@@ -1,1 +1,1 @@
-window.SY_AUDIO = {"ha3": {"d": 160, "t": "Impressionnisme et après. Quand la peinture sort en plein air."}, "hf3": {"d": 171, "t": "Renaissance et monarchie absolue. De François premier à Louis quatorze."}};
+window.SY_AUDIO = {"ha3": {"d": 160, "t": "Impressionnisme et après. Quand la peinture sort en plein air."}, "hf3": {"d": 171, "t": "Renaissance et monarchie absolue. De François premier à Louis quatorze."}, "re7": {"d": 165, "t": "La mythologie nordique. Les dieux des Vikings."}};
