@@ -13,6 +13,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 
+<script src="audio/audio-list.js"></script>
 <style>:root { --ink: #16222e; --muted: #5d6b78; --line: #dfe4ea; --bg: #f5f6f8; --card: #fff; --accent: #0b3f94; --ok: #1d7f4b; --bad: #b8352e;
   --font: "Segoe UI", system-ui, -apple-system, sans-serif; }
 * { box-sizing: border-box; }
@@ -366,6 +367,23 @@ b.ow::after { content: ' 🖼'; font-size: .78em; opacity: .7; }
 .ghrow input:focus { outline: none; border-color: var(--accent); }
 details.manual { margin: 4px 0 8px; }
 details.manual summary { cursor: pointer; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+
+/* ---------------- écoute */
+.games { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.btn.listen { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px; border-color: var(--t); color: var(--ink); }
+.btn.listen small { color: var(--muted); font-weight: 500; }
+.pbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; gap: 8px; background: #fff; border-top: 3px solid var(--t);
+  box-shadow: 0 -6px 24px rgba(17,28,38,.12); padding: 8px max(14px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); }
+.pb-btn { border: 0; background: #eef1f4; border-radius: 50%; width: 36px; height: 36px; flex: none; font-size: 15px; display: grid; place-items: center; }
+.pb-btn.big { width: 44px; height: 44px; background: var(--t); color: #fff; font-size: 17px; }
+.pb-btn:disabled { opacity: .35; cursor: default; }
+.pt { flex: 1; min-width: 0; display: grid; }
+.pt b { font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pt-sub { font-size: 12px; color: var(--muted); }
+.pt input { width: 100%; accent-color: var(--t); margin: 2px 0 0; }
+.pb-time { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+body.playing main { padding-bottom: 110px; }
+@media (max-width: 760px) { .pb-time { display: none; } .pb-btn { width: 32px; height: 32px; } .pb-btn.big { width: 40px; height: 40px; } }
 </style>
 </head>
 <body>
@@ -2703,7 +2721,7 @@ const readMins = f => Math.max(1, Math.round((f.text.join(' ').split(/\s+/).leng
 function lessonBody(f, inSess) {
   if (f.cards[0] && f.cards[0].img && !f.art) return f.text.map(p => '<p>' + md(p) + '</p>').join('') + keysOrGallery(f);
   const L = (CG.lecture || {})[f.id] || {};
-  let h = '<p class="rd-meta">⏱ ' + readMins(f) + ' min de lecture · ' + plural(f.cards.length, 'carte') + ' à la suite</p>';
+  let h = '<p class="rd-meta">⏱ ' + readMins(f) + ' min de lecture · ' + plural(f.cards.length, 'carte') + ' à la suite</p>' + (typeof audioBtn === 'function' ? audioBtn(f) : '');
   f.text.forEach((p, i) => {
     h += '<section class="rd-sec"><h3><span class="rd-n">' + (i + 1) + '</span>' + esc((L.h && L.h[i]) || 'Partie ' + (i + 1)) + '</h3><ul>' +
       sentences(p).map(s => '<li>' + sentenceHtml(s) + '</li>').join('') + '</ul></section>';
@@ -3261,7 +3279,7 @@ function gameEnd(g) {
 function homeGames() {
   const D = Object.assign({ best: 0, days: {} }, S.defi), td = D.days[dayIso(today())];
   return '<div class="games"><button class="game" data-act="defi" style="--t:#e0a100"><span class="gi">⚡</span><span><b>Défi du jour</b><small>10 questions chrono, dont 2 frises à remettre dans l\'ordre</small><small class="rec">' + (td != null ? 'Aujourd\'hui : ' + fmtN(td) + ' pts · ' : '') + 'Record : ' + fmtN(D.best) + ' pts</small></span></button>' +
-    '<button class="game" data-nav="frise" style="--t:#5a48b0"><span class="gi">🕰️</span><span><b>Frise chronologique</b><small>' + FRISE.length + ' repères et portraits, de l\'Antiquité à aujourd\'hui</small><small class="rec">Et le jeu « remettre dans l\'ordre »</small></span></button></div>';
+    (typeof audioTile === 'function' ? audioTile() : '') + '<button class="game" data-nav="frise" style="--t:#5a48b0"><span class="gi">🕰️</span><span><b>Frise chronologique</b><small>' + FRISE.length + ' repères et portraits, de l\'Antiquité à aujourd\'hui</small><small class="rec">Et le jeu « remettre dans l\'ordre »</small></span></button></div>';
 }
 function gameAction(a, b) {
   if (a === 'defi') startDefi();
@@ -3277,8 +3295,6 @@ function gameAction(a, b) {
 }
 document.addEventListener('change', e => { if (e.target.id === 'fz-mine') { FZ.mine = e.target.checked; fzSave(); friseRefresh(); } });
 
-render();
-window.__cg = { S: () => S, go, startSession, CARDS, FICHES, today, grade, dueCards, FRISE, makeOrder, orderPool, startDefi, sess: () => sess, FZ };
 
 /* Synchronisation de la progression entre appareils.
    Dans la version en ligne (page claude.ai), la progression est aussi gardée dans le stockage de la page (db, document
@@ -3520,6 +3536,102 @@ function ghWire(d) {
   ghBadge(GH.state || (GH.token ? 'ok' : ''));
 }
 ghStart();
+
+/* Écoute des fiches : épisodes lus par ElevenLabs (audio/<fiche>.mp3), liste dans audio/audio-list.js (window.SY_AUDIO).
+   Un seul lecteur pour toute l'app, en bas de l'écran ; commandes aussi sur l'écran verrouillé (Media Session). */
+var AUD = { el: null, q: [], i: 0 };
+const audioOf = f => (window.SY_AUDIO || {})[f && f.id];
+const fmtDur = s => Math.floor(s / 60) + ' min' + (s % 60 ? ' ' + String(s % 60).padStart(2, '0') : '');
+const hasAudio = () => Object.keys(window.SY_AUDIO || {}).some(id => FBY[id]);
+function audioBtn(f) {
+  const a = audioOf(f); if (!a) return '';
+  return '<button class="btn listen" data-act="listen" data-id="' + f.id + '">🎧 Écouter la fiche <small>' + fmtDur(a.d) + '</small></button>';
+}
+/* l'écoute du jour : fiches de la séance, puis fiches à réviser, puis fiches commencées, puis toutes */
+function dailyAudio() {
+  const withA = FICHES.filter(f => audioOf(f));
+  const planned = plannedLessons(dueCards().length, 0).filter(f => audioOf(f));
+  const dueF = new Set(dueCards().map(id => CARDS[id].fiche));
+  const due = withA.filter(f => dueF.has(f));
+  let q = Array.from(new Set(planned.concat(due)));
+  if (!q.length) q = withA.filter(f => ficheStarted(f));
+  if (!q.length) q = withA;
+  return q;
+}
+function audioTile() {
+  if (!hasAudio()) return '';
+  const q = dailyAudio(), tot = q.reduce((s, f) => s + audioOf(f).d, 0);
+  return '<button class="game" data-act="listen-day" style="--t:#1f6f5b"><span class="gi">🎧</span><span><b>Écoute du jour</b><small>' + plural(q.length, 'épisode') + ' · ' + fmtDur(tot) + '</small><small class="rec">Comme un podcast : en marchant, dans les transports…</small></span></button>';
+}
+function playQueue(fiches, start) {
+  AUD.q = fiches.filter(f => audioOf(f)); AUD.i = start || 0;
+  if (!AUD.q.length) return;
+  if (!AUD.el) {
+    AUD.el = new Audio(); AUD.el.preload = 'auto';
+    AUD.el.addEventListener('ended', () => { if (AUD.i < AUD.q.length - 1) { AUD.i++; loadCur(true); } else { barRender(); } });
+    ['play', 'pause', 'timeupdate', 'loadedmetadata'].forEach(ev => AUD.el.addEventListener(ev, barTick));
+    AUD.el.addEventListener('error', () => { const b = document.getElementById('pbar'); if (b) b.querySelector('.pt-sub').textContent = 'Épisode indisponible (pas de connexion ?)'; });
+    if ('mediaSession' in navigator) {
+      const ms = navigator.mediaSession;
+      ms.setActionHandler('play', () => AUD.el.play());
+      ms.setActionHandler('pause', () => AUD.el.pause());
+      ms.setActionHandler('previoustrack', () => audStep(-1));
+      ms.setActionHandler('nexttrack', () => audStep(1));
+      try { ms.setActionHandler('seekbackward', d => { AUD.el.currentTime = Math.max(0, AUD.el.currentTime - (d.seekOffset || 15)); }); ms.setActionHandler('seekforward', d => { AUD.el.currentTime += (d.seekOffset || 15); }); } catch (e) { /* ignoré */ }
+    }
+  }
+  loadCur(true);
+}
+function loadCur(play) {
+  const f = AUD.q[AUD.i]; if (!f) return;
+  AUD.el.src = 'audio/' + f.id + '.mp3';
+  if (play) AUD.el.play().catch(() => {});
+  if ('mediaSession' in navigator && window.MediaMetadata) {
+    navigator.mediaSession.metadata = new MediaMetadata({ title: f.title, artist: 'SY Culture', album: f.theme.name,
+      artwork: [{ src: location.protocol === 'file:' ? 'icon.png' : 'icon-512.png', sizes: '512x512', type: 'image/png' }] });
+  }
+  barRender();
+}
+function audStep(d) { const n = AUD.i + d; if (n < 0 || n >= AUD.q.length) return; AUD.i = n; loadCur(true); }
+function barRender() {
+  let b = document.getElementById('pbar');
+  if (!AUD.q.length) { if (b) b.hidden = true; document.body.classList.remove('playing'); return; }
+  if (!b) { b = document.createElement('div'); b.id = 'pbar'; b.className = 'pbar'; document.body.appendChild(b); }
+  const f = AUD.q[AUD.i];
+  b.style.setProperty('--t', f.theme.color);
+  b.innerHTML = '<button class="pb-btn" data-pb="prev" aria-label="Épisode précédent"' + (AUD.i ? '' : ' disabled') + '>⏮</button>' +
+    '<button class="pb-btn big" data-pb="play" aria-label="Lecture / pause">▶</button>' +
+    '<button class="pb-btn" data-pb="next" aria-label="Épisode suivant"' + (AUD.i < AUD.q.length - 1 ? '' : ' disabled') + '>⏭</button>' +
+    '<div class="pt"><b>' + f.theme.icon + ' ' + esc(f.title) + '</b><span class="pt-sub">' + (AUD.q.length > 1 ? (AUD.i + 1) + ' / ' + AUD.q.length + ' · ' : '') + esc(f.theme.name) + '</span>' +
+    '<input type="range" id="pb-seek" min="0" max="1000" value="0" aria-label="Position"></div>' +
+    '<span class="pb-time" id="pb-time"></span><button class="pb-btn" data-pb="fiche" aria-label="Ouvrir la fiche" title="Ouvrir la fiche">📄</button><button class="pb-btn" data-pb="close" aria-label="Fermer le lecteur">✕</button>';
+  b.hidden = false; document.body.classList.add('playing');
+  b.querySelector('#pb-seek').addEventListener('input', e => { if (AUD.el.duration) AUD.el.currentTime = AUD.el.duration * e.target.value / 1000; });
+  barTick();
+}
+function barTick() {
+  const b = document.getElementById('pbar'); if (!b || !AUD.el) return;
+  const p = b.querySelector('[data-pb="play"]'); if (p) p.textContent = AUD.el.paused ? '▶' : '⏸';
+  const d = AUD.el.duration || 0, t = AUD.el.currentTime || 0;
+  const s = b.querySelector('#pb-seek'); if (s && d && document.activeElement !== s) s.value = Math.round(t / d * 1000);
+  const tm = b.querySelector('#pb-time'); if (tm) tm.textContent = d ? Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0') + ' / ' + Math.floor(d / 60) + ':' + String(Math.floor(d % 60)).padStart(2, '0') : '';
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-pb], [data-act="listen"], [data-act="listen-day"]'); if (!b) return;
+  e.stopPropagation();
+  if (b.dataset.act === 'listen') { const f = FBY[b.dataset.id]; if (AUD.q[AUD.i] === f && AUD.el && !AUD.el.ended) { AUD.el.paused ? AUD.el.play() : AUD.el.pause(); } else playQueue([f]); return; }
+  if (b.dataset.act === 'listen-day') { playQueue(dailyAudio()); return; }
+  const a = b.dataset.pb;
+  if (a === 'play') AUD.el.paused ? AUD.el.play() : AUD.el.pause();
+  else if (a === 'prev') audStep(-1);
+  else if (a === 'next') audStep(1);
+  else if (a === 'fiche') { if (!(view.name === 'session' && sess && sess.results.length)) go('fiche', AUD.q[AUD.i].id); }
+  else if (a === 'close') { AUD.el.pause(); AUD.q = []; barRender(); }
+}, true);
+
+/* Démarrage : après tous les modules (leurs constantes doivent exister avant le premier affichage). */
+render();
+window.__cg = { S: () => S, go, startSession, CARDS, FICHES, today, grade, dueCards, FRISE, makeOrder, orderPool, startDefi, sess: () => sess, FZ };
 </script>
 <script>if ('serviceWorker' in navigator && location.protocol.startsWith('http')) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 </body>

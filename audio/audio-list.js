@@ -1,0 +1,1 @@
+window.SY_AUDIO = {"ha3": {"d": 160, "t": "Impressionnisme et après. Quand la peinture sort en plein air."}, "hf3": {"d": 171, "t": "Renaissance et monarchie absolue. De François premier à Louis quatorze."}};
