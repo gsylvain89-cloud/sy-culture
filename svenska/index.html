@@ -1,0 +1,1575 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SY Svenska</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1F5F99">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Svenska">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+
+<style>:root{--bg:#F5F3EC;--card:#fff;--ink:#1d2733;--muted:#6a7482;--line:#e1ddd0;--blue:#1F5F99;--yellow:#F2C230;--good:#2f8f5b;--bad:#c4473a;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+kbd{font:600 11px/1 inherit;background:rgba(0,0,0,.08);border-radius:4px;padding:2px 5px;margin-left:6px}
+.top{display:flex;align-items:center;gap:24px;padding:12px 28px;background:var(--blue);color:#fff;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px}.brand h1{font-size:19px;margin:0}
+.brand-mark{width:32px;height:32px;border-radius:8px;background:var(--yellow);color:var(--blue);display:grid;place-items:center;font-weight:800}
+.nav{display:flex;gap:4px}.nav button{background:none;border:0;color:#dbe7f3;padding:8px 14px;border-radius:8px}
+.nav button:hover{background:rgba(255,255,255,.12)}.nav button[aria-current=true]{background:#fff;color:var(--blue);font-weight:600}
+main{max-width:980px;margin:0 auto;padding:26px 24px 70px}
+h1.pt{margin:6px 0 16px}.sec{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:30px 0 12px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 6px}
+.muted{color:var(--muted)}.small{font-size:13px}
+.btn{border:1px solid var(--line);background:#fff;padding:10px 18px;border-radius:10px;font-weight:600}
+.btn:hover{border-color:var(--blue)}.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.big{padding:14px 26px;font-size:17px}.btn.sm{padding:6px 12px}.btn.good{border-color:var(--good);color:var(--good)}.btn.bad{border-color:var(--bad);color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:4px}
+.back{background:none;border:0;color:var(--blue);padding:4px 0;margin-bottom:8px}
+.hero{display:flex;gap:28px;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px 28px;border-top:5px solid var(--yellow)}
+.hero h1{margin:0 0 12px;font-size:28px}.lead{font-size:17px}
+.plan{list-style:none;padding:0;margin:0 0 18px}.plan li{display:flex;gap:12px;align-items:center;padding:6px 0}
+.pi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--blue);color:#fff;flex:none}.pi.rev{background:#8a94a3}
+.side{min-width:190px;display:flex;flex-direction:column;gap:10px}
+.stat{background:var(--bg);border-radius:12px;padding:10px 14px}.stat b{font-size:24px;display:block;line-height:1.1}.stat span{font-size:12px;color:var(--muted)}
+.week{display:flex;gap:5px}.week span{flex:1;text-align:center;font-size:11px;padding:6px 0;border-radius:7px;background:var(--bg);color:var(--muted)}
+.week span.on{background:var(--blue);color:#fff}.week span.today{outline:2px solid var(--yellow)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.theme{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:6px;border-top:4px solid var(--t)}
+.theme:hover{box-shadow:0 3px 12px rgba(0,0,0,.08)}.theme small{color:var(--muted)}
+.ti{font-size:26px}.ti.sm{font-size:20px;margin-right:8px}
+.bar{display:block;height:7px;background:var(--line);border-radius:5px;overflow:hidden;flex:1}.bar i{display:block;height:100%;background:var(--blue)}
+.how{color:var(--muted);font-size:14px;margin-top:28px}
+.lib h2{margin:24px 0 10px;font-size:18px}.flist{display:flex;flex-direction:column;gap:8px}
+.frow{display:flex;align-items:center;gap:14px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.frow:hover{border-color:var(--blue)}.fnum{width:28px;height:28px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-weight:700;font-size:13px}
+.ft{flex:1;display:flex;flex-direction:column}.ft small{color:var(--muted)}
+.badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;background:var(--bg);color:var(--muted);white-space:nowrap}
+.badge.new{background:#e8f0f8;color:var(--blue)}.badge.wip{background:#fcf1cf;color:#8a6a00}.badge.done{background:#dcf0e5;color:var(--good)}
+.lesson{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px 30px;border-top:5px solid var(--t,var(--blue))}
+.lesson h1{margin:0 0 6px}.lesson p{font-size:17px;max-width:70ch}.rd-meta{color:var(--muted);font-size:13px!important}
+.vh{margin:22px 0 8px}.vh small{font-weight:400;color:var(--muted)}
+.vocab{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.vrow{display:grid;grid-template-columns:40px minmax(150px,1fr) minmax(150px,1fr);gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line)}
+.vrow:last-child{border:0}.vsv{font-weight:700;font-size:17px;color:var(--blue)}.vnote{grid-column:2/4;font-size:13px;color:var(--muted)}
+.play{width:32px;height:32px;border-radius:50%;border:0;background:var(--blue);color:#fff;font-size:12px;flex:none}.play:hover{background:#174a79}
+.keys{background:#fbf6e2;border-left:4px solid var(--yellow);border-radius:10px;padding:6px 18px;margin:20px 0}.keys h3{margin:10px 0 4px}.ess{margin:0 0 10px;padding-left:20px}
+.actions{display:flex;align-items:center;gap:14px;margin-top:20px;flex-wrap:wrap}
+.sess{max-width:720px;margin:0 auto}.sess-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px 28px;border-top:5px solid var(--t)}
+.q{font-size:24px;margin:6px 0 14px}.newtag{color:var(--blue);font-weight:700}.sayline{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{display:flex;align-items:center;gap:12px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 16px;font-size:17px}
+.choice:hover:not(:disabled){border-color:var(--blue)}.choice kbd{margin:0}
+.choice.ok{border-color:var(--good);background:#e6f5ec}.choice.bad{border-color:var(--bad);background:#fbeae7}
+.typein{display:flex;gap:10px}.typein input,.search{flex:1;font:inherit;font-size:18px;padding:11px 14px;border:2px solid var(--line);border-radius:12px;width:100%}
+.typein input:focus,.search:focus{outline:0;border-color:var(--blue)}.typein input.ok{border-color:var(--good)}.typein input.bad{border-color:var(--bad)}
+.recall{text-align:center;padding:10px 0}.answer{font-size:26px;font-weight:700;color:var(--blue)}.selfgrade{display:flex;gap:12px;justify-content:center;margin-top:14px}
+.fb{margin-top:16px}.good{color:var(--good);font-weight:600}.wrong{color:var(--bad);font-weight:600}.expl{background:var(--bg);border-radius:10px;padding:10px 14px;margin:10px 0}
+.next{margin-top:16px;text-align:right}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.kpis .stat{background:var(--card);border:1px solid var(--line)}
+.cal{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;max-width:520px}.cal span{aspect-ratio:1;border-radius:4px;background:var(--line)}
+.cal .l1{background:#9bc1e3}.cal .l2{background:#4f8cc6}.cal .l3{background:var(--blue)}
+.boxes{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.boxes div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}.boxes b{display:block;font-size:22px}.boxes span{font-size:12px;color:var(--muted)}
+.weak{padding-left:18px}.opts{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.row select{font:inherit;padding:6px;max-width:60%}.chk{display:block;margin:8px 0}
+.hero.end{display:block}
+@media(max-width:700px){.hero{flex-direction:column}.vrow{grid-template-columns:36px 1fr}.vfr,.vnote{grid-column:2}.top{flex-wrap:wrap}.boxes{grid-template-columns:repeat(2,1fr)}}
+.lvl{font-size:11px;font-weight:700;background:var(--yellow);color:#4a3a00;border-radius:6px;padding:1px 6px;vertical-align:middle;margin-left:4px}
+.qfr{color:var(--muted);font-size:17px;margin:-6px 0 12px}.blank{display:inline-block;min-width:70px;border-bottom:3px solid var(--blue);color:transparent}
+.order{margin:8px 0}.ordans{min-height:56px;border:2px dashed var(--line);border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font-size:18px;font-weight:600}
+.chip:hover:not(:disabled){border-color:var(--blue)}.chip.on{background:#e8f0f8;border-color:var(--blue)}.chip.used{opacity:.25}
+.dw{color:var(--bad);font-weight:700;text-decoration:underline}.play.slow{background:#8a94a3;font-size:14px}
+
+.tilehead{margin:-8px -8px 18px;padding:14px 18px 18px;border-radius:14px;color:#fff;text-align:center}.tilehead h1{margin:6px 0 0;font-size:1.5rem;color:#fff}.tilehead .tbig{font-size:2.6rem}.tilehead .link{float:left}
+.tilegrid{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 10px;margin:8px 0 18px}
+.tile{font:inherit;font-size:1.25rem;padding:12px 20px;border-radius:16px;border:1px solid #d9d6c8;background:linear-gradient(#fff,#e7e5d8);box-shadow:0 3px 6px rgba(0,0,0,.12);cursor:pointer;color:#222;min-width:64px}
+.tile.flip{background:#fff7e0;color:#6b4e12;font-size:1.05rem}.tile.sel{outline:3px solid #1F5F99}.tile.s-learn{box-shadow:inset 6px 0 0 #F5B800,0 3px 6px rgba(0,0,0,.12)}.tile.s-known{box-shadow:inset 6px 0 0 #46A758,0 3px 6px rgba(0,0,0,.12)}.tile.s-done{box-shadow:inset 6px 0 0 #46A758,0 3px 6px rgba(0,0,0,.12)}
+.tilebar{position:sticky;bottom:0;background:#fff;border:1px solid #d9d6c8;border-radius:14px;padding:12px 14px;margin:10px 0;box-shadow:0 -2px 10px rgba(0,0,0,.08)}
+.ghp{background:#fff;border:1px solid #d9d6c8;border-radius:12px;padding:6px 14px;margin:6px 0}.ghrow input{padding:8px;border:1px solid #bbb;border-radius:8px;width:60%}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska</h1></div>
+  <nav class="nav" aria-label="Sections">
+    <button type="button" data-nav="home">Accueil</button>
+    <button type="button" data-nav="library">Fiches</button>
+    <button type="button" data-nav="tiles">Tuiles</button>
+    <button type="button" data-nav="words">Mes mots</button>
+    <button type="button" data-nav="stats">Progrès</button>
+  </nav>
+</header>
+<main id="main"></main>
+<script>const CG = { themes: [], words: [] };
+/* Aides pour écrire le contenu : V(suédois, français, note?) = un mot ou une phrase à retenir. */
+const V = (sv, fr, note) => ({ sv, fr, note: note || '' });
+/* Q(question, bonne réponse, [3 leurres], explication?, options?) = une carte écrite à la main.
+   options : { asv } texte suédois lu à voix haute après la réponse, { qsv } texte suédois lu à la question, { type: true } réponse à taper en rappel. */
+const Q = (q, a, d, x, o) => Object.assign({ q, a, d, x: x || '' }, o || {});
+/* P(suédois, français, note?) = phrase complète : donne un exercice « remets dans l'ordre / traduis » et une dictée. */
+const P = (sv, fr, note) => ({ sv, fr, note: note || '' });
+/* Z(phrase avec ___, mot attendu, traduction française, [3 leurres], explication?) = phrase à trous (choix, puis à taper dès la boîte 3). */
+const Z = (s, a, fr, d, x) => ({ s, a, fr, d, x: x || '' });
+
+/* Contenu de SY Svenska (A1). Thème → fiches {id, title, text[], keys[], vocab[V], extra[Q]}.
+   Les cartes sont fabriquées par app.js : chaque mot de vocab donne 2 cartes (suédois → français, français → suédois),
+   puis les cartes « extra » écrites à la main. Ids = <fiche>-s<k> / -f<k> (k = rang du mot) et <fiche>-c<j> (j = rang de la carte extra) :
+   AJOUTER à la fin de vocab / extra, ne jamais réordonner ni supprimer, sinon la progression se décale. */
+
+CG.themes.push({
+  id: 'pm', name: 'Premiers mots', icon: '👋', color: '#1F5F99', fiches: [
+    {
+      id: 'pm1', title: 'Hej ! Saluer et remercier',
+      text: [
+        'Le mot le plus utile pour commencer est **hej**. Il veut dire bonjour et salut, à toute heure et avec n\'importe qui. Pour dire au revoir, on dit **hej då**, et on entend souvent « hej hej » aussi.',
+        'Le deuxième réflexe, c\'est **tack**, merci. Les Suédois le disent très souvent : pour un café, une porte tenue, un billet. On peut l\'allonger : **tack så mycket**, merci beaucoup. Quand on tend quelque chose à quelqu\'un, on dit **varsågod**, qui veut dire « voilà » ou « je vous en prie ».',
+        'Pour s\'excuser, deux mots : **förlåt** (pardon, désolé) quand on a fait une erreur, et **ursäkta** (excusez-moi) pour attirer l\'attention ou passer. Le matin, on peut dire **god morgon**.'
+      ],
+      keys: ['**hej** = bonjour / salut, **hej då** = au revoir.', '**tack** = merci, **varsågod** = voilà / je vous en prie.', '**förlåt** = pardon (j\'ai fait une erreur), **ursäkta** = excusez-moi (pour passer ou demander).', '**ja** = oui, **nej** = non.'],
+      vocab: [V('Hej', 'Bonjour, salut', 'À toute heure, avec tout le monde.'), V('Hej då', 'Au revoir', '« Hej hej » s\'entend aussi pour dire au revoir.'), V('God morgon', 'Bonjour (le matin)'), V('Tack', 'Merci'), V('Tack så mycket', 'Merci beaucoup'), V('Varsågod', 'Voilà, je vous en prie', 'Quand on tend quelque chose à quelqu\'un.'), V('Förlåt', 'Pardon, désolé'), V('Ursäkta', 'Excusez-moi', 'Pour attirer l\'attention ou passer.')],
+      extra: [
+        Q('Comment se prononce la lettre j dans « ja » (oui) ?', 'Comme le « y » de « yaourt »', ['Comme le « j » de « jour »', 'Comme le « dj » de « djembé »', 'Elle ne se prononce pas'], 'Le j suédois sonne comme un y : « ja » se dit à peu près « ya ».', { asv: 'Ja' }),
+        Q('Comment dit-on « oui » en suédois ?', 'ja', ['nej', 'tack', 'hej'], '« Ja » = oui, « nej » = non.', { asv: 'ja', type: true })
+      ]
+    },
+    {
+      id: 'pm2', title: 'Se présenter',
+      text: [
+        'Pour se présenter, on dit **Jag heter** suivi du prénom : « Jag heter Anna ». **Jag** veut dire « je ». Pour demander le prénom de quelqu\'un : **Vad heter du?**, littéralement « comment t\'appelles-tu ? ».',
+        'En suédois, on dit **du** (tu) à presque tout le monde, y compris à un inconnu ou à un directeur. Cet usage s\'est généralisé avec ce qu\'on appelle la « réforme du du » dans les années 1960.',
+        'Ensuite, on demande **Hur mår du?** (comment vas-tu ?) et on répond **Bra, tack** (bien, merci). Pour dire d\'où l\'on vient, **Jag kommer från** suivi du pays, et pour dire où l\'on habite, **Jag bor i**.'
+      ],
+      keys: ['**Jag heter…** = je m\'appelle…, **Vad heter du?** = comment t\'appelles-tu ?', '**du** = tu, utilisé avec presque tout le monde.', '**Hur mår du?** → **Bra, tack.**', '**Jag kommer från…** = je viens de…, **Jag bor i…** = j\'habite à / en…'],
+      vocab: [V('Jag heter Anna.', 'Je m\'appelle Anna.'), V('Vad heter du?', 'Comment t\'appelles-tu ?'), V('Hur mår du?', 'Comment vas-tu ?'), V('Bra, tack.', 'Bien, merci.'), V('Trevligt att träffas.', 'Enchanté.', 'Littéralement : agréable de se rencontrer.'), V('Jag kommer från Frankrike.', 'Je viens de France.'), V('Jag bor i Frankrike.', 'J\'habite en France.'), V('Jag talar lite svenska.', 'Je parle un peu suédois.')],
+      extra: [
+        Q('Comment dit-on « je » en suédois ?', 'jag', ['du', 'han', 'vi'], '« Jag » = je, « du » = tu.', { asv: 'jag', type: true }),
+        Q('Depuis quand environ dit-on « du » à presque tout le monde en Suède ?', 'Depuis les années 1960', ['Depuis le Moyen Âge', 'Depuis les années 1990', 'Depuis le XIXe siècle'], 'La « réforme du du » date des années 1960.')
+      ]
+    },
+    {
+      id: 'pm3', title: 'Compter de 1 à 10',
+      text: [
+        'Voici les dix premiers nombres : **ett, två, tre, fyra, fem, sex, sju, åtta, nio, tio**. Zéro se dit **noll**.',
+        'Attention à **ett** : c\'est « un » pour les mots de genre neutre (ett hus). Devant les autres mots, on dit **en** (en bil). Nous y reviendrons dans la fiche sur les deux genres.',
+        'Quelques repères d\'écriture : **sju** (7) s\'écrit avec un j et **åtta** (8) avec un å. Écoutez chaque nombre avec le bouton avant de le répéter.'
+      ],
+      keys: ['**ett** 1, **två** 2, **tre** 3, **fyra** 4, **fem** 5.', '**sex** 6, **sju** 7, **åtta** 8, **nio** 9, **tio** 10.', '**noll** = 0.'],
+      vocab: [V('ett', '1'), V('två', '2'), V('tre', '3'), V('fyra', '4'), V('fem', '5'), V('sex', '6'), V('sju', '7'), V('åtta', '8'), V('nio', '9'), V('tio', '10')],
+      extra: [Q('Comment dit-on « zéro » en suédois ?', 'noll', ['ingen', 'inte', 'nej'], '« Noll » = 0.', { asv: 'noll', type: true })]
+    },
+    {
+      id: 'pm4', title: 'Les jours de la semaine',
+      text: [
+        'Les jours de la semaine se terminent tous par **-dag** (jour) : **måndag, tisdag, onsdag, torsdag, fredag, lördag, söndag**. Ils s\'écrivent avec une minuscule en suédois.',
+        'La semaine se dit **vecka** et le week-end **helg**. Comme en français, la semaine commence le lundi dans le calendrier suédois.',
+        'Astuce : **fredag** ressemble à « Friday » et **torsdag** vient du dieu nordique Thor (Thursday). Le suédois partage beaucoup de racines avec l\'anglais.'
+      ],
+      keys: ['Tous les jours finissent par **-dag**, sans majuscule.', '**lördag** = samedi, **söndag** = dimanche.', '**vecka** = semaine, **helg** = week-end.'],
+      vocab: [V('måndag', 'lundi'), V('tisdag', 'mardi'), V('onsdag', 'mercredi'), V('torsdag', 'jeudi'), V('fredag', 'vendredi'), V('lördag', 'samedi'), V('söndag', 'dimanche')],
+      extra: [
+        Q('Que veut dire « vecka » ?', 'semaine', ['week-end', 'jour', 'mois'], '« En vecka » = une semaine.', { qsv: 'vecka' }),
+        Q('Comment dit-on « week-end » ?', 'helg', ['vecka', 'dag', 'fest'], '« I helgen » = ce week-end.', { asv: 'helg' })
+      ]
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'gr', name: 'Grammaire', icon: '🧩', color: '#7A4FB0', fiches: [
+    {
+      id: 'gr1', title: 'Deux genres : en et ett',
+      text: [
+        'En suédois, tous les noms sont de l\'un de deux genres : **en** (commun) ou **ett** (neutre). L\'article indéfini « un / une » est donc soit **en**, soit **ett**. Il n\'y a pas de règle sûre : on apprend chaque mot avec son article.',
+        'Environ les trois quarts des noms sont en **en** : en bil (une voiture), en bok (un livre), en katt (un chat), en vän (un ami). Les autres sont en **ett** : ett hus (une maison), ett äpple (une pomme), ett barn (un enfant), ett glas (un verre).',
+        'L\'article défini (« le / la ») se colle à la fin du mot : **en bil → bilen**, **ett hus → huset**. Retenez la règle : -en pour les mots en « en », -et pour les mots en « ett » (après une voyelle, on ajoute juste -n ou -t).'
+      ],
+      keys: ['Deux genres : **en** et **ett**. Apprendre chaque mot avec son article.', '**en bil** (une voiture), **ett hus** (une maison).', 'Défini collé à la fin : **bilen**, **huset**.'],
+      vocab: [V('en bil', 'une voiture'), V('en bok', 'un livre'), V('en katt', 'un chat'), V('en vän', 'un ami'), V('ett hus', 'une maison'), V('ett äpple', 'une pomme'), V('ett barn', 'un enfant'), V('ett glas', 'un verre')],
+      extra: [
+        Q('Combien de genres grammaticaux compte le suédois ?', 'Deux : en et ett', ['Trois : le, la, les', 'Un seul', 'Quatre'], 'Genre commun (en) et genre neutre (ett).'),
+        Q('Quel article va avec « hus » (maison) ?', 'ett', ['en', 'et', 'de'], 'On dit « ett hus ».', { asv: 'ett hus', type: true }),
+        Q('Comment dit-on « la voiture » (défini) ?', 'bilen', ['bilet', 'ben bil', 'bilar'], 'Le défini se colle à la fin : en bil → bilen.', { asv: 'bilen' })
+      ]
+    },
+    {
+      id: 'gr2', title: 'Être et avoir : är et har',
+      text: [
+        'Bonne nouvelle : au présent, les verbes suédois ne changent pas selon la personne. **Être** (vara) donne **är** pour tout le monde, et **avoir** (ha) donne **har**.',
+        'Les pronoms sont : **jag** (je), **du** (tu), **han** (il), **hon** (elle), **vi** (nous), **ni** (vous), **de** (ils, elles). On dit donc : jag är, du är, hon är, vi är, de är ; jag har, du har, vi har.',
+        'Attention à ne pas confondre **är** (est) avec **var**, qui veut dire « où » ou « était » selon le contexte.'
+      ],
+      keys: ['Présent de **vara** (être) : **är** pour toutes les personnes.', 'Présent de **ha** (avoir) : **har** pour toutes les personnes.', '**jag, du, han, hon, vi, ni, de**.'],
+      vocab: [V('jag är', 'je suis'), V('du är', 'tu es'), V('hon är', 'elle est'), V('vi är', 'nous sommes'), V('de är', 'ils sont'), V('jag har', 'j\'ai'), V('du har', 'tu as'), V('vi har', 'nous avons')],
+      extra: [
+        Q('Quelle est la forme du verbe « vara » (être) au présent ?', 'är', ['var', 'vara', 'varit'], '« Är » pour toutes les personnes. « Var » est le passé, « vara » l\'infinitif.', { asv: 'är', type: true }),
+        Q('Le verbe change-t-il selon la personne au présent ?', 'Non, la même forme pour tous', ['Oui, comme en français', 'Seulement à la 3e personne', 'Seulement au pluriel'], 'Jag är, du är, vi är, de är.')
+      ]
+    },
+    {
+      id: 'gr3', title: 'Dire non : inte',
+      text: [
+        'Pour nier, on place **inte** juste après le verbe : « Jag är **inte** trött » (je ne suis pas fatigué). Il n\'y a qu\'un seul mot, pas de « ne… pas » en deux morceaux.',
+        'Autres exemples : « Jag har inte tid » (je n\'ai pas le temps), « Jag vet inte » (je ne sais pas), « Jag gillar inte kaffe » (je n\'aime pas le café).',
+        'Pour un refus poli, on dit **Nej, tack** (non, merci). Notez que **trött** veut dire fatigué et **tid** veut dire temps.'
+      ],
+      keys: ['**inte** se place juste après le verbe.', '**Jag vet inte** = je ne sais pas.', '**Nej, tack** = non, merci.'],
+      vocab: [V('Jag är inte trött.', 'Je ne suis pas fatigué(e).'), V('Jag har inte tid.', 'Je n\'ai pas le temps.'), V('Jag vet inte.', 'Je ne sais pas.'), V('Det är inte dyrt.', 'Ce n\'est pas cher.'), V('Jag gillar inte kaffe.', 'Je n\'aime pas le café.'), V('Nej, tack.', 'Non, merci.')],
+      extra: [
+        Q('Où place-t-on « inte » dans une phrase simple ?', 'Juste après le verbe', ['Avant le verbe', 'À la fin de la phrase', 'Avant le sujet'], '« Jag talar inte franska. »'),
+        Q('Comment dit-on « Je ne parle pas suédois » ?', 'Jag talar inte svenska.', ['Jag inte talar svenska.', 'Inte jag talar svenska.', 'Jag talar svenska inte.'], 'Inte vient juste après le verbe.', { asv: 'Jag talar inte svenska.' })
+      ]
+    },
+    {
+      id: 'gr4', title: 'Poser des questions',
+      text: [
+        'Les mots interrogatifs sont presque tous construits sur « v » : **vad** (quoi, que), **var** (où), **vem** (qui), **när** (quand), **varför** (pourquoi). Seul **hur** (comment) fait exception.',
+        'Pour une question oui/non, on met le verbe en premier : « Talar du svenska? » (parles-tu suédois ?), « Är du trött? » (es-tu fatigué ?). Pas besoin de « est-ce que ».',
+        'Pour une question avec un mot interrogatif, le mot vient en tête et le verbe juste après : « Var bor du? » (où habites-tu ?), « Vad heter du? ».'
+      ],
+      keys: ['**vad** quoi, **var** où, **vem** qui, **när** quand, **varför** pourquoi, **hur** comment.', 'Oui/non : le verbe en premier (**Talar du svenska?**).', 'Mot interrogatif puis verbe (**Var bor du?**).'],
+      vocab: [V('Vad?', 'Quoi ? Que ?'), V('Var?', 'Où ?'), V('Vem?', 'Qui ?'), V('När?', 'Quand ?'), V('Varför?', 'Pourquoi ?'), V('Hur?', 'Comment ?')],
+      extra: [
+        Q('Comment pose-t-on une question oui/non ?', 'On met le verbe en premier', ['On ajoute « est-ce que »', 'On ajoute un mot à la fin', 'On change l\'article'], '« Talar du svenska? »'),
+        Q('Que veut dire « Talar du svenska? »', 'Parles-tu suédois ?', ['Parles-tu français ?', 'Comprends-tu ?', 'Où habites-tu ?'], 'Verbe en premier = question.', { qsv: 'Talar du svenska?' })
+      ]
+    },
+    {
+      id: 'gr5', title: 'Le présent des verbes',
+      text: [
+        'Le verbe de base (l\'infinitif) est souvent précédé de **att** : « att bo » (habiter). Au présent, on ajoute simplement une terminaison à la racine, la même pour toutes les personnes.',
+        'Trois cas fréquents : les verbes en -a prennent souvent **-ar** (tala → talar, jobba → jobbar, gilla → gillar) ; les verbes comme äta, dricka, komma prennent **-er** (äter, dricker, kommer) ; ceux qui finissent par une voyelle accentuée prennent **-r** (bo → bor, se → ser).',
+        'On apprend donc chaque verbe avec sa forme du présent : jag talar, du bor, hon äter, vi kommer.'
+      ],
+      keys: ['Infinitif : **att** + verbe (att bo).', 'Présent : **-ar** (talar), **-er** (äter), **-r** (bor), identique pour toutes les personnes.', 'Apprendre chaque verbe avec sa forme au présent.'],
+      vocab: [V('att bo', 'habiter'), V('att äta', 'manger'), V('att dricka', 'boire'), V('att se', 'voir'), V('att komma', 'venir'), V('att gilla', 'aimer bien'), V('att jobba', 'travailler'), V('att tala', 'parler')],
+      extra: [
+        Q('Quel est le présent de « att bo » (habiter) ?', 'bor', ['bo', 'bodde', 'bott'], 'Après une voyelle accentuée, on ajoute -r.', { asv: 'bor', type: true }),
+        Q('Quel est le présent de « att äta » (manger) ?', 'äter', ['äta', 'åt', 'ätit'], 'Äta → äter.', { asv: 'äter', type: true }),
+        Q('Quel est le présent de « att tala » (parler) ?', 'talar', ['tala', 'talade', 'talat'], 'Tala → talar (jag talar).', { asv: 'talar', type: true }),
+        Q('Quel est le présent de « att komma » (venir) ?', 'kommer', ['komma', 'kom', 'kommit'], 'Komma → kommer.', { asv: 'kommer', type: true })
+      ]
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'vq', name: 'Vie quotidienne', icon: '☕', color: '#C9892B', fiches: [
+    {
+      id: 'vq1', title: 'Fika : café et gourmandises',
+      text: [
+        'Le mot **fika** désigne la pause café avec quelque chose à manger, un rituel central en Suède. On peut dire « ta en fika » (prendre un fika) ou simplement « fika » comme verbe : « Ska vi fika? » (on fait un fika ?).',
+        'Les mots de base : **kaffe** (café), **te** (thé), **mjölk** (lait), **socker** (sucre), **vatten** (eau). On le sert dans **en kopp** (une tasse), avec **en kanelbulle** (un petit pain à la cannelle) ou **en kaka** (un gâteau ou un biscuit).',
+        'Pour commander : « Jag vill ha en kopp kaffe, tack » (je voudrais une tasse de café, s\'il vous plaît).'
+      ],
+      keys: ['**fika** = pause café + douceur, nom et verbe.', '**kaffe, te, mjölk, socker, vatten**.', '**en kopp** (tasse), **en kanelbulle**, **en kaka**.'],
+      vocab: [V('kaffe', 'café'), V('te', 'thé'), V('mjölk', 'lait'), V('socker', 'sucre'), V('vatten', 'eau'), V('en kopp', 'une tasse'), V('en kanelbulle', 'un petit pain à la cannelle'), V('en kaka', 'un gâteau, un biscuit')],
+      extra: [
+        Q('Que veut dire « fika » ?', 'La pause café avec quelque chose à manger', ['Un type de café', 'Un repas du soir', 'Une fête de fin d\'année'], 'Le fika est un rituel social en Suède.', { qsv: 'fika' }),
+        Q('Comment dit-on « Je voudrais une tasse de café, s\'il vous plaît » ?', 'Jag vill ha en kopp kaffe, tack.', ['Jag har en kopp kaffe, tack.', 'Jag är en kopp kaffe, tack.', 'Jag vill kaffe en kopp, tack.'], '« Jag vill ha » = je voudrais (littéralement : je veux avoir).', { asv: 'Jag vill ha en kopp kaffe, tack.' })
+      ]
+    },
+    {
+      id: 'vq2', title: 'Au restaurant',
+      text: [
+        'Pour réserver ou s\'asseoir : **Ett bord för två, tack** (une table pour deux, s\'il vous plaît). **Menyn, tack** demande la carte.',
+        'Pour commander, on dit **Jag vill gärna ha…** (je voudrais volontiers…). On trinque avec **Skål!** et on souhaite bon appétit avec **Smaklig måltid!**.',
+        'Pour demander le prix, **Vad kostar det?**, et pour l\'addition **Notan, tack**. Un végétarien peut demander : « Har ni vegetariska rätter? » (avez-vous des plats végétariens ?).'
+      ],
+      keys: ['**Ett bord för två, tack.** = une table pour deux.', '**Jag vill gärna ha…** = je voudrais…', '**Notan, tack.** = l\'addition, s\'il vous plaît. **Skål!** = santé !'],
+      vocab: [V('Ett bord för två, tack.', 'Une table pour deux, s\'il vous plaît.'), V('Menyn, tack.', 'La carte, s\'il vous plaît.'), V('Jag vill gärna ha vatten, tack.', 'Je voudrais de l\'eau, s\'il vous plaît.'), V('Har ni vegetariska rätter?', 'Avez-vous des plats végétariens ?'), V('Smaklig måltid!', 'Bon appétit !'), V('Skål!', 'Santé !'), V('Vad kostar det?', 'Combien ça coûte ?'), V('Notan, tack.', 'L\'addition, s\'il vous plaît.')],
+      extra: []
+    },
+    {
+      id: 'vq3', title: 'La famille',
+      text: [
+        'Les mots de base : **mamma** (maman), **pappa** (papa), **syster** (sœur), **bror** (frère), **son** (fils), **dotter** (fille), **barn** (enfant, au singulier comme au pluriel).',
+        'Le suédois distingue les grands-parents selon le côté de la famille. **Mor** est la mère et **far** le père. **Mormor** est la mère de la mère, **farmor** la mère du père, **morfar** le père de la mère et **farfar** le père du père.',
+        'On construit donc le mot en collant les deux : mor + mor = mormor, far + far = farfar.'
+      ],
+      keys: ['**mamma, pappa, syster, bror, son, dotter, barn**.', '**mormor / morfar** : côté de la mère. **farmor / farfar** : côté du père.'],
+      vocab: [V('mamma', 'maman'), V('pappa', 'papa'), V('syster', 'sœur'), V('bror', 'frère'), V('son', 'fils'), V('dotter', 'fille'), V('mormor', 'grand-mère maternelle'), V('farfar', 'grand-père paternel')],
+      extra: [
+        Q('Qui est « farmor » ?', 'La mère de son père', ['La mère de sa mère', 'La sœur de son père', 'La tante'], 'Far + mor : la mère du père.', { qsv: 'farmor' }),
+        Q('Qui est « morfar » ?', 'Le père de sa mère', ['Le père de son père', 'Le frère de sa mère', 'Le beau-père'], 'Mor + far : le père de la mère.', { qsv: 'morfar' })
+      ]
+    },
+    {
+      id: 'vq4', title: 'Dans la ville',
+      text: [
+        'Pour demander son chemin : **Ursäkta, var är toaletten?** (excusez-moi, où sont les toilettes ?). Pour demander comment aller quelque part : **Hur kommer jag till stationen?**.',
+        'Les directions : **vänster** (gauche), **höger** (droite), **rakt fram** (tout droit). On prend **en buss** (un bus) ou **ett tåg** (un train) dans **en gata** (une rue).',
+        'Quand quelqu\'un vous répond, repérez ces trois mots : vänster, höger, rakt fram. Ils suffisent souvent à comprendre.'
+      ],
+      keys: ['**vänster** gauche, **höger** droite, **rakt fram** tout droit.', '**en buss**, **ett tåg**, **en gata**.', '**Hur kommer jag till…?** = comment aller à… ?'],
+      vocab: [V('ett tåg', 'un train'), V('en buss', 'un bus'), V('en gata', 'une rue'), V('vänster', 'gauche'), V('höger', 'droite'), V('rakt fram', 'tout droit'), V('Var är toaletten?', 'Où sont les toilettes ?'), V('Hur kommer jag till stationen?', 'Comment aller à la gare ?')],
+      extra: []
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'cu', name: 'Culture suédoise', icon: '🇸🇪', color: '#D4A017', fiches: [
+    {
+      id: 'cu1', title: 'Fika : plus qu\'une pause',
+      text: [
+        'Le **fika** est une pause café et gâteau prise avec des collègues, des amis ou la famille. Dans beaucoup d\'entreprises suédoises, il fait partie de la journée de travail, souvent le matin et l\'après-midi.',
+        'Le mot est à la fois un nom et un verbe : on « fikar » avec quelqu\'un. Proposer un fika est une manière simple de se retrouver et de discuter sans se presser.'
+      ],
+      keys: ['**fika** : pause café avec quelque chose de sucré.', 'Se pratique au travail comme entre amis.'],
+      vocab: [],
+      extra: [
+        Q('Qu\'est-ce que le fika ?', 'Une pause café avec quelque chose à manger', ['Un repas de midi', 'Une fête d\'été', 'Un type de gâteau'], 'C\'est un rituel social important en Suède.'),
+        Q('« Fika » peut-il être un verbe ?', 'Oui, on « fikar » avec quelqu\'un', ['Non, seulement un nom', 'Seulement dans les affaires', 'Non, c\'est un adjectif'], 'Ska vi fika ? = on fait un fika ?', { asv: 'Ska vi fika?' })
+      ]
+    },
+    {
+      id: 'cu2', title: 'Allemansrätten : la nature pour tous',
+      text: [
+        'Le **allemansrätten** (droit d\'accès à la nature) permet à chacun de se promener, de cueillir des baies et des champignons et, avec discrétion, de camper une nuit dans la nature, même sur un terrain privé non cultivé.',
+        'La règle d\'or tient en deux mots : **inte störa, inte förstöra**, c\'est-à-dire ne pas déranger, ne pas détruire. On ne s\'approche pas des maisons et on ne cueille pas les plantes protégées.'
+      ],
+      keys: ['**allemansrätten** : le droit d\'accès à la nature.', '**inte störa, inte förstöra** : ne pas déranger, ne pas détruire.'],
+      vocab: [],
+      extra: [
+        Q('Que permet l\'allemansrätten ?', 'Se promener, cueillir et camper dans la nature, avec respect', ['Chasser sans permis', 'Construire une cabane où l\'on veut', 'Entrer dans toutes les propriétés'], 'Un droit d\'accès à la nature, assorti de devoirs.'),
+        Q('Que signifie « inte störa, inte förstöra » ?', 'Ne pas déranger, ne pas détruire', ['Ne pas courir, ne pas crier', 'Ne pas camper, ne pas cueillir', 'Ne pas payer, ne pas partir'], 'La règle de conduite de l\'allemansrätten.', { qsv: 'Inte störa, inte förstöra' })
+      ]
+    },
+    {
+      id: 'cu3', title: 'Lucia et midsommar',
+      text: [
+        'Le **13 décembre**, les Suédois fêtent **Lucia**, la fête de la lumière. Des enfants défilent en robe blanche, la tête ornée d\'une couronne de bougies, et l\'on mange des petits pains au safran, les **lussekatter**.',
+        'En été, **midsommar** fête le solstice autour du week-end proche du 21 juin. On danse autour d\'un mât fleuri, la **midsommarstång**, et l\'on mange traditionnellement du hareng, des pommes de terre nouvelles et des fraises.'
+      ],
+      keys: ['**Lucia** : 13 décembre, fête de la lumière, lussekatter.', '**midsommar** : fête du solstice d\'été, mât fleuri, danses.'],
+      vocab: [],
+      extra: [
+        Q('Quand fête-t-on Lucia ?', 'Le 13 décembre', ['Le 24 juin', 'Le 1er janvier', 'Le 6 décembre'], 'C\'est la fête de la lumière.'),
+        Q('Que sont les « lussekatter » ?', 'Des petits pains au safran', ['Des chats en peluche', 'Des bougies de Lucia', 'Des biscuits au gingembre'], 'On les mange pendant Lucia.', { qsv: 'lussekatter' }),
+        Q('Que fait-on à midsommar ?', 'On danse autour d\'un mât fleuri', ['On allume de grands feux d\'artifice', 'On fait un défilé de masques', 'On offre des cadeaux'], 'La midsommarstång est décorée de fleurs et de feuillages.')
+      ]
+    },
+    {
+      id: 'cu4', title: 'Quelques repères sur la Suède',
+      text: [
+        'La Suède se dit **Sverige** en suédois, et la langue se dit **svenska**. La capitale est **Stockholm**.',
+        'La Suède fait partie de l\'Union européenne mais n\'utilise pas l\'euro : sa monnaie est la **couronne suédoise**, en suédois **krona**.'
+      ],
+      keys: ['**Sverige** = la Suède, **svenska** = suédois (la langue).', 'Capitale : **Stockholm**. Monnaie : **krona**.'],
+      vocab: [],
+      extra: [
+        Q('Comment dit-on « la Suède » en suédois ?', 'Sverige', ['Svenska', 'Sweden', 'Schweiz'], '« Svenska » désigne la langue.', { asv: 'Sverige' }),
+        Q('Comment dit-on « suédois » (la langue) ?', 'svenska', ['Sverige', 'Svensk', 'Stockholm'], '« Jag talar svenska. »', { asv: 'svenska' }),
+        Q('Quelle est la capitale de la Suède ?', 'Stockholm', ['Göteborg', 'Malmö', 'Uppsala'], 'Stockholm est la capitale.', { asv: 'Stockholm' }),
+        Q('Quelle est la monnaie de la Suède ?', 'La couronne suédoise', ['L\'euro', 'La couronne danoise', 'Le franc suédois'], 'La Suède n\'a pas adopté l\'euro.', { asv: 'krona' })
+      ]
+    }
+  ]
+});
+
+/* SY Svenska : contenu A2-B1. Mêmes règles que data-svenska.js : ajouter à la fin, ne jamais réordonner.
+   Une fiche peut avoir : text[], keys[], vocab[V], phrases[P], cloze[Z], extra[Q]. Ids de cartes :
+   -s<k>/-f<k> (vocab), -o<k>/-d<k> (phrases : ordre/traduction, dictée), -z<j> (trous), -c<j> (extra). */
+
+CG.themes.push({
+  id: 'ob', name: 'Ordre des mots', icon: '🧱', color: '#2E8B7A', lvl: 'A2', fiches: [
+    {
+      id: 'ob1', title: 'Le verbe toujours en deuxième position (V2)',
+      text: [
+        `La règle d'or de la phrase suédoise : dans une proposition principale, le verbe conjugué occupe toujours la **deuxième place**. Le sujet n'est pas forcément en premier : si l'on met en tête un moment, un lieu ou un connecteur, le sujet passe **après** le verbe.`,
+        `**Jag arbetar** hemifrån idag → Idag **arbetar jag** hemifrån. Le français dirait « Aujourd'hui, je travaille… » avec le sujet avant le verbe ; en suédois on inverse : verbe, puis sujet.`,
+        `Une proposition subordonnée en tête compte pour une seule « première place » : « När jag kom hem, **åt jag** middag. » Après la virgule, le verbe vient tout de suite.`
+      ],
+      keys: [`Principale : le verbe conjugué est en **2e position**.`, `Si un complément ouvre la phrase, le sujet passe après le verbe : **Idag arbetar jag**.`, `Une subordonnée en tête occupe la 1re place : **När jag kom hem, åt jag**…`],
+      phrases: [
+        P(`Idag arbetar jag hemifrån.`, `Aujourd'hui, je travaille de chez moi.`),
+        P(`I morgon ska vi träffa kunden.`, `Demain, nous allons rencontrer le client.`),
+        P(`På lördagar sover jag länge.`, `Le samedi, je dors longtemps.`),
+        P(`Här bor min syster.`, `C'est ici qu'habite ma sœur.`),
+        P(`Tyvärr kan jag inte komma.`, `Malheureusement, je ne peux pas venir.`),
+        P(`När jag kom hem, åt jag middag.`, `Quand je suis rentré, j'ai dîné.`)
+      ],
+      cloze: [
+        Z(`På fredag ___ vi på bio.`, `går`, `Vendredi, nous allons au cinéma.`, [`gå`, `gick`, `vi`]),
+        Z(`På morgonen ___ jag frukost.`, `äter`, `Le matin, je prends le petit-déjeuner.`, [`äta`, `åt`, `ätit`]),
+        Z(`Ibland ___ vi på restaurang.`, `äter`, `Parfois, nous mangeons au restaurant.`, [`äta`, `åt`, `ätit`])
+      ],
+      extra: [
+        Q(`Quelle phrase est correcte ?`, `Imorgon åker vi till Malmö.`, [`Imorgon vi åker till Malmö.`, `Imorgon åker till Malmö vi.`, `Vi imorgon åker till Malmö.`], `Le verbe reste en 2e position : imorgon (1) åker (2) vi.`, { asv: `Imorgon åker vi till Malmö.` })
+      ]
+    },
+    {
+      id: 'ob2', title: 'Subordonnées : inte avant le verbe',
+      text: [
+        `Dans une proposition subordonnée (après **att, om, eftersom, när, som, medan**…), l'ordre change : les petits adverbes **inte, aldrig, alltid, också, bara** se placent **avant** le verbe conjugué.`,
+        `Principale : « Jag **kommer inte** ». Subordonnée : « Jag vet att jag **inte kommer** ». Moyen mnémotechnique : en principale « verbe + inte », en subordonnée « inte + verbe ».`,
+        `Les conjonctions à connaître : **att** (que), **eftersom** (parce que, puisque), **om** (si ; si… ou non), **när** (quand), **medan** (pendant que), **trots att** (bien que).`
+      ],
+      keys: [`Principale : **kommer inte**. Subordonnée : **inte kommer**.`, `**att** que, **eftersom** parce que, **om** si, **när** quand, **medan** pendant que, **trots att** bien que.`],
+      phrases: [
+        P(`Jag vet att han inte kommer.`, `Je sais qu'il ne vient pas.`),
+        P(`Hon säger att hon aldrig har varit i Norge.`, `Elle dit qu'elle n'a jamais été en Norvège.`),
+        P(`Eftersom det regnar stannar vi hemma.`, `Comme il pleut, nous restons à la maison.`),
+        P(`Jag undrar om de redan har ätit.`, `Je me demande s'ils ont déjà mangé.`),
+        P(`Trots att jag var trött gick jag ut.`, `Bien que je sois fatigué, je suis sorti.`),
+        P(`Om du inte vill, kan vi vänta.`, `Si tu ne veux pas, nous pouvons attendre.`)
+      ],
+      cloze: [
+        Z(`Jag stannar hemma ___ jag är sjuk.`, `eftersom`, `Je reste à la maison parce que je suis malade.`, [`att`, `om`, `medan`]),
+        Z(`Jag vet ___ du har rätt.`, `att`, `Je sais que tu as raison.`, [`om`, `när`, `fast`]),
+        Z(`Han frågade ___ jag ville ha kaffe.`, `om`, `Il a demandé si je voulais du café.`, [`att`, `eftersom`, `trots`]),
+        Z(`___ jag kom hem, ringde telefonen.`, `När`, `Quand je suis rentré, le téléphone a sonné.`, [`Att`, `Om`, `Eftersom`])
+      ],
+      extra: [
+        Q(`Quelle phrase est correcte ?`, `Jag vet att hon inte kommer.`, [`Jag vet att hon kommer inte.`, `Jag vet hon inte att kommer.`, `Jag vet att inte hon kommer.`], `Dans la subordonnée, inte se place avant le verbe : inte kommer.`, { asv: `Jag vet att hon inte kommer.` })
+      ]
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'vb', name: 'Verbes', icon: '⚙️', color: '#B5522E', lvl: 'A2', fiches: [
+    {
+      id: 'vb1', title: 'Passé : prétérit et supin, verbes forts',
+      text: [
+        `Chaque verbe a trois formes utiles : l'**infinitif** (tala), le **prétérit** pour un moment passé (talade) et le **supin** après « har » (har talat). Les verbes réguliers se rangent en groupes : **-ade / -at** (tala → talade → talat), **-de / -t** (ringa → ringde → ringt), **-te / -t** (köpa → köpte → köpt), **-dde / -tt** pour les verbes courts (bo → bodde → bott).`,
+        `Les **verbes forts** changent de voyelle et s'apprennent par cœur : gå, gick, gått. Voici les plus courants ; entraîne-toi à les taper d'un trait.`
+      ],
+      keys: [`Prétérit : moment précis du passé. Supin : **har** + supin.`, `Réguliers : **-ade/-at**, **-de/-t**, **-te/-t**, **-dde/-tt**.`, `Forts : changement de voyelle, à apprendre (gå, gick, gått).`],
+      vocab: [
+        V(`gå, gick, gått`, `aller, marcher`), V(`se, såg, sett`, `voir`), V(`ta, tog, tagit`, `prendre`), V(`komma, kom, kommit`, `venir`),
+        V(`skriva, skrev, skrivit`, `écrire`), V(`dricka, drack, druckit`, `boire`), V(`äta, åt, ätit`, `manger`), V(`ge, gav, gett`, `donner`),
+        V(`bli, blev, blivit`, `devenir`), V(`vara, var, varit`, `être`), V(`förstå, förstod, förstått`, `comprendre`), V(`säga, sa, sagt`, `dire`), V(`göra, gjorde, gjort`, `faire`)
+      ],
+      phrases: [
+        P(`Igår gick jag till skolan.`, `Hier, je suis allé à l'école.`),
+        P(`Jag har gått hem.`, `Je suis rentré à pied.`),
+        P(`Vi såg en film i fredags.`, `Nous avons vu un film vendredi dernier.`),
+        P(`Har du sett henne?`, `L'as-tu vue ?`),
+        P(`Hon drack kaffe och åt en macka.`, `Elle a bu du café et mangé un sandwich.`)
+      ],
+      cloze: [
+        Z(`Igår ___ jag på bio.`, `gick`, `Hier, je suis allé au cinéma. (gå)`, [`gått`, `går`, `gå`]),
+        Z(`Hon har ___ en bok.`, `skrivit`, `Elle a écrit un livre. (skriva)`, [`skrev`, `skriver`, `skriva`]),
+        Z(`Vi ___ en film i lördags.`, `såg`, `Nous avons vu un film samedi dernier. (se)`, [`sett`, `ser`, `se`]),
+        Z(`Har du ___ min nyckel?`, `sett`, `As-tu vu ma clé ? (se)`, [`såg`, `ser`, `se`]),
+        Z(`Han ___ mycket vatten.`, `drack`, `Il a bu beaucoup d'eau. (dricka)`, [`druckit`, `dricker`, `dricka`]),
+        Z(`Jag har aldrig ___ sushi.`, `ätit`, `Je n'ai jamais mangé de sushi. (äta)`, [`åt`, `äter`, `äta`]),
+        Z(`Hon ___ en ny bil förra året.`, `köpte`, `Elle a acheté une voiture neuve l'an dernier. (köpa)`, [`köpt`, `köper`, `köpa`]),
+        Z(`Jag har ___ här i tio år.`, `bott`, `J'habite ici depuis dix ans. (bo)`, [`bodde`, `bor`, `bo`])
+      ],
+      extra: []
+    },
+    {
+      id: 'vb2', title: 'Parfait (har + supin) ou prétérit ?',
+      text: [
+        `Le **prétérit** situe une action à un moment précis du passé : « Förra året **bodde** jag i Lund. » Le **parfait** (har + supin) relie le passé au présent : expérience, résultat, durée qui continue : « Jag **har bott** i Göteborg i fem år » (j'y habite toujours).`,
+        `Indices : *igår, förra veckan, 2015, för tre år sedan* appellent le prétérit ; *redan, aldrig, någonsin, just, hittills* appellent le parfait. L'auxiliaire est **toujours har**, jamais « är » : Jag har kommit, Hon har åkt.`
+      ],
+      keys: [`Moment précis → **prétérit** (igår, förra året).`, `Expérience, résultat, durée jusqu'à maintenant → **har + supin**.`, `Toujours **har**, jamais « är » : **Jag har kommit**.`],
+      phrases: [
+        P(`Jag har bott i Göteborg i fem år.`, `J'habite à Göteborg depuis cinq ans.`),
+        P(`Jag bodde i Lund förra året.`, `J'habitais à Lund l'an dernier.`),
+        P(`Har du någonsin varit i Kiruna?`, `As-tu déjà été à Kiruna ?`),
+        P(`Vi har just kommit hem.`, `Nous venons de rentrer.`),
+        P(`Hon har redan ätit.`, `Elle a déjà mangé.`),
+        P(`Igår träffade jag Anna.`, `Hier, j'ai rencontré Anna.`)
+      ],
+      cloze: [
+        Z(`Jag ___ varit i Norge två gånger.`, `har`, `J'ai été en Norvège deux fois.`, [`är`, `var`, `blev`]),
+        Z(`Förra sommaren ___ vi i Italien.`, `var`, `L'été dernier, nous étions en Italie.`, [`har`, `är`, `varit`]),
+        Z(`Har du ___ Stockholm?`, `besökt`, `As-tu visité Stockholm ? (besöka)`, [`besökte`, `besöker`, `besöka`]),
+        Z(`I fredags ___ jag en kaka.`, `åt`, `Vendredi dernier, j'ai mangé un gâteau. (äta)`, [`ätit`, `äter`, `äta`])
+      ],
+      extra: [
+        Q(`Quel temps après « förra veckan » (la semaine dernière) ?`, `Le prétérit : « Förra veckan köpte jag… »`, [`Le supin avec har`, `Le présent`, `Le futur avec ska`], `Un moment précis dans le passé → prétérit.`)
+      ]
+    },
+    {
+      id: 'vb3', title: 'Verbes modaux : kan, vill, ska, måste, får, borde',
+      text: [
+        `Après un verbe modal, l'infinitif s'emploie **sans « att »** : « Jag måste gå », « Hon kan simma ». À la forme négative, **inte** vient après le modal : « Jag kan inte komma ».`,
+        `Sens à retenir : **kan** (pouvoir, savoir), **vill** (vouloir), **ska** (aller, avoir l'intention), **måste** (devoir), **får** (avoir le droit ; pouvoir demander : « Kan jag få… ? »), **borde** (devrait).`
+      ],
+      keys: [`Modal + infinitif **sans att** : **Jag måste gå**.`, `**får** = avoir le droit / obtenir : **Du får inte röka här**, **Kan jag få…?**`, `**ska** = aller faire : **Vi ska äta middag**.`],
+      phrases: [
+        P(`Jag måste gå nu.`, `Je dois partir maintenant.`),
+        P(`Du får inte röka här.`, `Tu n'as pas le droit de fumer ici.`),
+        P(`Vi ska äta middag klockan sju.`, `Nous allons dîner à sept heures.`),
+        P(`Kan du hjälpa mig?`, `Peux-tu m'aider ?`),
+        P(`Hon vill inte vänta längre.`, `Elle ne veut plus attendre.`),
+        P(`Du borde vila lite.`, `Tu devrais te reposer un peu.`)
+      ],
+      cloze: [
+        Z(`Jag måste ___ tidigt i morgon.`, `gå`, `Je dois partir tôt demain.`, [`att gå`, `går`, `gick`]),
+        Z(`Kan jag ___ ett glas vatten?`, `få`, `Puis-je avoir un verre d'eau ?`, [`fått`, `får`, `att få`]),
+        Z(`Vi ___ resa till Spanien i sommar.`, `ska`, `Nous allons voyager en Espagne cet été.`, [`att`, `har`, `är`]),
+        Z(`Du ___ inte parkera här.`, `får`, `Tu n'as pas le droit de te garer ici.`, [`är`, `har`, `gör`])
+      ],
+      extra: [
+        Q(`Faut-il « att » après un verbe modal ?`, `Non : « Jag kan simma »`, [`Oui : « Jag kan att simma »`, `Seulement avec « vill »`, `Seulement à la forme négative`], `Après kan, ska, vill, måste, får, borde : infinitif sans att.`)
+      ]
+    },
+    {
+      id: 'vb4', title: 'Verbes à particule et prépositions fixes',
+      text: [
+        `Beaucoup de verbes suédois vont avec une préposition ou une particule imposée, souvent différente du français : **vänta på** (attendre), **tänka på** (penser à), **leta efter** (chercher), **tycka om** (aimer), **hålla med** (être d'accord).`,
+        `Apprends toujours le verbe avec sa préposition. La particule est accentuée : *ta emot, packa upp, ge upp*. Dans la phrase, elle reste collée au verbe : « Jag **väntar på** bussen ».`
+      ],
+      keys: [`**vänta på**, **tänka på**, **leta efter**, **tycka om**, **hålla med**.`, `Verbe et préposition s'apprennent ensemble.`],
+      vocab: [
+        V(`att ta emot`, `accueillir, recevoir`), V(`att titta på`, `regarder`), V(`att vänta på`, `attendre`), V(`att tycka om`, `aimer (bien)`),
+        V(`att hålla med`, `être d'accord`), V(`att komma ihåg`, `se souvenir`), V(`att ge upp`, `abandonner`), V(`att ringa upp`, `appeler (au téléphone)`),
+        V(`att packa upp`, `déballer`), V(`att tänka på`, `penser à`), V(`att leta efter`, `chercher`), V(`att bry sig om`, `se soucier de`)
+      ],
+      phrases: [
+        P(`Jag väntar på bussen.`, `J'attends le bus.`),
+        P(`Vi tittar på en film ikväll.`, `Nous regardons un film ce soir.`),
+        P(`Håller du med mig?`, `Es-tu d'accord avec moi ?`),
+        P(`Jag kommer inte ihåg hans namn.`, `Je ne me souviens pas de son nom.`),
+        P(`Hon letar efter sina nycklar.`, `Elle cherche ses clés.`),
+        P(`Ge inte upp!`, `N'abandonne pas !`)
+      ],
+      cloze: [
+        Z(`Jag väntar ___ dig.`, `på`, `Je t'attends.`, [`efter`, `till`, `av`]),
+        Z(`Vi letar ___ en lägenhet.`, `efter`, `Nous cherchons un appartement.`, [`på`, `för`, `om`]),
+        Z(`Jag tänker ___ dig.`, `på`, `Je pense à toi.`, [`om`, `med`, `till`]),
+        Z(`Han tycker ___ jazz.`, `om`, `Il aime le jazz.`, [`på`, `av`, `med`]),
+        Z(`Jag håller ___ dig.`, `med`, `Je suis d'accord avec toi.`, [`om`, `på`, `efter`])
+      ],
+      extra: []
+    },
+    {
+      id: 'vb5', title: 'Le passif en -s',
+      text: [
+        `Le passif le plus courant se forme en ajoutant **-s** au verbe : « öppna » → « **öppnas** ». « Butiken öppnas klockan nio » (le magasin ouvre à neuf heures). Au présent, le -r tombe devant le -s : stänger → **stängs**.`,
+        `Ce passif sert aussi pour les règles générales ou l'impersonnel : « Svenska **talas** här ». Au prétérit : « Fönstret stängdes ». Pour un passif d'événement, on peut aussi employer **bli** + participe : « Han blev uppringd. »`
+      ],
+      keys: [`Passif = verbe + **-s** : **öppnas, talas, serveras**.`, `Présent : le **-r** disparaît : **stänger → stängs**.`, `Prétérit : **-des** : **stängdes**.`],
+      phrases: [
+        P(`Butiken öppnas klockan nio.`, `Le magasin ouvre à neuf heures.`),
+        P(`Svenska talas även i Finland.`, `Le suédois est aussi parlé en Finlande.`),
+        P(`Maten serveras klockan sex.`, `Le repas est servi à six heures.`),
+        P(`Fönstret stängdes av vinden.`, `La fenêtre a été fermée par le vent.`)
+      ],
+      cloze: [
+        Z(`Dörren ___ klockan sex.`, `stängs`, `La porte est fermée à six heures.`, [`stänger`, `stängde`, `stängt`]),
+        Z(`Svenska ___ här.`, `talas`, `Ici on parle suédois.`, [`talar`, `talade`, `talat`]),
+        Z(`Brödet ___ varje morgon.`, `bakas`, `Le pain est cuit chaque matin.`, [`bakar`, `bakade`, `bakat`])
+      ],
+      extra: [
+        Q(`Quel est le passif présent de « stänga » ?`, `stängs`, [`stänges`, `stängas`, `stängt`], `stänger + s → stängs (le r tombe).`, { asv: `stängs` })
+      ]
+    },
+    {
+      id: 'vb6', title: 'Les verbes réfléchis',
+      text: [
+        `Le pronom réfléchi suit la personne : **mig, dig, sig, oss, er, sig**. « Jag skyndar **mig**, du skyndar **dig**, hon skyndar **sig**, vi skyndar **oss** ».`,
+        `Verbes courants : **känna sig** (se sentir), **skynda sig** (se dépêcher), **lägga sig** (se coucher), **sätta sig** (s'asseoir), **bestämma sig** (se décider). Le **-s** réciproque exprime « l'un l'autre » : « Vi ses imorgon ! » (on se voit demain).`
+      ],
+      keys: [`**mig, dig, sig, oss, er, sig**.`, `**känna sig, skynda sig, lägga sig, sätta sig, bestämma sig**.`, `**ses** = se voir (réciproque).`],
+      phrases: [
+        P(`Jag lägger mig klockan elva.`, `Je me couche à onze heures.`),
+        P(`Känner du dig sjuk?`, `Te sens-tu malade ?`),
+        P(`Han har bestämt sig.`, `Il s'est décidé.`),
+        P(`Vi ses imorgon!`, `On se voit demain !`)
+      ],
+      cloze: [
+        Z(`Jag känner ___ trött.`, `mig`, `Je me sens fatigué.`, [`dig`, `sig`, `oss`]),
+        Z(`Hon skyndar ___.`, `sig`, `Elle se dépêche.`, [`mig`, `henne`, `dem`]),
+        Z(`Vi sätter ___ vid bordet.`, `oss`, `Nous nous asseyons à table.`, [`sig`, `vi`, `er`]),
+        Z(`Skynda ___!`, `dig`, `Dépêche-toi !`, [`mig`, `sig`, `honom`])
+      ],
+      extra: []
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'nd', name: 'Noms et adjectifs', icon: '🔤', color: '#3B6FB6', lvl: 'A2', fiches: [
+    {
+      id: 'nd1', title: 'Les pluriels',
+      text: [
+        `Cinq façons de faire le pluriel : **-or** (flicka → flickor, gata → gator), **-ar** (bil → bilar, stol → stolar), **-er** (park → parker, stad → städer), **-n** (äpple → äpplen) et **aucun changement** pour la plupart des mots en *ett* terminés par une consonne (hus → hus, barn → barn).`,
+        `À connaître : **man → män**, **fot → fötter**, **bok → böcker**, **mus → möss**, **syster → systrar**. L'article défini pluriel : bilarna, husen, barnen.`
+      ],
+      keys: [`**-or / -ar / -er / -n / zéro**.`, `Mots en ett : souvent **identiques** (hus, barn).`, `Irréguliers : **män, fötter, böcker, systrar**.`],
+      phrases: [
+        P(`Jag har två systrar och en bror.`, `J'ai deux sœurs et un frère.`),
+        P(`Barnen leker i parken.`, `Les enfants jouent dans le parc.`),
+        P(`Det finns många hus i staden.`, `Il y a beaucoup de maisons dans la ville.`)
+      ],
+      cloze: [
+        Z(`Jag har två ___.`, `bilar`, `J'ai deux voitures.`, [`bilor`, `biler`, `biln`]),
+        Z(`Det finns många ___ här.`, `flickor`, `Il y a beaucoup de filles ici.`, [`flickar`, `flicker`, `flickn`]),
+        Z(`Hon köpte tre ___.`, `äpplen`, `Elle a acheté trois pommes.`, [`äpplar`, `äpplor`, `äpplena`]),
+        Z(`De har fyra ___.`, `barn`, `Ils ont quatre enfants.`, [`barnar`, `barner`, `barnen`]),
+        Z(`Vi har många ___ hemma.`, `böcker`, `Nous avons beaucoup de livres à la maison.`, [`boker`, `bokar`, `bokor`]),
+        Z(`Två ___ står där.`, `män`, `Deux hommes se tiennent là.`, [`mannar`, `manor`, `mans`]),
+        Z(`Det är fem ___ i rummet.`, `stolar`, `Il y a cinq chaises dans la pièce.`, [`stolor`, `stoler`, `stol`])
+      ],
+      extra: [
+        Q(`Quel est le pluriel indéfini de « ett hus » ?`, `hus`, [`huser`, `husar`, `husen`], `Les mots en ett terminés par une consonne gardent la même forme.`, { asv: `hus`, type: true })
+      ]
+    },
+    {
+      id: 'nd2', title: 'Accord des adjectifs',
+      text: [
+        `L'adjectif s'accorde : **en stor bil**, **ett stort hus** (neutre : +t), **stora bilar / stora hus** (pluriel : +a). Au défini, on emploie la forme en **-a** et on garde aussi l'article : **den stora bilen**, **det stora huset** (double défini).`,
+        `Irréguliers : **liten / litet / små**, **gammal / gammalt / gamla**, **god / gott / goda**, **ny / nytt / nya**. L'attribut s'accorde aussi : « Huset är stort. »`
+      ],
+      keys: [`**en stor bil, ett stort hus, stora hus**.`, `Défini : **den stora bilen, det stora huset**.`, `**liten / litet / små**, **gammal / gammalt / gamla**.`],
+      phrases: [
+        P(`Det är ett stort hus.`, `C'est une grande maison.`),
+        P(`Den gamla bilen är billig.`, `La vieille voiture est bon marché.`),
+        P(`Vi har två små barn.`, `Nous avons deux petits enfants.`),
+        P(`Det här kaffet är gott.`, `Ce café est bon.`)
+      ],
+      cloze: [
+        Z(`Det är ett ___ hus.`, `stort`, `C'est une grande maison.`, [`stor`, `stora`, `storen`]),
+        Z(`Hon har en ___ katt.`, `liten`, `Elle a un petit chat.`, [`litet`, `små`, `lilla`]),
+        Z(`De bor i ett ___ hus.`, `gammalt`, `Ils habitent dans une vieille maison.`, [`gammal`, `gamla`, `gammla`]),
+        Z(`Den ___ bilen är min.`, `nya`, `La voiture neuve est à moi.`, [`ny`, `nytt`, `nyer`]),
+        Z(`Vi har tre ___ barn.`, `små`, `Nous avons trois petits enfants.`, [`liten`, `litet`, `lilla`]),
+        Z(`Det ___ huset är dyrt.`, `stora`, `Cette grande maison est chère.`, [`stor`, `stort`, `storet`])
+      ],
+      extra: []
+    },
+    {
+      id: 'nd3', title: 'Comparatif et superlatif',
+      text: [
+        `Régulier : **-are** et **-ast** (snabb → snabbare → snabbast). « Que » se dit **än** : « Min bror är äldre än jag ». Au défini, le superlatif prend -a : « den äldsta ».`,
+        `Irréguliers courants : **stor → större → störst**, **bra → bättre → bäst**, **dålig → sämre → sämst**, **gammal → äldre → äldst**, **lite → mindre → minst**, **mycket → mer → mest**.`
+      ],
+      keys: [`**-are / -ast** ; « que » = **än**.`, `**större, bättre, sämre, äldre, mindre, mer**.`],
+      vocab: [
+        V(`stor, större, störst`, `grand`), V(`bra, bättre, bäst`, `bon, bien`), V(`dålig, sämre, sämst`, `mauvais`), V(`gammal, äldre, äldst`, `vieux, âgé`),
+        V(`lång, längre, längst`, `long, grand (taille)`), V(`hög, högre, högst`, `haut`), V(`liten, mindre, minst`, `petit`), V(`mycket, mer, mest`, `beaucoup`)
+      ],
+      phrases: [
+        P(`Min bror är äldre än jag.`, `Mon frère est plus âgé que moi.`),
+        P(`Det här är den bästa pizzan i stan.`, `C'est la meilleure pizza de la ville.`),
+        P(`Idag är det kallare än igår.`, `Aujourd'hui, il fait plus froid qu'hier.`),
+        P(`Hon springer snabbast av alla.`, `Elle court le plus vite de tous.`)
+      ],
+      cloze: [
+        Z(`Min syster är ___ än jag.`, `äldre`, `Ma sœur est plus âgée que moi.`, [`äldst`, `gammalare`, `gammal`]),
+        Z(`Det här är den ___ boken jag har läst.`, `bästa`, `C'est le meilleur livre que j'aie lu.`, [`bättre`, `bra`, `bäst`]),
+        Z(`Stockholm är ___ än Malmö.`, `större`, `Stockholm est plus grand que Malmö.`, [`störst`, `stor`, `storare`]),
+        Z(`Jag mår ___ idag.`, `bättre`, `Je vais mieux aujourd'hui.`, [`bäst`, `bra`, `bätre`]),
+        Z(`Hon är ___ i klassen.`, `duktigast`, `Elle est la meilleure de la classe.`, [`duktigare`, `duktig`, `duktigt`])
+      ],
+      extra: []
+    },
+    {
+      id: 'nd4', title: 'Possessifs : hans ou sin ?',
+      text: [
+        `Les possessifs s'accordent avec la chose possédée : **min / mitt / mina**, **din / ditt / dina**, **vår / vårt / våra**, **er / ert / era**. Pour la 3e personne : **hans, hennes, deras** désignent la possession d'**une autre personne**.`,
+        `Quand le possesseur est le **sujet** de la phrase, on emploie le réfléchi **sin / sitt / sina**, qui s'accorde aussi avec la chose possédée : « Han tog **sin** jacka » (sa propre veste) ≠ « Han tog **hans** jacka » (la veste d'un autre).`
+      ],
+      keys: [`**sin / sitt / sina** = possesseur = sujet.`, `**hans, hennes, deras** = un autre possesseur.`, `**min/mitt/mina, vår/vårt/våra** s'accordent avec l'objet possédé.`],
+      phrases: [
+        P(`Hon tog sin väska och gick.`, `Elle a pris son sac et est partie.`),
+        P(`Han älskar sin fru.`, `Il aime sa femme.`),
+        P(`Jag träffade Erik och hans fru.`, `J'ai rencontré Erik et sa femme.`),
+        P(`De säljer sitt hus.`, `Ils vendent leur maison.`)
+      ],
+      cloze: [
+        Z(`Anna tvättar ___ bil.`, `sin`, `Anna lave sa (propre) voiture.`, [`hennes`, `hans`, `dess`]),
+        Z(`Jag ser Erik och ___ syster.`, `hans`, `Je vois Erik et sa sœur.`, [`sin`, `sitt`, `sina`]),
+        Z(`De bor i ___ hus.`, `sitt`, `Ils habitent dans leur (propre) maison.`, [`sin`, `sina`, `vårt`]),
+        Z(`Vi älskar ___ barn.`, `våra`, `Nous aimons nos enfants.`, [`vår`, `vårt`, `sina`])
+      ],
+      extra: []
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'ux', name: 'Mots utiles', icon: '💬', color: '#8A5BB0', lvl: 'B1', fiches: [
+    {
+      id: 'ux1', title: 'Connecteurs et petits mots',
+      text: [
+        `Ce sont ces petits mots qui rendent une phrase naturelle. Attention à l'ordre : après un connecteur placé en tête (**därför, dessutom, ändå, alltså**), le verbe vient tout de suite (V2) : « Därför **kan** hon inte komma. »`
+      ],
+      keys: [`**dessutom** de plus, **därför** c'est pourquoi, **ändå** quand même, **istället** à la place.`, `**förresten** au fait, **egentligen** en fait, **alltså** donc.`],
+      vocab: [
+        V(`dessutom`, `de plus`), V(`därför`, `c'est pourquoi`), V(`ändå`, `quand même`), V(`istället`, `à la place`), V(`förresten`, `au fait`),
+        V(`egentligen`, `en fait, à vrai dire`), V(`faktiskt`, `en réalité, vraiment`), V(`medan`, `pendant que`), V(`alltså`, `donc, c'est-à-dire`), V(`i alla fall`, `en tout cas`)
+      ],
+      phrases: [
+        P(`Jag var trött, men jag gick ändå.`, `J'étais fatigué, mais j'y suis allé quand même.`),
+        P(`Det är dyrt, dessutom är det långt borta.`, `C'est cher, et en plus c'est loin.`)
+      ],
+      cloze: [
+        Z(`Det regnade, ___ stannade vi hemma.`, `så`, `Il pleuvait, alors nous sommes restés à la maison.`, [`men`, `eller`, `för`]),
+        Z(`Jag vill inte ha te, jag tar kaffe ___.`, `istället`, `Je ne veux pas de thé, je prends du café à la place.`, [`dessutom`, `ändå`, `medan`]),
+        Z(`Hon är sjuk. ___ kan hon inte komma.`, `Därför`, `Elle est malade. C'est pourquoi elle ne peut pas venir.`, [`Medan`, `Eftersom`, `Ändå`])
+      ],
+      extra: []
+    },
+    {
+      id: 'ux2', title: 'Donner son avis, discuter',
+      text: [
+        `**Tycka** exprime une opinion personnelle (« Jag tycker att det är bra »), **tro** une supposition ou une croyance (« Jag tror att det regnar »), **tänka** la réflexion ou l'intention. Pour nuancer : **enligt mig**, **det beror på**, **jag är inte helt säker**.`
+      ],
+      keys: [`**tycka** = opinion, **tro** = croire/supposer, **tänka** = penser/avoir l'intention.`, `**Enligt mig…**, **Det beror på…**, **Jag håller med / inte med.**`],
+      phrases: [
+        P(`Jag tycker att det är en bra idé.`, `Je trouve que c'est une bonne idée.`),
+        P(`Enligt mig är det för dyrt.`, `Selon moi, c'est trop cher.`),
+        P(`Jag håller inte med dig.`, `Je ne suis pas d'accord avec toi.`),
+        P(`Det beror på vädret.`, `Ça dépend de la météo.`),
+        P(`Jag är inte helt säker.`, `Je n'en suis pas tout à fait sûr.`),
+        P(`Kan du upprepa det, tack?`, `Peux-tu répéter, s'il te plaît ?`),
+        P(`Vad menar du?`, `Que veux-tu dire ?`)
+      ],
+      cloze: [
+        Z(`Jag ___ att det är en bra idé.`, `tycker`, `Je trouve que c'est une bonne idée.`, [`tycka`, `tyckt`, `tyckande`]),
+        Z(`Det ___ på vädret.`, `beror`, `Ça dépend du temps.`, [`är`, `blir`, `går`]),
+        Z(`Enligt ___ är det för sent.`, `mig`, `Selon moi, il est trop tard.`, [`jag`, `min`, `mitt`])
+      ],
+      extra: []
+    },
+    {
+      id: 'ux3', title: 'Au travail',
+      text: [
+        `Vocabulaire du quotidien professionnel. Rappelle-toi l'article de chaque mot : **ett möte, ett företag, ett mejl** (ett) ; **en chef, en kollega, en uppgift** (en).`
+      ],
+      keys: [`**ett** : möte, företag, mejl. **en** : chef, kollega, uppgift.`],
+      vocab: [
+        V(`ett möte`, `une réunion`), V(`en chef`, `un chef, un supérieur`), V(`en kollega`, `un collègue`), V(`ett företag`, `une entreprise`),
+        V(`en uppgift`, `une tâche`), V(`ett mejl`, `un e-mail`), V(`att skicka`, `envoyer`), V(`att svara`, `répondre`), V(`att boka`, `réserver`), V(`en frist`, `un délai`)
+      ],
+      phrases: [
+        P(`Vi har ett möte klockan tio.`, `Nous avons une réunion à dix heures.`),
+        P(`Kan du skicka mejlet till alla kollegor?`, `Peux-tu envoyer le mail à tous les collègues ?`),
+        P(`Jag jobbar på ett litet företag.`, `Je travaille dans une petite entreprise.`),
+        P(`Min chef är på semester just nu.`, `Mon chef est en vacances en ce moment.`),
+        P(`Jag återkommer så snart jag kan.`, `Je reviens vers vous dès que possible.`)
+      ],
+      cloze: [
+        Z(`Mötet börjar ___ nio.`, `klockan`, `La réunion commence à neuf heures.`, [`om`, `i`, `på`]),
+        Z(`Min chef är ___ semester.`, `på`, `Mon chef est en vacances.`, [`i`, `om`, `av`])
+      ],
+      extra: []
+    },
+    {
+      id: 'ux4', title: 'Expressions idiomatiques',
+      text: [
+        `Des expressions que les Suédois emploient tout le temps. Souvent la traduction littérale est drôle, mais le sens est clair.`
+      ],
+      keys: [`**Det ordnar sig.** Ça va s'arranger.`, `**Håll tummarna!** Croise les doigts !`, `**Det spelar ingen roll.** Ça n'a pas d'importance.`],
+      phrases: [
+        P(`Det är ingen fara.`, `Il n'y a pas de souci.`),
+        P(`Det ordnar sig.`, `Ça va s'arranger.`),
+        P(`Håll tummarna!`, `Croise les doigts !`, `Littéralement : tiens les pouces.`),
+        P(`Jag har ingen aning.`, `Je n'en ai aucune idée.`),
+        P(`Det spelar ingen roll.`, `Ça n'a pas d'importance.`),
+        P(`Ta det lugnt!`, `Prends ton temps ! Du calme !`),
+        P(`Vad kul!`, `Comme c'est chouette !`),
+        P(`Tack för senast!`, `Merci pour la dernière fois ! (après une rencontre)`)
+      ],
+      cloze: [
+        Z(`Håll ___!`, `tummarna`, `Croise les doigts !`, [`fingrarna`, `händerna`, `tårna`]),
+        Z(`Det spelar ingen ___.`, `roll`, `Ça n'a pas d'importance.`, [`fara`, `aning`, `tid`]),
+        Z(`Jag har ingen ___.`, `aning`, `Je n'en ai aucune idée.`, [`roll`, `fara`, `tid`]),
+        Z(`Det ordnar ___.`, `sig`, `Ça va s'arranger.`, [`mig`, `dig`, `den`])
+      ],
+      extra: []
+    },
+    {
+      id: 'ux5', title: 'Pièges pour francophones',
+      text: [
+        `**gift** veut dire « marié » (et aussi « poison »). **Mycket** s'emploie avec un singulier indénombrable (mycket vatten), **många** avec un pluriel (många människor). **Tycka** = opinion, **tro** = croire, **tänka** = penser/réfléchir (« tänka på » = penser à).`
+      ],
+      keys: [`**mycket** + singulier, **många** + pluriel.`, `**gift** = marié.`, `**tycka / tro / tänka**.`],
+      phrases: [
+        P(`Han är gift med en svenska.`, `Il est marié à une Suédoise.`),
+        P(`Jag tycker om kaffe.`, `J'aime le café.`),
+        P(`Jag tror att det blir regn.`, `Je crois qu'il va pleuvoir.`),
+        P(`Jag tänker på dig.`, `Je pense à toi.`)
+      ],
+      cloze: [
+        Z(`Det finns ___ människor här.`, `många`, `Il y a beaucoup de gens ici.`, [`mycket`, `mer`, `mest`]),
+        Z(`Jag dricker ___ vatten.`, `mycket`, `Je bois beaucoup d'eau.`, [`många`, `flera`, `alla`]),
+        Z(`Han är ___ med Eva.`, `gift`, `Il est marié avec Eva.`, [`gifta`, `giftet`, `gifter`]),
+        Z(`Jag ___ på dig hela tiden.`, `tänker`, `Je pense à toi tout le temps.`, [`tycker`, `tror`, `vet`])
+      ],
+      extra: []
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'ls', name: 'Lecture', icon: '📖', color: '#C25B7A', lvl: 'B1', fiches: [
+    {
+      id: 'ls1', title: 'Une journée à Göteborg',
+      text: [`Lis le texte phrase par phrase : écoute avec ▶, puis découvre la traduction. Les exercices te feront ensuite remettre les phrases en ordre et les écrire sous dictée.`],
+      keys: [],
+      phrases: [
+        P(`Det är måndag morgon i Göteborg.`, `C'est lundi matin à Göteborg.`),
+        P(`Elin tar spårvagnen till jobbet varje dag.`, `Elin prend le tramway pour aller au travail chaque jour.`),
+        P(`På vägen köper hon en kaffe och en kanelbulle.`, `En chemin, elle achète un café et un petit pain à la cannelle.`),
+        P(`Klockan nio har hon ett möte med sina kollegor.`, `À neuf heures, elle a une réunion avec ses collègues.`),
+        P(`Efter jobbet går hon och tränar med en vän.`, `Après le travail, elle va s'entraîner avec une amie.`),
+        P(`På kvällen lagar hon middag och tittar på en serie.`, `Le soir, elle prépare le dîner et regarde une série.`)
+      ],
+      cloze: [], extra: []
+    },
+    {
+      id: 'ls2', title: 'Planer för helgen',
+      text: [`Un petit dialogue pour planifier le week-end. Remarque l'ordre des mots après « Om … » : le verbe suit tout de suite la subordonnée.`],
+      keys: [],
+      phrases: [
+        P(`Vad ska du göra i helgen?`, `Que vas-tu faire ce week-end ?`),
+        P(`Jag tänkte åka till stugan med några vänner.`, `Je pensais aller au chalet avec quelques amis.`),
+        P(`Om vädret är fint ska vi grilla och bada.`, `S'il fait beau, nous ferons un barbecue et nous baignerons.`),
+        P(`Om det regnar spelar vi kort inomhus.`, `S'il pleut, nous jouerons aux cartes à l'intérieur.`),
+        P(`Vill du följa med? Det finns plats i bilen.`, `Tu veux venir ? Il y a de la place dans la voiture.`),
+        P(`Gärna! Jag tar med mig något att äta.`, `Avec plaisir ! J'apporte quelque chose à manger.`)
+      ],
+      cloze: [], extra: []
+    }
+  ]
+});
+
+/* Mots en tuiles (comme Nemo) : thème → liste de mots {sv, fr}. Un mot signalé « à apprendre » entre dans la répétition espacée
+   (2 exercices : suédois → français, français → suédois). Ids : w<thème>-s<k> / w<thème>-f<k> : AJOUTER À LA FIN, ne jamais réordonner. */
+CG.words.push(
+  { id: 'xv', name: 'Verbes utiles', icon: '🏃', color: '#E5484D', words: [
+    V(`prata`, `parler, bavarder`), V(`äta`, `manger`), V(`vilja`, `vouloir`), V(`veta`, `savoir`), V(`kunna`, `pouvoir, savoir faire`),
+    V(`gå`, `aller, marcher`), V(`komma`, `venir`), V(`göra`, `faire`), V(`ha`, `avoir`), V(`ta`, `prendre`), V(`säga`, `dire`),
+    V(`läsa`, `lire`), V(`skriva`, `écrire`), V(`arbeta`, `travailler`), V(`vila`, `se reposer`), V(`köpa`, `acheter`), V(`sälja`, `vendre`),
+    V(`sova`, `dormir`), V(`behöva`, `avoir besoin de`), V(`se`, `voir`), V(`höra`, `entendre`), V(`hjälpa`, `aider`), V(`förstå`, `comprendre`),
+    V(`tycka`, `trouver, penser`), V(`tro`, `croire`), V(`älska`, `aimer, adorer`), V(`bo`, `habiter`), V(`heta`, `s'appeler`), V(`vänta`, `attendre`),
+    V(`hitta`, `trouver`), V(`öppna`, `ouvrir`), V(`stänga`, `fermer`), V(`börja`, `commencer`), V(`sluta`, `arrêter, finir`), V(`ringa`, `appeler, sonner`),
+    V(`fråga`, `demander, poser une question`), V(`svara`, `répondre`), V(`glömma`, `oublier`), V(`resa`, `voyager`), V(`betala`, `payer`),
+    V(`springa`, `courir`), V(`simma`, `nager`), V(`laga`, `cuisiner, réparer`), V(`tvätta`, `laver`), V(`ge`, `donner`), V(`träffa`, `rencontrer`), V(`lära sig`, `apprendre`)
+  ] },
+  { id: 'xn', name: 'Noms utiles', icon: '🏠', color: '#F76B15', words: [
+    V(`ett hus`, `une maison`), V(`en bil`, `une voiture`), V(`en bok`, `un livre`), V(`en dag`, `un jour`), V(`ett år`, `une année`), V(`en vecka`, `une semaine`),
+    V(`en tid`, `un temps, une époque`), V(`en människa`, `un être humain`), V(`en vän`, `un ami`), V(`ett barn`, `un enfant`), V(`en man`, `un homme`),
+    V(`en kvinna`, `une femme`), V(`en stad`, `une ville`), V(`ett land`, `un pays`), V(`ett vatten`, `de l'eau`), V(`en mat`, `un repas, de la nourriture`),
+    V(`pengar`, `de l'argent`), V(`ett jobb`, `un travail, un emploi`), V(`en skola`, `une école`), V(`en väg`, `une route, un chemin`), V(`ett rum`, `une pièce`),
+    V(`en dörr`, `une porte`), V(`ett fönster`, `une fenêtre`), V(`ett bord`, `une table`), V(`en stol`, `une chaise`), V(`en säng`, `un lit`), V(`en nyckel`, `une clé`),
+    V(`en telefon`, `un téléphone`), V(`en dator`, `un ordinateur`), V(`ett namn`, `un nom`), V(`en fråga`, `une question`), V(`ett svar`, `une réponse`),
+    V(`ett problem`, `un problème`), V(`en idé`, `une idée`), V(`ett tåg`, `un train`), V(`en buss`, `un bus`), V(`ett flygplan`, `un avion`), V(`en båt`, `un bateau`)
+  ] },
+  { id: 'xk', name: 'Le corps', icon: '🖐️', color: '#F76B15', words: [
+    V(`ett huvud`, `une tête`), V(`ett ansikte`, `un visage`), V(`ett öga`, `un œil`), V(`ett öra`, `une oreille`), V(`en näsa`, `un nez`), V(`en mun`, `une bouche`),
+    V(`en tand`, `une dent`), V(`ett hår`, `un cheveu`), V(`en hals`, `un cou, une gorge`), V(`en axel`, `une épaule`), V(`en arm`, `un bras`), V(`en hand`, `une main`),
+    V(`ett finger`, `un doigt`), V(`en mage`, `un ventre, un estomac`), V(`en rygg`, `un dos`), V(`ett ben`, `une jambe, un os`), V(`ett knä`, `un genou`),
+    V(`en fot`, `un pied`), V(`ett hjärta`, `un cœur`), V(`en hud`, `une peau`)
+  ] },
+  { id: 'xc', name: 'Vêtements', icon: '👗', color: '#F5B800', words: [
+    V(`en tröja`, `un pull`), V(`en skjorta`, `une chemise`), V(`byxor`, `un pantalon`), V(`en kjol`, `une jupe`), V(`en klänning`, `une robe`), V(`en jacka`, `une veste`),
+    V(`en kappa`, `un manteau`), V(`en sko`, `une chaussure`), V(`en strumpa`, `une chaussette`), V(`en mössa`, `un bonnet`), V(`en handske`, `un gant`),
+    V(`en halsduk`, `une écharpe`), V(`en hatt`, `un chapeau`), V(`en väska`, `un sac`), V(`ett bälte`, `une ceinture`)
+  ] },
+  { id: 'xm', name: 'Manger et boire', icon: '🍽️', color: '#46A758', words: [
+    V(`ett bröd`, `du pain`), V(`en ost`, `un fromage`), V(`ett smör`, `du beurre`), V(`en mjölk`, `du lait`), V(`ett ägg`, `un œuf`), V(`ett kött`, `de la viande`),
+    V(`en fisk`, `un poisson`), V(`en kyckling`, `un poulet`), V(`en potatis`, `une pomme de terre`), V(`ett ris`, `du riz`), V(`en grönsak`, `un légume`),
+    V(`en frukt`, `un fruit`), V(`ett äpple`, `une pomme`), V(`en apelsin`, `une orange`), V(`en banan`, `une banane`), V(`en tomat`, `une tomate`),
+    V(`en sallad`, `une salade`), V(`en soppa`, `une soupe`), V(`ett kaffe`, `du café`), V(`ett te`, `du thé`), V(`en juice`, `un jus`), V(`en öl`, `une bière`),
+    V(`ett vin`, `du vin`), V(`ett socker`, `du sucre`), V(`ett salt`, `du sel`), V(`en kaka`, `un gâteau, un biscuit`), V(`en glass`, `une glace`)
+  ] },
+  { id: 'xf', name: 'Famille et gens', icon: '👪', color: '#7C66DC', words: [
+    V(`en mamma`, `une maman`), V(`en pappa`, `un papa`), V(`en mor`, `une mère`), V(`en far`, `un père`), V(`en syster`, `une sœur`), V(`en bror`, `un frère`),
+    V(`en dotter`, `une fille (enfant)`), V(`en son`, `un fils`), V(`en mormor`, `une grand-mère maternelle`), V(`en farmor`, `une grand-mère paternelle`),
+    V(`en morfar`, `un grand-père maternel`), V(`en farfar`, `un grand-père paternel`), V(`en make`, `un mari, un époux`), V(`en fru`, `une épouse`),
+    V(`en kompis`, `un copain, une copine`), V(`en granne`, `un voisin`), V(`en chef`, `un chef`), V(`en lärare`, `un professeur`), V(`en läkare`, `un médecin`)
+  ] },
+  { id: 'xh', name: 'La maison', icon: '🛋️', color: '#0091FF', words: [
+    V(`ett kök`, `une cuisine`), V(`ett badrum`, `une salle de bain`), V(`ett sovrum`, `une chambre`), V(`ett vardagsrum`, `un salon`), V(`en trädgård`, `un jardin`),
+    V(`en trappa`, `un escalier`), V(`ett tak`, `un toit, un plafond`), V(`ett golv`, `un sol, un plancher`), V(`en vägg`, `un mur`), V(`en lampa`, `une lampe`),
+    V(`en spegel`, `un miroir`), V(`en soffa`, `un canapé`), V(`en matta`, `un tapis`), V(`ett kylskåp`, `un réfrigérateur`), V(`en spis`, `une cuisinière`),
+    V(`en tvål`, `un savon`), V(`en handduk`, `une serviette`)
+  ] },
+  { id: 'xt', name: 'Temps et dates', icon: '⏰', color: '#12A594', words: [
+    V(`idag`, `aujourd'hui`), V(`imorgon`, `demain`), V(`igår`, `hier`), V(`nu`, `maintenant`), V(`sen`, `tard`), V(`alltid`, `toujours`), V(`aldrig`, `jamais`),
+    V(`ibland`, `parfois`), V(`ofta`, `souvent`), V(`snart`, `bientôt`), V(`en morgon`, `un matin`), V(`en kväll`, `un soir`), V(`en natt`, `une nuit`),
+    V(`en eftermiddag`, `un après-midi`), V(`januari`, `janvier`), V(`februari`, `février`), V(`mars`, `mars`), V(`april`, `avril`), V(`maj`, `mai`), V(`juni`, `juin`),
+    V(`juli`, `juillet`), V(`augusti`, `août`), V(`september`, `septembre`), V(`oktober`, `octobre`), V(`november`, `novembre`), V(`december`, `décembre`)
+  ] },
+  { id: 'xl', name: 'Lieux et voyage', icon: '✈️', color: '#E93D82', words: [
+    V(`en station`, `une gare, une station`), V(`en flygplats`, `un aéroport`), V(`ett hotell`, `un hôtel`), V(`en restaurang`, `un restaurant`), V(`en butik`, `un magasin`),
+    V(`en bank`, `une banque`), V(`ett apotek`, `une pharmacie`), V(`ett sjukhus`, `un hôpital`), V(`ett bibliotek`, `une bibliothèque`), V(`ett museum`, `un musée`),
+    V(`en park`, `un parc`), V(`en gata`, `une rue`), V(`ett torg`, `une place`), V(`en bro`, `un pont`), V(`en kyrka`, `une église`), V(`en strand`, `une plage`),
+    V(`en skog`, `une forêt`), V(`en sjö`, `un lac`), V(`ett hav`, `une mer, un océan`), V(`ett berg`, `une montagne`)
+  ] },
+  { id: 'xa', name: 'Adjectifs', icon: '🎭', color: '#8E4EC6', words: [
+    V(`stor`, `grand`), V(`liten`, `petit`), V(`ny`, `neuf, nouveau`), V(`gammal`, `vieux`), V(`bra`, `bon, bien`), V(`dålig`, `mauvais`), V(`snabb`, `rapide`),
+    V(`långsam`, `lent`), V(`varm`, `chaud`), V(`kall`, `froid`), V(`dyr`, `cher`), V(`billig`, `bon marché`), V(`lätt`, `facile, léger`), V(`svår`, `difficile`),
+    V(`glad`, `content, joyeux`), V(`ledsen`, `triste`), V(`trött`, `fatigué`), V(`hungrig`, `affamé`), V(`törstig`, `assoiffé`), V(`rolig`, `amusant, drôle`),
+    V(`vacker`, `beau`), V(`ful`, `laid`), V(`stark`, `fort`), V(`svag`, `faible`), V(`ung`, `jeune`), V(`rik`, `riche`), V(`fattig`, `pauvre`), V(`ren`, `propre`), V(`smutsig`, `sale`)
+  ] },
+  { id: 'xy', name: 'Couleurs', icon: '🌈', color: '#E5484D', words: [
+    V(`röd`, `rouge`), V(`blå`, `bleu`), V(`gul`, `jaune`), V(`grön`, `vert`), V(`svart`, `noir`), V(`vit`, `blanc`), V(`grå`, `gris`), V(`brun`, `marron`),
+    V(`orange`, `orange`), V(`rosa`, `rose`), V(`lila`, `violet`)
+  ] },
+  { id: 'xj', name: 'Météo', icon: '⛅', color: '#F76B15', words: [
+    V(`en sol`, `un soleil`), V(`ett regn`, `une pluie`), V(`en snö`, `de la neige`), V(`en vind`, `un vent`), V(`ett moln`, `un nuage`), V(`en åska`, `un orage, du tonnerre`),
+    V(`en dimma`, `un brouillard`), V(`en is`, `de la glace`), V(`en himmel`, `un ciel`), V(`en temperatur`, `une température`), V(`ett grad`, `un degré`),
+    V(`det regnar`, `il pleut`), V(`det snöar`, `il neige`), V(`det blåser`, `il y a du vent`)
+  ] },
+  { id: 'xs', name: 'Nombres', icon: '🔢', color: '#7C66DC', words: [
+    V(`elva`, `11`), V(`tolv`, `12`), V(`tretton`, `13`), V(`fjorton`, `14`), V(`femton`, `15`), V(`sexton`, `16`), V(`sjutton`, `17`), V(`arton`, `18`), V(`nitton`, `19`),
+    V(`tjugo`, `20`), V(`trettio`, `30`), V(`fyrtio`, `40`), V(`femtio`, `50`), V(`sextio`, `60`), V(`sjuttio`, `70`), V(`åttio`, `80`), V(`nittio`, `90`), V(`hundra`, `100`), V(`tusen`, `1000`)
+  ] },
+  { id: 'xp', name: 'Petits mots et prépositions', icon: '🧩', color: '#12A594', words: [
+    V(`i`, `dans, en`), V(`på`, `sur, à`), V(`till`, `vers, à, pour`), V(`från`, `de, depuis`), V(`med`, `avec`), V(`utan`, `sans`), V(`för`, `pour, car`), V(`av`, `de, par`),
+    V(`om`, `si ; à propos de`), V(`under`, `sous, pendant`), V(`över`, `au-dessus de`), V(`mellan`, `entre`), V(`vid`, `près de, à`), V(`efter`, `après`), V(`före`, `avant`),
+    V(`genom`, `à travers`), V(`mot`, `contre, vers`), V(`hos`, `chez`), V(`bakom`, `derrière`), V(`framför`, `devant`), V(`bredvid`, `à côté de`), V(`här`, `ici`),
+    V(`där`, `là`), V(`nära`, `près`), V(`långt`, `loin`)
+  ] }
+);
+
+/* SY Svenska : apprendre le suédois avec de courtes fiches et des cartes revues au bon moment (répétition espacée), voix suédoise. */
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const plural = (n, s, p) => n + ' ' + (n > 1 ? (p || s + 's') : s);
+
+/* ---------------------------------------------------------------- données */
+const THEMES = CG.themes, FICHES = [], CARDS = {}, FBY = {}, TBY = {}, POOL = {};
+THEMES.forEach(t => {
+  TBY[t.id] = t; POOL[t.id] = []; t.lvl = t.lvl || (['pm', 'gr', 'vq', 'cu'].includes(t.id) ? 'A1' : 'A2');
+  t.fiches.forEach(f => (f.vocab || []).forEach(v => POOL[t.id].push(v)));
+});
+function genCards(f) {
+  const cards = [];
+  (f.vocab || []).forEach((v, k) => {
+    const listen = k % 3 === 0;   /* un mot sur trois : carte d'écoute (le texte suédois reste caché) */
+    cards.push({ id: f.id + '-s' + k, kind: listen ? 'listen' : 'sv-fr', q: listen ? 'Écoute, puis choisis la traduction.' : 'Que veut dire « ' + v.sv + ' » ?', qsv: v.sv, hide: listen, a: v.fr, pool: 'fr', v });
+    cards.push({ id: f.id + '-f' + k, kind: 'fr-sv', q: 'Comment dit-on « ' + v.fr + ' » en suédois ?', a: v.sv, asv: v.sv, type: true, pool: 'sv', v });
+  });
+  (f.extra || []).forEach((c, j) => cards.push(Object.assign({ id: f.id + '-c' + j, kind: 'custom' }, c)));
+  (f.phrases || []).forEach((p, k) => {
+    cards.push({ id: f.id + '-o' + k, kind: 'order', q: 'Traduis en suédois', qfr: p.fr, a: p.sv, asv: p.sv, type: true, x: p.note || '' });
+    cards.push({ id: f.id + '-d' + k, kind: 'dict', q: 'Écoute et écris la phrase.', qsv: p.sv, hide: true, a: p.sv, asv: p.sv, type: true, x: 'Traduction : ' + p.fr });
+  });
+  (f.cloze || []).forEach((z, j) => cards.push({ id: f.id + '-z' + j, kind: 'cloze', q: z.s, qfr: z.fr, a: z.a, d: z.d, x: z.x, asv: z.s.replace('___', z.a), type: true }));
+  cards.forEach(c => { c.fiche = f; CARDS[c.id] = c; });
+  f.cards = cards;
+}
+THEMES.forEach(t => t.fiches.forEach((f, i) => { f.theme = t; f.index = i; FBY[f.id] = f; FICHES.push(f); genCards(f); }));
+/* mots en tuiles (façon Nemo) : un jeu de cartes par thème de mots, hors parcours des fiches */
+const WSETS = CG.words.map(w => { const id = 'w' + w.id, f = { id, title: w.name, vocab: w.words, theme: { id, name: w.name, icon: w.icon, color: w.color }, isSet: true }; genCards(f); f.cards.forEach(c => { c.w = true; }); return f; });
+const WBY = {}; WSETS.forEach(w => { WBY[w.id] = w; POOL[w.id] = w.vocab; });
+
+/* ordre d'apprentissage : 1re fiche de chaque thème, puis 2e de chaque thème, etc. */
+const ORDER = []; for (let i = 0; i < 12; i++) THEMES.forEach(t => { if (t.fiches[i]) ORDER.push(t.fiches[i]); });
+/* ordre des cartes d'une fiche neuve : suédois → français et écoute, puis cartes écrites à la main, puis français → suédois */
+const KR = { 'sv-fr': 0, listen: 0, custom: 1, cloze: 1, dict: 2, order: 3, 'fr-sv': 3 };
+const newOrder = cards => cards.map((c, i) => [c, i]).sort((a, b) => (KR[a[0].kind] - KR[b[0].kind]) || (a[1] - b[1])).map(x => x[0]);
+
+/* leurres : mots du même thème (jamais la bonne réponse) */
+function choicesOf(c) {
+  if (c.d) return shuffle([c.a].concat(c.d));
+  const field = c.pool, pool = POOL[c.fiche.theme.id].map(v => v[field]).filter((x, i, a) => x !== c.a && a.indexOf(x) === i);
+  let all = pool.length >= 3 ? pool : FICHES.reduce((s, f) => s.concat((f.vocab || []).map(v => v[field])), []).filter((x, i, a) => x !== c.a && a.indexOf(x) === i);
+  return shuffle([c.a].concat(shuffle(all.slice()).slice(0, 3)));
+}
+
+/* ---------------------------------------------------------------- répétition espacée (Leitner, comme SY Culture) */
+const INTERVALS = [0, 1, 3, 7, 14, 30, 60, 120];   /* jours d'attente selon la boîte */
+const MASTER = 4;                                  /* boîte à partir de laquelle un exercice est « ancrée » */
+const RECALL = 3;                                  /* à partir de la boîte 3 : rappel libre (taper ou se noter) au lieu du QCM */
+const KEY = 'sy-svenska.v1';
+let S = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.cards) return s; } catch (e) { /* ignoré */ } return null; })()
+  || { cards: {}, fiches: {}, days: {}, opts: {}, tiles: {} };
+S.tiles = S.tiles || {}; S.tmod = S.tmod || {};
+S.opts = Object.assign({ maxReviews: 30, alwaysChoice: false, autoSpeak: true, rate: 0.85, voice: '' }, S.opts);
+const save = () => { S.mod = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ } if (typeof ghSoon === 'function') ghSoon(); };
+const dayNum = d => { d = d || new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 864e5); };
+const dayIso = n => new Date(n * 864e5).toISOString().slice(0, 10);
+const today = () => dayNum();
+const st = id => S.cards[id];
+const ficheStarted = f => f.cards.some(c => st(c.id)) || !!S.fiches[f.id];
+const ficheMastery = f => f.cards.length ? f.cards.filter(c => st(c.id) && st(c.id).b >= MASTER).length / f.cards.length : 0;
+const ficheSeen = f => f.cards.filter(c => st(c.id)).length;
+function ficheStatus(f) {
+  if (!ficheStarted(f)) return { cls: 'new', label: 'À découvrir' };
+  const m = ficheMastery(f);
+  if (m >= 1) return { cls: 'done', label: 'Acquise' };
+  return { cls: 'wip', label: 'En cours · ' + Math.round(m * 100) + ' %' };
+}
+function dueCards() {
+  const t = today();
+  return Object.keys(S.cards).filter(id => CARDS[id] && S.cards[id].due <= t).sort((a, b) => S.cards[a].due - S.cards[b].due || S.cards[a].b - S.cards[b].b);
+}
+const nextNewFiche = () => ORDER.find(f => !ficheStarted(f)) || null;
+/* fiches nouvelles du jour : de quoi remplir une séance de 10-15 min (≈ 18 cartes), au plus 2 fiches */
+function plannedLessons(nReviews, extra) {
+  const out = [], todo = ORDER.filter(f => !ficheStarted(f));
+  let cards = nReviews;
+  for (const f of todo) {
+    if (out.length >= 2) break;
+    if (!extra && (cards >= 18 || nReviews >= 20)) break;
+    if (!extra && out.length && cards + f.cards.length > 34) break;   /* séance raisonnable : pas de 2e fiche si elle la fait trop grossir */
+    out.push(f); cards += f.cards.length;
+    if (extra) break;
+  }
+  return out;
+}
+function grade(id, ok, practice) {
+  const t = today(), s = S.cards[id] || { b: 0, due: t, n: 0, ok: 0 };
+  s.n++; if (ok) s.ok++; delete s.known;
+  if (ok) { if (!practice || s.b === 0) { s.b = Math.min(s.b + 1, INTERVALS.length - 1); s.due = t + INTERVALS[s.b]; } }
+  else { s.b = 1; s.due = t + 1; }
+  s.last = t; S.cards[id] = s;
+  const d = S.days[dayIso(t)] || { n: 0, ok: 0 }; d.n++; if (ok) d.ok++; S.days[dayIso(t)] = d;
+  save();
+}
+function streak() {
+  let n = 0, d = today();
+  if (!S.days[dayIso(d)]) d--;          /* la série tient encore si on n'a pas encore travaillé aujourd'hui */
+  while (S.days[dayIso(d)]) { n++; d--; }
+  return n;
+}
+const mastered = () => Object.keys(S.cards).filter(id => CARDS[id] && !CARDS[id].w && S.cards[id].b >= MASTER && !S.cards[id].known).length;
+/* « Je connais déjà » : les cartes passent en boîte 4, avec une révision éclair dans 10 à 30 jours pour vérifier */
+function markKnown(f) {
+  const t = today();
+  f.cards.forEach(c => { if (!st(c.id)) S.cards[c.id] = { b: MASTER, due: t + 10 + Math.floor(Math.random() * 20), n: 0, ok: 0, last: t, known: true }; });
+  S.fiches[f.id] = S.fiches[f.id] || { read: t, known: true }; save();
+}
+function setLevel(l) {
+  S.opts.level = l;
+  if (l === 'bases') THEMES.filter(t => t.lvl === 'A1').forEach(t => t.fiches.forEach(markKnown));
+  save();
+}
+
+/* ---------------------------------------------------------------- voix suédoise (synthèse vocale de l'appareil ; Edge propose des voix naturelles) */
+const SP = { ok: ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window), voices: [] };
+function loadVoices() {
+  if (!SP.ok) return;
+  try { SP.voices = speechSynthesis.getVoices().filter(v => /^sv/i.test(v.lang)); } catch (e) { SP.voices = []; }
+}
+function voiceScore(v) {
+  const n = (v.name || '').toLowerCase();
+  let s = 0;
+  if (/natural|neural|online/.test(n)) s += 60;
+  if (/premium|enhanced|f[oö]rb[aä]ttrad|siri/.test(n)) s += 50;
+  if (/google/.test(n)) s += 25;
+  if (/^sv[-_]se$/i.test(v.lang)) s += 10;
+  if (/compact|espeak|robot|eloquence|novelty/.test(n)) s -= 40;
+  return s;
+}
+const rankedVoices = () => SP.voices.slice().sort((a, b) => voiceScore(b) - voiceScore(a));
+function svVoice() {
+  if (!SP.voices.length) return null;
+  if (S.opts.voice) { const v = SP.voices.find(x => x.voiceURI === S.opts.voice); if (v) return v; }
+  return rankedVoices()[0];
+}
+let speakTimer = 0;
+function speak(text, rate) {
+  if (!SP.ok || !text) return;
+  clearTimeout(speakTimer);
+  try { speechSynthesis.cancel(); } catch (e) { /* ignoré */ }
+  speakTimer = setTimeout(() => {   /* petite attente : annuler puis parler dans la foulée coupe parfois la voix */
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'sv-SE';
+    const v = svVoice(); if (v) { u.voice = v; u.lang = v.lang; }
+    u.rate = rate ? parseFloat(rate) : S.opts.rate;
+    try { speechSynthesis.speak(u); } catch (e) { /* ignoré */ }
+  }, 60);
+}
+if (SP.ok) {
+  loadVoices();
+  try { speechSynthesis.addEventListener('voiceschanged', () => { const n = SP.voices.length; loadVoices(); if (SP.voices.length !== n && view.name === 'stats') render(); }); } catch (e) { /* ignoré */ }
+}
+const playBtn = (text, label) => SP.ok ? '<button type="button" class="play" data-say="' + esc(text) + '" title="Écouter" aria-label="Écouter : ' + esc(label || text) + '">▶</button>' : '';
+
+/* ---------------------------------------------------------------- écrans */
+let view = { name: 'home' }, sess = null;
+function go(name, arg) { view = { name, arg }; render(); window.scrollTo(0, 0); const m = $('main'); if (m) m.scrollTop = 0; }
+function render() {
+  const navOf = { fiche: 'library', theme: 'library' };
+  document.querySelectorAll('.nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.nav === (navOf[view.name] || view.name))));
+  const h = { home, library, theme, fiche, session, end, stats, words, tiles }[view.name];
+  $('main').innerHTML = h(view.arg);
+  if (view.name === 'session' && sess) afterSessionRender();
+}
+const bar = (pct, color) => '<span class="bar"><i style="width:' + Math.round(pct * 100) + '%;' + (color ? 'background:' + color : '') + '"></i></span>';
+
+function levelChooser() {
+  return '<section class="hero"><div><p class="eyebrow">Bienvenue</p><h1>Quel est ton niveau ?</h1><p class="lead">Je m\'adapte : avec de bonnes bases, tu commences directement par l\'ordre des mots, les verbes, les adjectifs et le vocabulaire B1, avec des exercices où tu écris et tu écoutes (dictée, phrases à remettre en ordre, phrases à trous).</p>' +
+    '<div class="actions"><button class="btn primary big" data-act="level" data-l="bases">J\'ai déjà de bonnes bases</button><button class="btn big" data-act="level" data-l="debut">Je débute</button></div>' +
+    '<p class="muted small">« Bonnes bases » : les 17 fiches A1 sont marquées comme connues et reviennent en révision éclair dans 10 à 30 jours. Tu peux aussi marquer n\'importe quelle fiche comme connue, ou la refaire, depuis l\'onglet Fiches.</p></div></section>';
+}
+function home() {
+  if (!S.opts.level && !Object.keys(S.cards).length) return levelChooser();
+  const due = dueCards(), nf = nextNewFiche(), doneToday = !!S.days[dayIso(today())];
+  const nRev = Math.min(due.length, S.opts.maxReviews);
+  const lessons = plannedLessons(nRev, false);
+  const total = nRev + lessons.reduce((a, f) => a + f.cards.length, 0);
+  const mins = Math.max(3, Math.round(total * 0.35 + lessons.length * 2));
+  let plan = '<ul class="plan">';
+  if (nRev) plan += '<li><span class="pi rev">↻</span><span>' + plural(nRev, 'exercice') + ' à réviser</span></li>';
+  lessons.forEach(f => { plan += '<li><span class="pi new" style="background:' + f.theme.color + '">' + f.theme.icon + '</span><span>Nouvelle fiche : <b>' + esc(f.title) + '</b> <span class="muted">(' + esc(f.theme.name) + ', ' + plural(f.cards.length, 'exercice') + ')</span></span></li>'; });
+  plan += '</ul>';
+  let hero;
+  if (total) hero = '<section class="hero"><div><p class="eyebrow">Ma séance du jour</p><h1>' + (doneToday ? 'On continue ?' : 'God morgon ! Prêt pour aujourd\'hui ?') + '</h1>' + plan +
+    '<button class="btn primary big" data-act="start">Commencer · ≈ ' + mins + ' min</button></div>' + heroSide() + '</section>';
+  else hero = '<section class="hero done"><div><p class="eyebrow">Ma séance du jour</p><h1>Tout est à jour 🎉</h1><p class="lead">' + (nf ? 'Aucune révision en attente. Tu peux apprendre une fiche de plus si tu veux.' : 'Tu as découvert toutes les fiches. Les révisions reviendront au bon moment.') + '</p>' +
+    (nf ? '<button class="btn primary big" data-act="extra">Apprendre une fiche de plus</button>' : '') + '</div>' + heroSide() + '</section>';
+  let tiles = '<h2 class="sec">Thèmes</h2><div class="themes">';
+  THEMES.forEach(t => {
+    const nCards = t.fiches.reduce((s, f) => s + f.cards.length, 0), nM = t.fiches.reduce((s, f) => s + f.cards.filter(c => st(c.id) && st(c.id).b >= MASTER).length, 0);
+    const started = t.fiches.filter(ficheStarted).length;
+    tiles += '<button class="theme" data-theme="' + t.id + '" style="--t:' + t.color + '"><span class="ti">' + t.icon + '</span><b>' + esc(t.name) + ' <span class="lvl">' + t.lvl + '</span></b><small>' + started + ' / ' + t.fiches.length + ' fiches commencées</small>' + bar(nCards ? nM / nCards : 0, t.color) + '<small>' + nM + ' / ' + nCards + ' exercices ancrés</small></button>';
+  });
+  tiles += '</div>';
+  return hero + tiles + '<p class="how">Comment ça marche : chaque fiche se lit en 2 minutes, puis ses exercices reviennent <b>le lendemain, puis 3 jours, 7 jours, 2 semaines, 1 mois…</b> Chaque erreur ramène l\'exercice au début. Un exercice est « ancré » après 4 bonnes réponses espacées. Le bouton ▶ lit le suédois à voix haute.</p>';
+}
+function heroSide() {
+  const s = streak(), m = mastered(), tot = Object.keys(CARDS).filter(id => !CARDS[id].w).length;
+  return '<div class="side"><div class="stat"><b>' + s + '</b><span>' + (s > 1 ? 'jours de suite' : 'jour de suite') + '</span></div><div class="stat"><b>' + m + '</b><span>exercices ancrés sur ' + tot + '</span></div>' + week() + '</div>';
+}
+function week() {
+  let h = '<div class="week" aria-label="7 derniers jours">';
+  const L = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+  for (let i = 6; i >= 0; i--) { const d = today() - i, on = !!S.days[dayIso(d)]; h += '<span class="' + (on ? 'on' : '') + (i === 0 ? ' today' : '') + '" title="' + dayIso(d) + '">' + L[new Date(d * 864e5).getUTCDay()] + '</span>'; }
+  return h + '</div>';
+}
+function library() {
+  return '<h1 class="pt">Toutes les fiches</h1>' + THEMES.map(t => '<section class="lib" style="--t:' + t.color + '"><h2><span class="ti sm">' + t.icon + '</span>' + esc(t.name) + ' <span class="lvl">' + t.lvl + '</span></h2>' + ficheList(t) + '</section>').join('');
+}
+function ficheList(t) {
+  return '<div class="flist">' + t.fiches.map(f => { const s = ficheStatus(f); return '<button class="frow" data-fiche="' + f.id + '"><span class="fnum">' + (f.index + 1) + '</span><span class="ft"><b>' + esc(f.title) + '</b><small>' + plural(f.cards.length, 'exercice') + '</small></span><span class="badge ' + s.cls + '">' + s.label + '</span></button>'; }).join('') + '</div>';
+}
+function theme(id) {
+  const t = TBY[id];
+  return '<button class="back" data-nav="home">← Accueil</button><h1 class="pt" style="--t:' + t.color + '"><span class="ti">' + t.icon + '</span> ' + esc(t.name) + '</h1>' + ficheList(t);
+}
+function fiche(id) {
+  const f = FBY[id], t = f.theme, s = ficheStatus(f), seen = ficheSeen(f);
+  const learn = seen < f.cards.length ? 'Faire ses exercices' : 'Réviser cette fiche';
+  return '<button class="back" data-theme="' + t.id + '">← ' + esc(t.name) + '</button>' +
+    '<article class="lesson" style="--t:' + t.color + '"><p class="eyebrow">' + t.icon + ' ' + esc(t.name) + '</p><h1>' + esc(f.title) + '</h1>' + lessonBody(f) +
+    '<div class="actions"><button class="btn primary" data-act="learn" data-id="' + f.id + '">' + learn + '</button>' + (ficheStarted(f) ? '' : '<button class="btn" data-act="known" data-id="' + f.id + '">Je connais déjà</button>') + '<span class="badge ' + s.cls + '">' + s.label + '</span></div></article>';
+}
+const readMins = f => Math.max(1, Math.round((f.text.join(' ').split(/\s+/).length + (f.keys || []).join(' ').split(/\s+/).length) / 180));
+function vocabRows(list) {
+  return '<div class="vocab">' + list.map(v => '<div class="vrow">' + playBtn(v.sv) + '<span class="vsv">' + esc(v.sv) + '</span><span class="vfr">' + esc(v.fr) + '</span>' + (v.note ? '<span class="vnote">' + esc(v.note) + '</span>' : '') + '</div>').join('') + '</div>';
+}
+function lessonBody(f) {
+  let h = '<p class="rd-meta">⏱ ' + readMins(f) + ' min de lecture · ' + plural(f.cards.length, 'exercice') + ' à la suite</p>';
+  f.text.forEach(p => { h += '<p>' + md(p) + '</p>'; });
+  if (f.vocab && f.vocab.length) h += '<h3 class="vh">Mots et phrases <small>clique sur ▶ pour écouter</small></h3>' + vocabRows(f.vocab);
+  if (f.phrases && f.phrases.length) h += '<h3 class="vh">Phrases <small>écoute, puis lis la traduction</small></h3>' + vocabRows(f.phrases);
+  if (f.keys && f.keys.length) h += '<div class="keys"><h3>L\'essentiel</h3><ul class="ess">' + f.keys.map(k => '<li>' + md(k) + '</li>').join('') + '</ul></div>';
+  return h;
+}
+/* carnet de mots : tous les mots des fiches commencées */
+
+/* ---------------------------------------------------------------- tuiles de mots (façon Nemo) */
+const tileState = id => S.tiles[id] || '';
+const tileCards = (w, k) => [w.id + '-s' + k, w.id + '-f' + k];
+function setTile(w, k, state) {
+  const t = today(), wid = w.id + '-' + k;
+  if (state) S.tiles[wid] = state; else delete S.tiles[wid];
+  S.tmod = S.tmod || {}; S.tmod[wid] = Date.now();
+  tileCards(w, k).forEach(id => {
+    if (state === 'learn') { if (!S.cards[id]) S.cards[id] = { b: 0, due: t, n: 0, ok: 0, last: t }; }
+    else if (state === 'known') S.cards[id] = { b: MASTER, due: t + 10 + Math.floor(Math.random() * 20), n: 0, ok: 0, last: t, known: true };
+    else delete S.cards[id];
+  });
+  save();
+}
+function tiles(arg) {
+  if (arg && arg.set) return tileSet(WBY[arg.set]);
+  let h = '<h1 class="pt">Tuiles de mots</h1><p class="muted">Touche une tuile pour la retourner (le suédois est lu à voix haute). Marque les mots que tu veux apprendre : ils entrent dans tes révisions.</p><div class="themes">';
+  WSETS.forEach(w => {
+    const n = w.vocab.length, c = { learn: 0, known: 0, out: 0 }; w.vocab.forEach((v, k) => { const s = tileState(w.id + '-' + k); if (s) c[s]++; });
+    h += '<button class="theme" data-tset="' + w.id + '" style="--t:' + w.theme.color + '"><span class="ti">' + w.theme.icon + '</span><b>' + esc(w.title) + '</b><small>' + plural(n, 'mot') + '</small>' + bar((c.known + c.learn) / n, w.theme.color) + '<small>' + c.learn + ' à apprendre · ' + c.known + ' connus</small></button>';
+  });
+  return h + '</div>';
+}
+function tileSet(w) {
+  const sel = view.arg.sel, flip = view.arg.flip || {}, hideKnown = !!view.arg.hide;
+  const n = w.vocab.length, nl = w.vocab.filter((v, k) => tileState(w.id + '-' + k) === 'learn').length;
+  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button><div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div><div class="tilegrid">';
+  w.vocab.forEach((v, k) => {
+    const s = tileState(w.id + '-' + k);
+    if (s === 'out' || (hideKnown && s === 'known')) return;
+    const c = st(w.id + '-s' + k), done = s === 'learn' && c && c.b >= MASTER;
+    h += '<button class="tile' + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + '" data-tile="' + k + '"><span>' + esc(flip[k] ? v.fr : v.sv) + '</span></button>';
+  });
+  h += '</div>';
+  if (sel != null) {
+    const v = w.vocab[sel], s = tileState(w.id + '-' + sel);
+    h += '<div class="tilebar"><b>' + esc(v.sv) + '</b> · ' + esc(v.fr) + ' ' + playBtn(v.sv) + '<div class="actions">' +
+      '<button class="btn' + (s === 'learn' ? ' primary' : '') + '" data-act="tset" data-s="learn">À apprendre</button><button class="btn' + (s === 'known' ? ' primary' : '') + '" data-act="tset" data-s="known">Je connais</button><button class="btn" data-act="tset" data-s="out">Exclure</button>' + (s ? '<button class="link" data-act="tset" data-s="">Réinitialiser</button>' : '') + '</div></div>';
+  }
+  const hidden = w.vocab.filter((v, k) => tileState(w.id + '-' + k) === 'out').length;
+  h += '<div class="actions"><button class="btn primary" data-act="tlearn" data-id="' + w.id + '">' + (nl ? 'Réviser mes ' + plural(nl, 'mot') + ' à apprendre' : 'Tout apprendre (' + n + ')') + '</button><button class="btn" data-act="tflip">Tout retourner</button><button class="btn" data-act="thide">' + (hideKnown ? 'Afficher les mots connus' : 'Masquer les mots connus') + '</button>' + (hidden ? '<button class="link" data-act="trestore">Remettre les ' + hidden + ' exclus</button>' : '') + '</div>';
+  return h;
+}
+function words() {
+  const q = (view.arg && view.arg.q) || '';
+  const list = [];
+  FICHES.forEach(f => { if (ficheStarted(f)) (f.vocab || []).concat(f.phrases || []).forEach(v => list.push(v)); });
+  return '<h1 class="pt">Mes mots</h1><p class="muted">' + plural(list.length, 'mot ou phrase') + ' dans les fiches commencées.</p>' +
+    '<input type="search" class="search" id="wsearch" placeholder="Chercher en suédois ou en français" value="' + esc(q) + '" autocomplete="off">' +
+    '<div id="wlist">' + wordsList(list, q) + '</div>';
+}
+function wordsList(list, q) {
+  q = (q || '').toLowerCase().trim();
+  const rows = list.filter(v => !q || (v.sv + ' ' + v.fr).toLowerCase().includes(q));
+  return rows.length ? vocabRows(rows) : '<p class="muted">' + (list.length ? 'Aucun résultat.' : 'Commence une fiche pour remplir ton carnet.') + '</p>';
+}
+function stats() {
+  const days = Object.keys(S.days).sort(), total = days.reduce((s, d) => s + S.days[d].n, 0), ok = days.reduce((s, d) => s + S.days[d].ok, 0);
+  const boxes = [0, 0, 0, 0, 0, 0, 0, 0]; Object.keys(S.cards).forEach(id => { if (CARDS[id]) boxes[S.cards[id].b]++; });
+  const unseen = Object.keys(CARDS).length - Object.keys(S.cards).filter(id => CARDS[id]).length;
+  const tom = Object.keys(S.cards).filter(id => CARDS[id] && S.cards[id].due === today() + 1).length;
+  let cal = '<div class="cal">'; for (let i = 41; i >= 0; i--) { const d = today() - i, x = S.days[dayIso(d)]; const lv = !x ? 0 : x.n < 10 ? 1 : x.n < 25 ? 2 : 3; cal += '<span class="l' + lv + '" title="' + dayIso(d) + (x ? ' : ' + x.n + ' exercices' : '') + '"></span>'; } cal += '</div>';
+  const weak = Object.keys(S.cards).filter(id => CARDS[id] && S.cards[id].n >= 2 && S.cards[id].ok / S.cards[id].n < 0.6).slice(0, 12);
+  const voices = rankedVoices(), cur = svVoice();
+  const voiceOpts = voices.length ? voices.map(v => '<option value="' + esc(v.voiceURI) + '"' + (cur && cur.voiceURI === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') : '<option value="">Aucune voix suédoise trouvée</option>';
+  const rateOpts = [[0.65, 'Très lent'], [0.85, 'Lent'], [1, 'Normal']].map(r => '<option value="' + r[0] + '"' + (Math.abs(S.opts.rate - r[0]) < 0.01 ? ' selected' : '') + '>' + r[1] + '</option>').join('');
+  const voiceNote = !SP.ok ? 'La synthèse vocale n\'est pas disponible ici.' : !voices.length ? 'Aucune voix suédoise n\'est installée : le suédois est lu avec une voix qui n\'est pas faite pour lui. Dans Windows, ajoute la langue suédoise (Paramètres → Heure et langue → Langue et région), ou utilise Edge, qui propose des voix suédoises en ligne.' : (voiceScore(cur) < 40 ? 'Cette voix est basique. Dans Edge, une voix suédoise « Natural » (en ligne) sonne bien mieux, si elle est proposée.' : '');
+  return '<h1 class="pt">Progrès</h1><div class="kpis"><div class="stat"><b>' + streak() + '</b><span>jours de suite</span></div><div class="stat"><b>' + mastered() + '</b><span>exercices ancrés</span></div><div class="stat"><b>' + total + '</b><span>réponses données</span></div><div class="stat"><b>' + (total ? Math.round(100 * ok / total) : 0) + ' %</b><span>de bonnes réponses</span></div></div>' +
+    '<h2 class="sec">6 dernières semaines</h2>' + cal +
+    '<h2 class="sec">Où en sont les exercices</h2><div class="boxes">' + ['À découvrir', 'Vues 1 fois', 'Boîte 2', 'Boîte 3', 'Ancrés'].map((l, i) => '<div><b>' + (i === 0 ? unseen : i === 4 ? boxes.slice(4).reduce((a, b) => a + b, 0) : boxes[i]) + '</b><span>' + l + '</span></div>').join('') + '</div>' +
+    '<p class="muted">Demain : ' + plural(tom, 'exercice') + ' à revoir.</p>' +
+    (weak.length ? '<h2 class="sec">Points faibles</h2><ul class="weak">' + weak.map(id => '<li><b>' + esc(CARDS[id].q) + '</b> → ' + esc(CARDS[id].a) + '</li>').join('') + '</ul>' : '') +
+    '<h2 class="sec">Voix et réglages</h2><div class="opts"><label class="row">Voix suédoise <select id="opt-voice">' + voiceOpts + '</select></label><label class="row">Vitesse <select id="opt-rate">' + rateOpts + '</select></label>' +
+    '<label class="chk"><input type="checkbox" id="opt-auto"' + (S.opts.autoSpeak ? ' checked' : '') + '> Lire le suédois automatiquement pendant les séances</label>' +
+    '<label class="chk"><input type="checkbox" id="opt-choice"' + (S.opts.alwaysChoice ? ' checked' : '') + '> Toujours répondre avec des choix (pas de rappel libre)</label>' +
+    (voiceNote ? '<p class="muted small">' + esc(voiceNote) + '</p>' : '') + '<p><button class="btn sm" data-say="Hej! Jag heter Anna. Trevligt att träffas.">▶ Tester la voix</button></p></div>' +
+    '<h2 class="sec">Synchronisation</h2>' + ghPanel() + '<p><button class="link" data-act="reset">Effacer toute la progression</button></p>';
+}
+
+/* ---------------------------------------------------------------- séance */
+const diffHtml = (g, a) => { const aw = a.split(/\s+/); return g.trim().split(/\s+/).map((w, i) => '<span class="' + (aw[i] && fold(aw[i]) === fold(w) ? '' : 'dw') + '">' + esc(w) + '</span>').join(' '); };
+function orderHtml(it) {
+  const used = new Set(it.pick), wd = i => it.bank.find(b => b.i === i).w;
+  return '<div class="ordans" aria-label="Ta phrase">' + (it.pick.length ? it.pick.map(i => '<button type="button" class="chip on" data-chip="' + i + '">' + esc(wd(i)) + '</button>').join('') : '<span class="muted small">Touche les mots dans l\'ordre</span>') + '</div>' +
+    '<div class="bank">' + it.bank.map(b => '<button type="button" class="chip' + (used.has(b.i) ? ' used' : '') + '" data-chip="' + b.i + '"' + (used.has(b.i) ? ' disabled' : '') + '>' + esc(b.w) + '</button>').join('') + '</div>' +
+    '<div class="actions"><button type="button" class="btn primary" data-act="check-order">Valider <kbd>Entrée</kbd></button><button type="button" class="link" data-act="clear-order">Effacer</button></div>';
+}
+function checkOrder() {
+  const it = current(); if (!it || sess.answered || !it.pick || !it.pick.length) return;
+  const c = CARDS[it.id], given = it.pick.map(i => it.bank.find(b => b.i === i).w).join(' ');
+  answer(norm(given) === norm(c.a), given);
+}
+function startSession(kind, ficheId) {
+  const q = [], seen = new Set(), t = today();
+  const add = (id, practice) => { if (!seen.has(id)) { seen.add(id); q.push({ id, practice: !!practice, tries: 0 }); } };
+  let lessons = [];
+  if (kind === 'daily' || kind === 'extra') {
+    if (kind === 'daily') dueCards().slice(0, S.opts.maxReviews).forEach(id => add(id));
+    lessons = plannedLessons(q.length, kind === 'extra');
+  } else if (kind === 'ids') {
+    ficheId.forEach(id => add(id));
+  } else if (kind === 'fiche') {
+    const f = FBY[ficheId];
+    newOrder(f.cards).forEach(c => { const s = st(c.id); add(c.id, !!s && s.due > t); });
+    S.fiches[f.id] = S.fiches[f.id] || { read: t }; save();
+  }
+  sess = { kind, q, i: 0, lessons, li: 0, read: [], answered: false, results: [] };
+  if (!q.length && !lessons.length) { go('home'); return; }
+  go('session');
+}
+const current = () => sess.q[sess.i];
+function sessTop(done, total, color) {
+  return '<div class="sess-top"><button class="link" data-act="stop">✕ Arrêter</button>' + bar(total ? done / total : 0, color) + '<span class="muted">' + done + ' / ' + total + '</span></div>';
+}
+function session() {
+  const s = sess;
+  if (s.i >= s.q.length) {
+    if (s.li < s.lessons.length) return lessonScreen();
+    return endNow();
+  }
+  const it = current(), c = CARDS[it.id], stt = st(it.id), t = c.fiche.theme;
+  const wantsRecall = !S.opts.alwaysChoice && stt && stt.b >= RECALL && !it.tries;
+  const deep = stt && stt.b >= RECALL && !it.tries;   /* la phrase se tape au lieu de se reconstruire */
+  let mode;
+  if (c.kind === 'dict') mode = 'type';
+  else if (c.kind === 'order') mode = deep ? 'type' : 'order';
+  else if (c.kind === 'cloze') mode = wantsRecall ? 'type' : 'choice';
+  else mode = wantsRecall ? (c.type ? 'type' : 'reveal') : 'choice';
+  it.mode = mode;
+  if (mode === 'order' && !it.bank) {
+    const words = c.a.split(' ').map((w, i) => ({ w, i }));
+    let b, n = 0; do { b = shuffle(words.slice()); n++; } while (n < 6 && b.every((x, i) => x.i === i) && words.length > 1);
+    it.bank = b; it.pick = [];
+  }
+  const done = s.results.length, total = done + (s.q.length - s.i) + s.lessons.slice(s.li).reduce((a, f) => a + f.cards.length, 0);
+  let body;
+  if (mode === 'order') body = '<div id="ordwrap">' + orderHtml(it) + '</div>';
+  else if (mode === 'choice') {
+    it.choices = it.choices || choicesOf(c);
+    body = '<div class="choices">' + it.choices.map((x, i) => '<button class="choice" data-v="' + esc(x) + '"><kbd>' + (i + 1) + '</kbd><span>' + esc(x) + '</span></button>').join('') + '</div>';
+  } else if (mode === 'type') body = '<div class="typein"><input type="text" id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + (c.kind === 'dict' ? 'Écris ce que tu entends' : 'Écris en suédois') + ' (å ä ö)"><button class="btn primary" data-act="check">Valider <kbd>Entrée</kbd></button></div><p class="muted small">Les accents sont tolérés (a pour å ou ä), mais note l\'orthographe exacte.</p>';
+  else body = '<div class="recall"><button class="btn big" data-act="reveal">Afficher la réponse <kbd>Espace</kbd></button></div>';
+  const slow = c.kind === 'dict' && SP.ok ? '<button type="button" class="play slow" data-say="' + esc(c.qsv) + '" data-rate="0.6" title="Écouter lentement" aria-label="Écouter lentement">🐢</button>' : '';
+  const qsvBtn = c.qsv && SP.ok ? '<div class="sayline">' + playBtn(c.qsv, c.hide ? 'la phrase' : c.qsv) + slow + '<span class="muted small">' + (c.kind === 'dict' ? 'Écouter · lent' : c.hide ? 'Écoute le mot' : 'Écouter') + '</span></div>' : '';
+  const qHtml = c.kind === 'cloze' ? esc(c.q).replace('___', '<span class="blank">___</span>') : esc(c.q);
+  const qfrHtml = c.qfr ? '<p class="qfr">' + (c.kind === 'order' ? '« ' + esc(c.qfr) + ' »' : esc(c.qfr)) + '</p>' : '';
+  return '<div class="sess" style="--t:' + t.color + '">' + sessTop(done, total, t.color) +
+    '<div class="qcard"><p class="eyebrow">' + t.icon + ' ' + esc(t.name) + ' · ' + esc(c.fiche.title) + (stt ? '' : ' · <span class="newtag">nouvelle</span>') + '</p><h2 class="q">' + qHtml + '</h2>' + qfrHtml + qsvBtn + body +
+    '<div class="fb" id="fb"></div><div class="next" id="nextwrap" hidden><button class="btn primary" data-act="next">Continuer <kbd>Entrée</kbd></button></div></div></div>';
+}
+function afterSessionRender() {
+  const it = sess.q[sess.i];
+  if (!it) { const f = document.querySelector('[data-act="lesson-ok"]'); if (f && f.focus) f.focus({ preventScroll: true }); return; }
+  const c = CARDS[it.id];
+  if (S.opts.autoSpeak && c.qsv && !it.tries) speak(c.qsv);
+  const f = document.getElementById('typed') || document.querySelector('.choice, [data-act="reveal"]'); if (f && f.focus) f.focus({ preventScroll: true });
+}
+function lessonScreen() {
+  const f = sess.lessons[sess.li], t = f.theme;
+  return '<div class="sess" style="--t:' + t.color + '"><div class="sess-top"><button class="link" data-act="stop">✕ Arrêter</button><span class="muted">Nouvelle fiche</span></div>' +
+    '<article class="lesson in-sess"><p class="eyebrow">' + t.icon + ' ' + esc(t.name) + '</p><h1>' + esc(f.title) + '</h1>' + lessonBody(f) +
+    '<div class="actions"><button class="btn primary big" data-act="lesson-ok">J\'ai lu, passer aux ' + plural(f.cards.length, 'exercice') + ' <kbd>Entrée</kbd></button></div></article></div>';
+}
+const norm = s => String(s).toLowerCase().replace(/[.!?,;:"«»]/g, '').replace(/\s+/g, ' ').trim();
+const fold = s => norm(s).normalize('NFD').replace(/[̀-ͯ]/g, '');
+function answer(ok, given, note) {
+  const s = sess, it = current(); if (!it || s.answered) return;
+  const c = CARDS[it.id];
+  s.answered = true;
+  if (!it.tries) { grade(it.id, ok, it.practice); s.results.push({ id: it.id, ok }); }
+  it.tries++;
+  if (!ok && it.tries < 3) s.q.splice(Math.min(s.i + 4, s.q.length), 0, { id: it.id, practice: it.practice, tries: it.tries, again: true });
+  document.querySelectorAll('.choice').forEach(b => { b.disabled = true; if (b.dataset.v === c.a) b.classList.add('ok'); else if (b.dataset.v === given) b.classList.add('bad'); });
+  const ti = $('typed'); if (ti) { ti.disabled = true; ti.classList.add(ok ? 'ok' : 'bad'); }
+  const chk = document.querySelector('[data-act="check"], [data-act="check-order"]'); if (chk) chk.disabled = true;
+  document.querySelectorAll('.chip').forEach(x => { x.disabled = true; });
+  const asv = c.asv || (c.hide ? c.qsv : '');
+  $('fb').innerHTML = (ok ? '<p class="good">✓ Bonne réponse' + (note ? ' <span class="muted">· ' + esc(note) + '</span>' : '') + '</p>' : '<p class="wrong">✗ La réponse était : <b>' + esc(c.a) + '</b>' + (it.tries < 3 ? ' <span class="muted">· il reviendra dans quelques exercices</span>' : '') + '</p>') +
+    (!ok && given && (it.mode === 'type' || it.mode === 'order') ? '<p class="expl">Ta réponse : ' + diffHtml(given, c.a) + '</p>' : '') +
+    (c.hide && c.kind !== 'dict' ? '<p class="expl">Tu as entendu : <b>' + esc(c.qsv) + '</b> ' + playBtn(c.qsv) + '</p>' : '') +
+    (c.asv && !c.hide ? '<p class="expl">En suédois : <b>' + esc(c.asv) + '</b> ' + playBtn(c.asv) + '</p>' : '') + (c.x ? '<p class="expl">' + esc(c.x) + '</p>' : '');
+  if (S.opts.autoSpeak && asv && SP.ok) speak(asv);
+  $('nextwrap').hidden = false; const nb = document.querySelector('[data-act="next"]'); if (nb) nb.focus();
+}
+function checkTyped() {
+  const ti = $('typed'), c = CARDS[current().id]; if (!ti || !ti.value.trim()) return;
+  const given = ti.value, exact = norm(given) === norm(c.a), loose = fold(given) === fold(c.a);
+  answer(exact || loose, given, exact ? '' : loose ? 'attention à l\'orthographe : ' + c.a : '');
+}
+function reveal() {
+  const it = current(), c = CARDS[it.id];
+  document.querySelector('.recall').innerHTML = '<p class="answer">' + esc(c.a) + '</p>' + (c.x ? '<p class="expl">' + esc(c.x) + '</p>' : '') +
+    '<div class="selfgrade"><button class="btn bad" data-act="no"><kbd>1</kbd> Je ne savais pas</button><button class="btn good" data-act="yes"><kbd>2</kbd> Je savais</button></div>';
+  sess.revealed = true;
+  const asv = c.asv || (c.hide ? c.qsv : ''); if (S.opts.autoSpeak && asv && SP.ok) speak(asv);
+}
+function nextCard() { const s = sess; s.answered = false; s.revealed = false; s.i++; render(); }
+function lessonOk() {
+  const s = sess, f = s.lessons[s.li]; s.li++; s.read.push(f);
+  S.fiches[f.id] = S.fiches[f.id] || { read: today() }; save();
+  newOrder(f.cards).map(c => c.id).forEach(id => { if (!st(id)) s.q.push({ id, practice: false, tries: 0 }); else if (!s.q.some(x => x.id === id)) s.q.push({ id, practice: st(id).due > today(), tries: 0 }); });
+  render();
+}
+function endNow() { const r = sess.results; view = { name: 'end', arg: r }; return end(r); }
+function end(r) {
+  r = r || [];
+  const ok = r.filter(x => x.ok).length, rd = (sess && sess.read) || [];
+  const tom = Object.keys(S.cards).filter(id => CARDS[id] && S.cards[id].due === today() + 1).length;
+  const missed = r.filter(x => !x.ok && x.id).map(x => CARDS[x.id]);
+  return '<section class="hero end"><div><p class="eyebrow">Séance terminée</p><h1>' + (r.length ? ok + ' / ' + r.length + ' du premier coup' : 'Fiche lue') + '</h1>' +
+    '<p class="lead">' + (rd.length ? (rd.length > 1 ? 'Fiches découvertes : ' : 'Fiche découverte : ') + rd.map(f => '<b>' + esc(f.title) + '</b>').join(', ') + '. ' : '') + 'Demain : ' + plural(tom, 'exercice') + ' à revoir. Série : ' + plural(streak(), 'jour') + ' 🔥 Vi ses imorgon !</p>' +
+    (missed.length ? '<h3>À retenir de tes erreurs</h3><ul class="weak">' + missed.map(c => '<li><b>' + esc(c.q) + '</b> → ' + esc(c.a) + '</li>').join('') + '</ul>' : '') +
+    '<div class="actions"><button class="btn primary" data-nav="home">Retour à l\'accueil</button>' + (nextNewFiche() ? '<button class="btn" data-act="extra">Encore une fiche</button>' : '') + '</div></div></section>';
+}
+
+/* ---------------------------------------------------------------- évènements */
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.say != null) { speak(b.dataset.say, b.dataset.rate); return; }
+  if (b.dataset.nav) { const to = b.dataset.nav; if (view.name === 'session' && sess && sess.results.length && !confirm('Arrêter la séance ? Les réponses déjà données sont gardées.')) return; go(to); return; }
+  if (b.dataset.theme) { go('theme', b.dataset.theme); return; }
+  if (b.dataset.tset) { go('tiles', { set: b.dataset.tset }); return; }
+  if (b.dataset.tile != null) { const k = +b.dataset.tile, w = WBY[view.arg.set]; view.arg.flip = view.arg.flip || {}; view.arg.flip[k] = !view.arg.flip[k]; view.arg.sel = k; speak(w.vocab[k].sv); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+  if (b.dataset.fiche) { go('fiche', b.dataset.fiche); return; }
+  if (b.dataset.chip != null) {
+    if (!sess || sess.answered) return;
+    const it = current(), i = +b.dataset.chip, k = it.pick.indexOf(i);
+    if (k >= 0) it.pick.splice(k, 1); else it.pick.push(i);
+    $('ordwrap').innerHTML = orderHtml(it); return;
+  }
+  if (b.classList.contains('choice')) { const c = CARDS[current().id]; answer(b.dataset.v === c.a, b.dataset.v); return; }
+  const a = b.dataset.act;
+  if (a === 'start') startSession('daily');
+  else if (a === 'extra') startSession('extra');
+  else if (a === 'learn') startSession('fiche', b.dataset.id);
+  else if (a === 'tset') { const w = WBY[view.arg.set]; setTile(w, view.arg.sel, b.dataset.s); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  else if (a === 'tflip') { const w = WBY[view.arg.set], f = view.arg.flip || {}, all = w.vocab.every((v, k) => f[k]); view.arg.flip = {}; if (!all) w.vocab.forEach((v, k) => { view.arg.flip[k] = true; }); render(); }
+  else if (a === 'thide') { view.arg.hide = !view.arg.hide; render(); }
+  else if (a === 'trestore') { const w = WBY[view.arg.set]; w.vocab.forEach((v, k) => { if (tileState(w.id + '-' + k) === 'out') setTile(w, k, ''); }); render(); }
+  else if (a === 'tlearn') {
+    const w = WBY[b.dataset.id]; let ks = w.vocab.map((v, k) => k).filter(k => tileState(w.id + '-' + k) === 'learn');
+    if (!ks.length) { ks = w.vocab.map((v, k) => k).filter(k => !tileState(w.id + '-' + k)).slice(0, 20); ks.forEach(k => setTile(w, k, 'learn')); }
+    const ids = []; ks.forEach(k => tileCards(w, k).forEach(id => { const s = st(id); if (!s || s.due <= today() || s.b < 2) ids.push(id); }));
+    startSession('ids', ids.slice(0, 40));
+  }
+  else if (a === 'gh-save') ghActivate();
+  else if (a === 'gh-now') { b.disabled = true; ghSync().then(() => { b.disabled = false; }); }
+  else if (a === 'gh-off') { GH.token = ''; GH.gist = ''; ghSave(); render(); }
+  else if (a === 'lesson-ok') lessonOk();
+  else if (a === 'level') { setLevel(b.dataset.l); go('home'); }
+  else if (a === 'known') { markKnown(FBY[b.dataset.id]); render(); }
+  else if (a === 'check-order') checkOrder();
+  else if (a === 'clear-order') { current().pick = []; $('ordwrap').innerHTML = orderHtml(current()); }
+  else if (a === 'reveal') reveal();
+  else if (a === 'check') checkTyped();
+  else if (a === 'yes') answer(true);
+  else if (a === 'no') answer(false);
+  else if (a === 'next') nextCard();
+  else if (a === 'stop') { view = { name: 'end', arg: sess.results }; render(); }
+  else if (a === 'reset' && confirm('Effacer toute la progression de SY Svenska ?')) { S = { cards: {}, fiches: {}, days: {}, opts: S.opts, tiles: {}, tmod: {} }; save(); go('home'); }
+});
+document.addEventListener('change', e => {
+  const id = e.target.id;
+  if (id === 'opt-choice') { S.opts.alwaysChoice = e.target.checked; save(); }
+  else if (id === 'opt-auto') { S.opts.autoSpeak = e.target.checked; save(); }
+  else if (id === 'opt-voice') { S.opts.voice = e.target.value; save(); speak('Hej! Det här är min röst.'); }
+  else if (id === 'opt-rate') { S.opts.rate = parseFloat(e.target.value) || 0.85; save(); speak('Hej! Hur mår du?'); }
+});
+document.addEventListener('input', e => {
+  if (e.target.id !== 'wsearch') return;
+  const list = []; FICHES.forEach(f => { if (ficheStarted(f)) (f.vocab || []).concat(f.phrases || []).forEach(v => list.push(v)); });
+  view.arg = { q: e.target.value }; $('wlist').innerHTML = wordsList(list, e.target.value);
+});
+document.addEventListener('keydown', e => {
+  if (view.name !== 'session' || !sess) return;
+  const k = e.key, typing = e.target && e.target.id === 'typed';
+  if (document.querySelector('[data-act="lesson-ok"]')) { if (k === 'Enter') { e.preventDefault(); lessonOk(); } return; }
+  if (sess.answered) { if (k === 'Enter' || k === ' ') { e.preventDefault(); nextCard(); } return; }
+  const it = current(); if (!it) return;
+  if (it.mode === 'order') { if (k === 'Enter') { e.preventDefault(); checkOrder(); } return; }
+  if (it.mode === 'type') { if (k === 'Enter') { e.preventDefault(); checkTyped(); } return; }
+  if (it.mode === 'choice') { const n = parseInt(k, 10); if (!typing && n >= 1 && n <= 4 && it.choices[n - 1] != null) answer(it.choices[n - 1] === CARDS[it.id].a, it.choices[n - 1]); }
+  else if (!sess.revealed) { if (k === ' ' || k === 'Enter') { e.preventDefault(); reveal(); } }
+  else { if (k === '1') answer(false); if (k === '2') answer(true); }
+});
+
+/* Synchro GitHub (PC + iPhone) : même principe que SY Culture. La progression est rangée dans le gist secret
+   « SY Culture : progression (ne pas supprimer) », dans un fichier à part (svenska.json). Jeton « gist » collé une fois par appareil. */
+var GH = (() => { try { return Object.assign({ token: '', gist: '' }, JSON.parse(localStorage.getItem('sy-svenska-gh')) || {}); } catch (e) { return { token: '', gist: '' }; } })();
+GH.busy = false; GH.timer = null; GH.state = ''; GH.lastOk = 0;
+const GH_DESC = 'SY Culture : progression (ne pas supprimer)', GH_FILE = 'svenska.json';
+const ghSave = () => { try { localStorage.setItem('sy-svenska-gh', JSON.stringify({ token: GH.token, gist: GH.gist, lastOk: GH.lastOk })); } catch (e) { /* ignoré */ } };
+const ghApi = (path, opt) => fetch('https://api.github.com' + path, Object.assign({ cache: 'no-store' }, opt || {}, {
+  headers: Object.assign({ Authorization: 'Bearer ' + GH.token, Accept: 'application/vnd.github+json' }, opt && opt.body ? { 'Content-Type': 'application/json' } : {})
+}));
+/* fusion : carte par carte (la plus récemment travaillée gagne), jours au max, tuiles : la dernière modification gagne */
+function mergeS(a, b) {
+  const m = JSON.parse(JSON.stringify(a)); m.cards = m.cards || {}; m.tiles = m.tiles || {}; m.tmod = m.tmod || {}; m.days = m.days || {}; m.fiches = m.fiches || {};
+  Object.keys(b.cards || {}).forEach(id => { const x = m.cards[id], y = b.cards[id]; if (!x || (y.last || 0) > (x.last || 0) || ((y.last || 0) === (x.last || 0) && (y.n || 0) > (x.n || 0))) m.cards[id] = y; });
+  Object.keys(b.days || {}).forEach(d => { const x = m.days[d], y = b.days[d]; if (!x || y.n > x.n) m.days[d] = y; });
+  Object.keys(b.fiches || {}).forEach(f => { if (!m.fiches[f]) m.fiches[f] = b.fiches[f]; });
+  const bt = b.tmod || {};
+  Object.keys(bt).forEach(k => { if (!(m.tmod[k] >= bt[k])) { m.tmod[k] = bt[k]; if (b.tiles && b.tiles[k]) m.tiles[k] = b.tiles[k]; else delete m.tiles[k]; } });
+  Object.keys(m.tmod).forEach(k => { if (!m.tiles[k] || m.tiles[k] === 'out') { const i = k.lastIndexOf('-'); delete m.cards[k.slice(0, i) + '-s' + k.slice(i + 1)]; delete m.cards[k.slice(0, i) + '-f' + k.slice(i + 1)]; } });
+  m.opts = Object.assign({}, b.opts, m.opts); m.mod = Math.max(a.mod || 0, b.mod || 0);
+  return m;
+}
+function ghBadge(state) {
+  GH.state = state;
+  const txt = { syncing: '🔄 Synchronisation…', ok: '☁️ Synchronisé', offline: '☁️ Hors ligne · enregistré ici', auth: '⚠️ Jeton GitHub refusé', error: '⚠️ Synchro en échec' }[state] || '';
+  const s = document.getElementById('gh-status'); if (s) s.textContent = txt + (GH.lastOk ? ' · dernière synchro ' + new Date(GH.lastOk).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '');
+}
+async function ghFindOrCreate() {
+  for (let page = 1; page <= 10; page++) {
+    const r = await ghApi('/gists?per_page=100&page=' + page);
+    if (r.status === 401 || r.status === 403) throw { code: 'auth' };
+    if (!r.ok) throw { code: 'http' };
+    const a = await r.json(), g = a.find(x => x.description === GH_DESC);
+    if (g) return g.id;
+    if (a.length < 100) break;
+  }
+  const c = await ghApi('/gists', { method: 'POST', body: JSON.stringify({ description: GH_DESC, public: false, files: { [GH_FILE]: { content: JSON.stringify(S) } } }) });
+  if (c.status === 401 || c.status === 403) throw { code: 'auth' };
+  if (!c.ok) throw { code: 'http' };
+  return (await c.json()).id;
+}
+async function ghSync() {
+  if (!GH.token || GH.busy) return;
+  if (navigator.onLine === false) { ghBadge('offline'); return; }
+  GH.busy = true; ghBadge('syncing');
+  try {
+    if (!GH.gist) { GH.gist = await ghFindOrCreate(); ghSave(); }
+    const r = await ghApi('/gists/' + GH.gist);
+    if (r.status === 404) { GH.gist = ''; ghSave(); throw { code: 'retry' }; }
+    if (r.status === 401 || r.status === 403) throw { code: 'auth' };
+    if (!r.ok) throw { code: 'http' };
+    const g = await r.json(), f = g.files && g.files[GH_FILE];
+    let remote = null, txt = '';
+    if (f) { txt = f.truncated ? await (await fetch(f.raw_url, { cache: 'no-store' })).text() : f.content; try { remote = JSON.parse(txt); } catch (e) { remote = null; } }
+    if (remote && remote.cards) {
+      const merged = mergeS(S, remote);
+      if (JSON.stringify(merged) !== JSON.stringify(S)) {
+        S = merged; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ }
+        if (['home', 'library', 'theme', 'fiche', 'stats', 'tiles', 'words'].includes(view.name)) { const y = window.scrollY, ae = document.activeElement; if (!(ae && ae.tagName === 'INPUT')) { render(); window.scrollTo(0, y); } }
+      }
+    }
+    const mine = JSON.stringify(S);
+    if (mine !== txt) {
+      const p = await ghApi('/gists/' + GH.gist, { method: 'PATCH', body: JSON.stringify({ files: { [GH_FILE]: { content: mine } } }) });
+      if (p.status === 401 || p.status === 403) throw { code: 'auth' };
+      if (!p.ok) throw { code: 'http' };
+    }
+    GH.lastOk = Date.now(); ghSave(); ghBadge('ok');
+  } catch (e) {
+    ghBadge(e && e.code === 'auth' ? 'auth' : (navigator.onLine === false || !e || !e.code) ? 'offline' : 'error');
+    if (e && e.code === 'retry') setTimeout(ghSync, 2000);
+  }
+  GH.busy = false;
+}
+function ghSoon(ms) { if (!GH.token) return; clearTimeout(GH.timer); GH.timer = setTimeout(ghSync, ms == null ? 20000 : ms); }
+function ghFlush() {
+  if (!GH.token || !GH.gist || navigator.onLine === false) return;
+  const mine = JSON.stringify(S); if (GH.flushed === mine) return; GH.flushed = mine;
+  try { ghApi('/gists/' + GH.gist, { method: 'PATCH', keepalive: mine.length < 60000, body: JSON.stringify({ files: { [GH_FILE]: { content: mine } } }) }).catch(() => {}); } catch (e) { /* ignoré */ }
+}
+function ghStart() {
+  if (!GH.token || GH.started) return; GH.started = true;
+  setTimeout(ghSync, 800); setInterval(ghSync, 5 * 60 * 1000);
+  window.addEventListener('online', () => ghSoon(1000));
+  window.addEventListener('offline', () => ghBadge('offline'));
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') ghFlush(); else ghSoon(500); });
+  window.addEventListener('pagehide', ghFlush);
+}
+function ghPanel() {
+  if (GH.token) return '<div class="ghp"><p><b>Synchro GitHub : activée</b> <span class="muted" id="gh-status"></span></p><p class="muted small">Même jeton que SY Culture. À l\'ouverture, toutes les 5 minutes, après tes réponses et à la fermeture.</p>' +
+    '<p><button class="btn sm" data-act="gh-now">Synchroniser maintenant</button> <button class="link" data-act="gh-off">Retirer le jeton de cet appareil</button></p></div>';
+  return '<div class="ghp"><p><b>Synchro GitHub (PC ↔ iPhone)</b> : colle ton jeton GitHub (<code>ghp_…</code>, droit « gist » seulement, le même que pour SY Culture). Il reste sur cet appareil.</p>' +
+    '<p class="ghrow"><input id="gh-token" type="password" autocomplete="off" spellcheck="false" placeholder="ghp_…"> <button class="btn primary sm" data-act="gh-save">Activer</button></p></div>';
+}
+async function ghActivate() {
+  const v = ($('gh-token') || {}).value ? $('gh-token').value.trim() : '';
+  if (!/^(ghp_|github_pat_)[A-Za-z0-9_]{20,}$/.test(v)) { alert('Ce n\'est pas un jeton GitHub (il commence par ghp_).'); return; }
+  GH.token = v; GH.gist = ''; GH.lastOk = 0; ghSave();
+  await ghSync();
+  if (GH.state === 'auth') { GH.token = ''; ghSave(); alert('GitHub refuse ce jeton : vérifie qu\'il a bien la case « gist ».'); }
+  else ghStart();
+  render();
+}
+ghStart();
+
+/* Démarrage : après tous les modules. */
+render();
+window.__sv = { S: () => S, go, startSession, CARDS, FICHES, today, grade, dueCards, sess: () => sess, speak };
+</script>
+<script>if ('serviceWorker' in navigator && location.protocol.startsWith('http')) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
+</body>
+</html>
