@@ -1,0 +1,2404 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>France Explorer</title>
+<style>:root {
+  --sea: #d7e4ec;
+  --land: #ebede7;
+  --ink: #16222e;
+  --muted: #5a6876;
+  --line: #d2dae0;
+  --panel: #fbfbf9;
+  --card: #ffffff;
+  --plate: #0b3f94;
+  --signal: #f2b705;
+  --ok: #1e8a4c;
+  --bad: #c43a2f;
+  --river: #1f6fb4;
+  --font: Bahnschrift, "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; display: grid; grid-template-rows: auto 1fr; overflow: hidden;
+  font: 14px/1.45 var(--font); color: var(--ink); background: var(--panel);
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--plate); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------------------------------------------------------------- header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; height: 52px; border-bottom: 1px solid var(--line); background: var(--card); }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px; background: var(--plate); color: #fff; font-weight: 700; font-size: 15px; }
+.brand h1 { margin: 0; font-size: 18px; font-weight: 650; letter-spacing: .005em; }
+.top-right { display: flex; align-items: center; gap: 14px; }
+.modes { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.modes button { border: 0; background: transparent; padding: 7px 18px; font-weight: 600; }
+.modes button[aria-selected="true"] { background: var(--ink); color: #fff; }
+.link { background: none; border: 0; padding: 0; color: var(--plate); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ----------------------------------------------------------------- stage */
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 400px; min-height: 0; }
+.mapwrap { position: relative; overflow: hidden; background: var(--sea); min-height: 0; }
+svg.map { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.mapwrap.panning svg.map { cursor: grabbing; }
+
+/* map shapes */
+.map .dept, .inset-svg .dept { fill: var(--c, var(--land)); stroke: #fff; stroke-width: .8px; cursor: pointer; fill-rule: evenodd; }
+.mapwrap:not(.l-fill) .dept { fill: var(--land); }
+body[data-mode="explore"] .mapwrap.l-deptLines .map .dept:hover { filter: brightness(.92); }
+.map .dept.rh { filter: brightness(.9); }
+.map .region-line.hot { stroke: #111c26; stroke-width: 3px; }
+.map .region-line.hot-sel, .map .region-line.hot-target { stroke: #111c26; stroke-width: 3px; }
+.map .region-line.hot-ok { stroke: var(--ok); stroke-width: 3.5px; }
+.map .region-line.hot-bad { stroke: var(--bad); stroke-width: 3.5px; }
+.mapwrap:not(.l-deptLines) .map .dept { stroke: none; }
+.map .neigh-land { fill: var(--land); }
+.map .neigh-border { fill: none; stroke: #b9c3c6; stroke-width: 1px; stroke-dasharray: 4 3; }
+.map .cname { fill: #6f7c82; font-style: italic; letter-spacing: .12em; text-transform: uppercase; stroke: rgba(255,255,255,.4); stroke-width: .15em; }
+.g-neigh { pointer-events: none; }
+.map .river.major { stroke-width: 3.4px; }
+.map .region-line { fill: none; stroke: #3b4957; stroke-width: 1.5px; stroke-linejoin: round; pointer-events: none; }
+.map .wine-zone { fill: var(--wc); fill-opacity: .36; stroke: var(--wc); stroke-width: 1.6px; stroke-dasharray: 6 3; vector-effect: non-scaling-stroke; cursor: pointer; }
+.map .wine-zone:hover { fill-opacity: .55; }
+.map .river { fill: none; stroke: var(--river); stroke-width: 1.9px; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.map .river-hit { fill: none; stroke: transparent; stroke-width: 12px; pointer-events: stroke; cursor: pointer; vector-effect: non-scaling-stroke; }
+.map .pref-dot { fill: #fff; stroke: var(--ink); stroke-width: 1.5px; vector-effect: non-scaling-stroke; cursor: pointer; }
+.map .pref-dot.cap { fill: var(--signal); stroke-width: 2px; }
+.map .app-dot { fill: var(--wc); stroke: #fff; stroke-width: 1.5px; vector-effect: non-scaling-stroke; cursor: pointer; }
+
+.map text { pointer-events: none; paint-order: stroke; stroke-linejoin: round; font-family: var(--font); }
+.map .num { fill: #1c2a37; font-weight: 650; stroke: rgba(255,255,255,.7); stroke-width: .24em; }
+.map .pname { fill: #1b2733; stroke: rgba(255,255,255,.85); stroke-width: .28em; }
+.map .pname.cap { font-weight: 700; }
+.map .aname { fill: #4a1527; stroke: rgba(255,255,255,.85); stroke-width: .28em; }
+.map .wname { fill: var(--wc); font-weight: 700; stroke: rgba(255,255,255,.9); stroke-width: .32em; }
+.map .rname { fill: #12456f; font-style: italic; stroke: rgba(255,255,255,.85); stroke-width: .28em; }
+
+/* layer switches */
+.mapwrap:not(.l-regionLines) .g-regionLines,
+.mapwrap:not(.l-nums) .g-nums,
+.mapwrap:not(.l-prefs) .g-prefs,
+.mapwrap:not(.l-prefNames) .g-prefNames,
+.mapwrap:not(.l-rivers) .g-rivers,
+.mapwrap:not(.l-riverNames) .g-riverNames,
+.mapwrap:not(.l-wines) .g-wines,
+.mapwrap:not(.l-wineNames) .g-wineNames,
+.mapwrap:not(.l-apps) .g-apps,
+.mapwrap:not(.l-appNames) .g-appNames { display: none; }
+
+/* highlights */
+.map .hl { fill: none; fill-rule: evenodd; pointer-events: none; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.map .hl-sel { stroke: var(--ink); stroke-width: 3px; fill: rgba(242,183,5,.30); }
+.map .hl-regsel { stroke: var(--ink); stroke-width: 1.6px; fill: rgba(242,183,5,.26); }
+.map .hl-target { stroke: var(--ink); stroke-width: 3px; fill: rgba(242,183,5,.62); }
+.map .hl-regtarget { stroke: rgba(17,28,38,.35); stroke-width: 1px; fill: rgba(242,183,5,.55); }
+.map .hl-regok { stroke: rgba(30,138,76,.5); stroke-width: 1px; fill: rgba(30,138,76,.40); }
+.map .hl-regbad { stroke: rgba(196,58,47,.5); stroke-width: 1px; fill: rgba(196,58,47,.38); }
+.mapwrap:not(.l-deptLines) .hl-regsel { stroke: none; }
+.map .hl-dot.hl-reticle { fill: rgba(217,72,15,.18); stroke: #d9480f; stroke-width: 3px; stroke-dasharray: 5 3; }
+.map .hl-ok { stroke: var(--ok); stroke-width: 3.5px; fill: rgba(30,138,76,.38); }
+.map .hl-bad { stroke: var(--bad); stroke-width: 3.5px; fill: rgba(196,58,47,.36); }
+.map .hl-river { fill: none; stroke-width: 8px; }
+.map .hl-river.hl-sel, .map .hl-river.hl-target { stroke: rgba(242,183,5,.7); }
+.map .hl-river.hl-ok { stroke: rgba(30,138,76,.7); }
+.map .hl-river.hl-bad { stroke: rgba(196,58,47,.7); }
+.map .hl-dot.hl-sel { fill: none; stroke-width: 2.5px; }
+.map .hl-dot.hl-target { stroke-width: 2.5px; }
+
+/* overlays on the map */
+.toolbar { position: absolute; top: 12px; left: 12px; right: 64px; display: flex; flex-wrap: wrap; gap: 6px; }
+.toolbar button { border: 1px solid rgba(22,34,46,.25); background: rgba(255,255,255,.93); border-radius: 6px; padding: 6px 12px; font-weight: 600; }
+.toolbar button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.zoombtns { position: absolute; right: 12px; top: 12px; display: grid; gap: 4px; }
+.zoombtns button { width: 38px; height: 38px; border: 1px solid rgba(22,34,46,.25); background: rgba(255,255,255,.95); border-radius: 6px; font-size: 20px; line-height: 1; }
+.zoombtns button:hover, .toolbar button:not([aria-pressed="true"]):hover { background: #fff; }
+.toolbar button[aria-pressed="true"]:hover { background: #24313d; }
+.zoombtns button#zhome { font-size: 13px; font-weight: 700; }
+.insets { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 8px; max-width: calc(100% - 24px); flex-wrap: wrap; }
+body[data-mode="quiz"] .insets { display: none; }
+.inset-tile { width: 92px; background: rgba(255,255,255,.82); border: 1px solid rgba(22,34,46,.2); border-radius: 6px; padding: 4px; }
+.inset-svg { width: 100%; height: 56px; display: block; }
+.inset-svg .dept:hover { filter: brightness(.92); }
+.inset-svg .dept.hl-sel, .inset-svg .dept.hl-target { stroke: var(--ink); stroke-width: 2.5px; }
+.inset-svg .dept.hl-ok { stroke: var(--ok); stroke-width: 3px; }
+.inset-svg .dept.hl-bad { stroke: var(--bad); stroke-width: 3px; }
+.inset-cap { font-size: 10.5px; line-height: 1.2; color: var(--ink); text-align: center; }
+.inset-num { font-weight: 700; }
+.tip { position: absolute; z-index: 5; pointer-events: none; background: var(--ink); color: #fff; border-radius: 6px; padding: 5px 9px; font-size: 13px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.tip .dim { opacity: .75; font-size: 12px; margin-top: 1px; }
+
+.banner { position: absolute; z-index: 6; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(540px, calc(100% - 32px)); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; box-shadow: 0 10px 40px rgba(22,34,46,.22); }
+.banner h3 { margin: 0 0 8px; font-size: 18px; }
+.banner p { margin: 0 0 10px; }
+.banner code { font-size: 12.5px; background: #eef1f4; padding: 1px 5px; border-radius: 4px; }
+.banner.busy { top: 16px; transform: translateX(-50%); width: auto; padding: 8px 16px; border-radius: 999px; }
+.banner.busy p { margin: 0; }
+.banner-actions { display: flex; gap: 8px; margin: 14px 0 6px; }
+.banner pre { white-space: pre-wrap; word-break: break-all; font-size: 11px; max-height: 120px; overflow: auto; background: #f3f5f7; padding: 8px; border-radius: 6px; }
+.bad-note { color: var(--bad); font-size: 13px; }
+.banner-inline { background: #fff4d6; border: 1px solid #ecd48a; border-radius: 8px; padding: 8px 12px; margin: 0 0 12px; }
+
+/* ------------------------------------------------------------------ panel */
+.panel { border-left: 1px solid var(--line); background: var(--panel); min-height: 0; display: flex; flex-direction: column; }
+#explore, #quiz { display: flex; flex-direction: column; min-height: 0; flex: 1; padding: 14px 16px 10px; gap: 12px; }
+#quiz { overflow-y: auto; }
+.search input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); font: inherit; }
+.search input:focus { border-color: var(--plate); outline: 2px solid rgba(11,63,148,.2); }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.card.intro-card { background: transparent; border-style: dashed; }
+.card h2, .intro h2 { margin: 0; font-size: 20px; line-height: 1.2; font-weight: 650; }
+.card .sub { margin: 2px 0 0; color: var(--muted); }
+.card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.intro p { margin: 6px 0 0; color: var(--muted); }
+.facts { display: grid; grid-template-columns: 124px 1fr; gap: 5px 10px; margin: 0; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; }
+.note { margin: 10px 0 0; color: var(--muted); }
+.tag { display: inline-block; font-size: 12px; padding: 0 6px; border-radius: 4px; background: #fdf1c4; border: 1px solid #ecd48a; }
+.swatch { width: 26px; height: 26px; border-radius: 6px; flex: none; border: 1px solid rgba(0,0,0,.12); }
+.swatch.sm { width: 14px; height: 14px; border-radius: 4px; }
+.swatch.river-sw { background: linear-gradient(135deg, #fff 0 38%, var(--river) 38% 62%, #fff 62%); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chip-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 4px 8px; }
+.chip-btn:hover { border-color: var(--plate); }
+.chip-btn.plain { border: 0; padding: 0; background: none; color: var(--plate); text-decoration: underline; text-underline-offset: 2px; }
+.chip-btn.static { background: #f4f5f6; }
+
+/* département number, styled like the strip on a French licence plate */
+.plate { display: inline-flex; align-items: stretch; border: 2px solid #111; border-radius: 6px; overflow: hidden; background: #fff; line-height: 1; font-family: var(--font); flex: none; }
+.plate-eu { background: var(--plate); color: #fff; font-size: 10px; font-weight: 700; padding: 0 5px 3px; display: flex; align-items: flex-end; }
+.plate-n { font-weight: 700; font-size: 26px; padding: 4px 10px; min-width: 2.1ch; text-align: center; color: #111; letter-spacing: .02em; }
+.plate.sm { border-width: 1.5px; border-radius: 4px; }
+.plate.sm .plate-eu { font-size: 7px; padding: 0 3px 2px; }
+.plate.sm .plate-n { font-size: 14px; padding: 2px 6px; min-width: 2.4ch; }
+
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); }
+.tabs button { border: 0; background: none; padding: 7px 10px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 600; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--plate); }
+.list { flex: 1; min-height: 0; overflow-y: auto; margin: 0 -6px; padding: 0 6px; }
+.li { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid #ecf0f2; padding: 7px 8px; }
+.li:hover { background: #f1f4f6; }
+.li.on { background: #e8eff8; box-shadow: inset 3px 0 0 var(--plate); }
+.li-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.li-sub { color: var(--muted); font-size: 13px; text-align: right; }
+.kind { font-size: 12px; color: var(--muted); min-width: 84px; }
+.empty { color: var(--muted); padding: 12px 4px; }
+.credit { margin: 0; font-size: 12px; color: var(--muted); }
+
+/* ------------------------------------------------------------------- quiz */
+#quiz h3 { margin: 14px 0 6px; font-size: 14px; font-weight: 650; }
+.qz-opts { display: grid; gap: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.qz-opts .lbl { display: block; color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: #fff; }
+.seg button { border: 0; background: none; padding: 5px 14px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.chk { display: flex; gap: 8px; align-items: center; }
+.qz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.qz-card { position: relative; display: grid; align-content: start; gap: 3px; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 11px; }
+.qz-card:hover:not(:disabled) { border-color: var(--plate); }
+.qz-card:disabled { opacity: .5; cursor: not-allowed; }
+.qz-card b { font-weight: 650; }
+.qz-card span { color: var(--muted); font-size: 12.5px; line-height: 1.3; }
+.qz-card small { color: var(--muted); font-size: 12px; }
+.mastery { display: block; height: 4px; border-radius: 2px; background: #e6eaed; overflow: hidden; margin-top: 4px; }
+.mastery i { display: block; height: 100%; background: var(--ok); }
+.qz-foot { color: var(--muted); font-size: 12.5px; margin: 14px 0 0; }
+
+#qz-play, #qz-end { display: flex; flex-direction: column; gap: 12px; }
+.qz-head { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; }
+.qz-bar { height: 4px; background: #e6eaed; border-radius: 2px; overflow: hidden; }
+.qz-bar i { display: block; height: 100%; background: var(--plate); transition: width .25s; }
+.qz-prompt { font-size: 19px; line-height: 1.5; margin: 6px 0 2px; }
+.qz-prompt .plate { vertical-align: middle; margin: 0 2px; }
+.qz-prompt b { font-weight: 700; }
+.qz-hint { color: var(--muted); margin: 0; }
+.qz-answers { display: grid; gap: 8px; }
+.qz-choice { display: flex; align-items: center; gap: 12px; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 15px; }
+.qz-choice:hover:not(:disabled) { border-color: var(--plate); background: #f5f8fc; }
+.qz-choice kbd { font: 600 12px var(--font); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; background: #f4f6f8; }
+.qz-choice.correct { background: #e5f4ea; border-color: var(--ok); }
+.qz-choice.wrong { background: #fbe8e6; border-color: var(--bad); }
+.qz-choice:disabled { cursor: default; color: var(--ink); }
+.qz-form { display: flex; gap: 8px; }
+.qz-form input { flex: 1; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; font-size: 15px; }
+.qz-form input.correct { border-color: var(--ok); background: #e5f4ea; }
+.qz-form input.wrong { border-color: var(--bad); background: #fbe8e6; }
+.qz-feedback { min-height: 64px; }
+.fb { margin: 0 0 6px; font-weight: 650; }
+.fb.ok { color: var(--ok); }
+.fb.bad { color: var(--bad); font-weight: 500; }
+.fb.bad b { font-weight: 700; }
+.fact { margin: 0; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.qz-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 8px 16px; font-weight: 600; }
+.btn:hover:not(:disabled) { border-color: var(--plate); }
+.btn.primary { background: var(--plate); border-color: var(--plate); color: #fff; }
+.btn.primary:hover:not(:disabled) { background: #08306f; }
+.btn.ghost { border-color: transparent; background: none; color: var(--muted); }
+.btn:disabled { opacity: .45; cursor: default; }
+#qz-end h2 { margin: 0; font-size: 22px; }
+.big { font-size: 56px; font-weight: 700; line-height: 1; margin: 0; }
+.big span { font-size: 20px; font-weight: 500; color: var(--muted); }
+.qz-sum { margin: 0; color: var(--muted); }
+.missed { margin: 0; padding-left: 18px; columns: 2; }
+
+/* ---------------------------------------------------------------- small */
+@media (max-width: 900px) {
+  body { overflow: auto; }
+  .stage { grid-template-columns: 1fr; grid-template-rows: 62vh auto; }
+  .panel { border-left: 0; border-top: 1px solid var(--line); }
+  .list { max-height: 50vh; }
+}
+@media (prefers-reduced-motion: reduce) { .qz-bar i { transition: none; } }
+
+.grapes { display: flex; flex-wrap: wrap; gap: 2px 10px; }
+.grape { color: var(--plate, inherit); text-decoration: underline; text-underline-offset: 2px; }
+.grape:hover { text-decoration-thickness: 2px; }
+.sub-h { font-size: 13px; margin: 14px 0 0; color: var(--muted); font-weight: 600; }
+.chips.tight { margin-top: 6px; }
+
+/* quiz : catégories bien visibles */
+.qz-group { margin-top: 18px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--g) 30%, #fff); background: color-mix(in srgb, var(--g) 6%, #fff); overflow: hidden; }
+.qz-ghead { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--g); color: #fff; }
+.qz-ghead h3 { margin: 0; font-size: 17px; letter-spacing: .01em; color: #fff; }
+.qz-ghead small { display: block; opacity: .85; font-size: 12.5px; }
+.qz-gicon { font-size: 24px; line-height: 1; }
+.qz-gcount { margin-left: auto; font-size: 12px; background: rgba(255,255,255,.2); border-radius: 999px; padding: 2px 10px; }
+.qz-group .qz-grid { padding: 10px; }
+.qz-group .qz-card { border-left: 4px solid var(--g); }
+.qz-group .qz-card:hover:not(:disabled) { border-color: var(--g); }
+.qz-group .mastery i { background: var(--g); }
+.qz-tag { position: absolute; top: 8px; right: 8px; font-style: normal; font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); background: #f1f3f5; border-radius: 4px; padding: 1px 6px; }
+.qz-tag.map { color: #fff; background: var(--g); }
+.qz-card b { padding-right: 52px; }
+.qz-cat { align-self: flex-start; font-size: 13px; font-weight: 600; color: #fff; background: var(--g); border-radius: 999px; padding: 4px 12px; }
+.qz-cat em { font-style: normal; opacity: .85; font-weight: 500; }
+.qz-aside { font-size: 13px; font-weight: 500; color: #d9480f; }
+body[data-mode="quiz"] .map .pref-dot { stroke-width: 12px; stroke: rgba(11,63,148,.22); paint-order: stroke; }
+
+/* ---------- quiz : carte neutre, mises en évidence franches ---------- */
+body[data-mode="quiz"] .map .dept, body[data-mode="quiz"] .paris-svg .dept { fill: #e8e3d8; }
+body[data-mode="quiz"] .map .dept:hover, body[data-mode="quiz"] .paris-svg .dept:hover { fill: #d6cfbf; }
+body[data-mode="quiz"] .map .dept.rh { fill: #d6cfbf; filter: none; }
+body[data-mode="quiz"] .map .region-line { stroke: #6b7782; }
+.map .hl-target { stroke: #111c26; stroke-width: 3px; fill: rgba(255,196,0,.88); }
+.map .hl-regtarget { stroke: rgba(17,28,38,.3); stroke-width: 1px; fill: rgba(255,196,0,.88); }
+.map .hl-ok { stroke: #11603a; stroke-width: 3px; fill: rgba(39,160,95,.85); }
+.map .hl-bad { stroke: #8f1d16; stroke-width: 3px; fill: rgba(214,69,62,.85); }
+.map .hl-regok { stroke: rgba(17,96,58,.4); stroke-width: 1px; fill: rgba(39,160,95,.85); }
+.map .hl-regbad { stroke: rgba(143,29,22,.4); stroke-width: 1px; fill: rgba(214,69,62,.85); }
+.map .hl-river.hl-ok { stroke: rgba(39,160,95,.85); fill: none; }
+.map .hl-river.hl-bad { stroke: rgba(214,69,62,.85); fill: none; }
+.map .hl-river.hl-target, .map .hl-river.hl-sel { stroke: rgba(255,196,0,.9); fill: none; }
+.map .hl-dot.hl-ok { fill: #27a05f; stroke: #fff; stroke-width: 2px; }
+.map .hl-dot.hl-bad { fill: #d6453e; stroke: #fff; stroke-width: 2px; }
+.map .hl-dot.hl-reticle { fill: rgba(214,69,62,.22); stroke: #d6453e; stroke-width: 3px; stroke-dasharray: none; }
+
+/* bandeau de question / résultat au-dessus de la carte */
+.qz-banner { position: absolute; z-index: 4; top: 12px; left: 50%; transform: translateX(-50%); max-width: calc(100% - 150px);
+  background: #111c26; color: #fff; border-radius: 999px; padding: 9px 20px; font-size: 17px; line-height: 1.3; text-align: center;
+  box-shadow: 0 6px 20px rgba(17,28,38,.25); pointer-events: none; }
+.qz-banner b { color: #ffd23f; }
+.qz-banner .plate { vertical-align: middle; }
+.qz-banner.ok { background: #1d7f4b; } .qz-banner.ok b { color: #fff; }
+.qz-banner.bad { background: #b8352e; } .qz-banner.bad b { color: #fff; }
+.qz-banner .mark { font-weight: 800; margin-right: 4px; }
+body[data-mode="explore"] .qz-banner { display: none; }
+
+/* Paris et petite couronne, agrandis */
+.paris-tile { position: absolute; z-index: 3; left: 12px; top: 60px; width: 132px; background: rgba(255,255,255,.9); border: 1px solid rgba(22,34,46,.2); border-radius: 8px; padding: 6px 6px 4px; box-shadow: 0 2px 10px rgba(17,28,38,.12); }
+.paris-svg { display: block; width: 100%; height: 100px; }
+.paris-svg .dept { fill: var(--c); stroke: #fff; stroke-width: 1.5px; cursor: pointer; }
+.paris-svg .dept:hover { filter: brightness(.92); }
+.paris-svg .dept.rh { filter: brightness(.9); }
+.paris-svg .pnum { font-weight: 700; font-family: var(--font); fill: #111c26; pointer-events: none; paint-order: stroke; stroke: rgba(255,255,255,.85); stroke-width: .25px; }
+.paris-svg .dept.hl-sel, .paris-svg .dept.hl-target, .paris-svg .dept.hl-regsel, .paris-svg .dept.hl-regtarget { fill: rgba(255,196,0,.9); }
+.paris-svg .dept.hl-ok, .paris-svg .dept.hl-regok { fill: #27a05f; }
+.paris-svg .dept.hl-bad, .paris-svg .dept.hl-regbad { fill: #d6453e; }
+.paris-cap { font-size: 11.5px; color: #4a5a68; text-align: center; margin-top: 2px; }
+.mapwrap:not(.l-paris) .paris-tile { display: none; }
+body[data-mode="quiz"] .paris-svg .pnum { display: none; }
+
+/* vignobles dessinés par départements */
+.map .wine-zone.from-depts { stroke: none; }
+.map .wine-line { fill: none; stroke: var(--wc); stroke-width: 2px; stroke-linejoin: round; vector-effect: non-scaling-stroke; pointer-events: none; }
+.mapwrap:not(.l-wines) .wine-line { display: none; }
+body[data-mode="quiz"] .paris-tile { top: 12px; }
+.map .hl.hl-fillonly { stroke: none; }
+.map .hl-wine-line { fill: none; }
+
+/* fleuve mis en évidence : liseré sombre + trait vif, lisible sur toutes les couleurs */
+.map .hl-river-case { fill: none; stroke: #111c26; stroke-width: 8px; stroke-linecap: round; stroke-linejoin: round; }
+.map .hl.hl-river { fill: none; stroke-width: 4px; stroke-linecap: round; stroke-linejoin: round; }
+.map .hl-river.hl-sel, .map .hl-river.hl-target { stroke: #ffd23f; }
+.map .hl-river.hl-ok { stroke: #3ddc84; }
+.map .hl-river.hl-bad { stroke: #ff6b5e; }
+</style>
+</head>
+<body data-mode="explore">
+<header class="top">
+  <div class="brand"><span class="brand-mark" aria-hidden="true">F</span><h1>France Explorer</h1></div>
+  <div class="top-right">
+    <button class="link" id="reload" type="button" title="Supprimer les frontières enregistrées et les télécharger à nouveau">Recharger les frontières</button>
+    <div class="modes" role="tablist" aria-label="Mode">
+      <button role="tab" id="tab-explore" aria-selected="true" type="button">Explorer</button>
+      <button role="tab" id="tab-quiz" aria-selected="false" type="button">Quiz</button>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+  <section class="mapwrap" id="mapwrap" aria-label="Carte de la France">
+    <div class="toolbar" id="chips" role="group" aria-label="Calques de la carte">
+      <button type="button" data-chip="regions" aria-pressed="true">Régions</button>
+      <button type="button" data-chip="depts" aria-pressed="true">Départements</button>
+      <button type="button" data-chip="nums" aria-pressed="true">Numéros</button>
+      <button type="button" data-chip="prefs" aria-pressed="false">Préfectures</button>
+      <button type="button" data-chip="rivers" aria-pressed="false">Cours d'eau</button>
+      <button type="button" data-chip="wines" aria-pressed="false">Vignobles</button>
+    </div>
+    <div class="zoombtns">
+      <button type="button" id="zin" aria-label="Zoom avant">+</button>
+      <button type="button" id="zout" aria-label="Zoom arrière">−</button>
+      <button type="button" id="zhome" aria-label="Voir toute la France">Tout</button>
+    </div>
+    <div class="qz-banner" id="qz-banner" hidden role="status" aria-live="polite"></div>
+    <div class="insets" id="insets" hidden aria-label="Départements d'outre-mer"></div>
+    <div class="tip" id="tip" hidden></div>
+    <div class="banner busy" id="banner"><p class="busy">Chargement…</p></div>
+    <input type="file" id="filepick" accept=".geojson,.json,application/json,application/geo+json" multiple hidden>
+  </section>
+
+  <aside class="panel">
+    <div id="explore">
+      <label class="search"><span class="sr">Rechercher</span>
+        <input id="q" type="search" placeholder="Rechercher : 63, Lyon, Loire, Champagne…" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="card" id="card"></div>
+      <div class="tabs" id="listtabs" role="tablist" aria-label="Parcourir">
+        <button type="button" role="tab" data-tab="dept" aria-selected="true">Départements</button>
+        <button type="button" role="tab" data-tab="region" aria-selected="false">Régions</button>
+        <button type="button" role="tab" data-tab="river" aria-selected="false">Cours d'eau</button>
+        <button type="button" role="tab" data-tab="wine" aria-selected="false">Vins</button>
+      </div>
+      <div class="list" id="list"></div>
+      <p class="credit">Frontières : données ouvertes de gregoiredavid/france-geojson. Les cours d'eau sont tracés à la main (approximatifs) ; les vignobles sont simplifiés par départements.</p>
+    </div>
+    <div id="quiz" hidden>
+      <div id="qz-menu"></div>
+      <div id="qz-play" hidden></div>
+      <div id="qz-end" hidden></div>
+    </div>
+  </aside>
+</main>
+
+<script>/* ===== data.js ===== */
+/* France Explorer — hand-compiled reference data.
+   Coordinates are [lat, lon]. Rivers and wine zones are approximate, traced through known towns. */
+const FR = {};
+
+/* Régions: code -> name, capital (préfecture de région), fill colour */
+FR.REGIONS = {
+  "84": { name: "Auvergne-Rhône-Alpes",       capital: "Lyon",            color: "#9cc5a1" },
+  "27": { name: "Bourgogne-Franche-Comté",    capital: "Dijon",           color: "#e2b48f" },
+  "53": { name: "Bretagne",                   capital: "Rennes",          color: "#9db9dc" },
+  "24": { name: "Centre-Val de Loire",        capital: "Orléans",         color: "#e5d58f" },
+  "94": { name: "Corse",                      capital: "Ajaccio",         color: "#c3a7d8" },
+  "44": { name: "Grand Est",                  capital: "Strasbourg",      color: "#dc9fa9" },
+  "32": { name: "Hauts-de-France",            capital: "Lille",           color: "#bfd08e" },
+  "11": { name: "Île-de-France",              capital: "Paris",           color: "#f0bc72" },
+  "28": { name: "Normandie",                  capital: "Rouen",           color: "#8fd0c6" },
+  "75": { name: "Nouvelle-Aquitaine",         capital: "Bordeaux",        color: "#b4a9de" },
+  "76": { name: "Occitanie",                  capital: "Toulouse",        color: "#e3a5cf" },
+  "52": { name: "Pays de la Loire",           capital: "Nantes",          color: "#f0a98e" },
+  "93": { name: "Provence-Alpes-Côte d'Azur", capital: "Marseille",       color: "#efc95f" },
+  "01": { name: "Guadeloupe",                 capital: "Basse-Terre",     color: "#a8c8b8" },
+  "02": { name: "Martinique",                 capital: "Fort-de-France",  color: "#c8b8a0" },
+  "03": { name: "Guyane",                     capital: "Cayenne",         color: "#b8c8a0" },
+  "04": { name: "La Réunion",                 capital: "Saint-Denis",     color: "#d0b0b8" },
+  "06": { name: "Mayotte",                    capital: "Mamoudzou",       color: "#b0c0d0" }
+};
+
+/* Départements: [code, name, préfecture, région code, lat, lon of préfecture] */
+FR.DEPTS = [
+  ["01","Ain","Bourg-en-Bresse","84",46.205,5.226],
+  ["02","Aisne","Laon","32",49.564,3.620],
+  ["03","Allier","Moulins","84",46.566,3.334],
+  ["04","Alpes-de-Haute-Provence","Digne-les-Bains","93",44.092,6.236],
+  ["05","Hautes-Alpes","Gap","93",44.559,6.079],
+  ["06","Alpes-Maritimes","Nice","93",43.710,7.262],
+  ["07","Ardèche","Privas","84",44.735,4.599],
+  ["08","Ardennes","Charleville-Mézières","44",49.773,4.719],
+  ["09","Ariège","Foix","76",42.965,1.605],
+  ["10","Aube","Troyes","44",48.297,4.074],
+  ["11","Aude","Carcassonne","76",43.213,2.349],
+  ["12","Aveyron","Rodez","76",44.350,2.575],
+  ["13","Bouches-du-Rhône","Marseille","93",43.296,5.370],
+  ["14","Calvados","Caen","28",49.182,-0.371],
+  ["15","Cantal","Aurillac","84",44.926,2.444],
+  ["16","Charente","Angoulême","75",45.649,0.156],
+  ["17","Charente-Maritime","La Rochelle","75",46.160,-1.152],
+  ["18","Cher","Bourges","24",47.081,2.399],
+  ["19","Corrèze","Tulle","75",45.266,1.768],
+  ["2A","Corse-du-Sud","Ajaccio","94",41.919,8.738],
+  ["2B","Haute-Corse","Bastia","94",42.697,9.451],
+  ["21","Côte-d'Or","Dijon","27",47.322,5.041],
+  ["22","Côtes-d'Armor","Saint-Brieuc","53",48.514,-2.760],
+  ["23","Creuse","Guéret","75",46.171,1.871],
+  ["24","Dordogne","Périgueux","75",45.184,0.722],
+  ["25","Doubs","Besançon","27",47.238,6.024],
+  ["26","Drôme","Valence","84",44.933,4.892],
+  ["27","Eure","Évreux","28",49.027,1.151],
+  ["28","Eure-et-Loir","Chartres","24",48.447,1.489],
+  ["29","Finistère","Quimper","53",47.996,-4.102],
+  ["30","Gard","Nîmes","76",43.837,4.360],
+  ["31","Haute-Garonne","Toulouse","76",43.604,1.444],
+  ["32","Gers","Auch","76",43.646,0.586],
+  ["33","Gironde","Bordeaux","75",44.838,-0.579],
+  ["34","Hérault","Montpellier","76",43.611,3.877],
+  ["35","Ille-et-Vilaine","Rennes","53",48.117,-1.678],
+  ["36","Indre","Châteauroux","24",46.811,1.691],
+  ["37","Indre-et-Loire","Tours","24",47.394,0.685],
+  ["38","Isère","Grenoble","84",45.188,5.724],
+  ["39","Jura","Lons-le-Saunier","27",46.675,5.555],
+  ["40","Landes","Mont-de-Marsan","75",43.890,-0.500],
+  ["41","Loir-et-Cher","Blois","24",47.586,1.336],
+  ["42","Loire","Saint-Étienne","84",45.439,4.387],
+  ["43","Haute-Loire","Le Puy-en-Velay","84",45.043,3.885],
+  ["44","Loire-Atlantique","Nantes","52",47.218,-1.554],
+  ["45","Loiret","Orléans","24",47.903,1.909],
+  ["46","Lot","Cahors","76",44.448,1.441],
+  ["47","Lot-et-Garonne","Agen","75",44.203,0.616],
+  ["48","Lozère","Mende","76",44.518,3.500],
+  ["49","Maine-et-Loire","Angers","52",47.478,-0.563],
+  ["50","Manche","Saint-Lô","28",49.116,-1.090],
+  ["51","Marne","Châlons-en-Champagne","44",48.957,4.363],
+  ["52","Haute-Marne","Chaumont","44",48.111,5.139],
+  ["53","Mayenne","Laval","52",48.070,-0.770],
+  ["54","Meurthe-et-Moselle","Nancy","44",48.692,6.184],
+  ["55","Meuse","Bar-le-Duc","44",48.773,5.161],
+  ["56","Morbihan","Vannes","53",47.658,-2.760],
+  ["57","Moselle","Metz","44",49.119,6.176],
+  ["58","Nièvre","Nevers","27",46.990,3.159],
+  ["59","Nord","Lille","32",50.629,3.057],
+  ["60","Oise","Beauvais","32",49.430,2.081],
+  ["61","Orne","Alençon","28",48.432,0.091],
+  ["62","Pas-de-Calais","Arras","32",50.291,2.777],
+  ["63","Puy-de-Dôme","Clermont-Ferrand","84",45.777,3.087],
+  ["64","Pyrénées-Atlantiques","Pau","75",43.295,-0.371],
+  ["65","Hautes-Pyrénées","Tarbes","76",43.233,0.078],
+  ["66","Pyrénées-Orientales","Perpignan","76",42.699,2.895],
+  ["67","Bas-Rhin","Strasbourg","44",48.573,7.752],
+  ["68","Haut-Rhin","Colmar","44",48.079,7.358],
+  ["69","Rhône","Lyon","84",45.764,4.836],
+  ["70","Haute-Saône","Vesoul","27",47.620,6.155],
+  ["71","Saône-et-Loire","Mâcon","27",46.307,4.829],
+  ["72","Sarthe","Le Mans","52",48.006,0.199],
+  ["73","Savoie","Chambéry","84",45.564,5.918],
+  ["74","Haute-Savoie","Annecy","84",45.899,6.129],
+  ["75","Paris","Paris","11",48.857,2.352],
+  ["76","Seine-Maritime","Rouen","28",49.443,1.099],
+  ["77","Seine-et-Marne","Melun","11",48.542,2.660],
+  ["78","Yvelines","Versailles","11",48.805,2.130],
+  ["79","Deux-Sèvres","Niort","75",46.324,-0.464],
+  ["80","Somme","Amiens","32",49.895,2.296],
+  ["81","Tarn","Albi","76",43.929,2.148],
+  ["82","Tarn-et-Garonne","Montauban","76",44.018,1.355],
+  ["83","Var","Toulon","93",43.124,5.928],
+  ["84","Vaucluse","Avignon","93",43.949,4.806],
+  ["85","Vendée","La Roche-sur-Yon","52",46.670,-1.426],
+  ["86","Vienne","Poitiers","75",46.581,0.340],
+  ["87","Haute-Vienne","Limoges","75",45.833,1.261],
+  ["88","Vosges","Épinal","44",48.172,6.449],
+  ["89","Yonne","Auxerre","27",47.798,3.573],
+  ["90","Territoire de Belfort","Belfort","27",47.640,6.863],
+  ["91","Essonne","Évry-Courcouronnes","11",48.629,2.443],
+  ["92","Hauts-de-Seine","Nanterre","11",48.892,2.207],
+  ["93","Seine-Saint-Denis","Bobigny","11",48.907,2.440],
+  ["94","Val-de-Marne","Créteil","11",48.790,2.455],
+  ["95","Val-d'Oise","Cergy","11",49.036,2.076],
+  /* Outre-mer (DROM) */
+  ["971","Guadeloupe","Basse-Terre","01",16.000,-61.733],
+  ["972","Martinique","Fort-de-France","02",14.616,-61.059],
+  ["973","Guyane","Cayenne","03",4.922,-52.313],
+  ["974","La Réunion","Saint-Denis","04",-20.879,55.448],
+  ["976","Mayotte","Mamoudzou","06",-12.781,45.228]
+].map(r => ({ code: r[0], name: r[1], pref: r[2], region: r[3], lat: r[4], lon: r[5], overseas: r[0].length === 3 }));
+
+/* Rivers: path = waypoints through known towns, drawn as a smooth curve. km = approximate total length. */
+FR.RIVERS = [
+  { id:"loire", name:"Loire", det:"la Loire", km:1006, source:"Mont Gerbier de Jonc (Ardèche)", mouth:"l'océan Atlantique, à Saint-Nazaire",
+    cities:["Le Puy-en-Velay","Roanne","Nevers","Orléans","Blois","Tours","Saumur","Angers","Nantes"], note:"Le plus long fleuve de France.",
+    path:[[44.84,4.22],[44.93,4.12],[45.05,3.99],[45.21,4.03],[45.30,4.10],[45.37,4.25],[45.53,4.26],[45.74,4.23],[45.81,4.19],[46.04,4.07],[46.25,3.99],[46.48,3.98],[46.65,3.80],[46.83,3.45],[46.93,3.28],[46.99,3.16],[47.18,3.01],[47.41,2.93],[47.64,2.74],[47.69,2.63],[47.77,2.37],[47.85,2.10],[47.90,1.91],[47.78,1.63],[47.59,1.34],[47.50,1.15],[47.41,0.98],[47.39,0.69],[47.33,0.41],[47.30,0.20],[47.26,-0.08],[47.35,-0.30],[47.43,-0.52],[47.40,-0.92],[47.37,-1.18],[47.22,-1.55],[47.22,-1.73],[47.29,-2.03],[47.27,-2.20]] },
+  { id:"seine", name:"Seine", det:"la Seine", km:777, source:"Source-Seine (Côte-d'Or)", mouth:"la Manche, près du Havre",
+    cities:["Troyes","Melun","Paris","Mantes-la-Jolie","Rouen","Honfleur"], note:"Elle traverse Paris en son cœur.",
+    path:[[47.49,4.72],[47.86,4.57],[48.11,4.37],[48.30,4.08],[48.51,3.88],[48.49,3.50],[48.39,2.95],[48.54,2.66],[48.61,2.48],[48.76,2.42],[48.85,2.35],[48.84,2.23],[48.93,2.30],[48.95,2.25],[48.93,2.04],[49.01,1.90],[48.99,1.72],[49.09,1.48],[49.24,1.41],[49.30,1.15],[49.28,1.01],[49.44,1.09],[49.48,0.88],[49.52,0.73],[49.47,0.46],[49.42,0.23]] },
+  { id:"garonne", name:"Garonne", det:"la Garonne", km:529, source:"Val d'Aran (Espagne), dans les Pyrénées", mouth:"l'estuaire de la Gironde, puis l'océan Atlantique",
+    cities:["Saint-Gaudens","Toulouse","Agen","Langon","Bordeaux"], note:"Elle rejoint la Dordogne au Bec d'Ambès pour former l'estuaire de la Gironde.",
+    path:[[42.65,0.95],[42.78,0.69],[42.91,0.69],[43.11,0.73],[43.21,1.09],[43.46,1.33],[43.60,1.44],[43.77,1.29],[43.86,1.23],[44.07,1.02],[44.11,0.89],[44.20,0.62],[44.30,0.34],[44.50,0.17],[44.58,-0.04],[44.55,-0.25],[44.64,-0.32],[44.84,-0.57],[45.03,-0.55],[45.13,-0.66],[45.20,-0.75],[45.40,-0.88],[45.58,-1.04]] },
+  { id:"rhone", name:"Rhône", det:"le Rhône", km:812, source:"glacier du Rhône (Suisse)", mouth:"la mer Méditerranée, en Camargue",
+    cities:["Lyon","Vienne","Valence","Avignon","Arles"], note:"Environ 545 km de son cours sont en France.",
+    path:[[46.21,6.15],[46.12,5.90],[45.96,5.83],[45.70,5.75],[45.66,5.68],[45.90,5.35],[45.82,5.00],[45.76,4.83],[45.59,4.77],[45.52,4.87],[45.47,4.77],[45.07,4.83],[44.93,4.89],[44.77,4.84],[44.56,4.75],[44.38,4.70],[44.14,4.80],[43.95,4.80],[43.80,4.65],[43.68,4.63],[43.51,4.70],[43.38,4.80]] },
+  { id:"dordogne", name:"Dordogne", det:"la Dordogne", km:483, source:"Puy de Sancy (Massif central)", mouth:"la Garonne, au Bec d'Ambès",
+    cities:["Bort-les-Orgues","Argentat","Souillac","Bergerac","Libourne"], note:"Elle traverse le Périgord et passe près de Saint-Émilion.",
+    path:[[45.57,2.81],[45.40,2.50],[45.09,1.94],[44.98,1.84],[44.89,1.48],[44.84,1.14],[44.87,1.02],[44.88,0.90],[44.84,0.74],[44.85,0.48],[44.84,0.21],[44.85,-0.04],[44.92,-0.24],[44.98,-0.45],[45.03,-0.55]] },
+  { id:"saone", name:"Saône", det:"la Saône", km:480, source:"Vioménil (Vosges)", mouth:"le Rhône, à Lyon",
+    cities:["Gray","Chalon-sur-Saône","Tournus","Mâcon","Villefranche-sur-Saône","Lyon"], note:"Rivière lente et large, qui traverse la Bourgogne et le Beaujolais.",
+    path:[[48.00,6.00],[47.96,5.86],[47.82,5.90],[47.69,6.03],[47.65,5.96],[47.55,5.72],[47.45,5.59],[47.19,5.38],[47.10,5.25],[46.90,5.00],[46.78,4.85],[46.56,4.91],[46.31,4.83],[46.11,4.75],[45.99,4.72],[45.94,4.77],[45.87,4.84],[45.74,4.82]] },
+  { id:"marne", name:"Marne", det:"la Marne", km:514, source:"plateau de Langres (Haute-Marne)", mouth:"la Seine, à Charenton, près de Paris",
+    cities:["Chaumont","Saint-Dizier","Châlons-en-Champagne","Épernay","Meaux"], note:"Plus long affluent de la Seine ; elle traverse la Champagne.",
+    path:[[47.86,5.33],[48.11,5.14],[48.44,5.14],[48.64,4.95],[48.73,4.58],[48.96,4.36],[49.04,3.96],[49.04,3.40],[48.95,3.13],[48.96,2.88],[48.87,2.71],[48.82,2.41]] },
+  { id:"meuse", name:"Meuse", det:"la Meuse", km:975, source:"Pouilly-en-Bassigny (Haute-Marne)", mouth:"la mer du Nord, aux Pays-Bas",
+    cities:["Neufchâteau","Verdun","Sedan","Charleville-Mézières","Givet"], note:"Elle quitte la France à Givet et continue en Belgique.",
+    path:[[47.98,5.51],[48.35,5.69],[48.43,5.67],[48.76,5.59],[48.89,5.55],[49.16,5.39],[49.49,5.19],[49.70,4.94],[49.77,4.72],[49.93,4.64],[49.99,4.70],[50.14,4.82]] },
+  { id:"moselle", name:"Moselle", det:"la Moselle", km:545, source:"Bussang (Vosges)", mouth:"le Rhin, à Coblence (Allemagne)",
+    cities:["Épinal","Toul","Pont-à-Mousson","Metz","Thionville"], note:"Elle quitte la France à la frontière luxembourgeoise.",
+    path:[[47.89,6.86],[48.02,6.59],[48.17,6.45],[48.37,6.29],[48.68,5.89],[48.91,6.06],[49.12,6.18],[49.36,6.17],[49.44,6.36]] },
+  { id:"rhin", name:"Rhin", det:"le Rhin", km:1230, source:"Alpes suisses", mouth:"la mer du Nord, aux Pays-Bas",
+    cities:["Huningue","Neuf-Brisach","Strasbourg","Lauterbourg"], note:"Il forme la frontière entre l'Alsace et l'Allemagne.",
+    path:[[47.59,7.59],[47.69,7.52],[47.82,7.54],[48.01,7.55],[48.16,7.55],[48.35,7.74],[48.58,7.80],[48.69,7.90],[48.78,8.00],[48.97,8.18]] },
+  { id:"allier", name:"Allier", det:"l'Allier", km:421, source:"massif de la Margeride (Lozère)", mouth:"la Loire, au Bec d'Allier, près de Nevers",
+    cities:["Langeac","Brioude","Issoire","Vichy","Moulins"], note:"Dernière grande rivière sauvage du bassin de la Loire.",
+    path:[[44.58,3.85],[44.68,3.85],[45.10,3.49],[45.29,3.39],[45.54,3.25],[45.80,3.25],[46.12,3.42],[46.31,3.29],[46.57,3.33],[46.65,3.34],[46.82,3.17],[46.95,3.08]] },
+  { id:"lot", name:"Lot", det:"le Lot", km:485, source:"mont Lozère", mouth:"la Garonne, à Aiguillon",
+    cities:["Mende","Espalion","Cahors","Villeneuve-sur-Lot"], note:"Le vin de Cahors pousse le long de sa vallée.",
+    path:[[44.45,3.70],[44.52,3.50],[44.47,3.34],[44.43,2.98],[44.52,2.77],[44.64,2.57],[44.57,2.08],[44.48,1.84],[44.45,1.44],[44.50,0.96],[44.41,0.70],[44.30,0.34]] },
+  { id:"tarn", name:"Tarn", det:"le Tarn", km:381, source:"mont Lozère", mouth:"la Garonne, près de Moissac",
+    cities:["Florac","Millau","Albi","Gaillac","Montauban"], note:"Il creuse les gorges du Tarn.",
+    path:[[44.40,3.70],[44.32,3.59],[44.37,3.41],[44.10,3.08],[43.95,2.40],[43.93,2.15],[43.90,1.90],[43.82,1.72],[43.86,1.50],[44.02,1.35],[44.10,1.09]] },
+  { id:"charente", name:"Charente", det:"la Charente", km:381, source:"Chéronnac (Haute-Vienne)", mouth:"l'océan Atlantique, près de Rochefort",
+    cities:["Angoulême","Cognac","Saintes","Rochefort"], note:"Elle donne son nom au pays du cognac.",
+    path:[[45.70,0.72],[45.88,0.18],[45.65,0.16],[45.68,-0.17],[45.70,-0.33],[45.75,-0.63],[45.88,-0.68],[45.94,-0.96],[45.98,-1.10]] },
+  { id:"vienne", name:"Vienne", det:"la Vienne", km:372, source:"plateau de Millevaches (Corrèze)", mouth:"la Loire, à Candes-Saint-Martin",
+    cities:["Limoges","Confolens","Châtellerault","Chinon"], note:"À ne pas confondre avec la ville de Vienne, sur le Rhône.",
+    path:[[45.63,2.03],[45.74,1.74],[45.83,1.26],[45.89,0.90],[46.01,0.67],[46.13,0.65],[46.23,0.68],[46.45,0.65],[46.57,0.65],[46.82,0.55],[46.96,0.58],[47.12,0.43],[47.17,0.24],[47.22,0.05]] },
+  { id:"cher", name:"Cher", det:"le Cher", km:367, source:"Mérinchal (Creuse)", mouth:"la Loire, près de Tours",
+    cities:["Montluçon","Vierzon","Villandry"], note:"Il passe sous le château de Chenonceau.",
+    path:[[45.97,2.45],[46.34,2.60],[46.72,2.51],[47.22,2.07],[47.28,1.56],[47.27,1.37],[47.34,1.18],[47.33,1.07],[47.35,0.55],[47.34,0.51]] },
+  { id:"somme", name:"Somme", det:"la Somme", km:245, source:"Fonsomme (Aisne)", mouth:"la Manche, dans la baie de Somme",
+    cities:["Saint-Quentin","Péronne","Amiens","Abbeville"], note:"Théâtre des grandes batailles de 1916.",
+    path:[[49.85,3.30],[49.85,3.29],[49.75,3.07],[49.93,2.93],[49.94,2.71],[49.91,2.51],[49.89,2.30],[49.94,2.14],[50.10,1.83],[50.18,1.63]] },
+  { id:"oise", name:"Oise", det:"l'Oise", km:341, source:"près de Chimay (Belgique)", mouth:"la Seine, à Conflans-Sainte-Honorine",
+    cities:["Guise","Compiègne","Creil","Pontoise"], note:"Principal affluent de la Seine en aval de Paris.",
+    path:[[50.05,4.30],[49.92,4.08],[49.90,3.63],[49.66,3.37],[49.62,3.22],[49.58,2.99],[49.42,2.82],[49.26,2.48],[49.11,2.23],[49.05,2.10],[48.99,2.09]] },
+  { id:"yonne", name:"Yonne", det:"l'Yonne", km:295, source:"mont Préneley (Morvan)", mouth:"la Seine, à Montereau",
+    cities:["Clamecy","Auxerre","Sens"], note:"Elle traverse Auxerre, non loin du vignoble de Chablis.",
+    path:[[47.07,4.03],[47.20,3.90],[47.26,3.68],[47.46,3.52],[47.80,3.57],[47.98,3.40],[48.08,3.30],[48.20,3.28],[48.28,3.20],[48.38,2.95]] },
+  { id:"durance", name:"Durance", det:"la Durance", km:324, source:"Montgenèvre (Hautes-Alpes)", mouth:"le Rhône, près d'Avignon",
+    cities:["Briançon","Embrun","Sisteron","Manosque"], note:"Rivière alpine capricieuse, très aménagée par des barrages.",
+    path:[[44.93,6.72],[44.90,6.64],[44.67,6.62],[44.56,6.50],[44.52,6.40],[44.46,6.05],[44.19,5.94],[44.09,5.99],[43.83,5.78],[43.74,5.65],[43.69,5.50],[43.73,5.37],[43.84,5.04],[43.93,4.77]] },
+  { id:"isere", name:"Isère", det:"l'Isère", km:286, source:"Val-d'Isère (Savoie)", mouth:"le Rhône, près de Valence",
+    cities:["Bourg-Saint-Maurice","Albertville","Grenoble","Romans-sur-Isère"], note:"Rivière alpine qui a donné son nom à un département.",
+    path:[[45.45,6.98],[45.47,6.90],[45.62,6.77],[45.55,6.65],[45.49,6.53],[45.68,6.39],[45.50,6.06],[45.19,5.72],[45.29,5.63],[45.15,5.32],[45.05,5.05],[44.97,4.85]] },
+  { id:"doubs", name:"Doubs", det:"le Doubs", km:453, source:"Mouthe (Doubs)", mouth:"la Saône, près de Verdun-sur-le-Doubs",
+    cities:["Pontarlier","Montbéliard","Besançon","Dole"], note:"Il dessine une grande boucle autour de la vieille ville de Besançon.",
+    path:[[46.71,6.20],[46.90,6.35],[47.06,6.60],[47.32,6.82],[47.51,6.80],[47.44,6.58],[47.40,6.50],[47.35,6.36],[47.24,6.03],[47.09,5.49],[46.90,5.00]] },
+  { id:"adour", name:"Adour", det:"l'Adour", km:335, source:"Pic du Midi de Bigorre (Pyrénées)", mouth:"l'océan Atlantique, près de Bayonne",
+    cities:["Bagnères-de-Bigorre","Tarbes","Dax","Bayonne"], note:"Principal fleuve de la côte atlantique du Sud-Ouest.",
+    path:[[42.93,0.14],[43.07,0.15],[43.23,0.08],[43.47,0.03],[43.70,-0.26],[43.77,-0.43],[43.76,-0.57],[43.71,-1.05],[43.49,-1.30],[43.49,-1.48],[43.53,-1.52]] },
+  { id:"aude", name:"Aude", det:"l'Aude", km:224, source:"Pyrénées (Pyrénées-Orientales)", mouth:"la mer Méditerranée, près de Vendres",
+    cities:["Quillan","Limoux","Carcassonne","Coursan"], note:"Elle longe la Cité médiévale de Carcassonne.",
+    path:[[42.57,2.00],[42.79,2.23],[42.87,2.18],[42.96,2.26],[43.05,2.22],[43.21,2.35],[43.21,2.44],[43.23,2.60],[43.24,2.95],[43.23,3.05],[43.18,3.28]] },
+  { id:"vilaine", name:"Vilaine", det:"la Vilaine", km:225, source:"Juvigné (Mayenne)", mouth:"l'océan Atlantique, à Arzal",
+    cities:["Vitré","Rennes","Redon"], note:"Principal fleuve de Bretagne ; elle traverse Rennes.",
+    path:[[48.20,-0.87],[48.12,-1.21],[48.11,-1.68],[48.02,-1.72],[47.97,-1.79],[47.82,-1.81],[47.65,-2.08],[47.52,-2.30],[47.51,-2.37]] },
+  { id:"orne", name:"Orne", det:"l'Orne", km:170, source:"Aunou-sur-Orne (Orne)", mouth:"la Manche, à Ouistreham",
+    cities:["Argentan","Caen"], note:"Elle traverse Caen avant de rejoindre la côte normande.",
+    path:[[48.65,0.17],[48.74,-0.02],[48.91,-0.27],[48.91,-0.49],[48.99,-0.48],[49.18,-0.37],[49.28,-0.25]] }
+];
+
+/* Wine regions: rings = list of polygons (each a list of [lat, lon]). Zones are approximate. */
+FR.WINES = [
+  { id:"bordeaux", name:"Bordeaux", color:"#7a1f3d",
+    cepages:["Merlot", "Cabernet sauvignon", "Cabernet franc", "Sauvignon blanc", "Sémillon"],
+    trait:"Rouges de garde, structurés et tanniques ; grands liquoreux à Sauternes",
+    style:"Assemblages : la rive gauche est dominée par le cabernet sauvignon, la rive droite par le merlot. Sauternes produit de grands blancs liquoreux.",
+    famous:["Médoc","Pauillac","Margaux","Saint-Émilion","Pomerol","Sauternes"],
+    rings:[[[45.45,-1.00],[45.13,-0.66],[45.03,-0.56],[44.95,-0.05],[44.85,0.05],[44.60,-0.05],[44.45,-0.25],[44.50,-0.50],[44.70,-0.75],[45.00,-0.95],[45.30,-1.05]]] },
+  { id:"bourgogne", name:"Bourgogne", color:"#a3304f",
+    cepages:["Pinot noir", "Chardonnay", "Aligoté", "Gamay"],
+    trait:"Vins de terroir : rouges élégants et blancs minéraux, classés par village et par climat",
+    style:"Chaque parcelle compte : l'appellation indique le village, le premier cru ou le grand cru. Chablis, au nord, donne un blanc vif et minéral.",
+    famous:["Chablis","Gevrey-Chambertin","Vosne-Romanée","Beaune","Meursault","Pouilly-Fuissé"],
+    rings:[[[47.90,3.65],[47.90,3.95],[47.72,3.95],[47.72,3.65]],
+           [[47.35,4.98],[47.28,5.10],[47.00,4.90],[46.88,4.75],[46.95,4.65],[47.20,4.88]],
+           [[46.85,4.68],[46.80,4.80],[46.50,4.85],[46.25,4.88],[46.20,4.72],[46.50,4.65]]] },
+  { id:"champagne", name:"Champagne", color:"#b9962c",
+    cepages:["Chardonnay", "Pinot noir", "Pinot meunier"],
+    trait:"Vin effervescent élaboré selon la méthode traditionnelle",
+    style:"La seconde fermentation se fait en bouteille, ce qui donne les bulles fines. Du brut sec aux cuvées de prestige.",
+    famous:["Reims","Épernay","Aÿ","Côte des Blancs","Côte des Bar"],
+    rings:[[[49.32,3.85],[49.28,4.20],[49.10,4.25],[48.85,4.10],[48.78,3.85],[48.95,3.55],[49.05,3.30],[49.15,3.50],[49.22,3.75]],
+           [[48.25,4.15],[48.25,4.55],[48.00,4.55],[48.00,4.15]]] },
+  { id:"alsace", name:"Alsace", color:"#5c8a3a",
+    cepages:["Riesling", "Gewurztraminer", "Pinot gris", "Muscat", "Pinot blanc", "Sylvaner"],
+    trait:"Blancs aromatiques, étiquetés par cépage",
+    style:"Vignoble au pied des Vosges. Les vins portent le nom du cépage, du sec aux vendanges tardives.",
+    famous:["Riquewihr","Ribeauvillé","Eguisheim","Route des Vins d'Alsace"],
+    rings:[[[48.75,7.45],[48.75,7.60],[48.30,7.62],[47.95,7.45],[47.78,7.28],[47.78,7.10],[48.05,7.15],[48.30,7.28],[48.55,7.35]]] },
+  { id:"loire", name:"Vallée de la Loire", color:"#2f7f7a",
+    cepages:["Melon de Bourgogne", "Chenin", "Sauvignon blanc", "Cabernet franc"],
+    trait:"Blancs vifs et frais, effervescents et rouges légers",
+    style:"Un long ruban de vignobles de Nantes à Sancerre : muscadet, chenin moelleux, sancerre, chinon…",
+    famous:["Muscadet","Savennières","Saumur-Champigny","Vouvray","Chinon","Sancerre","Pouilly-Fumé"],
+    rings:[[[47.28,-1.55],[47.28,-1.15],[47.05,-1.15],[47.05,-1.55]],
+           [[47.45,-0.80],[47.45,-0.10],[47.15,0.00],[47.00,-0.30],[47.05,-0.80],[47.28,-0.95]],
+           [[47.50,0.30],[47.55,1.20],[47.30,1.35],[47.20,0.80],[47.15,0.25]],
+           [[47.45,2.75],[47.45,3.10],[47.20,3.10],[47.20,2.75]]] },
+  { id:"rhone", name:"Vallée du Rhône", color:"#8a3a1c",
+    cepages:["Syrah", "Grenache", "Mourvèdre", "Viognier"],
+    trait:"Rouges puissants et épicés",
+    style:"Au nord, la syrah pousse sur des coteaux abrupts. Au sud, des assemblages chauds à dominante de grenache.",
+    famous:["Côte-Rôtie","Condrieu","Hermitage","Cornas","Châteauneuf-du-Pape","Gigondas"],
+    rings:[[[45.55,4.72],[45.55,4.85],[45.45,4.88],[45.20,4.90],[44.92,4.90],[44.92,4.78],[45.20,4.70],[45.40,4.70]],
+           [[44.45,4.75],[44.45,5.05],[44.25,5.25],[44.05,5.20],[43.90,4.95],[43.95,4.70],[44.20,4.65]]] },
+  { id:"beaujolais", name:"Beaujolais", color:"#c0467a",
+    cepages:["Gamay"],
+    trait:"Rouges fruités, souples et légers",
+    style:"Dix crus se trouvent au nord de la région. Le beaujolais nouveau sort chaque année en novembre.",
+    famous:["Morgon","Fleurie","Moulin-à-Vent","Brouilly"],
+    rings:[[[46.20,4.60],[46.20,4.78],[45.95,4.75],[45.85,4.60],[46.00,4.50]]] },
+  { id:"provence", name:"Provence", color:"#d1668a",
+    cepages:["Grenache", "Cinsault", "Syrah", "Mourvèdre"],
+    trait:"Rosés secs, légers et frais",
+    style:"Région réputée dans le monde entier pour ses rosés. Bandol produit aussi des rouges de garde à base de mourvèdre.",
+    famous:["Bandol","Cassis","Les Baux-de-Provence","Bellet"],
+    rings:[[[43.80,4.75],[43.75,5.60],[43.55,6.50],[43.35,6.60],[43.10,6.30],[43.10,5.70],[43.25,5.40],[43.45,5.00]],
+           [[43.78,7.15],[43.78,7.28],[43.70,7.28],[43.70,7.15]]] },
+  { id:"languedoc", name:"Languedoc-Roussillon", color:"#a65b2a",
+    cepages:["Grenache", "Syrah", "Carignan", "Mourvèdre"],
+    trait:"Vins solaires : rouges généreux, doux naturels et blanquette de Limoux",
+    style:"Le plus vaste vignoble de France : rouges chaleureux, vins doux naturels (Banyuls, Maury) et effervescents de Limoux.",
+    famous:["Pic Saint-Loup","Faugères","Corbières","Minervois","Limoux","Banyuls","Collioure"],
+    rings:[[[43.70,4.40],[43.85,3.90],[43.65,3.10],[43.45,2.50],[43.15,2.20],[42.95,2.30],[42.60,2.50],[42.45,2.90],[42.45,3.15],[42.80,3.05],[43.10,3.15],[43.30,3.50],[43.40,3.80],[43.50,4.00],[43.55,4.30]]] },
+  { id:"sudouest", name:"Sud-Ouest", color:"#6b4a8f",
+    cepages:["Malbec (côt)", "Tannat", "Négrette", "Petit manseng"],
+    trait:"Vins variés et de caractère : rouges tanniques (Cahors, Madiran), moelleux (Monbazillac, Jurançon)",
+    style:"Un ensemble de petits vignobles à l'est et au sud de Bordeaux, chacun avec ses cépages locaux.",
+    famous:["Bergerac","Cahors","Gaillac","Madiran","Jurançon","Irouléguy"],
+    rings:[[[44.90,0.00],[44.95,0.75],[44.70,0.80],[44.65,0.10]],
+           [[44.55,1.00],[44.60,1.60],[44.38,1.60],[44.38,1.00]],
+           [[44.05,1.20],[44.05,2.05],[43.80,2.05],[43.80,1.20]],
+           [[43.62,-0.15],[43.62,0.05],[43.38,0.00],[43.20,-0.40],[43.20,-0.60],[43.45,-0.40]],
+           [[43.20,-1.40],[43.20,-1.20],[43.10,-1.20],[43.10,-1.40]]] },
+  { id:"jura", name:"Jura", color:"#c08a2e",
+    cepages:["Savagnin", "Chardonnay", "Poulsard", "Trousseau"],
+    trait:"Le vin jaune, un blanc oxydatif unique",
+    style:"Le vin jaune vieillit au moins six ans sous un voile de levures. Le Jura produit aussi des rouges clairs et des blancs frais.",
+    famous:["Arbois","Château-Chalon","L'Étoile"],
+    rings:[[[46.97,5.72],[46.95,5.85],[46.55,5.70],[46.50,5.55],[46.70,5.50],[46.88,5.65]]] },
+  { id:"savoie", name:"Savoie", color:"#4a6fa5",
+    cepages:["Jacquère", "Altesse", "Mondeuse"],
+    trait:"Blancs alpins légers et frais",
+    style:"Des vins de montagne, vifs, souvent servis avec les fromages et les plats de Savoie.",
+    famous:["Apremont","Chignin","Seyssel"],
+    rings:[[[45.70,5.80],[45.70,6.15],[45.45,6.15],[45.45,5.80]]] },
+  { id:"corse", name:"Corse", color:"#4f8f5f",
+    cepages:["Nielluccio", "Sciaccarello", "Vermentino"],
+    trait:"Vins méditerranéens aux cépages d'influence italienne",
+    style:"Patrimonio est l'appellation la plus connue de l'île.",
+    famous:["Patrimonio","Ajaccio","Figari"],
+    rings:[[[42.75,9.30],[42.70,9.45],[42.20,9.55],[41.60,9.30],[41.50,9.00],[41.80,8.70],[42.30,8.65]]] }
+];
+
+/* Notable appellations: [name, wine region id, lat, lon] */
+FR.APPELLATIONS = [
+  ["Pauillac","bordeaux",45.20,-0.75], ["Margaux","bordeaux",45.04,-0.67], ["Saint-Julien","bordeaux",45.15,-0.74],
+  ["Saint-Estèphe","bordeaux",45.26,-0.77], ["Saint-Émilion","bordeaux",44.89,-0.155], ["Pomerol","bordeaux",44.93,-0.20],
+  ["Sauternes","bordeaux",44.53,-0.35], ["Pessac-Léognan","bordeaux",44.73,-0.60], ["Entre-Deux-Mers","bordeaux",44.77,-0.35],
+  ["Chablis","bourgogne",47.81,3.80], ["Gevrey-Chambertin","bourgogne",47.23,4.97], ["Vosne-Romanée","bourgogne",47.15,4.95],
+  ["Beaune","bourgogne",47.02,4.84], ["Pommard","bourgogne",47.00,4.78], ["Meursault","bourgogne",46.98,4.77],
+  ["Puligny-Montrachet","bourgogne",46.94,4.75], ["Mercurey","bourgogne",46.71,4.74], ["Pouilly-Fuissé","bourgogne",46.30,4.74],
+  ["Reims","champagne",49.26,4.03], ["Épernay","champagne",49.04,3.96], ["Aÿ","champagne",49.05,4.00],
+  ["Côte des Blancs","champagne",48.94,4.00], ["Côte des Bar","champagne",48.11,4.38],
+  ["Riquewihr","alsace",48.17,7.30], ["Eguisheim","alsace",48.04,7.30], ["Ribeauvillé","alsace",48.20,7.32], ["Marlenheim","alsace",48.62,7.49],
+  ["Muscadet","loire",47.09,-1.28], ["Savennières","loire",47.40,-0.66], ["Saumur-Champigny","loire",47.20,-0.04],
+  ["Vouvray","loire",47.41,0.80], ["Chinon","loire",47.17,0.24], ["Bourgueil","loire",47.28,0.17],
+  ["Sancerre","loire",47.33,2.84], ["Pouilly-Fumé","loire",47.28,2.95],
+  ["Côte-Rôtie","rhone",45.49,4.81], ["Condrieu","rhone",45.46,4.77], ["Hermitage","rhone",45.07,4.84], ["Cornas","rhone",44.96,4.85],
+  ["Châteauneuf-du-Pape","rhone",44.06,4.83], ["Gigondas","rhone",44.17,5.00], ["Tavel","rhone",44.01,4.70],
+  ["Morgon","beaujolais",46.15,4.68], ["Fleurie","beaujolais",46.19,4.70], ["Moulin-à-Vent","beaujolais",46.19,4.73], ["Brouilly","beaujolais",46.13,4.66],
+  ["Bandol","provence",43.14,5.75], ["Cassis","provence",43.21,5.54], ["Les Baux-de-Provence","provence",43.745,4.795], ["Bellet","provence",43.74,7.20],
+  ["Corbières","languedoc",43.09,2.62], ["Minervois","languedoc",43.35,2.74], ["Saint-Chinian","languedoc",43.42,2.94],
+  ["Faugères","languedoc",43.55,3.17], ["Pic Saint-Loup","languedoc",43.78,3.80], ["Limoux","languedoc",43.05,2.22],
+  ["Banyuls","languedoc",42.48,3.13], ["Collioure","languedoc",42.53,3.08], ["Maury","languedoc",42.82,2.60], ["Costières de Nîmes","languedoc",43.69,4.28],
+  ["Bergerac","sudouest",44.85,0.48], ["Monbazillac","sudouest",44.80,0.50], ["Cahors","sudouest",44.45,1.44], ["Gaillac","sudouest",43.90,1.90],
+  ["Fronton","sudouest",43.84,1.40], ["Madiran","sudouest",43.55,-0.04], ["Jurançon","sudouest",43.28,-0.38], ["Irouléguy","sudouest",43.17,-1.33],
+  ["Arbois","jura",46.90,5.77], ["Château-Chalon","jura",46.78,5.69], ["L'Étoile","jura",46.58,5.60],
+  ["Apremont","savoie",45.51,5.98], ["Chignin","savoie",45.52,6.00], ["Seyssel","savoie",45.96,5.83],
+  ["Patrimonio","corse",42.69,9.35], ["Ajaccio","corse",41.92,8.74], ["Figari","corse",41.49,9.10]
+].map(a => ({ name: a[0], wine: a[1], lat: a[2], lon: a[3] }));
+
+/* Neighbouring land, drawn very faintly behind France (fades out with distance). Rough outlines; the part that
+   overlaps France is hidden underneath the départements. */
+FR.NEIGHBORS = {
+  land: [
+    { id:"continent", ring:[[50.95,2.45],[51.09,2.55],[51.36,3.37],[51.45,3.70],[51.80,4.00],[52.30,4.55],[52.95,4.75],[53.40,6.20],[53.55,7.50],[53.70,9.00],[53.70,13.00],[46.50,13.80],[45.65,13.75],[45.43,12.33],[44.42,12.28],[44.07,12.57],[43.62,13.50],[41.70,12.90],[41.73,12.25],[42.10,11.80],[42.40,11.15],[42.93,10.50],[43.55,10.30],[44.10,9.83],[44.41,8.93],[44.31,8.48],[43.88,8.03],[43.79,7.55],[43.73,7.42],[43.80,7.10],[43.70,6.30],[43.80,5.50],[43.80,4.00],[42.60,2.60],[42.43,3.17],[42.32,3.32],[41.38,2.17],[41.10,1.25],[40.70,0.85],[39.95,0.05],[39.45,-0.32],[38.80,-0.10],[38.80,-6.50],[43.50,-6.50],[43.55,-5.67],[43.47,-3.80],[43.39,-3.00],[43.32,-1.98],[43.37,-1.78],[43.40,-0.40],[43.60,1.30],[45.50,2.20],[47.50,2.20],[49.50,2.40]] },
+    { id:"uk", ring:[[50.07,-5.71],[50.37,-4.14],[50.62,-3.41],[50.55,-2.45],[50.70,-1.95],[50.80,-1.10],[50.82,-0.14],[50.73,0.25],[51.13,1.31],[51.38,1.45],[51.45,0.90],[52.50,1.75],[52.50,-5.20],[51.70,-5.20],[51.60,-3.95],[51.45,-3.18],[51.40,-3.00],[51.20,-4.10],[51.02,-4.52],[50.42,-5.08]] },
+    { id:"sardinia", ring:[[41.25,9.25],[40.95,9.70],[40.30,9.70],[39.20,9.60],[39.10,8.45],[40.00,8.40],[40.95,8.20]] },
+    { id:"andorra", ring:[[42.43,1.45],[42.60,1.42],[42.65,1.78],[42.50,1.78]] }
+  ],
+  borders: [
+    [[51.37,3.37],[51.26,3.90],[51.40,4.25],[51.47,4.55],[51.35,5.05],[51.25,5.80],[50.75,5.70],[50.75,6.03]],
+    [[50.75,6.03],[50.50,6.30],[50.34,6.28],[50.18,6.13]],
+    [[50.18,6.13],[49.96,5.85],[49.82,5.75],[49.55,5.82]],
+    [[50.18,6.13],[49.82,6.37],[49.47,6.37]],
+    [[50.75,6.03],[51.00,5.90],[51.50,6.00],[51.85,6.10],[52.20,7.05],[52.90,7.10],[53.30,7.20]],
+    [[47.59,7.59],[47.55,8.00],[47.65,8.60],[47.70,9.00],[47.60,9.50]],
+    [[45.92,6.95],[45.87,7.25],[45.93,7.86],[46.10,8.40],[46.45,8.45],[46.25,9.00],[46.45,9.50],[46.60,10.10]],
+    [[47.60,9.50],[47.30,9.55],[46.90,9.50],[46.60,10.10]]
+  ],
+  names: [
+    ["Belgique",50.55,4.55], ["Luxembourg",49.80,6.10], ["Pays-Bas",52.10,5.30], ["Allemagne",50.30,8.90],
+    ["Suisse",46.85,8.15], ["Italie",44.95,8.95], ["Espagne",42.25,-1.60], ["Royaume-Uni",51.25,-1.60]
+  ]
+};
+
+/* Vignobles dessinés à partir des départements (principaux départements de chaque région viticole ; un département
+   n'appartient qu'à une seule région ici, pour que la carte reste lisible et cliquable). Simplification assumée. */
+FR.WINE_DEPTS = {
+  bordeaux: ["33"], sudouest: ["24", "47", "46", "82", "81", "32", "40", "64"], bourgogne: ["21", "71", "89"],
+  beaujolais: ["69"], rhone: ["26", "07", "84"], champagne: ["51", "10"], alsace: ["67", "68"],
+  loire: ["44", "49", "37", "41", "18", "58"], jura: ["39"], savoie: ["73", "74"], provence: ["13", "83"],
+  languedoc: ["34", "11", "66", "30"], corse: ["2A", "2B"]
+};
+const PARIS_DEPTS = ["75", "92", "93", "94"];
+FR.PARIS_DEPTS = PARIS_DEPTS;
+
+if (typeof module !== "undefined") module.exports = FR;
+
+/* ===== geo.js ===== */
+/* geo.js — projection, geometry helpers, text normalisation. Pure functions, no DOM. */
+const GEO = (() => {
+  const RAD = Math.PI / 180, R = 6371;
+
+  /* Lambert conformal conic, the projection used for official maps of France.
+     Standard parallels 44° and 49°, origin 46.5°N 3°E. Output in km, y pointing down (SVG). */
+  const p1 = 44 * RAD, p2 = 49 * RAD, p0 = 46.5 * RAD, l0 = 3 * RAD;
+  const n = Math.log(Math.cos(p1) / Math.cos(p2)) /
+            Math.log(Math.tan(Math.PI / 4 + p2 / 2) / Math.tan(Math.PI / 4 + p1 / 2));
+  const F = Math.cos(p1) * Math.pow(Math.tan(Math.PI / 4 + p1 / 2), n) / n;
+  const rho = p => R * F / Math.pow(Math.tan(Math.PI / 4 + p / 2), n);
+  const rho0 = rho(p0);
+
+  function project(lat, lon) {
+    const r = rho(lat * RAD), th = n * (lon * RAD - l0);
+    return [r * Math.sin(th), r * Math.cos(th) - rho0];
+  }
+
+  const f1 = v => (Math.round(v * 10) / 10).toString();
+
+  function emptyBox() { return { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity }; }
+  function grow(b, x, y) {
+    if (x < b.x0) b.x0 = x; if (x > b.x1) b.x1 = x;
+    if (y < b.y0) b.y0 = y; if (y > b.y1) b.y1 = y;
+  }
+  function unionBox(a, b) {
+    return { x0: Math.min(a.x0, b.x0), y0: Math.min(a.y0, b.y0), x1: Math.max(a.x1, b.x1), y1: Math.max(a.y1, b.y1) };
+  }
+
+  /* Signed area and centroid of a projected ring [[x,y],...] */
+  function ringStats(pts) {
+    let a = 0, cx = 0, cy = 0;
+    for (let i = 0, m = pts.length; i < m; i++) {
+      const [x0, y0] = pts[i], [x1, y1] = pts[(i + 1) % m];
+      const c = x0 * y1 - x1 * y0;
+      a += c; cx += (x0 + x1) * c; cy += (y0 + y1) * c;
+    }
+    a /= 2;
+    if (Math.abs(a) < 1e-9) return { area: 0, cx: pts[0][0], cy: pts[0][1] };
+    return { area: Math.abs(a), cx: cx / (6 * a), cy: cy / (6 * a) };
+  }
+
+  /* Turn a GeoJSON geometry (lon,lat order) into an SVG path in projected km.
+     proj(lat, lon) -> [x, y]. Returns { d, box, cent, rings } */
+  function shapeFromGeometry(geom, proj) {
+    proj = proj || project;
+    const polys = !geom ? [] : geom.type === 'Polygon' ? [geom.coordinates]
+                : geom.type === 'MultiPolygon' ? geom.coordinates : [];
+    const box = emptyBox();
+    let d = '', best = null;
+    const rings = [];
+    for (const poly of polys) {
+      poly.forEach((ring, ri) => {
+        const pts = ring.map(c => proj(c[1], c[0]));
+        pts.forEach(p => grow(box, p[0], p[1]));
+        d += pts.map((p, i) => (i ? 'L' : 'M') + f1(p[0]) + ' ' + f1(p[1])).join('') + 'Z';
+        if (ri === 0) {
+          rings.push(pts);
+          const st = ringStats(pts);
+          if (!best || st.area > best.area) best = st;
+        }
+      });
+    }
+    if (!best) return null;
+    return { d, box, cent: [best.cx, best.cy], rings };
+  }
+
+  /* Even-odd point-in-ring test (outer rings only). */
+  function pointInRing(x, y, pts) {
+    let inside = false;
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+      const xi = pts[i][0], yi = pts[i][1], xj = pts[j][0], yj = pts[j][1];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+  function pointInShape(x, y, shape) { return shape.rings.some(r => pointInRing(x, y, r)); }
+
+  /* Catmull-Rom spline through projected points -> cubic Bézier SVG path */
+  function smoothPath(pts) {
+    if (pts.length < 2) return '';
+    let d = 'M' + f1(pts[0][0]) + ' ' + f1(pts[0][1]);
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i - 1] || pts[i], b = pts[i], c = pts[i + 1], e = pts[i + 2] || c;
+      const c1 = [b[0] + (c[0] - a[0]) / 6, b[1] + (c[1] - a[1]) / 6];
+      const c2 = [c[0] - (e[0] - b[0]) / 6, c[1] - (e[1] - b[1]) / 6];
+      d += 'C' + f1(c1[0]) + ' ' + f1(c1[1]) + ' ' + f1(c2[0]) + ' ' + f1(c2[1]) + ' ' + f1(c[0]) + ' ' + f1(c[1]);
+    }
+    return d;
+  }
+
+  /* Simple closed polygon path from projected points */
+  function polyPath(pts) {
+    return pts.map((p, i) => (i ? 'L' : 'M') + f1(p[0]) + ' ' + f1(p[1])).join('') + 'Z';
+  }
+
+  /* Fit a GeoJSON geometry into a w×h box with an equirectangular projection (for overseas insets). */
+  function fitGeometry(geom, w, h, pad) {
+    pad = pad == null ? 4 : pad;
+    const polys = geom.type === 'Polygon' ? [geom.coordinates] : geom.coordinates;
+    let lat0 = 0, n0 = 0;
+    polys.forEach(p => p[0].forEach(c => { lat0 += c[1]; n0++; }));
+    const kx = Math.cos((lat0 / n0) * RAD);
+    const box = emptyBox();
+    polys.forEach(p => p[0].forEach(c => grow(box, c[0] * kx, -c[1])));
+    const s = Math.min((w - 2 * pad) / (box.x1 - box.x0), (h - 2 * pad) / (box.y1 - box.y0));
+    const ox = (w - s * (box.x1 - box.x0)) / 2 - s * box.x0;
+    const oy = (h - s * (box.y1 - box.y0)) / 2 - s * box.y0;
+    let d = '';
+    polys.forEach(poly => poly.forEach(ring => {
+      d += ring.map((c, i) => (i ? 'L' : 'M') + f1(c[0] * kx * s + ox) + ' ' + f1(-c[1] * s + oy)).join('') + 'Z';
+    }));
+    return d;
+  }
+
+  /* Text normalisation for accent-, case- and punctuation-insensitive answers */
+  function norm(s) {
+    return String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[’'`´]/g, '').replace(/œ/g, 'oe').replace(/æ/g, 'ae')
+      .replace(/[^a-z0-9]+/g, ' ').trim()
+      .replace(/\bst\b/g, 'saint').replace(/\bste\b/g, 'sainte');
+  }
+
+  return { project, shapeFromGeometry, pointInShape, pointInRing, smoothPath, polyPath, fitGeometry,
+           emptyBox, grow, unionBox, norm, ringStats, f1 };
+})();
+
+if (typeof module !== 'undefined') module.exports = GEO;
+
+/* ===== loader.js ===== */
+/* loader.js — gets département / région boundaries: cache first, then network, then manual file drop. */
+const LOADER = (() => {
+  const BASES = [
+    'https://cdn.jsdelivr.net/gh/gregoiredavid/france-geojson@master/',
+    'https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/'
+  ];
+  const FILES = {
+    depts:    ['departements-version-simplifiee.geojson', 'departements.geojson'],
+    regions:  ['regions-version-simplifiee.geojson', 'regions.geojson'],
+    overseas: ['departements-avec-outre-mer.geojson']
+  };
+  const DROM = ['971', '972', '973', '974', '976'];
+
+  /* ---------- IndexedDB cache (silently skipped if unavailable) ---------- */
+  function openDb() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('france-explorer', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('geo');
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  }
+  async function cacheGet(key) {
+    try {
+      const db = await openDb();
+      return await new Promise((res, rej) => {
+        const q = db.transaction('geo').objectStore('geo').get(key);
+        q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error);
+      });
+    } catch (e) { return undefined; }
+  }
+  async function cachePut(key, val) {
+    try {
+      const db = await openDb();
+      await new Promise((res, rej) => {
+        const t = db.transaction('geo', 'readwrite'); t.objectStore('geo').put(val, key);
+        t.oncomplete = res; t.onerror = () => rej(t.error);
+      });
+    } catch (e) { /* cache is optional */ }
+  }
+  async function cacheClear() {
+    try {
+      const db = await openDb();
+      await new Promise(res => { const t = db.transaction('geo', 'readwrite'); t.objectStore('geo').clear(); t.oncomplete = res; t.onerror = res; });
+    } catch (e) { /* ignore */ }
+  }
+
+  /* ---------- helpers ---------- */
+  const CODE_KEYS = ['code', 'code_insee', 'CODE_DEPT', 'INSEE_DEP', 'insee_dep', 'dep', 'DEP', 'code_dept', 'codeDepartement'];
+  const NAME_KEYS = ['nom', 'NOM', 'name', 'NOM_DEPT', 'nom_dept', 'libelle'];
+  const pick = (props, keys) => { for (const k of keys) if (props && props[k] != null) return String(props[k]); return ''; };
+
+  /* GeoJSON -> [{ code, name, geometry }] */
+  function features(gj) {
+    if (!gj || !Array.isArray(gj.features)) return [];
+    return gj.features.map(f => ({
+      code: pick(f.properties, CODE_KEYS).toUpperCase(),
+      name: pick(f.properties, NAME_KEYS),
+      geometry: f.geometry
+    })).filter(f => f.geometry);
+  }
+
+  async function fetchJson(url, ms) {
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), ms);
+    try {
+      const r = await fetch(url, { signal: ctl.signal });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const gj = await r.json();
+      if (!gj || !Array.isArray(gj.features) || !gj.features.length) throw new Error('GeoJSON invalide');
+      return gj;
+    } finally { clearTimeout(timer); }
+  }
+
+  /* Try every base × file name until one works. Returns { data, tried } */
+  async function fetchFirst(kind, errors) {
+    for (const file of FILES[kind]) {
+      for (const base of BASES) {
+        try { return await fetchJson(base + file, 25000); }
+        catch (e) { errors.push(base + file + ' — ' + (e.name === 'AbortError' ? 'délai dépassé' : e.message)); }
+      }
+    }
+    return null;
+  }
+
+  /* Decide what a dropped file contains */
+  function classify(gj) {
+    const fs = features(gj);
+    if (!fs.length) return null;
+    if (fs.length <= 20) return 'regions';
+    const codes = fs.map(f => f.code);
+    const metro = codes.filter(c => /^(\d{2}|2A|2B)$/.test(c)).length;
+    if (metro >= 50) return 'depts';                       /* with or without the overseas ones */
+    if (codes.some(c => DROM.includes(c))) return 'overseas';
+    return 'depts';
+  }
+
+  /* ---------- public API ---------- */
+  async function loadAll(onStatus) {
+    const out = { depts: null, regions: null, overseas: null, errors: [], fromCache: false };
+    out.depts = await cacheGet('depts');
+    out.regions = await cacheGet('regions');
+    out.overseas = await cacheGet('overseas');
+    if (out.depts) { out.fromCache = true; }
+
+    if (!out.depts) {
+      onStatus && onStatus('Téléchargement des frontières des départements…');
+      out.depts = await fetchFirst('depts', out.errors);
+      if (out.depts) cachePut('depts', out.depts);
+    }
+    if (!out.regions) {
+      onStatus && onStatus('Téléchargement des frontières des régions…');
+      out.regions = await fetchFirst('regions', out.errors);
+      if (out.regions) cachePut('regions', out.regions);
+    }
+    /* DROM only needed if the main file lacks them */
+    const hasDrom = out.depts && features(out.depts).some(f => DROM.includes(f.code));
+    if (out.depts && !hasDrom && !out.overseas) {
+      onStatus && onStatus('Téléchargement des départements d\'outre-mer…');
+      const e2 = [];
+      out.overseas = await fetchFirst('overseas', e2);
+      if (out.overseas) cachePut('overseas', out.overseas);
+    }
+    return out;
+  }
+
+  /* Files from the file picker or drag-and-drop */
+  async function ingestFiles(fileList) {
+    const got = {}, problems = [];
+    for (const file of Array.from(fileList)) {
+      try {
+        const gj = JSON.parse(await file.text());
+        const kind = classify(gj);
+        if (!kind) { problems.push(file.name + ': aucune entité trouvée'); continue; }
+        got[kind] = gj; await cachePut(kind, gj);
+      } catch (e) { problems.push(file.name + ': ' + e.message); }
+    }
+    return { got, problems };
+  }
+
+  return { loadAll, ingestFiles, features, cacheClear, DROM, BASES, FILES };
+})();
+
+if (typeof module !== 'undefined') module.exports = LOADER;
+
+/* ===== map.js ===== */
+/* map.js — SVG map engine: layers, pan/zoom, highlighting, hit-testing. */
+const MAP = (() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+
+  const LAYER_FLAGS = ['fill', 'regionLines', 'deptLines', 'paris', 'nums', 'prefs', 'prefNames', 'rivers', 'riverNames',
+                       'wines', 'wineNames', 'apps', 'appNames'];
+
+  let host, svg, defs, W = 800, H = 600, k = 1, lastK = -1;
+  let view = { cx: 0, cy: 0, w: 1200 }, home = { cx: 0, cy: 0, w: 1200 };
+  let drag = null, hoverKey = '', anim = null;
+  const handlers = {};
+  const g = {};
+  const reg = { dept: {}, region: {}, river: {}, wine: {}, app: {}, pref: {} };
+  const inset = {};            // overseas code -> path element
+  const dots = [];             // {el, px} circles whose radius follows the zoom
+  const labels = [];           // {el, x, y, dx, px, rule}
+  const hlNodes = [];          // highlight overlays
+
+  const deptByCode = {};
+  FR.DEPTS.forEach(d => { deptByCode[d.code] = d; });
+
+  /* ---------------------------------------------------------------- build */
+  function init(hostEl) {
+    host = hostEl;
+    svg = el('svg', { class: 'map', role: 'img', 'aria-label': 'Carte de la France', preserveAspectRatio: 'xMidYMid meet' });
+    host.insertBefore(svg, host.firstChild);
+    defs = el('defs', {}, svg);
+    ['neigh', 'depts', 'regionLines', 'wines', 'rivers', 'hl', 'apps', 'prefs', 'nums',
+     'riverNames', 'wineNames', 'prefNames', 'appNames'].forEach(n => {
+      g[n] = el('g', { id: 'g-' + n, class: 'grp g-' + n }, svg);
+    });
+    buildStatic();
+    buildNeighbors();
+    setHomeFromPrefectures();
+
+    svg.addEventListener('pointerdown', onDown);
+    svg.addEventListener('wheel', onWheel, { passive: false });
+    host.addEventListener('click', onClick);
+    host.addEventListener('pointermove', onHover);
+    host.addEventListener('pointerleave', () => { hoverKey = ''; handlers.hover && handlers.hover(null, null, null); });
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(host);
+    window.addEventListener('resize', resize);
+    resize();
+  }
+
+  function on(name, fn) { handlers[name] = fn; }
+
+  const regionLine = {};
+  let hotRegion = null;
+  /* hover emphasis for a whole région (used when only régions are shown) */
+  function setHot(code) {
+    if (code === hotRegion) return;
+    if (hotRegion) {
+      if (regionLine[hotRegion]) regionLine[hotRegion].classList.remove('hot');
+      FR.DEPTS.forEach(d => { if (d.region === hotRegion) { if (reg.dept[d.code]) reg.dept[d.code].el.classList.remove('rh'); if (parisEl[d.code]) parisEl[d.code].classList.remove('rh'); } });
+    }
+    hotRegion = code || null;
+    if (hotRegion) {
+      if (regionLine[hotRegion]) regionLine[hotRegion].classList.add('hot');
+      FR.DEPTS.forEach(d => { if (d.region === hotRegion) { if (reg.dept[d.code]) reg.dept[d.code].el.classList.add('rh'); if (parisEl[d.code]) parisEl[d.code].classList.add('rh'); } });
+    }
+  }
+
+  const MAJOR_RIVERS = ['loire', 'seine', 'garonne', 'rhone', 'rhin'];
+  const pathOpen = pts => 'M' + pts.map(p => GEO.f1(p[0]) + ' ' + GEO.f1(p[1])).join('L');
+
+  /* Neighbouring countries: rough outlines, faded out with distance from France (the mask is built in setDepts) */
+  function buildNeighbors() {
+    g.neigh.style.display = 'none';
+    FR.NEIGHBORS.land.forEach(c => el('path', { d: GEO.polyPath(c.ring.map(p => GEO.project(p[0], p[1]))), class: 'neigh-land' }, g.neigh));
+    FR.NEIGHBORS.borders.forEach(b => el('path', { d: pathOpen(b.map(p => GEO.project(p[0], p[1]))), class: 'neigh-border', 'vector-effect': 'non-scaling-stroke' }, g.neigh));
+    FR.NEIGHBORS.names.forEach(n => {
+      const [x, y] = GEO.project(n[1], n[2]);
+      const t = el('text', { class: 'cname', 'text-anchor': 'middle' }, g.neigh);
+      t.textContent = n[0];
+      labels.push({ el: t, x, y, dx: 0, dy: 0.35, px: 13, rule: 'always' });
+    });
+  }
+
+  function hull(points) {
+    const p = points.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [], up = [];
+    p.forEach(q => { while (lo.length > 1 && cross(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); });
+    for (let i = p.length - 1; i >= 0; i--) { const q = p[i]; while (up.length > 1 && cross(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    lo.pop(); up.pop(); return lo.concat(up);
+  }
+
+  /* Mask: opaque near the French coast and borders, fading to nothing about 230 km away. Stepped strokes around
+     a coarse outline of each landmass, widest first, so no filter is needed and panning stays cheap. */
+  function buildNeighMask(shapes) {
+    const old = defs.querySelector('#neigh-mask'); if (old) old.remove();
+    const groups = [shapes.filter(s => s.code !== '2A' && s.code !== '2B'), shapes.filter(s => s.code === '2A' || s.code === '2B')];
+    const d = groups.filter(gp => gp.length).map(gp => {
+      const pts = []; gp.forEach(s => s.rings.forEach(r => { for (let i = 0; i < r.length; i += 2) pts.push(r[i]); }));
+      return hull(pts).map((q, i) => (i ? 'L' : 'M') + GEO.f1(q[0]) + ' ' + GEO.f1(q[1])).join('') + 'Z';
+    }).join('');
+    if (!d) return;
+    const m = el('mask', { id: 'neigh-mask', maskUnits: 'userSpaceOnUse', x: -4000, y: -4000, width: 8000, height: 8000 }, defs);
+    el('rect', { x: -4000, y: -4000, width: 8000, height: 8000, fill: '#000' }, m);
+    const FADE = 230, N = 18;
+    for (let i = N; i >= 1; i--) {
+      const t = i / N, v = Math.round(255 * Math.pow(1 - t, 1.7) * 0.9 + 0);
+      el('path', { d, fill: 'none', stroke: 'rgb(' + v + ',' + v + ',' + v + ')', 'stroke-width': 2 * FADE * t, 'stroke-linejoin': 'round' }, m);
+    }
+    el('path', { d, fill: '#fff' }, m);
+    g.neigh.setAttribute('mask', 'url(#neigh-mask)');
+    g.neigh.style.display = '';
+  }
+
+  /* Rivers, wine zones, appellations and préfecture markers only depend on my own data, not the GeoJSON */
+  function buildStatic() {
+    /* wine zones */
+    FR.WINES.forEach(w => {
+      let d = '', best = null, box = GEO.emptyBox();
+      w.rings.forEach(ring => {
+        const pts = ring.map(p => GEO.project(p[0], p[1]));
+        pts.forEach(p => GEO.grow(box, p[0], p[1]));
+        d += GEO.polyPath(pts);
+        const st = GEO.ringStats(pts);
+        if (!best || st.area > best.area) best = st;
+      });
+      const p = el('path', { d, class: 'wine-zone', 'data-layer': 'wine', 'data-id': w.id }, g.wines);
+      p.style.setProperty('--wc', w.color);
+      reg.wine[w.id] = { el: p, d, box };
+      const t = el('text', { class: 'wname', 'text-anchor': 'middle' }, g.wineNames);
+      t.textContent = w.name.replace(/ \(.*\)/, '');
+      t.style.setProperty('--wc', w.color);
+      labels.push({ el: t, x: best.cx, y: best.cy, dx: 0, dy: 0, px: 13, rule: 'always', wine: w.id });
+    });
+
+    /* rivers */
+    FR.RIVERS.forEach(r => {
+      const pts = r.path.map(p => GEO.project(p[0], p[1]));
+      const d = GEO.smoothPath(pts);
+      const box = GEO.emptyBox(); pts.forEach(p => GEO.grow(box, p[0], p[1]));
+      el('path', { d, class: 'river-hit', 'data-layer': 'river', 'data-id': r.id }, g.rivers);
+      const line = el('path', { d, class: 'river' + (MAJOR_RIVERS.includes(r.id) ? ' major' : ''), 'vector-effect': 'non-scaling-stroke' }, g.rivers);
+      reg.river[r.id] = { el: line, d, box, pts };
+      /* a left-to-right copy of the path so the label never reads upside down */
+      const lp = pts[0][0] <= pts[pts.length - 1][0] ? pts : pts.slice().reverse();
+      el('path', { id: 'lp-' + r.id, d: GEO.smoothPath(lp), fill: 'none' }, defs);
+      const t = el('text', { class: 'rname' }, g.riverNames);
+      const tp = el('textPath', { href: '#lp-' + r.id, startOffset: '50%', 'text-anchor': 'middle' }, t);
+      tp.textContent = r.name;
+      t.setAttribute('dy', '-0.45em');
+    });
+
+    /* appellations */
+    FR.APPELLATIONS.forEach((a, i) => {
+      const [x, y] = GEO.project(a.lat, a.lon);
+      const wc = FR.WINES.find(w => w.id === a.wine).color;
+      const c = el('circle', { cx: x, cy: y, class: 'app-dot', 'data-layer': 'app', 'data-id': String(i) }, g.apps);
+      c.style.setProperty('--wc', wc);
+      dots.push({ el: c, px: 3.2 });
+      reg.app[i] = { el: c, box: { x0: x, y0: y, x1: x, y1: y }, x, y };
+      const t = el('text', { class: 'aname' }, g.appNames);
+      t.textContent = a.name;
+      labels.push({ el: t, x, y, dx: 5, dy: 0.35, px: 10.5, rule: 'zoom', k: 0.62 });
+    });
+
+    /* préfectures */
+    FR.DEPTS.filter(d => !d.overseas).forEach(d => {
+      const [x, y] = GEO.project(d.lat, d.lon);
+      const cap = FR.REGIONS[d.region].capital === d.pref;
+      const c = el('circle', { cx: x, cy: y, class: 'pref-dot' + (cap ? ' cap' : ''), 'data-layer': 'pref', 'data-id': d.code }, g.prefs);
+      dots.push({ el: c, px: cap ? 4.6 : 3 });
+      reg.pref[d.code] = { el: c, box: { x0: x, y0: y, x1: x, y1: y }, x, y, cap };
+      const t = el('text', { class: 'pname' + (cap ? ' cap' : '') }, g.prefNames);
+      t.textContent = d.pref;
+      labels.push({ el: t, x, y, dx: 6, dy: 0.35, px: cap ? 12 : 10.5, rule: cap ? 'always' : 'zoom', k: 0.8 });
+    });
+  }
+
+  function setHomeFromPrefectures() {
+    const b = GEO.emptyBox();
+    Object.values(reg.pref).forEach(p => GEO.grow(b, p.x, p.y));
+    setHome(b);
+  }
+  let homeBox = null, atHome = true;
+  function computeHome() {
+    const b = homeBox, pad = 110, w = (b.x1 - b.x0) + 2 * pad, h = (b.y1 - b.y0) + 2 * pad;
+    home = { cx: (b.x0 + b.x1) / 2, cy: (b.y0 + b.y1) / 2, w: Math.max(w, h / (H / W)) };
+  }
+  function setHome(b) {
+    homeBox = b; computeHome();
+    view = { ...home }; atHome = true;
+    applyView();
+  }
+
+  /* Called once the GeoJSON is ready. shapes = [{ code, d, box, cent }] for metropolitan départements */
+  function setDepts(shapes) {
+    g.depts.textContent = ''; g.nums.textContent = '';
+    for (const key in reg.dept) delete reg.dept[key];
+    for (let i = labels.length - 1; i >= 0; i--) if (labels[i].kind === 'num') labels.splice(i, 1);
+    const all = GEO.emptyBox();
+    shapes.forEach(s => {
+      const d = deptByCode[s.code];
+      if (!d) return;
+      const p = el('path', { d: s.d, class: 'dept', 'data-layer': 'dept', 'data-id': s.code, 'vector-effect': 'non-scaling-stroke' }, g.depts);
+      p.style.setProperty('--c', FR.REGIONS[d.region].color);
+      reg.dept[s.code] = { el: p, d: s.d, box: s.box };
+      all.x0 = Math.min(all.x0, s.box.x0); all.y0 = Math.min(all.y0, s.box.y0);
+      all.x1 = Math.max(all.x1, s.box.x1); all.y1 = Math.max(all.y1, s.box.y1);
+      const t = el('text', { class: 'num', 'text-anchor': 'middle' }, g.nums);
+      t.textContent = s.code;
+      labels.push({ el: t, x: s.cent[0], y: s.cent[1], dx: 0, dy: 0.35, px: 12, rule: 'fit', box: s.box, len: s.code.length, kind: 'num' });
+    });
+    /* region boxes from their départements */
+    for (const key in reg.region) delete reg.region[key];
+    FR.DEPTS.forEach(d => {
+      const r = reg.dept[d.code]; if (!r || !r.box) return;
+      reg.region[d.region] = reg.region[d.region] ? { box: GEO.unionBox(reg.region[d.region].box, r.box) } : { box: { ...r.box } };
+    });
+    if (shapes.length) { setHome(all); buildNeighMask(shapes); buildWinesFromDepts(shapes); buildParis(shapes); }
+    lastK = -1; applyView();
+  }
+
+  /* Contour d'un groupe de départements : les segments partagés par deux départements s'annulent, il reste le bord. */
+  function outlineOf(group) {
+    const key = p => p[0].toFixed(3) + ',' + p[1].toFixed(3), count = new Map();
+    group.forEach(s => s.rings.forEach(r => {
+      for (let i = 0; i < r.length; i++) {
+        const a = r[i], b = r[(i + 1) % r.length], ka = key(a), kb = key(b);
+        if (ka === kb) continue;
+        const k2 = ka < kb ? ka + '|' + kb : kb + '|' + ka;
+        const e = count.get(k2); if (e) e.n++; else count.set(k2, { n: 1, a, b });
+      }
+    }));
+    let d = '';
+    count.forEach(e => { if (e.n === 1) d += 'M' + GEO.f1(e.a[0]) + ' ' + GEO.f1(e.a[1]) + 'L' + GEO.f1(e.b[0]) + ' ' + GEO.f1(e.b[1]); });
+    return d;
+  }
+
+  /* Les vignobles suivent les départements réels (au lieu des zones tracées à la main) dès que les frontières sont là */
+  function buildWinesFromDepts(shapes) {
+    if (!FR.WINE_DEPTS) return;
+    const byCode = {}; shapes.forEach(s => { byCode[s.code] = s; });
+    FR.WINES.forEach(w => {
+      const group = (FR.WINE_DEPTS[w.id] || []).map(c => byCode[c]).filter(Boolean), r = reg.wine[w.id];
+      if (!group.length || !r) return;
+      let box = GEO.emptyBox(); group.forEach(s => { box = GEO.unionBox(box, s.box); });
+      const fill = group.map(s => s.d).join('');
+      r.el.setAttribute('d', fill);
+      r.el.classList.add('from-depts');
+      if (!r.line) { r.line = el('path', { class: 'wine-line', 'vector-effect': 'non-scaling-stroke' }, g.wines); r.line.style.setProperty('--wc', w.color); }
+      r.line.setAttribute('d', outlineOf(group));
+      r.d = fill; r.box = box;
+      /* nom au centre du plus grand département du groupe */
+      const big = group.slice().sort((a, b) => (b.box.x1 - b.box.x0) * (b.box.y1 - b.box.y0) - (a.box.x1 - a.box.x0) * (a.box.y1 - a.box.y0))[0];
+      const lab = labels.find(l => l.wine === w.id); if (lab) { lab.x = big.cent[0]; lab.y = big.cent[1]; }
+    });
+    lastK = -1;
+  }
+
+  /* Paris et la petite couronne : trop petits à l'échelle de la France, montrés agrandis dans une vignette cliquable */
+  let parisTile = null;
+  const parisEl = {};
+  function buildParis(shapes) {
+    const list = shapes.filter(s => (FR.PARIS_DEPTS || []).includes(s.code));
+    if (parisTile) parisTile.remove();
+    for (const key in parisEl) delete parisEl[key];
+    if (!list.length) return;
+    let b = GEO.emptyBox(); list.forEach(s => { b = GEO.unionBox(b, s.box); });
+    const pad = 2, w = b.x1 - b.x0 + 2 * pad, h = b.y1 - b.y0 + 2 * pad;
+    parisTile = document.createElement('div'); parisTile.className = 'paris-tile';
+    const sv = el('svg', { viewBox: (b.x0 - pad) + ' ' + (b.y0 - pad) + ' ' + w + ' ' + h, class: 'paris-svg', 'aria-hidden': 'true' });
+    list.forEach(s => {
+      const d = deptByCode[s.code];
+      const p = el('path', { d: s.d, class: 'dept', 'data-layer': 'dept', 'data-id': s.code, 'vector-effect': 'non-scaling-stroke' }, sv);
+      p.style.setProperty('--c', FR.REGIONS[d.region].color);
+      parisEl[s.code] = p;
+      const t = el('text', { class: 'pnum', x: s.cent[0], y: s.cent[1], 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': (w / 9).toFixed(2) }, sv);
+      t.textContent = s.code;
+    });
+    parisTile.appendChild(sv);
+    const cap = document.createElement('div'); cap.className = 'paris-cap'; cap.textContent = 'Paris et petite couronne';
+    parisTile.appendChild(cap);
+    host.appendChild(parisTile);
+  }
+
+  function setRegionLines(list) {
+    g.regionLines.textContent = '';
+    for (const key in regionLine) delete regionLine[key];
+    list.forEach(r => { regionLine[r.code] = el('path', { d: r.d, class: 'region-line', 'data-region': r.code, 'vector-effect': 'non-scaling-stroke' }, g.regionLines); });
+  }
+
+  /* Overseas départements as small clickable tiles in the HTML overlay */
+  function setInsets(container, list) {
+    container.textContent = '';
+    for (const key in inset) delete inset[key];
+    list.forEach(s => {
+      const d = deptByCode[s.code]; if (!d) return;
+      const tile = document.createElement('div'); tile.className = 'inset-tile';
+      const sv = el('svg', { viewBox: '0 0 80 60', class: 'inset-svg', 'aria-hidden': 'true' });
+      const p = el('path', { d: s.d, class: 'dept', 'data-layer': 'dept', 'data-id': s.code, 'vector-effect': 'non-scaling-stroke' }, sv);
+      p.style.setProperty('--c', FR.REGIONS[d.region].color);
+      tile.appendChild(sv);
+      const cap = document.createElement('div'); cap.className = 'inset-cap';
+      cap.innerHTML = '<span class="inset-num">' + s.code + '</span> ' + d.name;
+      tile.appendChild(cap);
+      container.appendChild(tile);
+      inset[s.code] = p;
+      reg.dept[s.code] = { el: p, inset: true, box: null };
+    });
+  }
+
+  /* ----------------------------------------------------------- view logic */
+  function resize() {
+    W = host.clientWidth || 800; H = host.clientHeight || 600;
+    if (homeBox) { computeHome(); if (atHome) view = { ...home }; }
+    applyView();
+  }
+
+  function applyView() {
+    if (!svg) return;
+    const w = view.w, h = w * (H / W);
+    svg.setAttribute('viewBox', (view.cx - w / 2).toFixed(2) + ' ' + (view.cy - h / 2).toFixed(2) + ' ' + w.toFixed(2) + ' ' + h.toFixed(2));
+    k = w / W;
+    if (Math.abs(k - lastK) > 1e-6) { lastK = k; applyScale(); }
+  }
+
+  /* Things sized in screen pixels follow the zoom level */
+  function applyScale() {
+    dots.forEach(d => d.el.setAttribute('r', (d.px * k).toFixed(3)));
+    hlNodes.forEach(n => { if (n.dot) n.el.setAttribute('r', (n.px * k).toFixed(3)); });
+    ['nums', 'riverNames', 'wineNames', 'prefNames', 'appNames'].forEach(n => {
+      g[n].style.fontSize = (n === 'nums' ? 12 : n === 'wineNames' ? 13 : n === 'riverNames' ? 11.5 : 10.5) * k + 'px';
+    });
+    labels.forEach(l => {
+      const fs = l.px * k;
+      l.el.style.fontSize = fs + 'px';
+      if (l.el.tagName === 'text' && !l.el.firstChild.tagName) {
+        l.el.setAttribute('x', (l.x + l.dx * k).toFixed(2));
+        l.el.setAttribute('y', (l.y + (l.dy || 0) * fs).toFixed(2));
+      }
+      let show = true;
+      if (l.rule === 'fit') {
+        const bw = l.box.x1 - l.box.x0, bh = l.box.y1 - l.box.y0;
+        show = bw > fs * (l.len * 0.62 + 0.7) && bh > fs * 1.4;
+      } else if (l.rule === 'zoom') show = k < l.k;
+      l.el.style.display = show ? '' : 'none';
+    });
+  }
+
+  function clampView() {
+    view.w = Math.min(Math.max(view.w, 70), home.w * 1.6);
+  }
+
+  function onDown(e) {
+    if (e.button !== 0) return;
+    drag = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy, moved: false };
+    cancelAnim();
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp, { once: true });
+  }
+  function onMove(e) {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.hypot(dx, dy) > 4) { drag.moved = true; atHome = false; host.classList.add('panning'); }
+    if (drag.moved) { view.cx = drag.cx - dx * k; view.cy = drag.cy - dy * k; applyView(); }
+  }
+  function onUp() {
+    window.removeEventListener('pointermove', onMove);
+    host.classList.remove('panning');
+    setTimeout(() => { drag = null; }, 0);
+  }
+  function onWheel(e) {
+    e.preventDefault(); cancelAnim();
+    zoomAt(e.clientX, e.clientY, Math.exp(e.deltaY * 0.0016));
+  }
+  function zoomAt(clientX, clientY, factor) {
+    const r = svg.getBoundingClientRect();
+    const fx = (clientX - r.left) / W - 0.5, fy = (clientY - r.top) / H - 0.5;
+    const before = { x: view.cx + fx * view.w, y: view.cy + fy * view.w * (H / W) };
+    atHome = false;
+    view.w *= factor; clampView();
+    view.cx = before.x - fx * view.w; view.cy = before.y - fy * view.w * (H / W);
+    applyView();
+  }
+  function zoomBy(factor) {
+    cancelAnim();
+    const r = svg.getBoundingClientRect();
+    zoomAt(r.left + W / 2, r.top + H / 2, factor);
+  }
+
+  /* Smooth move to a bounding box (or back home). Instant if the person prefers reduced motion. */
+  function flyTo(box, opts) {
+    opts = opts || {};
+    let target;
+    atHome = !box;
+    if (!box) target = { ...home };
+    else {
+      const bw = Math.max(box.x1 - box.x0, 1), bh = Math.max(box.y1 - box.y0, 1);
+      /* gentle: for selecting things. Zooms at most to 60% of the full view, and never zooms out from a closer view. */
+      const gentle = !!opts.gentle;
+      const pad = opts.pad == null ? (gentle ? 1.8 : 1.35) : opts.pad;
+      const fit = Math.max(bw * pad, (bh * pad) / (H / W));
+      const floor = gentle ? (opts.fresh ? home.w * (opts.zoom || 0.6) : Math.min(view.w, home.w * (opts.zoom || 0.6))) : (opts.minW || 130);
+      const w = Math.max(fit, floor);
+      target = { cx: (box.x0 + box.x1) / 2, cy: (box.y0 + box.y1) / 2, w: Math.min(w, home.w * 1.6) };
+    }
+    cancelAnim();
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { view = target; applyView(); return; }
+    const from = { ...view }, t0 = performance.now(), dur = 380;
+    const step = now => {
+      const u = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - u, 3);
+      /* interpolate zoom in log space so the motion feels even */
+      view.w = Math.exp(Math.log(from.w) + (Math.log(target.w) - Math.log(from.w)) * e);
+      view.cx = from.cx + (target.cx - from.cx) * e;
+      view.cy = from.cy + (target.cy - from.cy) * e;
+      applyView();
+      anim = u < 1 ? requestAnimationFrame(step) : null;
+    };
+    anim = requestAnimationFrame(step);
+  }
+  function cancelAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
+
+  /* --------------------------------------------------------------- events */
+  function hit(e) { return e.target && e.target.closest ? e.target.closest('[data-layer]') : null; }
+  function onClick(e) {
+    if (drag && drag.moved) return;
+    const t = hit(e);
+    if (t) handlers.click && handlers.click(t.dataset.layer, t.dataset.id, e);
+    else if (e.target === svg) handlers.click && handlers.click(null, null, e);
+  }
+  function onHover(e) {
+    if (drag && drag.moved) return;
+    const t = hit(e), key = t ? t.dataset.layer + ':' + t.dataset.id : '';
+    if (key !== hoverKey) { hoverKey = key; handlers.hover && handlers.hover(t ? t.dataset.layer : null, t ? t.dataset.id : null, e); }
+    else if (t) handlers.move && handlers.move(e);
+  }
+
+  /* ------------------------------------------------------------ interface */
+  function setLayers(flags) {
+    for (const f in flags) host.classList.toggle('l-' + f, !!flags[f]);
+  }
+  function getLayers() {
+    const o = {}; LAYER_FLAGS.forEach(f => { o[f] = host.classList.contains('l-' + f); }); return o;
+  }
+
+  /* bounding box of an item, or null if unknown */
+  function boxOf(layer, id) {
+    if (layer === 'dept') return reg.dept[id] ? reg.dept[id].box : null;
+    if (layer === 'region') return reg.region[id] ? reg.region[id].box : null;
+    if (layer === 'pref') return reg.pref[id] ? reg.pref[id].box : null;
+    const r = reg[layer] && reg[layer][id];
+    return r ? r.box : null;
+  }
+
+  /* Draw an emphasis overlay. cls: 'sel' | 'ok' | 'bad' | 'target' */
+  function highlight(layer, id, cls) {
+    const add = (node, dot, px) => { g.hl.appendChild(node); hlNodes.push({ el: node, dot: !!dot, px }); if (dot) node.setAttribute('r', (px * k).toFixed(3)); };
+    if (layer === 'dept') {
+      if (inset[id]) { inset[id].classList.add('hl-' + cls); hlNodes.push({ el: inset[id], inset: true, cls: 'hl-' + cls }); return; }
+      const r = reg.dept[id]; if (r) add(el('path', { d: r.d, class: 'hl hl-' + cls, 'vector-effect': 'non-scaling-stroke' }));
+      if (parisEl[id]) { parisEl[id].classList.add('hl-' + cls); hlNodes.push({ el: parisEl[id], inset: true, cls: 'hl-' + cls }); }
+    } else if (layer === 'region') {
+      const rc = { sel: 'regsel', target: 'regtarget', ok: 'regok', bad: 'regbad' }[cls] || cls;
+      FR.DEPTS.forEach(d => { if (d.region === id) highlight('dept', d.code, rc); });
+      if (regionLine[id]) { regionLine[id].classList.add('hot-' + cls); hlNodes.push({ el: regionLine[id], inset: true, cls: 'hot-' + cls }); }
+    } else if (layer === 'river') {
+      const r = reg.river[id]; if (r) { add(el('path', { d: r.d, class: 'hl hl-river-case', 'vector-effect': 'non-scaling-stroke' })); add(el('path', { d: r.d, class: 'hl hl-river hl-' + cls, 'vector-effect': 'non-scaling-stroke' })); }
+    } else if (layer === 'wine') {
+      const r = reg.wine[id];
+      if (r && r.line) {   /* zone faite de départements : remplissage sans bord, puis le contour extérieur seul */
+        add(el('path', { d: r.d, class: 'hl hl-wine hl-fillonly hl-' + cls }));
+        add(el('path', { d: r.line.getAttribute('d'), class: 'hl hl-wine-line hl-' + cls, 'vector-effect': 'non-scaling-stroke' }));
+      } else if (r) add(el('path', { d: r.d, class: 'hl hl-wine hl-' + cls, 'vector-effect': 'non-scaling-stroke' }));
+    } else if (layer === 'app' || layer === 'pref') {
+      const r = reg[layer][id]; if (r) add(el('circle', { cx: r.x, cy: r.y, class: 'hl hl-dot hl-' + cls }), true, 9);
+    }
+  }
+  function clearHighlights() {
+    while (hlNodes.length) {
+      const n = hlNodes.pop();
+      if (n.inset) n.el.classList.remove(n.cls); else n.el.remove();
+    }
+  }
+
+  /* Region of the dept under a click */
+  function regionOfDept(code) { return deptByCode[code] ? deptByCode[code].region : null; }
+
+  function hasShape(layer, id) { return !!(reg[layer] && reg[layer][id]); }
+
+  const homeW = () => home.w;
+
+  return { init, on, setDepts, homeW, setRegionLines, setInsets, setLayers, getLayers, highlight, clearHighlights,
+           flyTo, zoomBy, boxOf, setHot, resize, hasShape, regionOfDept, LAYER_FLAGS,
+           _state: () => ({ view: { ...view }, home: { ...home }, k, W, H, labels: labels.length, depts: Object.keys(reg.dept).length }) };
+})();
+
+/* ===== explorer.js ===== */
+/* explorer.js — le panneau d'étude : recherche, fiches, listes, calques. */
+const EXPLORE = (() => {
+  const $ = id => document.getElementById(id);
+  const D = {}; FR.DEPTS.forEach(d => { D[d.code] = d; });
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const plate = (code, sm) =>
+    '<span class="plate' + (sm ? ' sm' : '') + '" role="img" aria-label="numéro ' + code + '">' +
+    '<span class="plate-eu" aria-hidden="true">F</span><span class="plate-n">' + code + '</span></span>';
+  const deptOrder = c => c === '2A' ? '20a' : c === '2B' ? '20b' : c.padStart(3, '0');
+  const regionCodes = () => Object.keys(FR.REGIONS).filter(c => FR.DEPTS.some(d => d.region === c && !d.overseas));
+  const wineById = {}; FR.WINES.forEach(w => { wineById[w.id] = w; });
+  const riverById = {}; FR.RIVERS.forEach(r => { riverById[r.id] = r; });
+  const appIndexByName = {}; FR.APPELLATIONS.forEach((a, i) => { appIndexByName[a.name] = i; });
+  const km = n => n.toLocaleString('fr');
+  const grapeSearch = g => 'https://www.google.com/search?q=' + encodeURIComponent('cépage ' + g);
+
+  const chips = { regions: true, depts: true, nums: true, prefs: false, rivers: false, wines: false };
+  const CHIP_OF = { dept: 'depts', region: 'regions', pref: 'prefs', river: 'rivers', wine: 'wines', app: 'wines' };
+  let sel = null, tab = 'dept', query = '';
+
+  /* ------------------------------------------------------------- calques */
+  function applyChips() {
+    MAP.setLayers({
+      fill: chips.regions, regionLines: chips.regions, deptLines: chips.depts, paris: chips.depts || chips.regions, nums: chips.nums,
+      prefs: chips.prefs, prefNames: chips.prefs,
+      rivers: chips.rivers, riverNames: chips.rivers,
+      wines: chips.wines, wineNames: chips.wines, apps: chips.wines, appNames: chips.wines
+    });
+    document.querySelectorAll('#chips [data-chip]').forEach(b => b.setAttribute('aria-pressed', String(!!chips[b.dataset.chip])));
+  }
+  function ensureChip(name) { if (name && !chips[name]) { chips[name] = true; applyChips(); } }
+
+  /* -------------------------------------------------------------- fiches */
+  function chipBtn(go, html, cls) { return '<button class="chip-btn ' + (cls || '') + '" data-go="' + go + '">' + html + '</button>'; }
+
+  function cardDept(d) {
+    const reg = FR.REGIONS[d.region], cap = reg.capital === d.pref && !d.overseas;
+    return '<div class="card-head">' + plate(d.code) + '<div><h2>' + esc(d.name) + '</h2><p class="sub">' + esc(reg.name) + '</p></div></div>' +
+      '<dl class="facts">' +
+      '<dt>Numéro</dt><dd>' + esc(d.code) + '</dd>' +
+      '<dt>Préfecture</dt><dd>' + esc(d.pref) + (cap ? ' <span class="tag">capitale de région</span>' : '') + '</dd>' +
+      '<dt>Région</dt><dd>' + chipBtn('region:' + d.region, esc(reg.name), 'plain') + '</dd></dl>';
+  }
+  function cardRegion(code) {
+    const r = FR.REGIONS[code], ds = FR.DEPTS.filter(d => d.region === code).sort((a, b) => deptOrder(a.code).localeCompare(deptOrder(b.code)));
+    return '<div class="card-head"><span class="swatch" style="background:' + r.color + '"></span><div><h2>' + esc(r.name) + '</h2><p class="sub">' +
+      ds.length + (ds.length > 1 ? ' départements' : ' département') + '</p></div></div>' +
+      '<dl class="facts"><dt>Capitale</dt><dd>' + esc(r.capital) + '</dd></dl>' +
+      '<div class="chips">' + ds.map(d => chipBtn('dept:' + d.code, plate(d.code, true) + ' ' + esc(d.name))).join('') + '</div>';
+  }
+  function cardRiver(id) {
+    const r = riverById[id];
+    return '<div class="card-head"><span class="swatch river-sw"></span><div><h2>' + esc(r.name) + '</h2><p class="sub">≈ ' + km(r.km) + ' km</p></div></div>' +
+      '<dl class="facts"><dt>Source</dt><dd>' + esc(r.source) + '</dd><dt>Se jette dans</dt><dd>' + esc(r.mouth) + '</dd>' +
+      '<dt>Traverse</dt><dd>' + esc(r.cities.join(', ')) + '</dd></dl><p class="note">' + esc(r.note) + '</p>';
+  }
+  function cardWine(id) {
+    const w = wineById[id];
+    const grapes = w.cepages.map(g =>
+      '<a class="grape" href="' + grapeSearch(g) + '" target="_blank" rel="noopener" title="Chercher ce cépage sur Google">' + esc(g) + '</a>').join('');
+    const fam = w.famous.map(n => appIndexByName[n] != null
+      ? chipBtn('app:' + appIndexByName[n], esc(n)) : '<span class="chip-btn static">' + esc(n) + '</span>').join('');
+    return '<div class="card-head"><span class="swatch" style="background:' + w.color + '"></span><div><h2>' + esc(w.name) + '</h2><p class="sub">Région viticole</p></div></div>' +
+      '<dl class="facts"><dt>Cépages principaux</dt><dd><span class="grapes">' + grapes + '</span></dd>' +
+      '<dt>Caractère du vin</dt><dd>' + esc(w.trait) + '</dd></dl>' +
+      '<p class="note">' + esc(w.style) + '</p>' +
+      '<h3 class="sub-h">Appellations célèbres</h3><div class="chips tight">' + fam + '</div>';
+  }
+  function cardApp(i) {
+    const a = FR.APPELLATIONS[i], w = wineById[a.wine];
+    return '<div class="card-head"><span class="swatch" style="background:' + w.color + '"></span><div><h2>' + esc(a.name) + '</h2><p class="sub">Appellation</p></div></div>' +
+      '<dl class="facts"><dt>Région viticole</dt><dd>' + chipBtn('wine:' + w.id, esc(w.name), 'plain') + '</dd>' +
+      '<dt>Cépages</dt><dd><span class="grapes">' + w.cepages.map(g => '<a class="grape" href="' + grapeSearch(g) + '" target="_blank" rel="noopener" title="Chercher ce cépage sur Google">' + esc(g) + '</a>').join('') + '</span></dd></dl>';
+  }
+  function cardIntro() {
+    return '<div class="intro"><h2>Apprenez la France par la carte</h2><p>Cliquez sur un département pour voir son numéro, sa préfecture et sa région. ' +
+      'Les boutons au-dessus de la carte ajoutent les préfectures, les cours d\'eau et les régions viticoles. Passez en mode <b>Quiz</b> pour vous tester.</p></div>';
+  }
+
+  function renderCard() {
+    const c = $('card');
+    if (!sel) { c.innerHTML = cardIntro(); c.classList.add('intro-card'); return; }
+    c.classList.remove('intro-card');
+    c.innerHTML = sel.layer === 'dept' ? cardDept(D[sel.id]) : sel.layer === 'region' ? cardRegion(sel.id)
+      : sel.layer === 'river' ? cardRiver(sel.id) : sel.layer === 'wine' ? cardWine(sel.id) : cardApp(sel.id);
+  }
+
+  /* -------------------------------------------------------------- listes */
+  function itemHtml(layer, id) {
+    if (layer === 'dept') { const d = D[id]; return '<span class="li-main">' + plate(d.code, true) + '<span>' + esc(d.name) + '</span></span><span class="li-sub">' + esc(d.pref) + '</span>'; }
+    if (layer === 'region') { const r = FR.REGIONS[id]; return '<span class="li-main"><span class="swatch sm" style="background:' + r.color + '"></span><span>' + esc(r.name) + '</span></span><span class="li-sub">' + esc(r.capital) + '</span>'; }
+    if (layer === 'river') { const r = riverById[id]; return '<span class="li-main"><span class="swatch sm river-sw"></span><span>' + esc(r.name) + '</span></span><span class="li-sub">≈ ' + km(r.km) + ' km</span>'; }
+    if (layer === 'wine') { const w = wineById[id]; return '<span class="li-main"><span class="swatch sm" style="background:' + w.color + '"></span><span>' + esc(w.name) + '</span></span>'; }
+    return '';
+  }
+
+  function listItems() {
+    if (tab === 'dept') return FR.DEPTS.slice().sort((a, b) => deptOrder(a.code).localeCompare(deptOrder(b.code))).map(d => ['dept', d.code]);
+    if (tab === 'region') return regionCodes().sort((a, b) => FR.REGIONS[a].name.localeCompare(FR.REGIONS[b].name, 'fr')).map(c => ['region', c]);
+    if (tab === 'river') return FR.RIVERS.slice().sort((a, b) => b.km - a.km).map(r => ['river', r.id]);
+    return FR.WINES.map(w => ['wine', w.id]);
+  }
+
+  /* ----------------------------------------------------------- recherche */
+  let index = null;
+  function buildIndex() {
+    index = [];
+    FR.DEPTS.forEach(d => {
+      index.push({ layer: 'dept', id: d.code, kind: 'Département', label: d.code + ' ' + d.name, sub: d.pref + ' · ' + FR.REGIONS[d.region].name, keys: [d.code, d.name] });
+      index.push({ layer: 'pref', id: d.code, kind: 'Préfecture', label: d.pref, sub: d.name + ' (' + d.code + ')', keys: [d.pref], skipIfSame: d.pref === d.name });
+    });
+    regionCodes().forEach(c => index.push({ layer: 'region', id: c, kind: 'Région', label: FR.REGIONS[c].name, sub: 'Capitale : ' + FR.REGIONS[c].capital, keys: [FR.REGIONS[c].name] }));
+    FR.RIVERS.forEach(r => index.push({ layer: 'river', id: r.id, kind: 'Cours d\'eau', label: r.name, sub: '≈ ' + km(r.km) + ' km', keys: [r.name] }));
+    FR.WINES.forEach(w => index.push({ layer: 'wine', id: w.id, kind: 'Région viticole', label: w.name, sub: w.cepages.slice(0, 3).join(', '), keys: [w.name] }));
+    FR.APPELLATIONS.forEach((a, i) => index.push({ layer: 'app', id: String(i), kind: 'Appellation', label: a.name, sub: wineById[a.wine].name, keys: [a.name] }));
+  }
+  function search(q) {
+    if (!index) buildIndex();
+    const nq = GEO.norm(q); if (!nq) return [];
+    const out = [];
+    index.forEach(it => {
+      let best = 9;
+      it.keys.forEach(k => {
+        const nk = GEO.norm(k);
+        if (nk === nq) best = Math.min(best, 0); else if (nk.startsWith(nq)) best = Math.min(best, 1);
+        else if (nk.split(' ').some(w => w.startsWith(nq))) best = Math.min(best, 2); else if (nq.length > 2 && nk.includes(nq)) best = Math.min(best, 3);
+      });
+      if (best < 9) out.push({ it, best });
+    });
+    const order = { dept: 0, pref: 1, region: 2, river: 3, wine: 4, app: 5 };
+    out.sort((a, b) => a.best - b.best || order[a.it.layer] - order[b.it.layer] || a.it.label.localeCompare(b.it.label, 'fr'));
+    return out.map(o => o.it).filter(it => !it.skipIfSame).slice(0, 40);
+  }
+
+  function renderList() {
+    const host = $('list');
+    document.querySelectorAll('#listtabs button').forEach(b => b.setAttribute('aria-selected', String(!query && b.dataset.tab === tab)));
+    if (query) {
+      const res = search(query);
+      host.innerHTML = res.length
+        ? res.map(it => '<button class="li" data-go="' + it.layer + ':' + esc(it.id) + '"><span class="li-main"><span class="kind">' + esc(it.kind) + '</span><span>' + esc(it.label) + '</span></span><span class="li-sub">' + esc(it.sub) + '</span></button>').join('')
+        : '<p class="empty">Aucun résultat pour « ' + esc(query) + ' ». Essayez un numéro (63), un département, une ville, un cours d\'eau ou un vin.</p>';
+      return;
+    }
+    host.innerHTML = listItems().map(([l, id]) => '<button class="li" data-go="' + l + ':' + esc(id) + '">' + itemHtml(l, id) + '</button>').join('');
+    markList();
+  }
+  function markList() {
+    document.querySelectorAll('#list .li').forEach(b => {
+      const on = sel && b.dataset.go === sel.layer + ':' + sel.id;
+      b.classList.toggle('on', !!on);
+      if (on) b.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  /* ----------------------------------------------------------- sélection */
+  function select(layer, id, opts) {
+    opts = opts || {};
+    const pref = layer === 'pref';
+    if (pref) layer = 'dept';
+    if (layer === 'dept' && !D[id]) return;
+    sel = { layer, id, pref };
+    if (opts.layerChip !== false) ensureChip(pref ? 'prefs' : CHIP_OF[layer]);
+    if (!query) {
+      const t = layer === 'app' ? 'wine' : layer;
+      if (t !== tab) { tab = t; renderList(); }
+    }
+    show();
+    if (opts.fly !== false) {
+      const b = MAP.boxOf(layer, id);
+      /* un zoom doux : la carte se recentre, sans se rapprocher de beaucoup */
+      if (b) MAP.flyTo(b, layer === 'app' ? { gentle: true, zoom: 0.5 } : { gentle: true });
+    }
+  }
+  function show() {
+    MAP.clearHighlights();
+    if (sel) {
+      MAP.highlight(sel.layer, sel.id, 'sel');
+      if (sel.layer === 'dept' && (sel.pref || chips.prefs)) MAP.highlight('pref', sel.id, 'sel');
+    }
+    renderCard();
+    markList();
+  }
+  function clear() { sel = null; show(); }
+
+  /* quand seules les régions sont affichées, un département « vaut » sa région */
+  const regionOnly = () => chips.regions && !chips.depts;
+  function onMapClick(layer, id) {
+    if (!layer) { clear(); return; }
+    if (layer === 'dept' && regionOnly() && D[id]) { select('region', D[id].region); return; }
+    select(layer, id);
+  }
+  function onHover(layer, id) {
+    MAP.setHot(layer === 'dept' && D[id] && regionOnly() ? D[id].region : null);
+  }
+
+  /* ------------------------------------------------------------ infobulle */
+  function tooltipFor(layer, id) {
+    if (layer === 'dept') {
+      const d = D[id]; if (!d) return '';
+      const r = FR.REGIONS[d.region];
+      if (regionOnly()) return '<b>' + esc(r.name) + '</b><div class="dim">capitale : ' + esc(r.capital) + '</div>';
+      return '<b>' + esc(d.code) + '</b> ' + esc(d.name) + '<div class="dim">' + esc(r.name) + '</div>';
+    }
+    if (layer === 'pref') { const d = D[id]; return d ? esc(d.pref) + ' <span class="dim">préfecture · ' + esc(d.name) + '</span>' : ''; }
+    if (layer === 'river') return esc(riverById[id].name);
+    if (layer === 'wine') return esc(wineById[id].name);
+    if (layer === 'app') { const a = FR.APPELLATIONS[+id]; return esc(a.name) + ' <span class="dim">' + esc(wineById[a.wine].name) + '</span>'; }
+    return '';
+  }
+
+  /* ------------------------------------------------------- initialisation */
+  function init() {
+    applyChips(); renderCard(); renderList();
+    $('chips').addEventListener('click', e => {
+      const b = e.target.closest('[data-chip]'); if (!b) return;
+      chips[b.dataset.chip] = !chips[b.dataset.chip]; sel = null; applyChips(); show();
+    });
+    $('listtabs').addEventListener('click', e => {
+      const b = e.target.closest('[data-tab]'); if (!b) return;
+      tab = b.dataset.tab; query = ''; $('q').value = ''; renderList();
+    });
+    $('explore').addEventListener('click', e => {
+      const b = e.target.closest('[data-go]'); if (!b) return;
+      const s = b.dataset.go, i = s.indexOf(':');
+      select(s.slice(0, i), s.slice(i + 1));
+    });
+    $('q').addEventListener('input', e => { query = e.target.value.trim(); renderList(); });
+    $('q').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && query) {
+        const first = search(query)[0];
+        if (first) { select(first.layer, first.id); }
+      } else if (e.key === 'Escape') { e.target.value = ''; query = ''; renderList(); }
+    });
+  }
+
+  return { init, select, clear, onMapClick, onHover, tooltipFor, applyChips, show, plate, search,
+           _state: () => ({ sel, tab, query, chips: { ...chips } }) };
+})();
+
+/* ===== quiz.js ===== */
+/* quiz.js — moteur et interface du quiz. La progression est gardée dans localStorage (ignoré s'il est indisponible). */
+const QUIZ = (() => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const rnd = n => Math.floor(Math.random() * n);
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const plate = (c, sm) => EXPLORE.plate(c, sm);
+  const km = n => n.toLocaleString('fr');
+
+  const D = {}; FR.DEPTS.forEach(d => { D[d.code] = d; });
+  const WINE = {}; FR.WINES.forEach(w => { WINE[w.id] = w; });
+  const RIVER = {}; FR.RIVERS.forEach(r => { RIVER[r.id] = r; });
+  const deptOrder = c => c === '2A' ? '20a' : c === '2B' ? '20b' : c.padStart(3, '0');
+
+  /* ------------------------------------------------------------ stockage */
+  const STORE = 'france-explorer.v1';
+  let store = (() => {
+    try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && s.stats) return s; } catch (e) { /* ignorer */ }
+    return { stats: {}, opts: {} };
+  })();
+  store.opts = Object.assign({ count: 10, input: 'choice', overseas: false, auto: true }, store.opts);
+  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(store)); } catch (e) { /* ignorer */ } };
+  const stat = (t, id) => store.stats[t + '|' + id] || [0, 0];
+  function record(t, id, ok) {
+    const k = t + '|' + id, s = store.stats[k] || [0, 0];
+    s[0]++; if (ok) s[1]++; store.stats[k] = s; save();
+  }
+  const isKnown = (t, id) => { const [s, c] = stat(t, id); return s >= 2 && c / s >= 0.7; };
+  const weight = (t, id) => { const [s, c] = stat(t, id); return s === 0 ? 3 : (isKnown(t, id) ? 0.4 : 1 + 4 * (1 - c / s)); };
+
+  /* -------------------------------------------------------------- séries */
+  const withOverseas = () => store.opts.overseas;
+  const deptList = () => FR.DEPTS.filter(d => withOverseas() || !d.overseas);
+  const deptPool = () => deptList().map(d => d.code);
+  /* les quiz « cliquer » ne portent que sur la métropole : les vignettes d'outre-mer sont masquées pendant un quiz */
+  const clickDeptPool = () => FR.DEPTS.filter(d => !d.overseas && MAP.hasShape('dept', d.code)).map(d => d.code);
+  const regionList = () => Object.keys(FR.REGIONS).filter(c => FR.DEPTS.some(d => d.region === c && (withOverseas() || !d.overseas)));
+  const clickRegionPool = () => regionList().filter(c => FR.DEPTS.some(d => d.region === c && !d.overseas && MAP.hasShape('dept', d.code)));
+  const riverPool = () => FR.RIVERS.map(r => r.id);
+  const winePool = () => FR.WINES.map(w => w.id);
+  const appPool = () => FR.APPELLATIONS.map((a, i) => String(i));
+
+  /* ------------------------------------------------- aides pour les réponses */
+  const ALT_PREF = { 'Évry-Courcouronnes': ['Évry'], 'Charleville-Mézières': ['Charleville', 'Mézières'], 'Cergy': ['Cergy-Pontoise'],
+    'Châlons-en-Champagne': ['Châlons', 'Châlons-sur-Marne'], 'Saint-Denis': ['St-Denis'] };
+  const ALT_WINE = { bourgogne: ['Burgundy'], loire: ['Loire', 'Val de Loire'], rhone: ['Rhône', 'Rhone'],
+    languedoc: ['Languedoc', 'Roussillon', 'Languedoc Roussillon'], sudouest: ['Sud Ouest', 'South West'] };
+  const codeAlts = c => (c.length === 2 && c[0] === '0') ? [c, c[1]] : [c];
+
+  /* n leurres distincts (par clé), avec un leurre « proche » si possible */
+  function others(list, correct, n, key, near) {
+    const seen = new Set([key(correct)]), out = [];
+    if (near) {
+      for (const x of shuffle(list.filter(x => x !== correct && near(x)))) {
+        if (out.length >= 1) break;
+        if (!seen.has(key(x))) { seen.add(key(x)); out.push(x); }
+      }
+    }
+    for (const x of shuffle(list.slice())) {
+      if (out.length >= n) break;
+      if (!seen.has(key(x))) { seen.add(key(x)); out.push(x); }
+    }
+    return out;
+  }
+  const choicesOf = (correct, wrongs, val, label) =>
+    shuffle([correct].concat(wrongs)).map(x => ({ value: val(x), label: label(x) }));
+
+  const capitalDept = r => { const x = FR.DEPTS.find(d => d.region === r && d.pref === FR.REGIONS[r].capital && !d.overseas); return x ? x.code : null; };
+  const GROUPS = {
+    'Départements': { color: '#0b3f94', icon: '🔢', blurb: 'Numéros et noms' },
+    'Préfectures': { color: '#c2570c', icon: '🏛️', blurb: 'Villes principales' },
+    'Régions': { color: '#2f7d57', icon: '🗺️', blurb: 'Régions et capitales' },
+    'Cours d\'eau': { color: '#1f6fb4', icon: '🌊', blurb: 'Fleuves et rivières' },
+    'Vins': { color: '#8b1e3f', icon: '🍷', blurb: 'Vignobles et appellations' }
+  };
+
+  /* La ligne « à retenir » montrée après chaque réponse */
+  function factDept(d) { return plate(d.code, true) + ' <b>' + esc(d.name) + '</b> · préfecture : ' + esc(d.pref) + ' · ' + esc(FR.REGIONS[d.region].name); }
+  function factRegion(c) { const r = FR.REGIONS[c]; return '<b>' + esc(r.name) + '</b> · capitale : ' + esc(r.capital); }
+  function factRiver(id) { const r = RIVER[id]; return '<b>' + esc(r.name) + '</b> · ≈ ' + km(r.km) + ' km · se jette dans ' + esc(r.mouth); }
+  function factWine(id) { const w = WINE[id]; return '<b>' + esc(w.name) + '</b> · cépages : ' + esc(w.cepages.join(', ')); }
+
+  /* ------------------------------------------------------- types de quiz */
+  const TYPES = [
+    { id: 'click-dept', group: 'Départements', title: 'Trouver le département', desc: 'Un nom apparaît. Cliquez dessus sur la carte.', kind: 'click',
+      layers: { fill: true, regionLines: true }, pool: clickDeptPool,
+      make(id) { const d = D[id]; return { prompt: 'Cliquez sur le département : <b>' + esc(d.name) + '</b>', clickLayer: 'dept', answer: id, answerLabel: d.code + ' ' + d.name, fact: factDept(d), target: { layer: 'dept', id } }; } },
+    { id: 'click-num', group: 'Départements', title: 'Trouver le numéro', desc: 'Un numéro apparaît. Cliquez sur ce département.', kind: 'click',
+      layers: { fill: true, regionLines: true }, pool: clickDeptPool,
+      make(id) { const d = D[id]; return { prompt: 'Cliquez sur le département n° ' + plate(d.code), clickLayer: 'dept', answer: id, answerLabel: d.code + ' ' + d.name, fact: factDept(d), target: { layer: 'dept', id } }; } },
+    { id: 'num-name', group: 'Départements', title: 'Numéro → nom', desc: 'Un numéro apparaît. Nommez le département.', kind: 'choice', typable: true,
+      layers: { fill: true, regionLines: true }, pool: deptPool,
+      make(id) {
+        const d = D[id], list = deptList();
+        return { prompt: 'Quel département porte le numéro ' + plate(d.code) + ' ?', show: [{ layer: 'dept', id }], answer: d.code, answerLabel: d.name, accept: [d.name], fact: factDept(d),
+          choices: choicesOf(d, others(list, d, 3, x => x.code, x => x.region === d.region), x => x.code, x => esc(x.name)) };
+      } },
+    { id: 'name-num', group: 'Départements', title: 'Nom → numéro', desc: 'Un nom apparaît. Donnez son numéro.', kind: 'choice', typable: true,
+      layers: { fill: true, regionLines: true }, pool: deptPool,
+      make(id) {
+        const d = D[id], list = deptList().slice().sort((a, b) => deptOrder(a.code).localeCompare(deptOrder(b.code)));
+        const at = list.indexOf(d);
+        return { prompt: 'Département : <b>' + esc(d.name) + '</b>. Quel est son numéro ?', show: [{ layer: 'dept', id }], answer: d.code, answerLabel: d.code, accept: codeAlts(d.code), fact: factDept(d),
+          choices: choicesOf(d, others(list, d, 3, x => x.code, x => Math.abs(list.indexOf(x) - at) <= 5), x => x.code, x => plate(x.code, true)) };
+      } },
+    { id: 'dept-pref', group: 'Préfectures', title: 'Département → préfecture', desc: 'Trouvez la ville principale d\'un département.', kind: 'choice', typable: true,
+      layers: { fill: true, regionLines: true }, pool: deptPool,
+      make(id) {
+        const d = D[id], list = deptList();
+        return { prompt: 'Département : <b>' + esc(d.name) + '</b>. Quelle est sa préfecture ? <span class="qz-aside">(cible rouge sur la carte)</span>', show: [{ layer: 'dept', id }, { layer: 'pref', id, cls: 'reticle' }], answer: d.code, answerLabel: d.pref, accept: [d.pref].concat(ALT_PREF[d.pref] || []), fact: factDept(d),
+          choices: choicesOf(d, others(list, d, 3, x => x.pref, x => x.region === d.region), x => x.code, x => esc(x.pref)) };
+      },
+      mapMake(id) {
+        const d = D[id];
+        return { prompt: 'Cliquez sur la <b>préfecture</b> du département : <b>' + esc(d.name) + '</b>', clickLayer: 'pref', answer: id, answerLabel: d.pref, fact: factDept(d),
+          target: { layer: 'pref', id }, show: [{ layer: 'dept', id }], layers: { prefs: true, fill: true, regionLines: true } };
+      } },
+    { id: 'pref-dept', group: 'Préfectures', title: 'Préfecture → département', desc: 'Une ville apparaît. Nommez son département.', kind: 'choice', typable: true,
+      layers: { fill: true, regionLines: true }, pool: deptPool,
+      make(id) {
+        const d = D[id], list = deptList();
+        return { prompt: 'Préfecture : <b>' + esc(d.pref) + '</b>. De quel département ? <span class="qz-aside">(cible rouge sur la carte)</span>', show: [{ layer: 'pref', id, cls: 'reticle' }], answer: d.code, answerLabel: d.name, accept: [d.name], fact: factDept(d),
+          choices: choicesOf(d, others(list, d, 3, x => x.name, x => x.region === d.region), x => x.code, x => esc(x.name)) };
+      },
+      mapMake(id) {
+        const d = D[id];
+        return { prompt: 'Préfecture : <b>' + esc(d.pref) + '</b>. Cliquez sur son département.', clickLayer: 'dept', answer: id, answerLabel: d.name, fact: factDept(d),
+          target: { layer: 'dept', id }, layers: { fill: true, regionLines: true } };
+      } },
+    { id: 'dept-region', group: 'Régions', title: 'Département → région', desc: 'Un département s\'illumine. Nommez sa région.', kind: 'choice',
+      layers: { fill: true, regionLines: true }, pool: deptPool,
+      make(id) {
+        const d = D[id], rs = regionList(), r = d.region;
+        return { prompt: 'Département : <b>' + esc(d.name) + '</b>. Dans quelle région se situe-t-il ?', show: [{ layer: 'dept', id }], answer: r, answerLabel: FR.REGIONS[r].name, fact: factDept(d),
+          choices: choicesOf(r, others(rs, r, 3, x => x), x => x, x => esc(FR.REGIONS[x].name)) };
+      },
+      mapMake(id) {
+        const d = D[id];
+        return { prompt: 'Département : <b>' + esc(d.name) + '</b>. Cliquez sur sa région.', clickLayer: 'region', answer: d.region, answerLabel: FR.REGIONS[d.region].name, fact: factDept(d),
+          target: { layer: 'region', id: d.region }, show: [{ layer: 'dept', id }], layers: { fill: true, regionLines: true } };
+      } },
+    { id: 'click-region', group: 'Régions', title: 'Trouver la région', desc: 'Un nom de région apparaît. Cliquez dessus sur la carte.', kind: 'click',
+      layers: { fill: true, regionLines: true }, pool: clickRegionPool,
+      make(id) { const r = FR.REGIONS[id]; return { prompt: 'Cliquez sur la région : <b>' + esc(r.name) + '</b>', clickLayer: 'region', answer: id, answerLabel: r.name, fact: factRegion(id), target: { layer: 'region', id } }; } },
+    { id: 'region-capital', group: 'Régions', title: 'Région → capitale', desc: 'Donnez la capitale d\'une région.', kind: 'choice', typable: true,
+      layers: { fill: true, regionLines: true }, pool: regionList,
+      make(id) {
+        const r = FR.REGIONS[id], rs = regionList();
+        const cd = capitalDept(id);
+        return { prompt: 'Région : <b>' + esc(r.name) + '</b>. Quelle est sa capitale ? <span class="qz-aside">(cible rouge sur la carte)</span>', show: [{ layer: 'region', id }].concat(cd ? [{ layer: 'pref', id: cd, cls: 'reticle' }] : []), answer: id, answerLabel: r.capital, accept: [r.capital].concat(ALT_PREF[r.capital] || []), fact: factRegion(id),
+          choices: choicesOf(id, others(rs, id, 3, x => FR.REGIONS[x].capital), x => x, x => esc(FR.REGIONS[x].capital)) };
+      },
+      mapMake(id) {
+        const r = FR.REGIONS[id], cd = capitalDept(id);
+        return { prompt: 'Région : <b>' + esc(r.name) + '</b>. Cliquez sur sa <b>capitale</b>.', clickLayer: 'pref', answer: cd, answerLabel: r.capital, fact: factRegion(id),
+          target: { layer: 'pref', id: cd }, show: [{ layer: 'region', id }], layers: { prefs: true, fill: true, regionLines: true } };
+      } },
+    { id: 'river-id', group: 'Cours d\'eau', title: 'Nommer le cours d\'eau', desc: 'Un cours d\'eau s\'illumine. Lequel est-ce ?', kind: 'choice', typable: true,
+      layers: { rivers: true }, pool: riverPool,
+      make(id) {
+        const r = RIVER[id];
+        return { prompt: 'Quel cours d\'eau est en surbrillance ?', show: [{ layer: 'river', id }], answer: id, answerLabel: r.name, accept: [r.name, r.det], fact: factRiver(id),
+          choices: choicesOf(id, others(riverPool(), id, 3, x => x), x => x, x => esc(RIVER[x].name)) };
+      } },
+    { id: 'river-click', group: 'Cours d\'eau', title: 'Trouver le cours d\'eau', desc: 'Un nom apparaît. Cliquez sur le cours d\'eau.', kind: 'click',
+      layers: { rivers: true }, pool: riverPool,
+      make(id) { const r = RIVER[id]; return { prompt: 'Cliquez sur <b>' + esc(r.det) + '</b>', clickLayer: 'river', answer: id, answerLabel: r.name, fact: factRiver(id), target: { layer: 'river', id } }; } },
+    { id: 'wine-id', group: 'Vins', title: 'Nommer la région viticole', desc: 'Une région viticole s\'illumine. Laquelle est-ce ?', kind: 'choice', typable: true,
+      layers: { wines: true }, pool: winePool,
+      make(id) {
+        const w = WINE[id];
+        return { prompt: 'Quelle région viticole est en surbrillance ?', show: [{ layer: 'wine', id }], answer: id, answerLabel: w.name, accept: [w.name].concat(ALT_WINE[id] || []), fact: factWine(id),
+          choices: choicesOf(id, others(winePool(), id, 3, x => x), x => x, x => esc(WINE[x].name)) };
+      } },
+    { id: 'wine-click', group: 'Vins', title: 'Trouver la région viticole', desc: 'Un nom apparaît. Cliquez sur sa zone.', kind: 'click',
+      layers: { wines: true }, pool: winePool,
+      make(id) { const w = WINE[id]; return { prompt: 'Cliquez sur la région viticole : <b>' + esc(w.name) + '</b>', clickLayer: 'wine', answer: id, answerLabel: w.name, fact: factWine(id), target: { layer: 'wine', id } }; } },
+    { id: 'app-wine', group: 'Vins', title: 'Appellation → région', desc: 'Une appellation célèbre apparaît. Dans quelle région viticole est-elle ?', kind: 'choice',
+      layers: { wines: true, apps: true }, pool: appPool,
+      make(id) {
+        const a = FR.APPELLATIONS[+id], w = a.wine;
+        return { prompt: 'Dans quelle région viticole se trouve <b>' + esc(a.name) + '</b> ?', show: [{ layer: 'app', id }], answer: w, answerLabel: WINE[w].name,
+          fact: '<b>' + esc(a.name) + '</b> · ' + esc(WINE[w].name) + ' · cépages : ' + esc(WINE[w].cepages.join(', ')),
+          choices: choicesOf(w, others(winePool(), w, 3, x => x), x => x, x => esc(WINE[x].name)) };
+      },
+      mapMake(id) {
+        const a = FR.APPELLATIONS[+id], w = a.wine;
+        return { prompt: 'Appellation : <b>' + esc(a.name) + '</b>. Cliquez sur sa région viticole.', clickLayer: 'wine', answer: w, answerLabel: WINE[w].name,
+          fact: '<b>' + esc(a.name) + '</b> · ' + esc(WINE[w].name) + ' · cépages : ' + esc(WINE[w].cepages.join(', ')),
+          target: { layer: 'wine', id: w }, show: [{ layer: 'app', id }], layers: { wines: true } };
+      } }
+  ];
+  const typeById = {}; TYPES.forEach(t => { typeById[t.id] = t; });
+
+  /* --------------------------------------------------------------- partie */
+  let session = null;
+
+  function sample(pool, n, t) {
+    const items = pool.slice(), out = [];
+    while (out.length < n && items.length) {
+      const ws = items.map(id => weight(t.id, id)), total = ws.reduce((a, b) => a + b, 0);
+      let r = Math.random() * total, i = 0;
+      while (i < items.length - 1 && r >= ws[i]) { r -= ws[i]; i++; }
+      out.push(items.splice(i, 1)[0]);
+    }
+    return out;
+  }
+
+  const OFF = {}; MAP.LAYER_FLAGS.forEach(f => { OFF[f] = false; });
+  function applyLayers(t, q) {
+    const L = Object.assign({}, OFF, { deptLines: true }, t.layers, q && q.layers);
+    L.paris = !!L.fill;
+    MAP.setLayers(L);
+  }
+
+  /* mode de réponse effectif : choix, saisie ou carte, selon ce que le quiz permet */
+  function modeFor(t) {
+    const m = store.opts.input;
+    if (m === 'type') return t.typable ? 'type' : 'choice';
+    if (m === 'map') return (t.mapMake || t.kind === 'click') ? 'map' : 'choice';
+    return 'choice';
+  }
+  const mapAble = t => !!t.mapMake || t.kind === 'click';
+
+  function start(typeId, items) {
+    const t = typeById[typeId], pool = items || t.pool();
+    if (!pool.length) { renderMenu('Les frontières ne sont pas encore chargées : ce quiz est indisponible.'); return; }
+    const n = items ? items.length : Math.min(store.opts.count, pool.length);
+    session = { t, items: items ? shuffle(items.slice()) : sample(pool, n, t), i: 0, score: 0, streak: 0, best: 0,
+                missed: [], results: [], input: modeFor(t), q: null, answered: false };
+    EXPLORE.clear();
+    MAP.flyTo(null);          /* chaque quiz repart de la France entière */
+    showScreen('play');
+    next();
+  }
+
+  function next() {
+    if (session.i >= session.items.length) { finish(); return; }
+    const id = session.items[session.i];
+    const t = session.t, useMap = session.input === 'map' && t.mapMake;
+    session.q = Object.assign({ id }, useMap ? t.mapMake(id) : t.make(id));
+    session.q.kind = useMap ? 'click' : t.kind;
+    session.answered = false;
+    clearTimeout(session.auto);
+    MAP.clearHighlights();
+    applyLayers(t, session.q);
+    /* ce qui est montré sur la carte : région / département / cible. La France reste entière à l'écran ;
+       on ne zoome (doucement) que sur un sujet minuscule. */
+    let focus = null;
+    (session.q.show || []).forEach(s => {
+      MAP.highlight(s.layer, s.id, s.cls || 'target');
+      if (!focus && s.layer === 'dept') focus = MAP.boxOf(s.layer, s.id);   /* les points (préfecture, appellation) ne déclenchent pas de zoom */
+    });
+    viewFor(focus);
+    renderQuestion();
+  }
+
+  /* France entière, sauf pour un sujet minuscule : zoom doux dessus */
+  function viewFor(box) {
+    const tiny = box && (box.x1 - box.x0) < MAP.homeW() * 0.05 && (box.y1 - box.y0) < MAP.homeW() * 0.05;
+    if (tiny) MAP.flyTo(box, { gentle: true, fresh: true, zoom: 0.45 });
+    else MAP.flyTo(null);
+  }
+
+  function banner(html, cls) {
+    const b = $('qz-banner'); if (!b) return;
+    if (!html) { b.hidden = true; return; }
+    b.className = 'qz-banner' + (cls ? ' ' + cls : ''); b.innerHTML = html; b.hidden = false;
+  }
+
+  const headHtml = s => '<span>Question ' + Math.min(s.i + (s.answered ? 0 : 1), s.items.length) + ' sur ' + s.items.length + '</span><span>Score : ' + s.score + '</span><span>Série : ' + s.streak + '</span>';
+
+  function renderQuestion() {
+    const s = session, q = s.q, total = s.items.length;
+    banner(q.kind === 'click' ? q.prompt : null, 'ask');
+    const typing = q.kind === 'choice' && s.input === 'type';
+    let body;
+    if (q.kind === 'click') body = '<p class="qz-hint">Cliquez sur la carte. Molette pour zoomer, glissez pour déplacer.</p>';
+    else if (typing) body = '<form id="qz-form" class="qz-form" autocomplete="off"><input id="qz-input" type="text" spellcheck="false" aria-label="Votre réponse" placeholder="Votre réponse"><button class="btn primary" type="submit">Valider</button></form>';
+    else body = '<div class="qz-answers">' + q.choices.map((c, i) => '<button class="qz-choice" data-v="' + esc(c.value) + '"><kbd>' + (i + 1) + '</kbd><span>' + c.label + '</span></button>').join('') + '</div>';
+    $('qz-play').innerHTML =
+      '<div class="qz-cat" style="--g:' + (GROUPS[s.t.group] || {}).color + '"><span>' + (GROUPS[s.t.group] || {}).icon + ' ' + esc(s.t.group) + '</span> · ' + esc(s.t.title) + (q.kind === 'click' ? ' <em>sur la carte</em>' : '') + '</div>' +
+      '<div class="qz-head">' + headHtml(s) + '</div>' +
+      '<div class="qz-bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + s.i + '"><i style="width:' + (100 * s.i / total) + '%"></i></div>' +
+      '<p class="qz-prompt">' + q.prompt + '</p>' + body +
+      '<div class="qz-feedback" id="qz-fb" role="status" aria-live="polite"></div>' +
+      '<div class="qz-actions"><button class="btn primary" id="qz-next" disabled>' + (s.i + 1 === total ? 'Voir les résultats' : 'Suivant') + '</button>' +
+      '<button class="btn" id="qz-skip">Passer</button><button class="btn ghost" id="qz-quit">Terminer</button></div>';
+    const inp = $('qz-input'); if (inp) inp.focus();
+  }
+
+  /* via : 'choice' | 'type' | 'click' | 'skip' */
+  function submit(raw, via) {
+    const s = session; if (!s || s.answered) return;
+    const q = s.q;
+    let ok = false;
+    if (via === 'type') ok = (q.accept || []).some(a => GEO.norm(a) === GEO.norm(raw));
+    else if (via !== 'skip') ok = raw === q.answer;
+    s.answered = true;
+    record(s.t.id, q.id, ok);
+    if (ok) { s.score++; s.streak++; s.best = Math.max(s.best, s.streak); } else { s.streak = 0; s.missed.push(q.id); }
+    s.results.push({ id: q.id, ok, label: q.answerLabel });
+
+    /* retour sur la carte */
+    if (q.kind === 'click') {
+      MAP.clearHighlights();
+      (q.show || []).forEach(x => MAP.highlight(x.layer, x.id, 'sel'));
+      if (!ok && via === 'click') MAP.highlight(q.clickLayer, raw, 'bad');
+      MAP.highlight(q.target.layer, q.target.id, 'ok');
+      if (!ok && q.target.layer === 'dept') viewFor(MAP.boxOf(q.target.layer, q.target.id));
+    } else if (q.show) {
+      MAP.clearHighlights();
+      q.show.forEach(x => MAP.highlight(x.layer, x.id, ok ? 'ok' : 'bad'));
+    }
+
+    /* retour dans le panneau */
+    document.querySelectorAll('#qz-play .qz-choice').forEach(b => {
+      b.disabled = true;
+      if (b.dataset.v === q.answer) b.classList.add('correct');
+      else if (via === 'choice' && b.dataset.v === raw) b.classList.add('wrong');
+    });
+    const inp = $('qz-input'); if (inp) { inp.disabled = true; inp.classList.add(ok ? 'correct' : 'wrong'); }
+    const sub = $('qz-form') && $('qz-form').querySelector('button'); if (sub) sub.disabled = true;
+    $('qz-fb').innerHTML = (ok ? '<p class="fb ok">Bonne réponse</p>'
+      : '<p class="fb bad">' + (via === 'skip' ? 'Question passée.' : 'Raté.') + ' La réponse est <b>' + q.answerLabel + '</b>.</p>') +
+      '<p class="fact">' + q.fact + '</p>';
+    $('qz-skip').disabled = true;
+    const nb = $('qz-next'); nb.disabled = false; nb.focus();
+    banner(ok ? '<span class="mark">✓</span> Bonne réponse : <b>' + q.answerLabel + '</b>'
+              : '<span class="mark">✗</span> ' + (via === 'skip' ? 'Passée' : 'Raté') + ' : c\'était <b>' + q.answerLabel + '</b>', ok ? 'ok' : 'bad');
+    /* bonne réponse : on enchaîne tout seul ; erreur : on laisse le temps de lire (Entrée ou Suivant) */
+    if (ok && store.opts.auto !== false) s.auto = setTimeout(() => { if (session === s && s.answered) goNext(); }, 1300);
+    s.i++;
+    const head = document.querySelector('#qz-play .qz-head');
+    if (head) head.innerHTML = '<span>Question ' + s.i + ' sur ' + s.items.length + '</span><span>Score : ' + s.score + '</span><span>Série : ' + s.streak + '</span>';
+    const bar = document.querySelector('#qz-play .qz-bar i'); if (bar) bar.style.width = (100 * s.i / s.items.length) + '%';
+  }
+
+  function goNext() {
+    const s = session; if (!s || !s.answered) return;
+    clearTimeout(s.auto);
+    if (s.i >= s.items.length) finish(); else next();
+  }
+
+  /* survol en quiz « carte » : on montre ce qui serait cliqué, sans le nommer */
+  function onHover(layer, id) {
+    const s = session, q = s && !s.answered && s.q;
+    MAP.setHot(q && q.kind === 'click' && q.clickLayer === 'region' && layer === 'dept' ? MAP.regionOfDept(id) : null);
+  }
+
+  /* appelé par main quand on clique sur la carte en mode quiz */
+  function onMapClick(layer, id) {
+    const s = session; if (!s || s.answered || !s.q || s.q.kind !== 'click') return;
+    let given = null;
+    if (s.q.clickLayer === 'region') { if (layer === 'dept') given = MAP.regionOfDept(id); }
+    else if (layer === s.q.clickLayer) given = id;
+    if (given == null) return;
+    submit(given, 'click');
+  }
+
+  function finish(early) {
+    const s = session; if (!s) return;
+    const answered = s.results.length, pct = answered ? Math.round(100 * s.score / answered) : 0;
+    clearTimeout(s.auto);
+    MAP.clearHighlights(); banner(null); MAP.flyTo(null);
+    $('qz-end').innerHTML =
+      '<h2>' + (early ? 'Quiz interrompu' : 'Quiz terminé') + '</h2>' +
+      '<p class="big">' + s.score + ' <span>sur ' + answered + '</span></p>' +
+      '<p class="qz-sum">' + pct + ' % de réussite · meilleure série : ' + s.best + '</p>' +
+      (s.missed.length ? '<h3>À revoir</h3><ul class="missed">' + s.results.filter(r => !r.ok).map(r => '<li>' + r.label + '</li>').join('') + '</ul>' : '<p class="fb ok">Aucune erreur.</p>') +
+      '<div class="qz-actions">' + (s.missed.length ? '<button class="btn primary" id="qz-again-missed">Retravailler les erreurs</button>' : '') +
+      '<button class="btn' + (s.missed.length ? '' : ' primary') + '" id="qz-again">Rejouer</button><button class="btn ghost" id="qz-tomenu">Tous les quiz</button></div>';
+    session.over = true;
+    showScreen('end');
+  }
+
+  /* ---------------------------------------------------------------- menu */
+  function masteryOf(t) {
+    const pool = t.pool(); if (!pool.length) return { n: 0, known: 0 };
+    return { n: pool.length, known: pool.filter(id => isKnown(t.id, id)).length };
+  }
+  function seg(name, label, opts, cur) {
+    return '<div class="seg" role="group" aria-label="' + label + '">' + opts.map(o => '<button data-opt="' + name + '" data-val="' + o[0] + '" aria-pressed="' + (String(cur) === String(o[0])) + '">' + o[1] + '</button>').join('') + '</div>';
+  }
+  function renderMenu(msg) {
+    session = null;
+    const groups = [];
+    TYPES.forEach(t => { if (!groups.includes(t.group)) groups.push(t.group); });
+    let html = (msg ? '<p class="banner-inline">' + esc(msg) + '</p>' : '') +
+      '<div class="qz-opts"><div><span class="lbl">Nombre de questions</span>' + seg('count', 'Nombre de questions', [[10, '10'], [20, '20'], [40, '40']], store.opts.count) + '</div>' +
+      '<div><span class="lbl">Répondre en</span>' + seg('input', 'Mode de réponse', [['choice', 'choisissant'], ['type', 'tapant'], ['map', 'sur la carte']], store.opts.input) + '</div>' +
+      '<label class="chk"><input type="checkbox" id="opt-overseas"' + (store.opts.overseas ? ' checked' : '') + '> Inclure l\'outre-mer (971–976)</label>' +
+      '<label class="chk"><input type="checkbox" id="opt-auto"' + (store.opts.auto !== false ? ' checked' : '') + '> Passer seul à la question suivante après une bonne réponse</label></div>';
+    groups.forEach(gname => {
+      const G = GROUPS[gname] || { color: '#0b3f94', icon: '', blurb: '' }, ts = TYPES.filter(t => t.group === gname);
+      html += '<section class="qz-group" style="--g:' + G.color + '"><header class="qz-ghead"><span class="qz-gicon" aria-hidden="true">' + G.icon + '</span><div><h3>' + esc(gname) + '</h3><small>' + esc(G.blurb) + '</small></div><span class="qz-gcount">' + ts.length + ' quiz</span></header><div class="qz-grid">';
+      ts.forEach(t => {
+        const m = masteryOf(t), off = !m.n, mode = modeFor(t);
+        const tag = t.kind === 'click' || mode === 'map' ? '<em class="qz-tag map">Carte</em>' : (mode === 'type' ? '<em class="qz-tag">Saisie</em>' : '<em class="qz-tag">Choix</em>');
+        html += '<button class="qz-card" data-type="' + t.id + '"' + (off ? ' disabled title="Nécessite les frontières de la carte"' : '') + '>' + tag + '<b>' + esc(t.title) + '</b><span>' + esc(t.desc) + '</span>' +
+          '<span class="mastery"><i style="width:' + (m.n ? Math.round(100 * m.known / m.n) : 0) + '%"></i></span><small>' + (off ? 'Nécessite la carte' : m.known + ' sur ' + m.n + ' maîtrisés') + '</small></button>';
+      });
+      html += '</div></section>';
+    });
+    html += '<p class="qz-foot">Une question est « maîtrisée » après deux réponses avec au moins 70 % de réussite. Les points faibles reviennent plus souvent. <button class="link" id="qz-reset">Réinitialiser la progression</button></p>';
+    $('qz-menu').innerHTML = html;
+    showScreen('menu');
+  }
+
+  function showScreen(name) {
+    ['menu', 'play', 'end'].forEach(n => { $('qz-' + n).hidden = n !== name; });
+  }
+
+  /* ------------------------------------------------------ initialisation */
+  function init() {
+    $('quiz').addEventListener('click', e => {
+      const t = e.target.closest('button, label'); if (!t) return;
+      if (t.dataset.type) { start(t.dataset.type); return; }
+      if (t.dataset.opt) { store.opts[t.dataset.opt] = t.dataset.opt === 'count' ? +t.dataset.val : t.dataset.val; save(); renderMenu(); return; }
+      if (t.classList.contains('qz-choice')) { submit(t.dataset.v, 'choice'); return; }
+      if (t.id === 'qz-next') { goNext(); return; }
+      if (t.id === 'qz-skip') { submit(null, 'skip'); return; }
+      if (t.id === 'qz-quit') { finish(true); return; }
+      if (t.id === 'qz-tomenu') { enter(); return; }
+      if (t.id === 'qz-again') { start(session.t.id); return; }
+      if (t.id === 'qz-again-missed') { start(session.t.id, session.missed.slice()); return; }
+      if (t.id === 'qz-reset') {
+        if (confirm('Effacer toute la progression des quiz sur cet ordinateur ?')) { store.stats = {}; save(); renderMenu(); }
+      }
+    });
+    $('quiz').addEventListener('change', e => {
+      if (e.target.id === 'opt-overseas') { store.opts.overseas = e.target.checked; save(); renderMenu(); }
+      if (e.target.id === 'opt-auto') { store.opts.auto = e.target.checked; save(); }
+    });
+    $('quiz').addEventListener('submit', e => {
+      e.preventDefault();
+      const inp = $('qz-input'); if (inp && inp.value.trim()) submit(inp.value, 'type');
+    });
+    document.addEventListener('keydown', e => {
+      if (session && !session.over && session.answered && (e.key === 'Enter' || e.key === ' ')) {
+        if (document.activeElement && document.activeElement.id === 'qz-next') return;   /* le bouton s'en charge */
+        e.preventDefault(); goNext(); return;
+      }
+      if (!session || session.over || !session.q || session.answered) return;
+      if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+      const n = parseInt(e.key, 10);
+      if (n >= 1 && n <= 4 && session.q.choices && session.input === 'choice') {
+        const c = session.q.choices[n - 1]; if (c) submit(c.value, 'choice');
+      }
+    });
+  }
+
+  function enter() { if (session) clearTimeout(session.auto); banner(null); EXPLORE.clear(); MAP.clearHighlights(); MAP.setLayers(Object.assign({}, OFF, { fill: true, regionLines: true, deptLines: true, paris: true })); MAP.flyTo(null); renderMenu(); }
+  function leave() { if (session) clearTimeout(session.auto); session = null; banner(null); MAP.clearHighlights(); EXPLORE.applyChips(); EXPLORE.show(); }
+  function refresh() { if (!session && !$('qz-menu').hidden) renderMenu(); }
+
+  return { init, enter, leave, onMapClick, onHover, refresh, TYPES,
+           _state: () => ({ session, store }), _submit: submit, _start: start, _next: next };
+})();
+
+/* ===== main.js ===== */
+/* main.js — start-up: load borders, wire the panels together. */
+(function () {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const D = {}; FR.DEPTS.forEach(d => { D[d.code] = d; });
+  const nameToCode = {}; FR.DEPTS.forEach(d => { nameToCode[GEO.norm(d.name)] = d.code; });
+  const OVERSEAS_REGIONS = ['01', '02', '03', '04', '06'];
+  let mode = 'explore';
+  const checks = { shapes: 0, missing: [], prefOutside: [], overseas: 0 };
+
+  MAP.init($('mapwrap'));
+  EXPLORE.init();
+  QUIZ.init();
+
+  /* ----------------------------------------------------------- map events */
+  MAP.on('click', (layer, id) => { if (mode === 'explore') EXPLORE.onMapClick(layer, id); else QUIZ.onMapClick(layer, id); });
+  const tip = $('tip');
+  const moveTip = e => {
+    const r = $('mapwrap').getBoundingClientRect();
+    tip.style.left = Math.max(8, Math.min(e.clientX - r.left + 14, r.width - tip.offsetWidth - 8)) + 'px';
+    tip.style.top = Math.max(8, e.clientY - r.top + 18) + 'px';
+  };
+  MAP.on('hover', (layer, id, e) => {
+    EXPLORE.onHover(mode === 'explore' ? layer : null, id);
+    if (mode === 'quiz') QUIZ.onHover(layer, id);
+    const html = mode === 'explore' && layer ? EXPLORE.tooltipFor(layer, id) : '';
+    if (!html) { tip.hidden = true; return; }
+    tip.innerHTML = html; tip.hidden = false; moveTip(e);
+  });
+  MAP.on('move', e => { if (!tip.hidden) moveTip(e); });
+
+  $('zin').addEventListener('click', () => MAP.zoomBy(1 / 1.6));
+  $('zout').addEventListener('click', () => MAP.zoomBy(1.6));
+  $('zhome').addEventListener('click', () => MAP.flyTo(null));
+  $('reload').addEventListener('click', async () => { await LOADER.cacheClear(); location.reload(); });
+
+  /* ---------------------------------------------------------- mode switch */
+  function setMode(m) {
+    if (m === mode) return;
+    mode = m; document.body.dataset.mode = m; tip.hidden = true;
+    $('tab-explore').setAttribute('aria-selected', String(m === 'explore'));
+    $('tab-quiz').setAttribute('aria-selected', String(m === 'quiz'));
+    $('explore').hidden = m !== 'explore'; $('quiz').hidden = m !== 'quiz'; $('chips').hidden = m === 'quiz';
+    if (m === 'quiz') QUIZ.enter(); else QUIZ.leave();
+  }
+  $('tab-explore').addEventListener('click', () => setMode('explore'));
+  $('tab-quiz').addEventListener('click', () => setMode('quiz'));
+
+  /* -------------------------------------------------------------- banners */
+  function banner(html, cls) { const b = $('banner'); b.className = 'banner ' + (cls || ''); b.innerHTML = html; b.hidden = false; }
+  function hideBanner() { $('banner').hidden = true; }
+
+  function failureBanner(errors, problems) {
+    banner(
+      '<h3>Les frontières n\'ont pas été chargées</h3>' +
+      '<p>France Explorer dessine les départements à partir d\'un fichier GeoJSON libre. Le téléchargement a échoué, ce qui signifie en général qu\'il n\'y a pas de connexion internet pour le moment.</p>' +
+      '<p><b>À faire une seule fois :</b> connectez-vous à internet puis appuyez sur <b>Réessayer</b>. Les frontières sont ensuite enregistrées sur cet ordinateur et fonctionnent hors ligne.</p>' +
+      '<p>Ou téléchargez <code>departements-version-simplifiee.geojson</code> et <code>regions-version-simplifiee.geojson</code> depuis ' +
+      '<a href="https://github.com/gregoiredavid/france-geojson" target="_blank" rel="noopener">github.com/gregoiredavid/france-geojson</a>, puis glissez-les ici ou choisissez-les.</p>' +
+      '<div class="banner-actions"><button class="btn primary" id="retry">Réessayer</button><button class="btn" id="pick">Choisir des fichiers…</button></div>' +
+      (problems && problems.length ? '<p class="bad-note">' + problems.map(esc).join('<br>') + '</p>' : '') +
+      (errors && errors.length ? '<details><summary>Ce qui a été essayé</summary><pre>' + errors.map(esc).join('\n') + '</pre></details>' : ''),
+      'err');
+    $('retry').addEventListener('click', loadMap);
+    $('pick').addEventListener('click', () => $('filepick').click());
+  }
+
+  /* --------------------------------------------------------------- borders */
+  function resolveCode(f) {
+    if (D[f.code]) return f.code;
+    const byName = nameToCode[GEO.norm(f.name)];
+    return byName || null;
+  }
+
+  function applyGeo(res) {
+    const shapes = [], seen = new Set(), droms = {};
+    LOADER.features(res.depts).forEach(f => {
+      const code = resolveCode(f); if (!code) return;
+      if (D[code].overseas) { droms[code] = droms[code] || f; return; }
+      if (seen.has(code)) return;
+      const sh = GEO.shapeFromGeometry(f.geometry); if (!sh) return;
+      seen.add(code); shapes.push({ code, d: sh.d, box: sh.box, cent: sh.cent, rings: sh.rings });
+    });
+    if (res.overseas) LOADER.features(res.overseas).forEach(f => { const c = resolveCode(f); if (c && D[c].overseas && !droms[c]) droms[c] = f; });
+
+    const lines = [];
+    if (res.regions) LOADER.features(res.regions).forEach(f => {
+      if (OVERSEAS_REGIONS.includes(f.code)) return;
+      const sh = GEO.shapeFromGeometry(f.geometry); if (sh) lines.push({ code: f.code, d: sh.d });
+    });
+
+    const insets = [];
+    FR.DEPTS.filter(d => d.overseas).forEach(d => {
+      const f = droms[d.code]; if (!f) return;
+      try { insets.push({ code: d.code, d: GEO.fitGeometry(f.geometry, 80, 60, 5) }); } catch (e) { /* skip */ }
+    });
+
+    MAP.setDepts(shapes);
+    MAP.setRegionLines(lines);
+    MAP.setInsets($('insets'), insets);
+    $('insets').hidden = !insets.length;
+
+    /* consistency check: each préfecture should sit inside its own département */
+    checks.shapes = shapes.length; checks.overseas = insets.length;
+    checks.missing = FR.DEPTS.filter(d => !d.overseas && !seen.has(d.code)).map(d => d.code);
+    checks.prefOutside = [];
+    shapes.forEach(s => {
+      const d = D[s.code], p = GEO.project(d.lat, d.lon);
+      if (!GEO.pointInShape(p[0], p[1], s)) checks.prefOutside.push(s.code);
+    });
+    if (checks.missing.length || checks.prefOutside.length) console.warn('France Explorer border check', checks);
+
+    QUIZ.refresh();
+    EXPLORE.show();
+    return checks;
+  }
+
+  async function loadMap() {
+    banner('<p class="busy">Chargement des frontières…</p>', 'busy');
+    let res;
+    try { res = await LOADER.loadAll(msg => banner('<p class="busy">' + esc(msg) + '</p>', 'busy')); }
+    catch (e) { res = { depts: null, errors: [String(e)] }; }
+    if (!res.depts) { failureBanner(res.errors); return; }
+    const c = applyGeo(res);
+    if (c.shapes < 90) {
+      banner('<h3>Seulement ' + c.shapes + ' départements sur 96 reconnus</h3><p>Le fichier utilise peut-être d\'autres codes. Vous pouvez glisser un autre fichier ici ou appuyer sur le bouton.</p>' +
+        '<div class="banner-actions"><button class="btn" id="pick">Choisir des fichiers…</button><button class="btn ghost" id="dismiss">Continuer quand même</button></div>', 'err');
+      $('pick').addEventListener('click', () => $('filepick').click());
+      $('dismiss').addEventListener('click', hideBanner);
+    } else hideBanner();
+  }
+
+  /* manual file loading: picker or drag-and-drop anywhere in the window */
+  async function takeFiles(files) {
+    if (!files || !files.length) return;
+    banner('<p class="busy">Lecture des fichiers…</p>', 'busy');
+    const { got, problems } = await LOADER.ingestFiles(files);
+    if (!got.depts) { failureBanner([], problems.length ? problems : ['Aucun fichier de départements parmi les fichiers sélectionnés.']); return; }
+    await loadMap();
+  }
+  $('filepick').addEventListener('change', e => takeFiles(e.target.files));
+  window.addEventListener('dragover', e => { e.preventDefault(); });
+  window.addEventListener('drop', e => { e.preventDefault(); takeFiles(e.dataTransfer && e.dataTransfer.files); });
+
+  /* test hook */
+  window.__fx = { applyGeo, checks, setMode, loadMap };
+  loadMap();
+})();
+</script>
+</body>
+</html>
