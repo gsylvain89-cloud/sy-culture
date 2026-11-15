@@ -3390,39 +3390,20 @@ function importProgress(txt) {
   toast(JSON.stringify(S.cards) === before ? 'Rien de nouveau : cette version était déjà à jour.' : '✓ Progression fusionnée : ' + plural(changed, 'carte') + ' mise' + (changed > 1 ? 's' : '') + ' à jour.');
   return true;
 }
-document.addEventListener('paste', e => {
-  if (e.target && e.target.id !== 'sync-paste' && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
-  const t = (e.clipboardData || window.clipboardData).getData('text');
-  if (t && t.trim().startsWith(PREFIX)) { e.preventDefault(); importProgress(t); }
-});
 function syncBox() {
   let d = document.getElementById('ask');
   if (!d) { d = document.createElement('div'); d.id = 'ask'; d.className = 'ask'; document.body.appendChild(d); }
   const here = isOnline() ? 'la version claude.ai' : location.protocol === 'file:' ? 'l\'app du PC' : 'l\'app iPhone', there = location.protocol === 'file:' ? 'l\'autre appareil' : 'l\'app du PC';
   d.innerHTML = '<div class="ask-box sbox" role="dialog" aria-modal="true" aria-labelledby="sb-h">' +
-    '<h3 id="sb-h">🔄 Synchroniser PC ↔ iPhone</h3>' +
+    '<h3 id="sb-h">🔄 Synchro PC ↔ iPhone</h3>' +
     '<p class="muted">Ici : <b>' + here + '</b> · ' + plural(nCards(S), 'carte') + ' vue' + (nCards(S) > 1 ? 's' : '') + '. ' +
     '</p>' +
     (typeof ghPanel === 'function' ? ghPanel() : '') +
-    '<details class="manual"' + (typeof GH !== 'undefined' && GH.token ? '' : ' open') + '><summary>Synchro manuelle (copier-coller)</summary>' +
-    '<ol class="steps"><li><button class="btn primary" id="sb-copy">Copier ma progression</button></li>' +
-    '<li>Ouvre ' + there + (isOnline() ? '' : ' (<a href="' + ONLINE_URL + '" target="_blank" rel="noopener">ouvrir ↗</a>)') + ', clique 🔄 Synchro et colle (Ctrl+V).</li>' +
-    '<li>Pour le retour : là-bas, « Copier ma progression », puis reviens ici et colle-la ci-dessous (ou Ctrl+V n\'importe où).</li></ol>' +
-    '<textarea id="sync-paste" rows="2" placeholder="Colle ici une progression copiée depuis l\'autre version"></textarea>' +
-    '<p class="sb-note muted">Les deux progressions sont fusionnées carte par carte : rien n\'est perdu, la révision la plus récente gagne.</p></details>' +
     '<div class="actions"><button class="btn" id="sb-close">Fermer</button></div></div>';
   d.hidden = false;
   if (typeof ghWire === 'function') ghWire(d);
-  const ta = d.querySelector('#sync-paste');
-  ta.addEventListener('input', () => { if (ta.value.trim().startsWith(PREFIX)) importProgress(ta.value); });
-  ta.addEventListener('paste', e => { const t = e.clipboardData.getData('text'); if (t) { e.preventDefault(); if (!importProgress(t)) toast('Ce texte n\'est pas une progression SY Culture.'); } });
   d.querySelector('#sb-close').onclick = () => { d.hidden = true; };
   d.onclick = e => { if (e.target === d) d.hidden = true; };
-  d.querySelector('#sb-copy').onclick = () => {
-    const txt = PREFIX + JSON.stringify(S);
-    const fallback = () => { ta.value = txt; ta.focus(); ta.select(); toast('Copie automatique refusée : le texte est sélectionné, fais Ctrl+C.'); };
-    try { navigator.clipboard.writeText(txt).then(() => toast('✓ Progression copiée. Colle-la dans ' + there + '.'), fallback); } catch (e) { fallback(); }
-  };
 }
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-act="sync-box"]'); if (b) { e.stopPropagation(); syncBox(); } }, true);
 syncStart();
