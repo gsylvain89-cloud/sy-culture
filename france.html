@@ -2057,7 +2057,7 @@ const LEARN = (() => {
       '<div class="card lr-card">' + prompt + (v.reveal ? '<div class="lr-ans">' + answer + '</div>' : '') + '</div>' +
       '<div class="lr-nav">' + (v.reveal ? '<button class="btn bad" data-lr="again">À revoir</button><button class="btn good primary" data-lr="knew">Je savais</button>' : '<button class="btn primary wide" data-lr="reveal">Voir la réponse</button>') + '</div>';
     const showAns = v.reveal || q.dir !== 2;
-    paint(s, it, !v.reveal && q.dir === 2); fly(it, s);
+    paint(s, it, !v.reveal); fly(it, s);   /* avant la réponse : ni numéros ni préfectures sur la carte (ils la donneraient) */
   }
   function render() {
     if (v.screen === 'path') pathView();
