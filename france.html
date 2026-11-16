@@ -1543,6 +1543,7 @@ const MAP = (() => {
 
   const homeW = () => home.w;
 
+  /*sy-mapx*/ window.__mapx = { zoomAt: zoomAt, cancel: cancelAnim, pan: function (dx, dy) { atHome = false; view.cx -= dx * k; view.cy -= dy * k; applyView(); } };
   return { init, on, setDepts, homeW, setRegionLines, setInsets, setLayers, getLayers, highlight, clearHighlights,
            flyTo, zoomBy, boxOf, setHot, resize, hasShape, regionOfDept, LAYER_FLAGS,
            _state: () => ({ view: { ...view }, home: { ...home }, k, W, H, labels: labels.length, depts: Object.keys(reg.dept).length }) };
@@ -2412,16 +2413,31 @@ const QUIZ = (() => {
   html.sy-has-tabs .maps{display:none !important}
   html.sy-has-tabs{--tabs-h:calc(62px + env(safe-area-inset-bottom));overflow-x:hidden}
 }
-@media (max-width:600px){
-  .top{height:auto !important;min-height:46px;padding:calc(6px + env(safe-area-inset-top)) 10px 6px !important;flex-wrap:wrap;gap:6px 10px !important}
+@media (max-width:700px){
+  html,body{height:100%}
+  body{height:100dvh !important;overflow:hidden !important;display:grid;grid-template-rows:auto minmax(0,1fr) !important;padding-bottom:calc(62px + env(safe-area-inset-bottom)) !important}
+  .top{height:auto !important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 10px 6px !important;flex-wrap:wrap;gap:4px 10px !important}
   .brand h1{font-size:16px !important;white-space:nowrap}
   .top-right{margin-left:auto;gap:8px !important}
   #reload{font-size:11px;max-width:92px;line-height:1.15;text-align:right}
-  .modes button{padding:6px 12px !important;font-size:14px}
-  .toolbar{right:62px !important;flex-wrap:wrap}
-  .toolbar button{font-size:13px !important;padding:6px 9px !important}
-  .stage{grid-template-rows:58vh auto !important}
-  .panel{padding-bottom:8px}
+  .modes button{padding:7px 14px !important;font-size:14px}
+  .stage{display:grid !important;grid-template-columns:minmax(0,1fr) !important;grid-template-rows:minmax(0,1fr) var(--sh,52px) !important;min-height:0;overflow:hidden}
+  .mapwrap{min-height:0}
+  .panel{border-left:0 !important;border-top:0 !important;border-radius:16px 16px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.2);overflow-y:auto;overflow-x:hidden;min-height:0;position:relative;z-index:6;overscroll-behavior:contain}
+  .stage[data-sheet=closed] .panel{overflow:hidden}
+  .list{max-height:none !important}
+  .sheet-handle{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:52px;border:0;background:var(--panel,#fff);border-bottom:1px solid #e3e6ea;font-weight:650;font-size:14px;color:#33414f;flex:none}
+  .sheet-handle i{width:38px;height:5px;border-radius:3px;background:#c3cad2;display:block}
+  .sheet-handle span{display:flex;align-items:center;gap:6px}
+  .toolbar{left:8px !important;top:8px !important;right:60px !important;flex-wrap:nowrap !important;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+  .toolbar::-webkit-scrollbar{display:none}
+  .toolbar button{flex:none;font-size:13.5px !important;padding:8px 11px !important;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+  .zoombtns{top:8px !important;right:8px !important}
+  .zoombtns button{width:44px !important;height:44px !important;font-size:22px !important;box-shadow:0 1px 5px rgba(0,0,0,.2)}
+  .zoombtns #zhome{font-size:13px !important}
+  .tip{display:none !important}
+  .qz-banner{font-size:15px !important;left:8px !important;right:8px !important}
+  .insets{transform:scale(.8);transform-origin:left bottom}
   h2,h3{overflow-wrap:anywhere}
 }
 </style>
@@ -2435,5 +2451,39 @@ const QUIZ = (() => {
   document.documentElement.classList.add('sy-has-tabs'); document.body.appendChild(n);
 })();</script>
 <!--/sy-tabs-->
+<!--sy-maps-->
+<script>(function(){
+  var svg=document.querySelector('svg.map'), panel=document.getElementById('panel'), stage=document.querySelector('.stage');
+  if(!svg||!panel||!stage) return;
+  var mq=matchMedia('(max-width:700px)'), HEIGHTS={closed:'52px',half:'46%',full:'86%'}, state='closed', ready=false;
+  var h=document.createElement('button'); h.type='button'; h.className='sheet-handle';
+  h.innerHTML='<span><i></i></span>'; panel.insertBefore(h,panel.firstChild);
+  function label(){ h.innerHTML='<i></i><span>'+(state==='closed'?'▲ Rechercher et détails':'▼ Replier')+'</span><i></i>'; }
+  function set(s){ if(!mq.matches) return; state=s; stage.dataset.sheet=s; stage.style.setProperty('--sh',HEIGHTS[s]); label(); setTimeout(function(){window.dispatchEvent(new Event('resize'));},30); }
+  mq.addEventListener&&mq.addEventListener('change',function(){ if(!mq.matches){stage.style.removeProperty('--sh');delete stage.dataset.sheet;} else set('closed'); });
+  set('closed');
+  var ty=null; h.addEventListener('touchstart',function(e){ty=e.touches[0].clientY;},{passive:true});
+  h.addEventListener('touchend',function(e){ if(ty==null) return; var dy=e.changedTouches[0].clientY-ty; ty=null;
+    if(Math.abs(dy)>40){ var o=['closed','half','full'],i=o.indexOf(state); set(o[Math.max(0,Math.min(2,i+(dy<0?1:-1)))]); e.preventDefault(); h.dataset.sw=1; setTimeout(function(){delete h.dataset.sw;},350); } },{passive:false});
+  h.addEventListener('click',function(){ if(h.dataset.sw) return; set(state==='closed'?'half':'closed'); });
+  /* la carte reprend la main : un doigt qui se pose sur la carte replie la fiche */
+  svg.addEventListener('pointerdown',function(){ if(state!=='closed' && !document.body.dataset.playing) set('closed'); });
+  /* ouverture automatique : fiche choisie, quiz, résultats */
+  setTimeout(function(){ready=true;},1500);
+  function watch(id,fn){ var el=document.getElementById(id); if(el) new MutationObserver(fn).observe(el,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']}); }
+  watch('card',function(){ var c=document.getElementById('card'); if(ready && document.body.dataset.mode==='explore' && state==='closed' && c && !c.classList.contains('intro-card')) set('half'); });
+  watch('qz-play',function(){ var p=document.getElementById('qz-play'); if(ready && p && !p.hidden && p.children.length) set('half'); });
+  watch('qz-end',function(){ var p=document.getElementById('qz-end'); if(p && !p.hidden && p.children.length) set('half'); });
+  new MutationObserver(function(){ if(document.body.dataset.mode==='quiz') set('half'); else if(ready) set('closed'); }).observe(document.body,{attributes:true,attributeFilter:['data-mode']});
+  /* pincer pour zoomer, deux doigts pour déplacer, double tape pour zoomer */
+  var t0=null, last=null;
+  function inf(e){var a=e.touches[0],b=e.touches[1];return {d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||1,x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2};}
+  svg.addEventListener('touchstart',function(e){ if(e.touches.length===2){ window.dispatchEvent(new PointerEvent('pointerup',{bubbles:true})); t0=inf(e); if(window.__mapx) window.__mapx.cancel(); e.preventDefault(); } },{passive:false});
+  svg.addEventListener('touchmove',function(e){ if(e.touches.length===2&&t0&&window.__mapx){ var t1=inf(e); window.__mapx.pan(t1.x-t0.x,t1.y-t0.y); window.__mapx.zoomAt(t1.x,t1.y,t0.d/t1.d); t0=t1; e.preventDefault(); } },{passive:false});
+  svg.addEventListener('touchend',function(e){ if(e.touches.length<2) t0=null;
+    if(e.touches.length===0&&e.changedTouches.length===1){ var c=e.changedTouches[0], now=Date.now();
+      if(last&&now-last.t<320&&Math.hypot(c.clientX-last.x,c.clientY-last.y)<28&&window.__mapx){ window.__mapx.cancel(); window.__mapx.zoomAt(c.clientX,c.clientY,0.45); last=null; } else last={t:now,x:c.clientX,y:c.clientY}; } });
+})();</script>
+<!--/sy-maps-->
 </body>
 </html>
