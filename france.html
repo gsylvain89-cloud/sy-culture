@@ -1089,6 +1089,85 @@ const LOADER = (() => {
 
 if (typeof module !== 'undefined') module.exports = LOADER;
 
+/* ===== kvsync.js ===== */
+/* kvsync.js — synchro GitHub de la progression des cartes France et Monde (quiz + Apprendre).
+   Même gist secret que SY Culture / Svenska (« SY Culture : progression (ne pas supprimer) »), fichier à part : explorer.json.
+   Le jeton « gist » est celui de SY Culture (clé sy-culture-gh, collé une fois dans Culture générale > Synchro) :
+   rien à configurer ici. Chaque module s'inscrit avec KV.reg(nom, { get, apply, merge }). */
+var KV = (() => {
+  const TOK = 'sy-culture-gh', GH_DESC = 'SY Culture : progression (ne pas supprimer)', FILE = 'explorer.json';
+  const mods = {}; let last = {}, busy = false, timer = null, started = false, flushed = '', cfg = { token: '', gist: '' };
+  const readCfg = () => { try { cfg = Object.assign({ token: '', gist: '' }, JSON.parse(localStorage.getItem(TOK)) || {}); } catch (e) { cfg = { token: '', gist: '' }; } return cfg; };
+  const api = (path, opt) => fetch('https://api.github.com' + path, Object.assign({ cache: 'no-store' }, opt || {}, {
+    headers: Object.assign({ Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' }, opt && opt.body ? { 'Content-Type': 'application/json' } : {})
+  }));
+  const snapshot = () => { const o = {}; Object.keys(mods).forEach(n => { o[n] = mods[n].get(); }); return o; };
+  /* fusion de deux stats de quiz : stats = {clé: [vues, justes]} (le plus travaillé gagne), opts : l'appareil local gagne */
+  const mergeQuiz = (a, b) => {
+    const m = { stats: Object.assign({}, a.stats), opts: Object.assign({}, b.opts, a.opts) };
+    Object.keys(b.stats || {}).forEach(k => { const x = m.stats[k], y = b.stats[k]; if (!x || (y[0] || 0) > (x[0] || 0)) m.stats[k] = y; });
+    return m;
+  };
+  /* Apprendre : retenus = horodatage, effacés (« à revoir ») = gone ; vus = union ; département de départ : le plus récent */
+  const mergeLearn = (a, b) => {
+    const known = Object.assign({}, b.known, a.known), gone = Object.assign({}, b.gone, a.gone);
+    Object.keys(b.known || {}).forEach(k => { known[k] = Math.max((a.known || {})[k] || 0, b.known[k]); });
+    Object.keys(b.gone || {}).forEach(k => { gone[k] = Math.max((a.gone || {})[k] || 0, b.gone[k]); });
+    Object.keys(gone).forEach(k => { if (known[k] && gone[k] >= known[k]) delete known[k]; });
+    const bh = (b.hmod || 0) > (a.hmod || 0);
+    return { home: bh ? b.home : a.home, hmod: Math.max(a.hmod || 0, b.hmod || 0), known, gone, seen: Object.assign({}, b.seen, a.seen) };
+  };
+  const mergeAll = (mine, remote) => { const o = Object.assign({}, remote || {}); Object.keys(mods).forEach(n => { o[n] = remote && remote[n] ? mods[n].merge(mine[n], remote[n]) : mine[n]; }); return o; };
+  async function findOrCreate() {
+    for (let page = 1; page <= 10; page++) {
+      const r = await api('/gists?per_page=100&page=' + page);
+      if (r.status === 401 || r.status === 403) throw { code: 'auth' };
+      if (!r.ok) throw { code: 'http' };
+      const a = await r.json(), g = a.find(x => x.description === GH_DESC);
+      if (g) return g.id;
+      if (a.length < 100) break;
+    }
+    const c = await api('/gists', { method: 'POST', body: JSON.stringify({ description: GH_DESC, public: false, files: { [FILE]: { content: JSON.stringify(snapshot()) } } }) });
+    if (!c.ok) throw { code: 'http' };
+    return (await c.json()).id;
+  }
+  async function sync() {
+    readCfg(); if (!cfg.token || busy || navigator.onLine === false) return;
+    busy = true;
+    try {
+      if (!cfg.gist) { cfg.gist = await findOrCreate(); try { const c = JSON.parse(localStorage.getItem(TOK)) || {}; c.gist = cfg.gist; localStorage.setItem(TOK, JSON.stringify(c)); } catch (e) { /* ignoré */ } }
+      const r = await api('/gists/' + cfg.gist);
+      if (r.status === 404) { cfg.gist = ''; throw { code: 'retry' }; }
+      if (!r.ok) throw { code: 'http' };
+      const g = await r.json(), f = g.files && g.files[FILE];
+      let remote = null, txt = '';
+      if (f) { txt = f.truncated ? await (await fetch(f.raw_url, { cache: 'no-store' })).text() : f.content; try { remote = JSON.parse(txt); } catch (e) { remote = null; } }
+      const mine = snapshot(), merged = mergeAll(mine, remote); last = merged;
+      Object.keys(mods).forEach(n => { if (JSON.stringify(merged[n]) !== JSON.stringify(mine[n])) mods[n].apply(merged[n]); });
+      const out = JSON.stringify(merged);
+      if (out !== txt) {
+        const p = await api('/gists/' + cfg.gist, { method: 'PATCH', body: JSON.stringify({ files: { [FILE]: { content: out } } }) });
+        if (!p.ok) throw { code: 'http' };
+      }
+    } catch (e) { if (e && e.code === 'retry') setTimeout(sync, 2000); }
+    busy = false;
+  }
+  const soon = ms => { readCfg(); if (!cfg.token) return; clearTimeout(timer); timer = setTimeout(sync, ms == null ? 20000 : ms); };
+  function flush() {
+    readCfg(); if (!cfg.token || !cfg.gist || navigator.onLine === false) return;
+    const out = JSON.stringify(Object.assign({}, last, snapshot())); if (out === flushed) return; flushed = out;
+    try { api('/gists/' + cfg.gist, { method: 'PATCH', keepalive: out.length < 60000, body: JSON.stringify({ files: { [FILE]: { content: out } } }) }).catch(() => {}); } catch (e) { /* ignoré */ }
+  }
+  function start() {
+    if (started) return; started = true;
+    setTimeout(sync, 1200); setInterval(sync, 5 * 60 * 1000);
+    window.addEventListener('online', () => soon(1000));
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); else soon(500); });
+    window.addEventListener('pagehide', flush);
+  }
+  return { reg(n, m) { mods[n] = m; start(); }, soon, sync, mergeQuiz, mergeLearn, _snap: snapshot };
+})();
+
 /* ===== map.js ===== */
 /* map.js — SVG map engine: layers, pan/zoom, highlighting, hit-testing. */
 const MAP = (() => {
@@ -1845,9 +1924,9 @@ const LEARN = (() => {
   const plate = (code, sm) => '<span class="plate' + (sm ? ' sm' : '') + '" role="img" aria-label="numéro ' + code + '"><span class="plate-eu" aria-hidden="true">F</span><span class="plate-n">' + code + '</span></span>';
   const dist = (a, b) => { const R = 6371, r = Math.PI / 180, dl = (b.lat - a.lat) * r, dn = (b.lon - a.lon) * r;
     const x = Math.sin(dl / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); };
-  let st = { home: '44', known: {}, seen: {} };
+  let st = { home: '44', hmod: 0, known: {}, gone: {}, seen: {} };
   try { st = Object.assign(st, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { /* ignoré */ }
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* ignoré */ } };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* ignoré */ } if (window.KV) KV.soon(); };
   let cb = {}, steps = [], v = { screen: 'path' }, savedLayers = null;
 
   /* ------------------------------------------------------------ parcours */
@@ -1923,7 +2002,7 @@ const LEARN = (() => {
     steps.forEach((s, i) => { const p = progress(s);
       h += '<button class="lr-step' + (p.known === p.n ? ' done' : '') + '" data-lr="open:' + i + '"><span class="lr-no" style="background:' + s.color + '">' + (i + 1) + '</span><span class="lr-st"><b>' + esc(s.title) + '</b><small>' + p.n + (s.items[0].kind === 'region' ? ' régions' : ' départements') + ' · ' + p.known + ' retenus</small></span><span class="lr-go">›</span></button>'; });
     root().innerHTML = h + '</div>';
-    const sel = $('lr-home'); if (sel) sel.onchange = () => { st.home = sel.value; save(); buildSteps(); pathView(); };
+    const sel = $('lr-home'); if (sel) sel.onchange = () => { st.home = sel.value; st.hmod = Date.now(); save(); buildSteps(); pathView(); };
     paint(null, null, false); MAP.flyTo(null);
   }
   function stepHead(s, title2) {
@@ -1989,8 +2068,8 @@ const LEARN = (() => {
     else if (c === 'reveal') v.reveal = true;
     else if (c === 'knew' || c === 'again') {
       const q = v.queue.shift(), k = key(q.it);
-      if (c === 'knew') { st.known[k] = Date.now(); if (!q.tries) v.firstTry++; }
-      else { delete st.known[k]; q.tries++; q.dir = (q.dir + 1) % 3; if (q.tries < 3) v.queue.splice(Math.min(v.queue.length, 3), 0, q); }
+      if (c === 'knew') { st.known[k] = Date.now(); delete st.gone[k]; if (!q.tries) v.firstTry++; }
+      else { delete st.known[k]; st.gone[k] = Date.now(); q.tries++; q.dir = (q.dir + 1) % 3; if (q.tries < 3) v.queue.splice(Math.min(v.queue.length, 3), 0, q); }
       v.reveal = false; save();
     }
     else if (c === 'quiz') { if (cb.toQuiz) cb.toQuiz(); return; }
@@ -2006,6 +2085,7 @@ const LEARN = (() => {
 
   function init(callbacks) {
     cb = callbacks || {}; buildSteps();
+    KV.reg('learn', { get: () => st, merge: KV.mergeLearn, apply: o => { st = Object.assign({ home: '44', hmod: 0, known: {}, gone: {}, seen: {} }, o); try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* ignoré */ } buildSteps(); if (v.screen === 'path' && !root().hidden) pathView(); } });
     root().addEventListener('click', e => { const b = e.target.closest('[data-lr]'); if (b && !b.disabled) act(b.dataset.lr); });
   }
   function enter() { savedLayers = MAP.getLayers(); document.body.dataset.playing = '1'; buildSteps(); if (v.screen === 'step') render(); else { v = { screen: 'path' }; render(); } }
@@ -2035,7 +2115,8 @@ const QUIZ = (() => {
     return { stats: {}, opts: {} };
   })();
   store.opts = Object.assign({ count: 10, input: 'choice', overseas: false, auto: true }, store.opts);
-  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(store)); } catch (e) { /* ignorer */ } };
+  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(store)); } catch (e) { /* ignorer */ } if (window.KV) KV.soon(); };
+  KV.reg('france', { get: () => store, merge: KV.mergeQuiz, apply: o => { store.stats = o.stats; store.opts = Object.assign(store.opts, o.opts); try { localStorage.setItem(STORE, JSON.stringify(store)); } catch (e) { /* ignorer */ } } });
   const stat = (t, id) => store.stats[t + '|' + id] || [0, 0];
   function record(t, id, ok) {
     const k = t + '|' + id, s = store.stats[k] || [0, 0];
