@@ -145,8 +145,8 @@ body[data-mode="quiz"] .insets { display: none; }
 
 /* ------------------------------------------------------------------ panel */
 .panel { border-left: 1px solid var(--line); background: var(--panel); min-height: 0; display: flex; flex-direction: column; }
-#explore, #quiz { display: flex; flex-direction: column; min-height: 0; flex: 1; padding: 14px 16px 10px; gap: 12px; }
-#quiz { overflow-y: auto; }
+#explore, #quiz, #learn { display: flex; flex-direction: column; min-height: 0; flex: 1; padding: 14px 16px 10px; gap: 12px; }
+#quiz, #learn { overflow-y: auto; }
 .search input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); font: inherit; }
 .search input:focus { border-color: var(--plate); outline: 2px solid rgba(11,63,148,.2); }
 
@@ -339,6 +339,45 @@ body[data-mode="quiz"] .paris-tile { top: 12px; }
 .map .hl-river.hl-sel, .map .hl-river.hl-target { stroke: #ffd23f; }
 .map .hl-river.hl-ok { stroke: #3ddc84; }
 .map .hl-river.hl-bad { stroke: #ff6b5e; }
+
+/* ---------------------------------------------------------------- mode Apprendre */
+.modes button { padding-left: 14px; padding-right: 14px; }
+.map .hl-learnset { stroke: rgba(17,28,38,.55); stroke-width: 1.2px; fill: rgba(31,95,153,.22); }
+.map .hl-regtarget { stroke: rgba(17,28,38,.4); }
+#learn .lr-intro h2 { margin: 0 0 6px; font-size: 20px; }
+#learn .lr-intro p { margin: 0 0 8px; color: var(--muted); line-height: 1.5; }
+.lr-home { display: block; margin: 8px 0; font-weight: 600; }
+.lr-home select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; max-width: 100%; }
+.lr-total, .lr-prog { height: 8px; background: #e4e8ec; border-radius: 4px; overflow: hidden; margin: 8px 0 4px; }
+.lr-total i, .lr-prog i { display: block; height: 100%; background: var(--ok); }
+.lr-steps { display: flex; flex-direction: column; gap: 8px; }
+.lr-step { display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.lr-step.done { border-color: var(--ok); background: #f1faf4; }
+.lr-no { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #111c26; }
+.lr-st { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.lr-st small { color: var(--muted); font-size: 12.5px; }
+.lr-go { font-size: 22px; color: var(--muted); }
+.lr-top { display: flex; align-items: center; gap: 10px; }
+.lr-ttl { font-weight: 650; overflow-wrap: anywhere; }
+.lr-ph { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.lr-ph button { flex: 1; border: 0; background: #fff; padding: 8px 6px; font-weight: 600; }
+.lr-ph button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.lr-note { margin: 0; color: var(--muted); font-size: 13.5px; }
+.lr-card .seq { color: var(--muted); }
+.lr-card .seq b { color: var(--ink); }
+.lr-q { margin: 0 0 6px; color: var(--muted); font-weight: 600; }
+.lr-card h3 { margin: 4px 0 8px; font-size: 24px; }
+.lr-big { margin: 8px 0; } .lr-big .plate-n { font-size: 38px; }
+.lr-ans { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.lr-dots { display: flex; flex-wrap: wrap; gap: 6px; }
+.lr-dots button { min-width: 38px; height: 32px; padding: 0 6px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-weight: 600; font-size: 13px; }
+.lr-dots button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.lr-dots button.ok:not(.on) { border-color: var(--ok); color: var(--ok); }
+.lr-nav { display: flex; gap: 10px; } .lr-nav .btn { flex: 1; padding: 12px 10px; } .lr-nav.col { flex-direction: column; }
+.lr-nav .btn:disabled { opacity: .4; }
+.lr-nav .good { background: var(--ok); color: #fff; border-color: var(--ok); } .lr-nav .bad { border-color: var(--bad); color: var(--bad); }
+.lr-end .big { font-size: 34px; font-weight: 700; margin: 6px 0; } .lr-end .big span { font-size: 15px; font-weight: 500; color: var(--muted); }
+#learn > * { flex: none; }
 </style>
 </head>
 <body data-mode="explore">
@@ -348,6 +387,7 @@ body[data-mode="quiz"] .paris-tile { top: 12px; }
     <button class="link" id="reload" type="button" title="Supprimer les frontières enregistrées et les télécharger à nouveau">Recharger les frontières</button>
     <div class="modes" role="tablist" aria-label="Mode">
       <button role="tab" id="tab-explore" aria-selected="true" type="button">Explorer</button>
+      <button role="tab" id="tab-learn" aria-selected="false" type="button">Apprendre</button>
       <button role="tab" id="tab-quiz" aria-selected="false" type="button">Quiz</button>
     </div>
   </div>
@@ -390,6 +430,7 @@ body[data-mode="quiz"] .paris-tile { top: 12px; }
       <div class="list" id="list"></div>
       <p class="credit">Frontières : données ouvertes de gregoiredavid/france-geojson. Les cours d'eau sont tracés à la main (approximatifs) ; les vignobles sont simplifiés par départements.</p>
     </div>
+    <div id="learn" hidden></div>
     <div id="quiz" hidden>
       <div id="qz-menu"></div>
       <div id="qz-play" hidden></div>
@@ -1790,6 +1831,188 @@ const EXPLORE = (() => {
            _state: () => ({ sel, tab, query, chips: { ...chips } }) };
 })();
 
+/* ===== learn.js ===== */
+/* learn.js — mode « Apprendre » : un parcours guidé, du proche au lointain.
+   Méthode : on part de ce qu'on connaît (son département, sa région), on avance région par région en petits paquets (≤ 7),
+   on découvre carte en main, puis on se teste sans pénalité (voir la réponse → « je savais » / « à revoir »). Les quiz viennent après. */
+const LEARN = (() => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const D = {}; FR.DEPTS.forEach(d => { D[d.code] = d; });
+  const KEY = 'sy-france-learn.v1';
+  const order = c => c === '2A' ? '20a' : c === '2B' ? '20b' : c.padStart(3, '0');
+  const METRO = FR.DEPTS.filter(d => !d.overseas).sort((a, b) => order(a.code).localeCompare(order(b.code)));
+  const plate = (code, sm) => '<span class="plate' + (sm ? ' sm' : '') + '" role="img" aria-label="numéro ' + code + '"><span class="plate-eu" aria-hidden="true">F</span><span class="plate-n">' + code + '</span></span>';
+  const dist = (a, b) => { const R = 6371, r = Math.PI / 180, dl = (b.lat - a.lat) * r, dn = (b.lon - a.lon) * r;
+    const x = Math.sin(dl / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); };
+  let st = { home: '44', known: {}, seen: {} };
+  try { st = Object.assign(st, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { /* ignoré */ }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* ignoré */ } };
+  let cb = {}, steps = [], v = { screen: 'path' }, savedLayers = null;
+
+  /* ------------------------------------------------------------ parcours */
+  const TIPS = {
+    '11': 'Paris (75) et la petite couronne : 92, 93, 94. La grande couronne : 77, 78, 91, 95.',
+    '94': '2A (Corse-du-Sud) avant 2B (Haute-Corse) : l\'ordre alphabétique des deux anciens départements.',
+    '53': 'Les quatre départements bretons : 22, 29, 35, 56.',
+    '52': 'Cinq départements : 44, 49, 53, 72, 85.'
+  };
+  function buildSteps() {
+    const home = D[st.home] || D['44'], out = [];
+    const regs = Object.keys(FR.REGIONS).filter(c => METRO.some(d => d.region === c));
+    const avg = c => { const ds = METRO.filter(d => d.region === c); return ds.reduce((s, d) => s + dist(home, d), 0) / ds.length; };
+    regs.sort((a, b) => (a === home.region ? -1 : b === home.region ? 1 : avg(a) - avg(b)));
+    regs.forEach(c => {
+      const ds = METRO.filter(d => d.region === c).sort((a, b) => dist(home, a) - dist(home, b));
+      const n = Math.ceil(ds.length / 7), size = Math.ceil(ds.length / n);
+      for (let k = 0; k < n; k++) {
+        const part = ds.slice(k * size, (k + 1) * size).sort((a, b) => order(a.code).localeCompare(order(b.code)));
+        const r = FR.REGIONS[c], isHome = c === home.region && k === 0;
+        out.push({ id: 'r' + c + '-' + k, title: (isHome ? 'Chez toi : ' : '') + r.name + (n > 1 ? ' (' + (k + 1) + '/' + n + ')' : ''), color: r.color,
+          note: isHome ? 'On part de ce que tu connais déjà : ton département et ta région.' : (TIPS[c] || ('Capitale de région : ' + r.capital + '.')),
+          items: part.map(d => ({ kind: 'dept', code: d.code })) });
+      }
+    });
+    out.push({ id: 'om', title: 'Outre-mer', color: '#c8b8a0', note: 'Les numéros à trois chiffres : 971, 972, 973, 974, 976.', items: FR.DEPTS.filter(d => d.overseas).map(d => ({ kind: 'dept', code: d.code })) });
+    out.push({ id: 'reg', title: 'Les 13 régions et leurs capitales', color: '#9db9dc', note: 'Pour finir : la grande carte des régions de métropole.',
+      items: regs.map(c => ({ kind: 'region', code: c })) });
+    steps = out;
+  }
+  const key = it => it.kind === 'region' ? 'R' + it.code : it.code;
+  const progress = s => ({ n: s.items.length, known: s.items.filter(i => st.known[key(i)]).length, seen: s.items.filter(i => st.seen[key(i)] || st.known[key(i)]).length });
+
+  /* --------------------------------------------------------------- carte */
+  function boxUnion(items) {
+    let b = null;
+    items.forEach(it => { const x = it.kind === 'region' ? null : MAP.boxOf('dept', it.code); if (!x) return;
+      b = b ? { x0: Math.min(b.x0, x.x0), y0: Math.min(b.y0, x.y0), x1: Math.max(b.x1, x.x1), y1: Math.max(b.y1, x.y1) } : { ...x }; });
+    return b;
+  }
+  function paint(step, cur, hideNums) {
+    MAP.clearHighlights();
+    if (step) step.items.forEach(it => { if (it.kind === 'dept') MAP.highlight('dept', it.code, 'learnset'); else MAP.highlight('region', it.code, 'learnset'); });
+    if (cur) { if (cur.kind === 'dept') MAP.highlight('dept', cur.code, 'target'); else MAP.highlight('region', cur.code, 'target'); }
+    const l = Object.assign({}, savedLayers || MAP.getLayers());
+    MAP.setLayers(hideNums ? Object.assign(l, { nums: false, prefs: false, prefNames: false }) : l);
+  }
+  function fly(it, step) {
+    if (it && it.kind === 'dept' && !D[it.code].overseas) { const b = MAP.boxOf('dept', it.code); if (b) MAP.flyTo(b, { gentle: true, zoom: 0.45 }); }
+    else if (it && it.kind === 'region') { const ds = METRO.filter(d => d.region === it.code).map(d => ({ kind: 'dept', code: d.code })); const b = boxUnion(ds); if (b) MAP.flyTo(b, { gentle: true, zoom: 0.4 }); }
+    else if (step) { const b = boxUnion(step.items); if (b) MAP.flyTo(b, { gentle: true, zoom: 0.3 }); else MAP.flyTo(null); }
+  }
+
+  /* ---------------------------------------------------------------- vues */
+  const root = () => $('learn');
+  function itemCard(it) {
+    if (it.kind === 'region') {
+      const r = FR.REGIONS[it.code], ds = METRO.filter(d => d.region === it.code);
+      return '<div class="card-head"><span class="swatch" style="background:' + r.color + '"></span><div><h2>' + esc(r.name) + '</h2><p class="sub">' + ds.length + ' départements</p></div></div>' +
+        '<dl class="facts"><dt>Capitale</dt><dd>' + esc(r.capital) + '</dd><dt>Départements</dt><dd>' + ds.map(d => esc(d.code)).join(' · ') + '</dd></dl>';
+    }
+    const d = D[it.code], r = FR.REGIONS[d.region], i = METRO.findIndex(x => x.code === d.code);
+    const pv = METRO[i - 1], nx = METRO[i + 1];
+    return '<div class="card-head">' + plate(d.code) + '<div><h2>' + esc(d.name) + '</h2><p class="sub">' + esc(r.name) + '</p></div></div>' +
+      '<dl class="facts"><dt>Préfecture</dt><dd>' + esc(d.pref) + (r.capital === d.pref && !d.overseas ? ' <span class="tag">capitale de région</span>' : '') + '</dd>' +
+      (d.overseas ? '' : '<dt>Numéro</dt><dd class="seq">' + (pv ? esc(pv.code + ' ' + pv.name) + ' › ' : '') + '<b>' + esc(d.code) + '</b>' + (nx ? ' › ' + esc(nx.code + ' ' + nx.name) : '') + '</dd>') + '</dl>';
+  }
+  function pathView() {
+    const tot = steps.reduce((s, x) => s + x.items.length, 0), kn = steps.reduce((s, x) => s + progress(x).known, 0);
+    let h = '<div class="lr-intro"><h2>Apprendre la France</h2><p>On part de chez toi et on s\'éloigne petit à petit, région par région, par paquets de 7 au plus. Pour chaque étape : <b>découvre</b> carte en main, puis <b>réponds de tête</b> avant de voir la réponse. Les quiz viennent ensuite.</p>' +
+      '<label class="lr-home">Mon département : <select id="lr-home">' + METRO.map(d => '<option value="' + d.code + '"' + (d.code === st.home ? ' selected' : '') + '>' + esc(d.code + ' ' + d.name) + '</option>').join('') + '</select></label>' +
+      '<div class="lr-total"><i style="width:' + Math.round(100 * kn / tot) + '%"></i></div><p class="muted">' + kn + ' retenus sur ' + tot + '</p></div><div class="lr-steps">';
+    steps.forEach((s, i) => { const p = progress(s);
+      h += '<button class="lr-step' + (p.known === p.n ? ' done' : '') + '" data-lr="open:' + i + '"><span class="lr-no" style="background:' + s.color + '">' + (i + 1) + '</span><span class="lr-st"><b>' + esc(s.title) + '</b><small>' + p.n + (s.items[0].kind === 'region' ? ' régions' : ' départements') + ' · ' + p.known + ' retenus</small></span><span class="lr-go">›</span></button>'; });
+    root().innerHTML = h + '</div>';
+    const sel = $('lr-home'); if (sel) sel.onchange = () => { st.home = sel.value; save(); buildSteps(); pathView(); };
+    paint(null, null, false); MAP.flyTo(null);
+  }
+  function stepHead(s, title2) {
+    const p = progress(s);
+    return '<div class="lr-top"><button class="link" data-lr="path">‹ Parcours</button><span class="lr-ttl">Étape ' + (v.idx + 1) + '/' + steps.length + ' · ' + esc(s.title) + '</span></div>' +
+      '<div class="lr-ph"><button data-lr="phase:discover" aria-pressed="' + (v.phase === 'discover') + '">1 · Découvrir</button><button data-lr="phase:review" aria-pressed="' + (v.phase === 'review') + '">2 · Se tester</button></div>';
+  }
+  function discoverView() {
+    const s = steps[v.idx], it = s.items[v.i], last = v.i === s.items.length - 1;
+    st.seen[key(it)] = 1; save();
+    root().innerHTML = stepHead(s) + '<p class="lr-note">' + esc(s.note) + '</p><div class="card lr-card">' + itemCard(it) + '</div>' +
+      '<div class="lr-dots">' + s.items.map((x, k) => '<button class="' + (k === v.i ? 'on' : '') + (st.known[key(x)] ? ' ok' : '') + '" data-lr="go:' + k + '" aria-label="' + (x.kind === 'region' ? esc(FR.REGIONS[x.code].name) : esc(x.code)) + '">' + (x.kind === 'region' ? '' : esc(x.code)) + '</button>').join('') + '</div>' +
+      '<div class="lr-nav"><button class="btn" data-lr="prev"' + (v.i ? '' : ' disabled') + '>‹ Précédent</button>' + (last ? '<button class="btn primary" data-lr="phase:review">Me tester ›</button>' : '<button class="btn primary" data-lr="next">Suivant ›</button>') + '</div>';
+    paint(s, it, false); fly(it, s);
+  }
+  function startReview() {
+    const s = steps[v.idx];
+    v.queue = s.items.map(it => ({ it, dir: 0, tries: 0 })).sort(() => Math.random() - .5);
+    v.queue.forEach((q, k) => { q.dir = k % 3; }); v.reveal = false; v.firstTry = 0; v.total = v.queue.length;
+  }
+  function reviewView() {
+    const s = steps[v.idx];
+    if (!v.queue.length) {
+      const ok = v.firstTry, n = v.total, nxt = v.idx + 1 < steps.length;
+      root().innerHTML = stepHead(s) + '<div class="card lr-card lr-end"><h2>' + (ok === n ? 'Sans faute !' : 'Étape terminée') + '</h2><p class="big">' + ok + ' <span>du premier coup sur ' + n + '</span></p>' +
+        '<p class="muted">Les départements « à revoir » sont repassés jusqu\'à ce qu\'ils soient sus. Reviens les voir demain : c\'est comme ça qu\'on retient longtemps.</p></div>' +
+        '<div class="lr-nav col"><button class="btn primary" data-lr="quiz">Faire un quiz</button>' + (nxt ? '<button class="btn" data-lr="open:' + (v.idx + 1) + '">Étape suivante ›</button>' : '') + '<button class="btn ghost" data-lr="phase:review">Recommencer le test</button><button class="link" data-lr="path">Retour au parcours</button></div>';
+      paint(s, null, false); fly(null, s); return;
+    }
+    const q = v.queue[0], it = q.it, left = v.queue.length;
+    let prompt, answer;
+    if (it.kind === 'region') {
+      const r = FR.REGIONS[it.code];
+      if (q.dir === 1) { prompt = '<p class="lr-q">Capitale de la région</p><h3>' + esc(r.name) + ' ?</h3>'; answer = '<dl class="facts"><dt>Capitale</dt><dd>' + esc(r.capital) + '</dd></dl>'; }
+      else { prompt = '<p class="lr-q">Quelle est cette région ? Et sa capitale ?</p><h3>(surlignée sur la carte)</h3>'; answer = '<div class="card-head"><span class="swatch" style="background:' + r.color + '"></span><div><h2>' + esc(r.name) + '</h2></div></div><dl class="facts"><dt>Capitale</dt><dd>' + esc(r.capital) + '</dd></dl>'; }
+    } else {
+      const d = D[it.code];
+      if (q.dir === 0) { prompt = '<p class="lr-q">Quel département porte ce numéro ? Et sa préfecture ?</p><div class="lr-big">' + plate(d.code) + '</div>'; }
+      else if (q.dir === 1) { prompt = '<p class="lr-q">Quel est le numéro de ce département ? Sa préfecture ?</p><h3>' + esc(d.name) + '</h3>'; }
+      else { prompt = '<p class="lr-q">Quel est ce département (surligné sur la carte) ? Son numéro, sa préfecture ?</p>'; }
+      answer = itemCard(it);
+    }
+    root().innerHTML = stepHead(s) + '<div class="lr-prog"><i style="width:' + Math.round(100 * (v.total - left) / v.total) + '%"></i></div>' +
+      '<div class="card lr-card">' + prompt + (v.reveal ? '<div class="lr-ans">' + answer + '</div>' : '') + '</div>' +
+      '<div class="lr-nav">' + (v.reveal ? '<button class="btn bad" data-lr="again">À revoir</button><button class="btn good primary" data-lr="knew">Je savais</button>' : '<button class="btn primary wide" data-lr="reveal">Voir la réponse</button>') + '</div>';
+    const showAns = v.reveal || q.dir !== 2;
+    paint(s, it, !v.reveal && q.dir === 2); fly(it, s);
+  }
+  function render() {
+    if (v.screen === 'path') pathView();
+    else if (v.phase === 'discover') discoverView();
+    else reviewView();
+    const r = root(); if (r.scrollTo) r.scrollTo(0, 0); const p = r.closest('.panel'); if (p) p.scrollTop = 0;
+  }
+  function act(a) {
+    const [c, arg] = a.split(':');
+    if (c === 'path') { v = { screen: 'path' }; }
+    else if (c === 'open') { v = { screen: 'step', idx: +arg, phase: 'discover', i: 0 }; }
+    else if (c === 'phase') { v.phase = arg; v.i = 0; if (arg === 'review') startReview(); }
+    else if (c === 'go') v.i = +arg;
+    else if (c === 'next') v.i = Math.min(steps[v.idx].items.length - 1, v.i + 1);
+    else if (c === 'prev') v.i = Math.max(0, v.i - 1);
+    else if (c === 'reveal') v.reveal = true;
+    else if (c === 'knew' || c === 'again') {
+      const q = v.queue.shift(), k = key(q.it);
+      if (c === 'knew') { st.known[k] = Date.now(); if (!q.tries) v.firstTry++; }
+      else { delete st.known[k]; q.tries++; q.dir = (q.dir + 1) % 3; if (q.tries < 3) v.queue.splice(Math.min(v.queue.length, 3), 0, q); }
+      v.reveal = false; save();
+    }
+    else if (c === 'quiz') { if (cb.toQuiz) cb.toQuiz(); return; }
+    render();
+  }
+  function onMapClick(layer, id) {
+    if (v.screen !== 'step' || v.phase !== 'discover') return;
+    const s = steps[v.idx]; let k = -1;
+    if (layer === 'dept') k = s.items.findIndex(x => x.kind === 'dept' && x.code === id);
+    if (layer === 'region') k = s.items.findIndex(x => x.kind === 'region' && x.code === id);
+    if (k >= 0) { v.i = k; render(); }
+  }
+
+  function init(callbacks) {
+    cb = callbacks || {}; buildSteps();
+    root().addEventListener('click', e => { const b = e.target.closest('[data-lr]'); if (b && !b.disabled) act(b.dataset.lr); });
+  }
+  function enter() { savedLayers = MAP.getLayers(); document.body.dataset.playing = '1'; buildSteps(); if (v.screen === 'step') render(); else { v = { screen: 'path' }; render(); } }
+  function leave() { delete document.body.dataset.playing; MAP.clearHighlights(); savedLayers = null; }
+  return { init, enter, leave, onMapClick, _steps: () => steps, _act: act, _state: () => v };
+})();
+
 /* ===== quiz.js ===== */
 /* quiz.js — moteur et interface du quiz. La progression est gardée dans localStorage (ignoré s'il est indisponible). */
 const QUIZ = (() => {
@@ -2265,9 +2488,10 @@ const QUIZ = (() => {
   MAP.init($('mapwrap'));
   EXPLORE.init();
   QUIZ.init();
+  LEARN.init({ toQuiz: () => setMode('quiz') });
 
   /* ----------------------------------------------------------- map events */
-  MAP.on('click', (layer, id) => { if (mode === 'explore') EXPLORE.onMapClick(layer, id); else QUIZ.onMapClick(layer, id); });
+  MAP.on('click', (layer, id) => { if (mode === 'explore') EXPLORE.onMapClick(layer, id); else if (mode === 'learn') LEARN.onMapClick(layer, id); else QUIZ.onMapClick(layer, id); });
   const tip = $('tip');
   const moveTip = e => {
     const r = $('mapwrap').getBoundingClientRect();
@@ -2291,13 +2515,18 @@ const QUIZ = (() => {
   /* ---------------------------------------------------------- mode switch */
   function setMode(m) {
     if (m === mode) return;
+    const prev = mode;
     mode = m; document.body.dataset.mode = m; tip.hidden = true;
-    $('tab-explore').setAttribute('aria-selected', String(m === 'explore'));
-    $('tab-quiz').setAttribute('aria-selected', String(m === 'quiz'));
-    $('explore').hidden = m !== 'explore'; $('quiz').hidden = m !== 'quiz'; $('chips').hidden = m === 'quiz';
-    if (m === 'quiz') QUIZ.enter(); else QUIZ.leave();
+    ['explore', 'learn', 'quiz'].forEach(k => { $('tab-' + k).setAttribute('aria-selected', String(m === k)); $(k).hidden = m !== k; });
+    $('chips').hidden = m === 'quiz';
+    if (prev === 'learn') LEARN.leave();
+    if (prev === 'quiz') QUIZ.leave();
+    if (m === 'quiz') QUIZ.enter();
+    else if (m === 'learn') { EXPLORE.clear(); EXPLORE.applyChips(); LEARN.enter(); }
+    else if (prev === 'learn') { EXPLORE.applyChips(); EXPLORE.show(); }
   }
   $('tab-explore').addEventListener('click', () => setMode('explore'));
+  $('tab-learn').addEventListener('click', () => setMode('learn'));
   $('tab-quiz').addEventListener('click', () => setMode('quiz'));
 
   /* -------------------------------------------------------------- banners */
@@ -2426,6 +2655,7 @@ const QUIZ = (() => {
   .panel{border-left:0 !important;border-top:0 !important;border-radius:16px 16px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.2);overflow-y:auto;overflow-x:hidden;min-height:0;position:relative;z-index:6;overscroll-behavior:contain}
   .stage[data-sheet=closed] .panel{overflow:hidden}
   .list{max-height:none !important}
+  #learn{flex:none !important;overflow:visible !important}
   .sheet-handle{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:52px;border:0;background:var(--panel,#fff);border-bottom:1px solid #e3e6ea;font-weight:650;font-size:14px;color:#33414f;flex:none}
   .sheet-handle i{width:38px;height:5px;border-radius:3px;background:#c3cad2;display:block}
   .sheet-handle span{display:flex;align-items:center;gap:6px}
@@ -2453,7 +2683,7 @@ const QUIZ = (() => {
 <!--/sy-tabs-->
 <!--sy-maps-->
 <script>(function(){
-  var svg=document.querySelector('svg.map'), panel=document.getElementById('panel'), stage=document.querySelector('.stage');
+  var svg=document.querySelector('svg.map'), panel=document.getElementById('panel')||document.querySelector('aside.panel'), stage=document.querySelector('.stage');
   if(!svg||!panel||!stage) return;
   var mq=matchMedia('(max-width:700px)'), HEIGHTS={closed:'52px',half:'46%',full:'86%'}, state='closed', ready=false;
   var h=document.createElement('button'); h.type='button'; h.className='sheet-handle';
@@ -2474,7 +2704,7 @@ const QUIZ = (() => {
   watch('card',function(){ var c=document.getElementById('card'); if(ready && document.body.dataset.mode==='explore' && state==='closed' && c && !c.classList.contains('intro-card')) set('half'); });
   watch('qz-play',function(){ var p=document.getElementById('qz-play'); if(ready && p && !p.hidden && p.children.length) set('half'); });
   watch('qz-end',function(){ var p=document.getElementById('qz-end'); if(p && !p.hidden && p.children.length) set('half'); });
-  new MutationObserver(function(){ if(document.body.dataset.mode==='quiz') set('half'); else if(ready) set('closed'); }).observe(document.body,{attributes:true,attributeFilter:['data-mode']});
+  new MutationObserver(function(){ if(document.body.dataset.mode==='quiz'||document.body.dataset.mode==='learn') set('half'); else if(ready) set('closed'); }).observe(document.body,{attributes:true,attributeFilter:['data-mode']});
   /* pincer pour zoomer, deux doigts pour déplacer, double tape pour zoomer */
   var t0=null, last=null;
   function inf(e){var a=e.touches[0],b=e.touches[1];return {d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||1,x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2};}
