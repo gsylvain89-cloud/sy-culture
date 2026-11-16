@@ -3537,6 +3537,13 @@ function ghWire(d) {
 }
 ghStart();
 
+/* le menu SY Culture (page parente) demande l'état ou une synchro */
+window.addEventListener('message', async e => {
+  const d = e.data; if (!d || d.sy !== 'ask') return;
+  if (d.act === 'sync') await ghSync();
+  try { e.source.postMessage({ sy: 'state', state: GH.token ? (GH.state || (GH.lastOk ? 'ok' : 'syncing')) : 'notoken', lastOk: GH.lastOk }, '*'); } catch (x) { /* ignoré */ }
+});
+
 /* Écoute des fiches : épisodes lus par ElevenLabs (audio/<fiche>.mp3), liste dans audio/audio-list.js (window.SY_AUDIO).
    Un seul lecteur pour toute l'app, en bas de l'écran ; commandes aussi sur l'écran verrouillé (Media Session). */
 var AUD = { el: null, q: [], i: 0 };

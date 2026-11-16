@@ -466,7 +466,8 @@ CG.themes.push({
       vocab: [
         V(`gå, gick, gått`, `aller, marcher`), V(`se, såg, sett`, `voir`), V(`ta, tog, tagit`, `prendre`), V(`komma, kom, kommit`, `venir`),
         V(`skriva, skrev, skrivit`, `écrire`), V(`dricka, drack, druckit`, `boire`), V(`äta, åt, ätit`, `manger`), V(`ge, gav, gett`, `donner`),
-        V(`bli, blev, blivit`, `devenir`), V(`vara, var, varit`, `être`), V(`förstå, förstod, förstått`, `comprendre`), V(`säga, sa, sagt`, `dire`), V(`göra, gjorde, gjort`, `faire`)
+        V(`bli, blev, blivit`, `devenir`), V(`vara, var, varit`, `être`), V(`sitta, satt, suttit`, `être assis`), V(`ligga, låg, legat`, `être couché`),
+        V(`stå, stod, stått`, `être debout`), V(`förstå, förstod, förstått`, `comprendre`), V(`säga, sa, sagt`, `dire`), V(`göra, gjorde, gjort`, `faire`), V(`ha, hade, haft`, `avoir`)
       ],
       phrases: [
         P(`Igår gick jag till skolan.`, `Hier, je suis allé à l'école.`),
@@ -1007,9 +1008,9 @@ const RECALL = 3;                                  /* à partir de la boîte 3 :
 const KEY = 'sy-svenska.v1';
 let S = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.cards) return s; } catch (e) { /* ignoré */ } return null; })()
   || { cards: {}, fiches: {}, days: {}, opts: {}, tiles: {} };
-S.tiles = S.tiles || {}; S.tmod = S.tmod || {};
+S.tiles = S.tiles || {};
 S.opts = Object.assign({ maxReviews: 30, alwaysChoice: false, autoSpeak: true, rate: 0.85, voice: '' }, S.opts);
-const save = () => { S.mod = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ } if (typeof ghSoon === 'function') ghSoon(); };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ } };
 const dayNum = d => { d = d || new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 864e5); };
 const dayIso = n => new Date(n * 864e5).toISOString().slice(0, 10);
 const today = () => dayNum();
@@ -1199,7 +1200,6 @@ const tileCards = (w, k) => [w.id + '-s' + k, w.id + '-f' + k];
 function setTile(w, k, state) {
   const t = today(), wid = w.id + '-' + k;
   if (state) S.tiles[wid] = state; else delete S.tiles[wid];
-  S.tmod = S.tmod || {}; S.tmod[wid] = Date.now();
   tileCards(w, k).forEach(id => {
     if (state === 'learn') { if (!S.cards[id]) S.cards[id] = { b: 0, due: t, n: 0, ok: 0, last: t }; }
     else if (state === 'known') S.cards[id] = { b: MASTER, due: t + 10 + Math.floor(Math.random() * 20), n: 0, ok: 0, last: t, known: true };
@@ -1269,7 +1269,7 @@ function stats() {
     '<label class="chk"><input type="checkbox" id="opt-auto"' + (S.opts.autoSpeak ? ' checked' : '') + '> Lire le suédois automatiquement pendant les séances</label>' +
     '<label class="chk"><input type="checkbox" id="opt-choice"' + (S.opts.alwaysChoice ? ' checked' : '') + '> Toujours répondre avec des choix (pas de rappel libre)</label>' +
     (voiceNote ? '<p class="muted small">' + esc(voiceNote) + '</p>' : '') + '<p><button class="btn sm" data-say="Hej! Jag heter Anna. Trevligt att träffas.">▶ Tester la voix</button></p></div>' +
-    '<h2 class="sec">Synchronisation</h2>' + ghPanel() + '<p><button class="link" data-act="reset">Effacer toute la progression</button></p>';
+    '<p><button class="link" data-act="reset">Effacer toute la progression</button></p>';
 }
 
 /* ---------------------------------------------------------------- séance */
@@ -1438,9 +1438,6 @@ document.addEventListener('click', e => {
     const ids = []; ks.forEach(k => tileCards(w, k).forEach(id => { const s = st(id); if (!s || s.due <= today() || s.b < 2) ids.push(id); }));
     startSession('ids', ids.slice(0, 40));
   }
-  else if (a === 'gh-save') ghActivate();
-  else if (a === 'gh-now') { b.disabled = true; ghSync().then(() => { b.disabled = false; }); }
-  else if (a === 'gh-off') { GH.token = ''; GH.gist = ''; ghSave(); render(); }
   else if (a === 'lesson-ok') lessonOk();
   else if (a === 'level') { setLevel(b.dataset.l); go('home'); }
   else if (a === 'known') { markKnown(FBY[b.dataset.id]); render(); }
@@ -1452,7 +1449,7 @@ document.addEventListener('click', e => {
   else if (a === 'no') answer(false);
   else if (a === 'next') nextCard();
   else if (a === 'stop') { view = { name: 'end', arg: sess.results }; render(); }
-  else if (a === 'reset' && confirm('Effacer toute la progression de SY Svenska ?')) { S = { cards: {}, fiches: {}, days: {}, opts: S.opts, tiles: {}, tmod: {} }; save(); go('home'); }
+  else if (a === 'reset' && confirm('Effacer toute la progression de SY Svenska ?')) { S = { cards: {}, fiches: {}, days: {}, opts: S.opts }; save(); go('home'); }
 });
 document.addEventListener('change', e => {
   const id = e.target.id;
@@ -1485,7 +1482,7 @@ var GH = (() => { try { return Object.assign({ token: '', gist: '' }, JSON.parse
 GH.busy = false; GH.timer = null; GH.state = ''; GH.lastOk = 0;
 const GH_DESC = 'SY Culture : progression (ne pas supprimer)', GH_FILE = 'svenska.json';
 const ghSave = () => { try { localStorage.setItem('sy-svenska-gh', JSON.stringify({ token: GH.token, gist: GH.gist, lastOk: GH.lastOk })); } catch (e) { /* ignoré */ } };
-/* même navigateur que SY Culture (page du même site) : on reprend son jeton, rien à recoller */
+/* pas de jeton propre : on reprend celui de SY Culture (même navigateur / même iPhone) */
 if (!GH.token) { try { const c = JSON.parse(localStorage.getItem('sy-culture-gh')); if (c && c.token) { GH.token = c.token; ghSave(); } } catch (e) { /* ignoré */ } }
 const ghApi = (path, opt) => fetch('https://api.github.com' + path, Object.assign({ cache: 'no-store' }, opt || {}, {
   headers: Object.assign({ Authorization: 'Bearer ' + GH.token, Accept: 'application/vnd.github+json' }, opt && opt.body ? { 'Content-Type': 'application/json' } : {})
@@ -1584,6 +1581,13 @@ async function ghActivate() {
   render();
 }
 ghStart();
+
+/* le menu SY Culture (page parente) demande l'état ou une synchro */
+window.addEventListener('message', async e => {
+  const d = e.data; if (!d || d.sy !== 'ask') return;
+  if (d.act === 'sync') await ghSync();
+  try { e.source.postMessage({ sy: 'state', state: GH.token ? (GH.state || (GH.lastOk ? 'ok' : 'syncing')) : 'notoken', lastOk: GH.lastOk }, '*'); } catch (x) { /* ignoré */ }
+});
 
 /* Démarrage : après tous les modules. */
 render();

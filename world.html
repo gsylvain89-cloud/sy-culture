@@ -454,7 +454,7 @@ body[data-mode="quiz"] .map .cap { stroke-width: 10px; stroke: rgba(11,63,148,.2
    rien à configurer ici. Chaque module s'inscrit avec KV.reg(nom, { get, apply, merge }). */
 var KV = (() => {
   const TOK = 'sy-culture-gh', GH_DESC = 'SY Culture : progression (ne pas supprimer)', FILE = 'explorer.json';
-  const mods = {}; let last = {}, busy = false, timer = null, started = false, flushed = '', cfg = { token: '', gist: '' };
+  const mods = {}; let st = '', lastOk = 0, last = {}, busy = false, timer = null, started = false, flushed = '', cfg = { token: '', gist: '' };
   const readCfg = () => { try { cfg = Object.assign({ token: '', gist: '' }, JSON.parse(localStorage.getItem(TOK)) || {}); } catch (e) { cfg = { token: '', gist: '' }; } return cfg; };
   const api = (path, opt) => fetch('https://api.github.com' + path, Object.assign({ cache: 'no-store' }, opt || {}, {
     headers: Object.assign({ Authorization: 'Bearer ' + cfg.token, Accept: 'application/vnd.github+json' }, opt && opt.body ? { 'Content-Type': 'application/json' } : {})
@@ -490,8 +490,8 @@ var KV = (() => {
     return (await c.json()).id;
   }
   async function sync() {
-    readCfg(); if (!cfg.token || busy || navigator.onLine === false) return;
-    busy = true;
+    readCfg(); if (!cfg.token || busy) return; if (navigator.onLine === false) { st = 'offline'; return; }
+    busy = true; st = 'syncing';
     try {
       if (!cfg.gist) { cfg.gist = await findOrCreate(); try { const c = JSON.parse(localStorage.getItem(TOK)) || {}; c.gist = cfg.gist; localStorage.setItem(TOK, JSON.stringify(c)); } catch (e) { /* ignoré */ } }
       const r = await api('/gists/' + cfg.gist);
@@ -507,7 +507,8 @@ var KV = (() => {
         const p = await api('/gists/' + cfg.gist, { method: 'PATCH', body: JSON.stringify({ files: { [FILE]: { content: out } } }) });
         if (!p.ok) throw { code: 'http' };
       }
-    } catch (e) { if (e && e.code === 'retry') setTimeout(sync, 2000); }
+      st = 'ok'; lastOk = Date.now();
+    } catch (e) { st = e && e.code === 'auth' ? 'auth' : (navigator.onLine === false || !e || !e.code) ? 'offline' : 'error'; if (e && e.code === 'retry') setTimeout(sync, 2000); }
     busy = false;
   }
   const soon = ms => { readCfg(); if (!cfg.token) return; clearTimeout(timer); timer = setTimeout(sync, ms == null ? 20000 : ms); };
@@ -523,6 +524,13 @@ var KV = (() => {
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); else soon(500); });
     window.addEventListener('pagehide', flush);
   }
+  /* le menu SY Culture (page parente) demande l'état ou une synchro : { sy:'ask', act:'status'|'sync' } -> { sy:'state', state, lastOk } */
+  window.addEventListener('message', async e => {
+    const d = e.data; if (!d || d.sy !== 'ask') return;
+    if (d.act === 'sync') await sync();
+    readCfg();
+    try { e.source.postMessage({ sy: 'state', state: cfg.token ? (st || (lastOk ? 'ok' : 'syncing')) : 'notoken', lastOk }, '*'); } catch (x) { /* ignoré */ }
+  });
   return { reg(n, m) { mods[n] = m; start(); }, soon, sync, mergeQuiz, mergeLearn, _snap: snapshot };
 })();
 
