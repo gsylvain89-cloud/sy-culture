@@ -113,6 +113,34 @@ html,body{overflow-x:hidden}
   .vrow{padding:8px 4px}
   input[type=text],input[type=search],.search{font-size:16px}
 }
+
+/* ---- 0.5 : genre en / ett, tableaux, pièges, introduction d'un mot ---- */
+:root { --en: #1f6fb8; --en-bg: #e3f0fb; --ett: #d9731a; --ett-bg: #fdeedd; }
+.gb { display: inline-block; font-size: .72em; font-weight: 700; letter-spacing: .02em; border-radius: 6px; padding: 1px 7px; margin-right: 7px; vertical-align: .08em; line-height: 1.5; }
+.gb.g-en { background: var(--en-bg); color: var(--en); border: 1px solid var(--en); }
+.gb.g-ett { background: var(--ett-bg); color: var(--ett); border: 1px solid var(--ett); }
+.vrow.g-en { border-left: 4px solid var(--en); } .vrow.g-ett { border-left: 4px solid var(--ett); }
+.tile.g-en { box-shadow: inset 0 -5px 0 var(--en); } .tile.g-ett { box-shadow: inset 0 -5px 0 var(--ett); }
+.tile.g-en.flip, .tile.g-ett.flip { box-shadow: none; }
+.choice.g-en { border-color: var(--en); } .choice.g-ett { border-color: var(--ett); }
+.choices.two { grid-template-columns: 1fr 1fr; } .choices.two .choice { justify-content: center; font-size: 1.4rem; font-weight: 700; padding: 22px 12px; }
+.tbl { margin: 18px 0; } .tbl h4 { margin: 0 0 8px; font-size: 1rem; }
+.tscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #dfe5ec; border-radius: 12px; background: #fff; }
+.tbl table { border-collapse: collapse; width: 100%; font-size: .95rem; min-width: 320px; }
+.tbl th { background: #eef3f8; text-align: left; padding: 9px 12px; font-weight: 700; white-space: nowrap; }
+.tbl td { padding: 8px 12px; border-top: 1px solid #e8edf2; vertical-align: top; }
+.tbl td.t0 { font-weight: 700; white-space: nowrap; }
+.tbl .tn { margin: 6px 2px 0; color: #5b6b7a; font-size: .88rem; }
+.pits { margin: 20px 0; padding: 14px 18px; background: #fff6e5; border: 1px solid #f0d9a8; border-radius: 14px; }
+.pits h3 { margin: 0 0 6px; font-size: 1rem; }
+.expl.warn { color: #9a4a00; font-weight: 600; }
+.intro { text-align: center; padding: 8px 4px 4px; }
+.intro .iw { font-size: 2.6rem; font-weight: 800; margin: 10px 0 4px; line-height: 1.2; }
+.intro .iw .gb { font-size: .42em; vertical-align: .55em; }
+.intro .ifr { font-size: 1.5rem; margin: 6px 0 14px; color: #33475b; }
+.intro .imeta { margin: 4px 0; color: #4b5d6e; } .intro .imeta.hint { margin-top: 12px; font-size: .95rem; }
+.intro .actions { justify-content: center; margin-top: 18px; }
+@media (max-width: 700px) { .intro .iw { font-size: 2.1rem; } }
 </style>
 </head>
 <body>
@@ -137,6 +165,29 @@ const Q = (q, a, d, x, o) => Object.assign({ q, a, d, x: x || '' }, o || {});
 const P = (sv, fr, note) => ({ sv, fr, note: note || '' });
 /* Z(phrase avec ___, mot attendu, traduction française, [3 leurres], explication?) = phrase à trous (choix, puis à taper dès la boîte 3). */
 const Z = (s, a, fr, d, x) => ({ s, a, fr, d, x: x || '' });
+
+/* W('texte') = un mot écrit en une ligne, séparé par | :
+   nom      W('en bil|bilar|voiture|note?')      (en ou ett, pluriel indéfini, français, note)
+   verbe    W('v prata|pratar|pratade|pratat|parler|note?')   (infinitif, présent, prétérit, supin, français)
+   autre    W('snabb|rapide|note?')
+   Donne {sv, fr, note, g ('en'|'ett'|''), pl, forms ('pratar · pratade · pratat')}. */
+const W = s => {
+  const p = s.split('|').map(x => x.trim()); let m;
+  if ((m = /^(en|ett) (.+)$/.exec(p[0]))) return { sv: m[2], g: m[1], pl: p[1] || '', fr: p[2], note: p[3] || '', forms: '' };
+  if ((m = /^v (.+)$/.exec(p[0]))) return { sv: m[1], g: '', pl: '', fr: p[4], note: p[5] || '', forms: p[1] + ' · ' + p[2] + ' · ' + p[3] };
+  return { sv: p[0], g: '', pl: '', fr: p[1], note: p[2] || '', forms: '' };
+};
+/* T(titre, [colonnes], [[ligne], …], note?) = un tableau dans une fiche */
+const T = (title, cols, rows, note) => ({ title, cols, rows, note: note || '' });
+/* UP(id de fiche, { tables, pit, keys, text, vocab… }) = enrichit une fiche existante sans toucher à ses cartes ni à ses ids */
+const UPGRADES = {};
+const UP = (id, o) => { UPGRADES[id] = Object.assign(UPGRADES[id] || {}, o); };
+/* GENDERS : « en bil|bilar » pour donner genre et pluriel à des mots déjà écrits sans article (clé = le mot) */
+const GENDERS = {};
+const GN = lines => lines.split('\n').forEach(l => { const p = l.trim().split('|'); const m = /^(en|ett) (.+)$/.exec(p[0] || ''); if (m) GENDERS[m[2]] = { g: m[1], pl: p[1] || '' }; });
+/* VF : formes de verbes pour des mots déjà écrits sans formes (clé = l'infinitif) : « prata|pratar|pratade|pratat » */
+const VERBFORMS = {};
+const VF = lines => lines.split('\n').forEach(l => { const p = l.trim().split('|'); if (p.length === 4) VERBFORMS[p[0]] = p[1] + ' · ' + p[2] + ' · ' + p[3]; });
 
 /* Contenu de SY Svenska (A1). Thème → fiches {id, title, text[], keys[], vocab[V], extra[Q]}.
    Les cartes sont fabriquées par app.js : chaque mot de vocab donne 2 cartes (suédois → français, français → suédois),
@@ -861,6 +912,823 @@ CG.themes.push({
   ]
 });
 
+/* SY Svenska 0.5 : fiches de base sur les NOMS (genre, forme définie, pluriel) et les VERBES (groupes, formes). Mots écrits avec W(). */
+
+CG.themes.push({
+  id: 'sb', name: 'Noms : genre et formes', icon: '🏷️', color: '#C2410C', lvl: 'A1', fiches: [
+    {
+      id: 'sb1', title: 'La forme définie : bilen, huset',
+      text: [
+        `En suédois, l'article « le / la » **se colle à la fin du mot**. Un mot **en** prend **-en** (ou **-n** s'il finit par une voyelle) : **en bil → bilen**, **en flicka → flickan**. Un mot **ett** prend **-et** (ou **-t**) : **ett hus → huset**, **ett äpple → äpplet**.`,
+        `C'est la raison pour laquelle le genre est si important : sans lui, on ne sait pas quelle terminaison choisir. Quand le mot finit par **-er**, **-el** ou **-en**, le **e** tombe souvent : **ett fönster → fönstret**, **en nyckel → nyckeln**.`
+      ],
+      tables: [T('Forme définie', ['Genre', 'Le mot finit par…', 'Défini', 'Exemple'], [
+        ['en', 'une consonne', '**-en**', 'en bil → bilen'], ['en', 'une voyelle (-a, -e)', '**-n**', 'en flicka → flickan'],
+        ['ett', 'une consonne', '**-et**', 'ett hus → huset'], ['ett', 'une voyelle', '**-t**', 'ett äpple → äpplet'],
+        ['ett', '-er, -el, -en', 'on perd le e', 'ett fönster → fönstret']
+      ])],
+      keys: [`**en bil → bilen**, **ett hus → huset** : l'article défini est une finale.`, `Après une voyelle : **-n** (en) ou **-t** (ett).`, `Les mots en **-er / -el / -en** perdent leur **e** : **fönstret**, **nyckeln**.`],
+      vocab: [W('en bil|bilar|voiture'), W('ett hus|hus|maison'), W('en flicka|flickor|fille'), W('en pojke|pojkar|garçon'), W('ett äpple|äpplen|pomme'), W('en katt|katter|chat'), W('en hund|hundar|chien'), W('ett bord|bord|table'), W('en stol|stolar|chaise'), W('ett barn|barn|enfant'), W('en bok|böcker|livre'), W('en gata|gator|rue'), W('ett fönster|fönster|fenêtre'), W('en dag|dagar|jour')],
+      phrases: [P(`Bilen är röd.`, `La voiture est rouge.`), P(`Huset är stort.`, `La maison est grande.`), P(`Boken ligger på bordet.`, `Le livre est sur la table.`), P(`Hunden sover under stolen.`, `Le chien dort sous la chaise.`), P(`Jag öppnar fönstret.`, `J'ouvre la fenêtre.`)],
+      cloze: [
+        Z(`Var är ___? (le chat)`, `katten`, `Où est le chat ?`, [`katt`, `kattet`, `katter`], `en katt → katten.`),
+        Z(`Jag öppnar ___. (la fenêtre)`, `fönstret`, `J'ouvre la fenêtre.`, [`fönsteret`, `fönster`, `fönstren`], `ett fönster → fönstret : le e tombe.`),
+        Z(`___ är stort. (la maison)`, `huset`, `La maison est grande.`, [`hus`, `husen`, `husa`], `ett hus → huset.`),
+        Z(`Jag läser ___. (le livre)`, `boken`, `Je lis le livre.`, [`bok`, `boket`, `böcker`], `en bok → boken.`)
+      ],
+      pit: [`Ne dis pas « den bilen » pour « la voiture » : le défini simple est **bilen** tout seul. On ne met **den / det** que devant un adjectif (**den röda bilen**).`]
+    },
+    {
+      id: 'sb2', title: 'Les pluriels : apprends-les avec le mot',
+      text: [
+        `Le pluriel suédois n'est pas prévisible à 100 % : il y a **six familles** (-or, -ar, -er, -r, -n et inchangé). Mais les tendances sont fortes : les mots **en** en **-a** font **-or** (**flicka → flickor**), beaucoup d'autres mots **en** font **-ar** ou **-er**, les mots **ett** en voyelle font **-n** (**äpple → äpplen**), et les mots **ett** en consonne ne changent pas (**hus → hus**).`,
+        `Le plus efficace : apprendre **chaque nom avec son article et son pluriel** : **en bil, bilar**. C'est exactement ce que font les cartes de cette fiche (genre, pluriel, traduction). Le pluriel défini ajoute **-na** (après -or/-ar/-er), **-en** (mots inchangés) ou **-a** (après -n).`
+      ],
+      tables: [T('Les pluriels indéfini et défini', ['Singulier', 'Pluriel', 'Pluriel défini', 'Famille'], [
+        ['en flicka', 'flickor', 'flickorna', '-or'], ['en stol', 'stolar', 'stolarna', '-ar'], ['en station', 'stationer', 'stationerna', '-er'], ['en sko', 'skor', 'skorna', '-r'],
+        ['ett äpple', 'äpplen', 'äpplena', '-n'], ['ett hus', 'hus', 'husen', 'inchangé'], ['en lärare', 'lärare', 'lärarna', 'inchangé'], ['en man', 'män', 'männen', 'irrégulier']
+      ])],
+      keys: [`**en**: -a → **-or** ; beaucoup → **-ar** ou **-er**.`, `**ett** : voyelle → **-n** ; consonne → **inchangé**.`, `Irréguliers courants : **man → män**, **bok → böcker**, **fot → fötter**, **öga → ögon**.`],
+      vocab: [W('en flicka|flickor|fille'), W('en stol|stolar|chaise'), W('en båt|båtar|bateau'), W('en station|stationer|gare'), W('en vän|vänner|ami'), W('en sko|skor|chaussure'), W('ett äpple|äpplen|pomme'), W('ett hjärta|hjärtan|cœur'), W('ett hus|hus|maison'), W('en lärare|lärare|professeur'), W('en man|män|homme'), W('en bok|böcker|livre'), W('en fot|fötter|pied'), W('ett öga|ögon|œil')],
+      phrases: [P(`Jag har två systrar och tre bröder.`, `J'ai deux sœurs et trois frères.`), P(`Barnen har nya skor.`, `Les enfants ont de nouvelles chaussures.`), P(`Det finns många hus här.`, `Il y a beaucoup de maisons ici.`), P(`Vi har två katter.`, `Nous avons deux chats.`)],
+      cloze: [
+        Z(`Jag har två ___. (livre)`, `böcker`, `J'ai deux livres.`, [`boker`, `bokar`, `bok`], `en bok → böcker (voyelle qui change).`),
+        Z(`Det finns många ___ här. (maison)`, `hus`, `Il y a beaucoup de maisons ici.`, [`huser`, `husar`, `husen`], `ett hus → hus (inchangé).`),
+        Z(`Hon har tre ___. (enfant)`, `barn`, `Elle a trois enfants.`, [`barnar`, `barner`, `barnen`], `ett barn → barn.`),
+        Z(`Vi köper fem ___. (pomme)`, `äpplen`, `Nous achetons cinq pommes.`, [`äpplar`, `äpplor`, `äpple`], `ett äpple → äpplen.`)
+      ],
+      pit: [`Le pluriel n'est **presque jamais** en -s : le suédois a ses propres terminaisons (-or, -ar, -er, -r, -n).`, `**flickorna** (les filles) : le **-na** est l'article défini pluriel, pas un deuxième pluriel.`]
+    },
+    {
+      id: 'sb3', title: 'En ou ett ? Deviner et retenir',
+      text: [
+        `Environ **trois mots sur quatre** sont des mots **en**. Quelques indices fiables : les **personnes et animaux** sont presque toujours **en** (**en lärare, en hund**), et les mots en **-are**, **-ing**, **-het**, **-ion** aussi. Les mots **ett** sont souvent courts ou en **-um** et **-eri** : **ett museum, ett bageri**.`,
+        `Mais ces indices ont des exceptions, et beaucoup de mots n'ont aucun indice (**ett vatten, en mjölk, ett bord, en stol**). La seule vraie méthode : apprendre chaque mot avec son article, et utiliser l'**association de couleur** de l'app : **en = bleu**, **ett = orange**.`
+      ],
+      keys: [`**en** : personnes, animaux, **-are, -ing, -het, -ion**.`, `**ett** : **-um, -eri**, beaucoup de mots courts.`, `Les liquides et matières : pas de règle (**ett vatten, ett kaffe, en mjölk, en juice**).`],
+      vocab: [W('en lärare|lärare|professeur'), W('en frihet|friheter|liberté'), W('en träning|träningar|entraînement'), W('en lektion|lektioner|leçon'), W('ett museum|museer|musée'), W('ett bageri|bagerier|boulangerie'), W('ett centrum|centrum|centre'), W('ett vatten|vatten|eau'), W('en mjölk||lait'), W('ett kaffe||café'), W('ett land|länder|pays'), W('en stad|städer|ville')],
+      extra: [
+        Q(`Quel est le genre de « lärare » (professeur) ?`, `en`, [`ett`, `les deux`, `aucun`], `Les mots en -are désignent des personnes et sont des mots en : en lärare.`),
+        Q(`Un mot en -um, comme « museum », est le plus souvent…`, `ett`, [`en`, `toujours en`, `pluriel`], `-um → ett : ett museum, ett centrum, ett akvarium.`),
+        Q(`Combien de mots suédois sont des mots « en » environ ?`, `environ 3 sur 4`, [`environ 1 sur 4`, `la moitié`, `presque tous`], `Les mots en dominent : ils représentent environ 75 % des noms.`)
+      ],
+      pit: [`Le genre du français **ne se traduit pas** : « le café » est **ett kaffe**, « la mer » est **ett hav**, « le soleil » est **en sol**.`]
+    },
+    {
+      id: 'sb4', title: 'Adjectifs : en stor bil, ett stort hus',
+      text: [
+        `L'adjectif **s'accorde en genre et en nombre** avec le nom, et il change aussi quand le nom est défini. Avec un mot **en**, l'adjectif reste de base : **en stor bil**. Avec un mot **ett**, on ajoute **-t** : **ett stort hus**. Au **pluriel**, on ajoute **-a** : **stora bilar**.`,
+        `Quand le nom est défini (« la grande voiture »), il faut un article **devant** l'adjectif, **et** la finale du nom : **den stora bilen**, **det stora huset**, **de stora bilarna**. L'adjectif finit alors toujours par **-a**.`
+      ],
+      tables: [T('Un adjectif, toutes ses formes', ['', 'en-ord', 'ett-ord', 'Pluriel', 'Défini'], [
+        ['stor', 'en stor bil', 'ett stort hus', 'stora hus', 'den stora bilen'], ['ny', 'en ny bil', 'ett nytt hus', 'nya hus', 'det nya huset'], ['gul', 'en gul bil', 'ett gult hus', 'gula hus', 'de gula husen'], ['liten', 'en liten bil', 'ett litet hus', 'små hus', 'den lilla bilen']
+      ])],
+      keys: [`**en stor bil**, **ett stort hus**, **stora hus**.`, `Défini : **den / det / de + adjectif en -a + nom défini** : **den stora bilen**.`, `**liten** : **litet, små, lilla**.`],
+      vocab: [W('stor|grand'), W('liten|petit'), W('ny|neuf, nouveau'), W('gammal|vieux'), W('gul|jaune'), W('röd|rouge'), W('vacker|beau'), W('billig|bon marché'), W('dyr|cher'), W('snäll|gentil'), W('trött|fatigué'), W('glad|content')],
+      phrases: [P(`Det är en stor bil.`, `C'est une grande voiture.`), P(`Det är ett stort hus.`, `C'est une grande maison.`), P(`Den stora bilen är dyr.`, `La grande voiture est chère.`), P(`Barnen är trötta.`, `Les enfants sont fatigués.`)],
+      cloze: [
+        Z(`Det är ett ___ hus. (grand)`, `stort`, `C'est une grande maison.`, [`stor`, `stora`, `store`], `ett hus → stort.`),
+        Z(`Det är en ___ bil. (neuf)`, `ny`, `C'est une voiture neuve.`, [`nytt`, `nya`, `nyn`], `en bil → ny (forme de base).`),
+        Z(`Vi har två ___ hundar. (petit)`, `små`, `Nous avons deux petits chiens.`, [`liten`, `litet`, `lilla`], `Pluriel de liten : små.`),
+        Z(`___ röda bilen är min. (la)`, `den`, `La voiture rouge est la mienne.`, [`det`, `de`, `en`], `bilen est en : den + adjectif en -a + nom défini.`)
+      ],
+      pit: [`**ett stort hus** s'écrit avec **-t** : ne l'oublie pas pour tous les mots ett.`, `Certains adjectifs sont irréguliers : **gammal → gammalt, gamla** ; **liten → litet, små, lilla**. À apprendre par cœur.`]
+    },
+    {
+      id: 'sb5', title: 'Mon, ton, son : min, mitt, mina',
+      text: [
+        `Les possessifs suédois s'accordent avec la **chose possédée**, pas avec le possesseur (comme en français). **Min** va avec un mot **en**, **mitt** avec un mot **ett**, **mina** avec un pluriel : **min bil, mitt hus, mina vänner**. Même système pour **din / ditt / dina** (ton) et **vår / vårt / våra** (notre).`,
+        `Pour « son, sa, ses » il y a **deux** mots : **hans / hennes** quand le possesseur est quelqu'un d'autre que le sujet, et **sin / sitt / sina** quand le possesseur est **le sujet de la phrase** : **Han älskar sin fru** (sa propre femme), **Han älskar hans fru** (la femme d'un autre).`
+      ],
+      tables: [T('Possessifs', ['Possesseur', 'en-ord', 'ett-ord', 'Pluriel'], [
+        ['jag', 'min bil', 'mitt hus', 'mina vänner'], ['du', 'din bil', 'ditt hus', 'dina vänner'], ['vi', 'vår bil', 'vårt hus', 'våra vänner'], ['ni', 'er bil', 'ert hus', 'era vänner'],
+        ['han / hon', 'hans / hennes (invariable)', 'hans / hennes', 'hans / hennes'], ['sujet = possesseur', 'sin bil', 'sitt hus', 'sina vänner']
+      ])],
+      keys: [`**min / mitt / mina** (mon), **din / ditt / dina** (ton), **vår / vårt / våra** (notre).`, `**hans, hennes** = de lui, d'elle (jamais d'accord).`, `**sin / sitt / sina** = son propre (le sujet est le possesseur).`],
+      vocab: [W('en bil|bilar|voiture'), W('ett hus|hus|maison'), W('en syster|systrar|sœur'), W('en bror|bröder|frère'), W('en mamma|mammor|maman'), W('en pappa|pappor|papa'), W('ett barn|barn|enfant'), W('en nyckel|nycklar|clé'), W('en väska|väskor|sac'), W('ett namn|namn|nom')],
+      phrases: [P(`Det är min bil.`, `C'est ma voiture.`), P(`Det här är mitt hus.`, `Ceci est ma maison.`), P(`Var är dina nycklar?`, `Où sont tes clés ?`), P(`Hon älskar sin man.`, `Elle aime son mari.`)],
+      cloze: [
+        Z(`Det är ___ hus. (ma)`, `mitt`, `C'est ma maison.`, [`min`, `mina`, `mit`], `ett hus → mitt.`),
+        Z(`Var är ___ väska? (ta)`, `din`, `Où est ton sac ?`, [`ditt`, `dina`, `dig`], `en väska → din.`),
+        Z(`Jag älskar ___ barn. (mes)`, `mina`, `J'aime mes enfants.`, [`min`, `mitt`, `mig`], `Pluriel → mina.`),
+        Z(`Anna älskar ___ man. (son propre)`, `sin`, `Anna aime son mari.`, [`hennes`, `hans`, `sitt`], `Le possesseur est le sujet : sin (en-ord man).`)
+      ],
+      pit: [`**sin / sitt / sina** ne s'emploie **jamais** pour le sujet lui-même dans un sujet composé : « Anna och hennes mamma » (pas « sin »).`, `**mitt** (ett), **min** (en), **mina** (pluriel) : ne dis pas « min hus ».`]
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'vf', name: 'Verbes : les formes', icon: '🔧', color: '#6D28D9', lvl: 'A2', fiches: [
+    {
+      id: 'vf1', title: 'Groupe 1 : parler, travailler (-ar, -ade, -at)',
+      text: [
+        `Le **groupe 1** est le plus simple et le plus fréquent : l'infinitif finit par **-a**, et on retire ce **-a** pour obtenir le radical. **Présent : radical + -ar** (**jag talar**), **prétérit : radical + -ade** (**jag talade**), **supin : radical + -at** (**jag har talat**).`,
+        `Quand tu apprends un verbe, apprends toujours ses **trois formes** : présent, prétérit, supin. L'app le fait pour toi avec les cartes « formes ». Le supin sert avec **har** pour former le parfait : **Jag har arbetat hela dagen** (j'ai travaillé toute la journée).`
+      ],
+      tables: [T('Groupe 1', ['Infinitif', 'Présent', 'Prétérit', 'Supin'], [['tala', 'talar', 'talade', 'talat'], ['arbeta', 'arbetar', 'arbetade', 'arbetat'], ['laga', 'lagar', 'lagade', 'lagat'], ['älska', 'älskar', 'älskade', 'älskat']])],
+      keys: [`Radical + **-ar / -ade / -at**.`, `Le supin s'emploie avec **har** : **jag har talat**.`, `**att tala, talar, talade, talat** : les quatre formes à connaître.`],
+      vocab: [W('v tala|talar|talade|talat|parler'), W('v arbeta|arbetar|arbetade|arbetat|travailler'), W('v laga|lagar|lagade|lagat|cuisiner, réparer'), W('v älska|älskar|älskade|älskat|aimer'), W('v hoppas|hoppas|hoppades|hoppats|espérer'), W('v fråga|frågar|frågade|frågat|demander'), W('v svara|svarar|svarade|svarat|répondre'), W('v öppna|öppnar|öppnade|öppnat|ouvrir'), W('v vänta|väntar|väntade|väntat|attendre'), W('v lyssna|lyssnar|lyssnade|lyssnat|écouter'), W('v handla|handlar|handlade|handlat|faire les courses'), W('v städa|städar|städade|städat|faire le ménage')],
+      phrases: [P(`Jag arbetade hemma igår.`, `J'ai travaillé à la maison hier.`), P(`Vi lyssnade på musik.`, `Nous avons écouté de la musique.`), P(`Han frågade läraren.`, `Il a demandé au professeur.`), P(`Hon har städat hela huset.`, `Elle a nettoyé toute la maison.`)],
+      cloze: [
+        Z(`Igår ___ jag hemma. (arbeta)`, `arbetade`, `Hier j'ai travaillé à la maison.`, [`arbetar`, `arbetat`, `arbeta`], `Prétérit groupe 1 : radical + -ade.`),
+        Z(`Hon ___ svenska. (tala, présent)`, `talar`, `Elle parle suédois.`, [`talade`, `talat`, `tala`], `Présent groupe 1 : -ar.`),
+        Z(`Vi har ___ länge. (vänta)`, `väntat`, `Nous avons attendu longtemps.`, [`väntade`, `väntar`, `vänta`], `Supin : radical + -at.`),
+        Z(`Jag ___ mat. (handla, prétérit)`, `handlade`, `J'ai fait les courses (alimentaires).`, [`handlar`, `handlat`, `handla`], `Prétérit : -ade.`)
+      ],
+      pit: [`**har** + supin pour « avoir fait » : **har talat**, jamais **har talade**.`, `Quelques verbes en -a (**bo, tro, sy**) ne sont pas du groupe 1 : voir la fiche suivante.`]
+    },
+    {
+      id: 'vf2', title: 'Groupes 2 et 3 : köpa, bo, tro',
+      text: [
+        `Le **groupe 2** : verbes à radical en consonne. **Présent -er** (**köper**), **prétérit -de ou -te** (**köpte**, **stängde**), **supin -t ou -d** (**köpt**, **stängt**). On met **-te** après une consonne dure (**p, k, t, s, x**) : **köpa → köpte** ; sinon **-de** : **stänga → stängde**.`,
+        `Le **groupe 3** : verbes d'une syllabe finissant par une voyelle (**bo, tro, sy, nå**). **Présent -r** (**bor, tror**), **prétérit -dde** (**bodde, trodde**), **supin -tt** (**bott, trott**). Ce sont peu de verbes, mais très fréquents.`
+      ],
+      tables: [T('Groupes 2 et 3', ['Groupe', 'Infinitif', 'Présent', 'Prétérit', 'Supin'], [['2', 'köpa', 'köper', 'köpte', 'köpt'], ['2', 'stänga', 'stänger', 'stängde', 'stängt'], ['2', 'läsa', 'läser', 'läste', 'läst'], ['3', 'bo', 'bor', 'bodde', 'bott'], ['3', 'tro', 'tror', 'trodde', 'trott']])],
+      keys: [`Groupe 2 : **-er / -te (-de) / -t (-d)**.`, `Groupe 3 : **-r / -dde / -tt**.`, `**-te** après p, k, t, s, x ; sinon **-de**.`],
+      vocab: [W('v köpa|köper|köpte|köpt|acheter'), W('v stänga|stänger|stängde|stängt|fermer'), W('v läsa|läser|läste|läst|lire'), W('v höra|hör|hörde|hört|entendre'), W('v tycka|tycker|tyckte|tyckt|trouver, penser'), W('v resa|reser|reste|rest|voyager'), W('v tro|tror|trodde|trott|croire'), W('v sy|syr|sydde|sytt|coudre'), W('v nå|når|nådde|nått|atteindre'), W('v leva|lever|levde|levt|vivre'), W('v sälja|säljer|sålde|sålt|vendre'), W('v ringa|ringer|ringde|ringt|appeler')],
+      phrases: [P(`Jag köpte en ny jacka.`, `J'ai acheté une nouvelle veste.`), P(`Hon har läst boken.`, `Elle a lu le livre.`), P(`Vi trodde att du var hemma.`, `Nous pensions que tu étais à la maison.`), P(`Han stängde dörren.`, `Il a fermé la porte.`)],
+      cloze: [
+        Z(`Igår ___ jag en bok. (köpa)`, `köpte`, `Hier j'ai acheté un livre.`, [`köpade`, `köper`, `köpt`], `Radical en p → -te.`),
+        Z(`Han har ___ dörren. (stänga)`, `stängt`, `Il a fermé la porte.`, [`stängde`, `stänger`, `stängat`], `Supin groupe 2 : -t.`),
+        Z(`Jag ___ att det är sant. (tro, présent)`, `tror`, `Je crois que c'est vrai.`, [`trodde`, `trott`, `troar`], `Groupe 3 : -r au présent.`),
+        Z(`Hon ___ i Göteborg i fem år. (bo, prétérit)`, `bodde`, `Elle a habité cinq ans à Göteborg.`, [`bor`, `bott`, `bodade`], `Groupe 3 : prétérit -dde.`)
+      ],
+      pit: [`**hör** est à la fois le présent de **höra** et l'impératif : le contexte aide.`, `**läst** (supin de **läsa**) est aussi le participe passé : **en läst bok**.`]
+    },
+    {
+      id: 'vf3', title: 'Groupe 4 : les verbes forts à connaître',
+      text: [
+        `Le **groupe 4** réunit les **verbes forts**, qui changent leur **voyelle** au prétérit : **skriva → skrev → skrivit**. Il faut les apprendre par cœur, par séries : ils suivent quelques schémas (i - e - i, i - a - u, ...).`,
+        `Dans l'app, chaque verbe fort est une carte « formes » : tu vois l'infinitif, tu retrouves les trois autres formes. Le présent finit toujours par **-er** (sauf quelques verbes courts : **går, står, ser, ger**).`
+      ],
+      tables: [T('Quelques schémas de verbes forts', ['Schéma', 'Verbes', 'Exemple'], [['i – e – i', 'skriva, bli, stiga', 'skriva → skrev → skrivit'], ['i – a – u', 'dricka, springa, sitta', 'dricka → drack → druckit'], ['å – o – å', 'stå', 'stå → stod → stått'], ['ä – a – u', 'bära', 'bära → bar → burit']])],
+      keys: [`Ils changent de **voyelle** au prétérit.`, `Apprends toujours **infinitif – présent – prétérit – supin**.`, `Les plus utiles : **gå, se, ta, komma, äta, skriva, dricka, ge, vara, bli**.`],
+      vocab: [W('v skriva|skriver|skrev|skrivit|écrire'), W('v dricka|dricker|drack|druckit|boire'), W('v sitta|sitter|satt|suttit|être assis'), W('v ligga|ligger|låg|legat|être couché'), W('v bära|bär|bar|burit|porter'), W('v stå|står|stod|stått|être debout'), W('v ge|ger|gav|gett|donner'), W('v ta|tar|tog|tagit|prendre'), W('v komma|kommer|kom|kommit|venir'), W('v bli|blir|blev|blivit|devenir'), W('v finna|finner|fann|funnit|trouver'), W('v stiga|stiger|steg|stigit|monter')],
+      phrases: [P(`Jag skrev ett brev igår.`, `J'ai écrit une lettre hier.`), P(`Hon har druckit kaffe hela dagen.`, `Elle a bu du café toute la journée.`), P(`Vi satt i parken.`, `Nous étions assis dans le parc.`), P(`Han blev trött.`, `Il est devenu fatigué.`)],
+      cloze: [
+        Z(`Igår ___ jag ett mejl. (skriva)`, `skrev`, `Hier j'ai écrit un e-mail.`, [`skriver`, `skrivit`, `skrivade`], `skriva → skrev (verbe fort).`),
+        Z(`Hon har ___ mycket kaffe. (dricka)`, `druckit`, `Elle a bu beaucoup de café.`, [`drack`, `dricker`, `drickat`], `Supin : druckit.`),
+        Z(`Barnen ___ i soffan. (sitta, prétérit)`, `satt`, `Les enfants étaient assis sur le canapé.`, [`sitter`, `suttit`, `sittade`], `sitta → satt → suttit.`),
+        Z(`Jag ___ hem klockan fem. (komma, prétérit)`, `kom`, `Je suis rentré à cinq heures.`, [`kommer`, `kommit`, `kommade`], `komma → kom → kommit.`)
+      ],
+      pit: [`Le prétérit d'un verbe fort **n'a pas de -de / -te** : **skrev**, pas **skrivde**.`, `**vara** (être) : **är – var – varit**, et **ha** : **har – hade – haft**. Ils sont irréguliers.`]
+    }
+  ]
+});
+
+/* SY Svenska 0.5 : niveau B2, grammaire avancée. Mots avec W() (genre, pluriel, formes). */
+
+CG.themes.push({
+  id: 'b2g', name: 'Grammaire avancée', icon: '🧠', color: '#0F766E', lvl: 'B2', fiches: [
+    {
+      id: 'b2g1', title: 'Les relatives : som, vars, vilket, där',
+      text: [
+        `Le suédois a un petit mot passe-partout pour « qui » et « que » : **som**. Il ne change jamais et s'emploie pour le sujet comme pour l'objet : **Mannen som bor här** (l'homme qui habite ici), **Boken som jag läste** (le livre que j'ai lu). Quand **som** est l'objet, on peut l'omettre : **Boken jag läste**.`,
+        `Pour « dont / dont le », on utilise **vars** (invariable) : **Kvinnan vars bil står där**. Pour un lieu, **där** : **staden där jag växte upp**. Et pour reprendre **toute une proposition**, **vilket** (« ce qui ») : **Han kom för sent, vilket irriterade mig.** Avec une préposition, le suédois la rejette à la fin : **Kvinnan som jag pratade med** (la femme avec qui j'ai parlé).`
+      ],
+      tables: [T('Les pronoms relatifs', ['Mot', 'Sens', 'Exemple'], [
+        ['som', 'qui, que', 'Mannen **som** bor här'], ['(som omis)', 'que (objet)', 'Boken **jag läste**'], ['vars', 'dont le / la / les', 'Kvinnan **vars** bil står där'],
+        ['där', 'où (lieu)', 'Staden **där** jag bor'], ['vilket', 'ce qui (toute la phrase)', 'Han kom sent, **vilket** irriterade mig'], ['vad', 'ce que (sans antécédent)', 'Jag vet inte **vad** du menar']
+      ])],
+      keys: [`**som** pour qui / que ; objet : on peut l'omettre.`, `**vars** = dont le, **där** = où, **vilket** = ce qui (reprend toute la phrase).`, `La préposition va **à la fin** : **kvinnan som jag pratade med**.`],
+      vocab: [W('en orsak|orsaker|cause, raison'), W('en konsekvens|konsekvenser|conséquence'), W('ett resultat|resultat|résultat'), W('en lösning|lösningar|solution'), W('ett exempel|exempel|exemple'), W('en skillnad|skillnader|différence'), W('en möjlighet|möjligheter|possibilité'), W('ett behov|behov|besoin'), W('en anledning|anledningar|raison, motif'), W('en effekt|effekter|effet')],
+      phrases: [P(`Boken som jag läste var bra.`, `Le livre que j'ai lu était bien.`), P(`Mannen vars bil står där är min granne.`, `L'homme dont la voiture est là est mon voisin.`), P(`Han kom för sent, vilket irriterade alla.`, `Il est arrivé en retard, ce qui a agacé tout le monde.`), P(`Det är staden där jag växte upp.`, `C'est la ville où j'ai grandi.`), P(`Kvinnan som jag pratade med är läkare.`, `La femme avec qui j'ai parlé est médecin.`)],
+      cloze: [
+        Z(`Det är mannen ___ bor här. (qui)`, `som`, `C'est l'homme qui habite ici.`, [`vars`, `vilket`, `där`], `som = qui / que.`),
+        Z(`Hon har en bror ___ bil är röd. (dont la)`, `vars`, `Elle a un frère dont la voiture est rouge.`, [`som`, `vilken`, `där`], `vars = dont le / la.`),
+        Z(`Hon sa ja, ___ glädjde oss. (ce qui)`, `vilket`, `Elle a dit oui, ce qui nous a réjouis.`, [`som`, `vars`, `där`], `vilket reprend toute la proposition.`),
+        Z(`Det är huset ___ vi bodde. (où)`, `där`, `C'est la maison où nous habitions.`, [`som`, `vars`, `vilket`], `där pour un lieu.`)
+      ],
+      pit: [`En suédois courant, la préposition reste **à la fin** : **Mannen som jag pratade med** (le formel **mannen med vilken jag pratade** existe, mais il est rare).`, `**vilket** reprend la phrase entière ; **som** ne le peut pas : **Han kom sent, vilket…** (pas « som »).`]
+    },
+    {
+      id: 'b2g2', title: 'Le passif : -s, bli et vara',
+      text: [
+        `Le suédois a **trois** façons d'exprimer le passif. La plus courante à l'écrit : le **-s** collé au verbe (**Boken läses av många**, **Beslutet fattades i går**). Elle est fréquente dans les lois, les articles et les modes d'emploi. À l'oral, on préfère **bli** : **Huset blev sålt** (la maison a été vendue).`,
+        `Avec **vara**, on exprime un **état** (résultat) : **Dörren är stängd** (elle est fermée). **Bli** exprime le **changement** : **Dörren blev stängd** (elle a été fermée). L'agent se dit avec **av** : **Huset byggdes av min farfar**. Le participe passé s'accorde : **byggd / byggt / byggda**.`
+      ],
+      tables: [T('Trois passifs', ['Forme', 'Exemple', 'Sens'], [
+        ['verbe + **-s**', 'Beslutet fattades', 'écrit, neutre'], ['**bli** + participe', 'Huset blev sålt', 'action, changement'], ['**vara** + participe', 'Huset är sålt', 'état (déjà vendu)']
+      ], 'Participe : **-d / -t / -da** (**byggd, byggt, byggda**) pour les verbes faibles.')],
+      keys: [`**-s** : **läses, köps, öppnas** (écrit).`, `**bli + participe** = action ; **vara + participe** = état.`, `L'agent : **av** : **av min farfar**.`],
+      vocab: [W('en lag|lagar|loi'), W('ett beslut|beslut|décision'), W('en regel|regler|règle'), W('en nyhet|nyheter|nouvelle'), W('en rapport|rapporter|rapport'), W('ett förslag|förslag|proposition'), W('en undersökning|undersökningar|enquête, étude'), W('en myndighet|myndigheter|autorité'), W('ett avtal|avtal|contrat'), W('en ansökan|ansökningar|demande')],
+      phrases: [P(`Beslutet fattades i går.`, `La décision a été prise hier.`), P(`Huset byggdes på femtiotalet.`, `La maison a été construite dans les années cinquante.`), P(`Dörren stängdes av vakten.`, `La porte a été fermée par le gardien.`), P(`Nyheten blev känd i går kväll.`, `La nouvelle est devenue connue hier soir.`), P(`Affären är stängd på söndagar.`, `Le magasin est fermé le dimanche.`)],
+      cloze: [
+        Z(`Boken ___ av många. (se lit)`, `läses`, `Le livre est lu par beaucoup.`, [`läser`, `läste`, `läsa`], `Passif en -s : läses.`),
+        Z(`Huset ___ på femtiotalet. (a été construit)`, `byggdes`, `La maison a été construite dans les années cinquante.`, [`byggde`, `byggs`, `byggt`], `Prétérit passif : byggdes.`),
+        Z(`Beslutet ___ av regeringen. (a été pris)`, `fattades`, `La décision a été prise par le gouvernement.`, [`fattade`, `fattas`, `fattat`], `fattades = prétérit passif de fatta.`),
+        Z(`Dörren ___ stängd när jag kom. (était, état)`, `var`, `La porte était fermée quand je suis arrivé.`, [`bli`, `vara`, `varit`], `Un état → vara.`)
+      ],
+      pit: [`Certains verbes en **-s** sont **actifs** (déponents) : **finnas** (exister), **synas** (sembler), **lyckas** (réussir), **hoppas** (espérer).`, `Ne confonds pas **är stängd** (état) et **blev stängd** (l'action de fermer).`]
+    },
+    {
+      id: 'b2g3', title: 'Le conditionnel et l\'irréel',
+      text: [
+        `Pour une hypothèse **possible ou imaginée au présent**, le suédois dit : **Om jag hade tid, skulle jag komma** (si j'avais le temps, je viendrais). Les deux verbes sont au prétérit : **hade** dans la condition, **skulle** dans la conséquence. Pour le **passé irréel**, on ajoute le supin : **Om jag hade vetat det, hade jag stannat hemma** (si je l'avais su, je serais resté).`,
+        `**Skulle** sert aussi à la politesse : **Skulle du kunna hjälpa mig?** (pourrais-tu m'aider ?). Et à l'écrit, **vore** (subjonctif de **vara**) exprime l'irréel : **Det vore bra om du kunde komma.** Familier : **Det skulle vara bra** s'entend aussi.`
+      ],
+      tables: [T('Hypothèses', ['Cas', 'Condition', 'Conséquence'], [
+        ['Présent imaginé', 'om jag **hade** tid', 'skulle jag komma'], ['Passé irréel', 'om jag **hade** vetat det', '**hade** jag stannat / skulle jag **ha** stannat'], ['Politesse', '', '**Skulle** du kunna …?'], ['Formel', '', 'Det **vore** bra om …']
+      ])],
+      keys: [`**om + hade … skulle** = hypothèse présente.`, `**hade + supin** (ou **skulle ha + supin**) = passé irréel.`, `**Skulle du kunna …?** = demande polie.`],
+      vocab: [W('en förutsättning|förutsättningar|condition préalable'), W('en risk|risker|risque'), W('en chans|chanser|chance'), W('ett alternativ|alternativ|alternative'), W('ett val|val|choix'), W('en fördel|fördelar|avantage'), W('en nackdel|nackdelar|inconvénient'), W('en gissning|gissningar|supposition'), W('en dröm|drömmar|rêve'), W('ett önskemål|önskemål|souhait')],
+      phrases: [P(`Om jag hade tid skulle jag hjälpa dig.`, `Si j'avais le temps, je t'aiderais.`), P(`Om jag hade vetat det hade jag stannat hemma.`, `Si je l'avais su, je serais resté à la maison.`), P(`Skulle du kunna stänga fönstret?`, `Pourrais-tu fermer la fenêtre ?`), P(`Det vore bra om du kunde komma.`, `Ce serait bien que tu puisses venir.`), P(`Jag skulle vilja ha en kopp kaffe.`, `Je voudrais une tasse de café.`)],
+      cloze: [
+        Z(`Om jag ___ pengar skulle jag resa. (avais)`, `hade`, `Si j'avais de l'argent, je voyagerais.`, [`har`, `ska ha`, `skulle`], `Condition : prétérit.`),
+        Z(`Om jag hade vetat det, ___ jag ha stannat hemma. (aurais)`, `skulle`, `Si je l'avais su, je serais resté à la maison.`, [`hade`, `vore`, `har`], `skulle jag ha + supin.`),
+        Z(`___ du kunna hjälpa mig? (pourrais-tu)`, `Skulle`, `Pourrais-tu m'aider ?`, [`Ska`, `Vill`, `Kan`], `Skulle = politesse.`),
+        Z(`Det ___ bra om du kunde komma. (ce serait)`, `vore`, `Ce serait bien que tu puisses venir.`, [`vara`, `är`, `varit`], `vore = subjonctif de vara.`)
+      ],
+      pit: [`Après **om** (si), **jamais** de **skulle** : **Om jag hade tid** (pas « om jag skulle ha tid »).`, `Le français « je serais venu » devient **hade jag kommit** ou **skulle jag ha kommit**, jamais « hade jag skulle ».`]
+    },
+    {
+      id: 'b2g4', title: 'Le discours indirect',
+      text: [
+        `Dans le discours indirect, le suédois **recule les temps** comme le français : **Hon sa att hon var trött** (elle a dit qu'elle était fatiguée) ; **Han sa att han skulle komma** (il a dit qu'il viendrait). Les questions fermées passent par **om** : **Han frågade om jag kom**. Les questions ouvertes gardent leur mot interrogatif : **Hon undrade var jag bodde**.`,
+        `Rappel capital : dans la **subordonnée**, l'adverbe (**inte, aldrig, alltid**) passe **avant** le verbe : **Hon sa att hon inte kom**. Les verbes qui introduisent le discours : **säga, berätta, påstå, förklara, meddela, hävda, undra, lova**.`
+      ],
+      tables: [T('Du direct à l\'indirect', ['Direct', 'Indirect'], [
+        ['« Jag är trött. »', 'Hon sa **att** hon **var** trött.'], ['« Kommer du? »', 'Han frågade **om** jag **kom**.'], ['« Var bor du? »', 'Hon undrade **var** jag **bodde**.'], ['« Jag kommer inte. »', 'Han sa att han **inte** kom.']
+      ])],
+      keys: [`**att** pour une affirmation, **om** pour oui / non, mot interrogatif pour le reste.`, `Le temps recule : présent → prétérit.`, `Subordonnée : **inte** avant le verbe.`],
+      vocab: [W('v påstå|påstår|påstod|påstått|prétendre'), W('v förklara|förklarar|förklarade|förklarat|expliquer'), W('v berätta|berättar|berättade|berättat|raconter'), W('v hävda|hävdar|hävdade|hävdat|affirmer'), W('v meddela|meddelar|meddelade|meddelat|annoncer, informer'), W('v undra|undrar|undrade|undrat|se demander'), W('v föreslå|föreslår|föreslog|föreslagit|proposer'), W('v erkänna|erkänner|erkände|erkänt|avouer'), W('v varna|varnar|varnade|varnat|avertir'), W('v lova|lovar|lovade|lovat|promettre')],
+      phrases: [P(`Hon sa att hon var trött.`, `Elle a dit qu'elle était fatiguée.`), P(`Han frågade om jag kom på festen.`, `Il a demandé si je venais à la fête.`), P(`Läraren förklarade att provet var svårt.`, `Le professeur a expliqué que l'examen était difficile.`), P(`Hon påstod att hon inte hade sett något.`, `Elle a prétendu qu'elle n'avait rien vu.`), P(`De lovade att de skulle ringa.`, `Ils ont promis qu'ils appelleraient.`)],
+      cloze: [
+        Z(`Hon sa ___ hon var trött. (que)`, `att`, `Elle a dit qu'elle était fatiguée.`, [`om`, `som`, `vad`], `att introduit une affirmation.`),
+        Z(`Han frågade ___ jag kom. (si)`, `om`, `Il a demandé si je venais.`, [`att`, `som`, `vilket`], `om pour une question oui / non.`),
+        Z(`Hon sa att hon ___ kom. (ne … pas)`, `inte`, `Elle a dit qu'elle ne venait pas.`, [`kom inte`, `inga`, `nej`], `Dans la subordonnée, inte avant le verbe : hon inte kom.`),
+        Z(`Han sa att han ___ komma. (viendrait)`, `skulle`, `Il a dit qu'il viendrait.`, [`vill att`, `måste att`, `ska att`], `Futur dans le passé : skulle.`)
+      ],
+      pit: [`Ne dis pas « Hon sa att hon kom inte » : dans la subordonnée, **inte** passe **avant** le verbe.`, `**fråga** et **undra** ne sont pas synonymes : **fråga** = demander (à quelqu'un), **undra** = se demander.`]
+    },
+    {
+      id: 'b2g5', title: 'Participes employés comme adjectifs',
+      text: [
+        `Le suédois utilise beaucoup de participes comme adjectifs. Le **participe présent** finit par **-ande / -ende** et reste **invariable** : **en spännande bok** (un livre passionnant), **ett överraskande resultat**. Le **participe passé** s'accorde : **en bokad resa**, **ett bokat rum**, **bokade resor**.`,
+        `Les participes passés des verbes forts ont des formes propres : **skriven / skrivet / skrivna**, **gjord / gjort / gjorda**, **känd / känt / kända**. Beaucoup de ces adjectifs décrivent un **état d'esprit** : **trött, stressad, uttråkad, förvånad, nöjd**. Attention à la différence : **spännande** (qui provoque) et **spänd** (qui ressent).`
+      ],
+      tables: [T('Participes', ['Type', 'Forme', 'Exemple'], [
+        ['présent', '-ande / -ende (invariable)', 'en spännande bok · ett spännande spel'], ['passé (faible)', '-d / -t / -da', 'en bokad resa · ett bokat rum · bokade resor'], ['passé (fort)', '-en / -et / -na', 'en skriven text · ett skrivet brev · skrivna texter']
+      ])],
+      keys: [`**-ande / -ende** : invariable, sens actif (qui fait).`, `**-d / -t / -da** (faible) ou **-en / -et / -na** (fort) : s'accorde.`, `**uttråkad** = ennuyé, **tråkig** = ennuyeux.`],
+      vocab: [W('spännande|passionnant, captivant'), W('överraskande|surprenant'), W('förvånad|étonné'), W('stressad|stressé'), W('uttråkad|qui s\'ennuie'), W('upptagen|occupé'), W('känd|célèbre, connu'), W('utbildad|formé, diplômé'), W('avslappnad|détendu'), W('försenad|en retard'), W('bokad|réservé'), W('nöjd|satisfait')],
+      phrases: [P(`Det var en mycket spännande film.`, `C'était un film très captivant.`), P(`Jag är stressad inför provet.`, `Je suis stressé avant l'examen.`), P(`Tåget är försenat med tio minuter.`, `Le train a dix minutes de retard.`), P(`Hon är en känd författare.`, `Elle est une auteure célèbre.`)],
+      cloze: [
+        Z(`Det var en ___ bok. (captivant)`, `spännande`, `C'était un livre captivant.`, [`spänd`, `spänt`, `spända`], `-ande : sens actif, invariable.`),
+        Z(`Jag är ___ inför provet. (stressé)`, `stressad`, `Je suis stressé avant l'examen.`, [`stressande`, `stressat`, `stressa`], `-ad : participe passé, état.`),
+        Z(`Tåget är ___. (en retard)`, `försenat`, `Le train est en retard.`, [`försenad`, `försenade`, `försening`], `tåg est ett-ord : försenat.`),
+        Z(`Vi har ___ ett bord. (réservé)`, `bokat`, `Nous avons réservé une table.`, [`bokad`, `bokade`, `bokar`], `har + supin : bokat.`)
+      ],
+      pit: [`**spännande** (passionnant) ≠ **spänd** (tendu). Pareil : **tråkig** (ennuyeux) ≠ **uttråkad** (qui s'ennuie).`, `**känd** devient **kända** au pluriel : **kända författare**.`]
+    },
+    {
+      id: 'b2g6', title: 'Verbes à particule : le sens change',
+      text: [
+        `Les **verbes à particule** (verbe + petit mot comme **upp, ut, bort, på, in, till**) sont partout. Le sens est souvent idiomatique : **ta upp** (aborder un sujet), **ta bort** (supprimer), **komma på** (trouver une idée), **hålla på med** (être en train de). Le **verbe** et la **particule** se séparent ou se collent selon la phrase.`,
+        `Dans la phrase, la particule est accentuée et se place **juste après le verbe**, avant l'objet : **Jag tar bort filen**, **Jag tar bort den**. À l'infinitif ou au supin, elle reste collée au verbe : **att ta bort**, **har tagit bort**. Le sens du verbe seul ne permet pas de deviner celui du verbe à particule : apprends-les comme des mots à part entière.`
+      ],
+      tables: [T('Verbes à particule courants', ['Verbe', 'Sens', 'Exemple'], [
+        ['ta upp', 'aborder, soulever', 'Vi tog upp problemet.'], ['ta bort', 'supprimer, enlever', 'Jag tog bort filen.'], ['komma på', 'trouver (idée), se rappeler', 'Jag kom på lösningen.'],
+        ['hålla på med', 'être en train de', 'Jag håller på med rapporten.'], ['räkna med', 'compter sur, s\'attendre à', 'Vi räknar med regn.'], ['bero på', 'dépendre de', 'Det beror på vädret.']
+      ])],
+      keys: [`**ta upp, ta bort, komma på, hålla på med** : les plus utiles.`, `La particule se place **juste après le verbe** : **jag tar bort filen**.`, `À l'infinitif : verbe + particule collés : **att ta bort**.`],
+      vocab: [W('v ta upp|tar upp|tog upp|tagit upp|aborder, soulever'), W('v ta bort|tar bort|tog bort|tagit bort|supprimer, enlever'), W('v komma på|kommer på|kom på|kommit på|trouver, se rappeler'), W('v hålla på|håller på|höll på|hållit på|être en train de'), W('v räkna med|räknar med|räknade med|räknat med|compter sur'), W('v bero på|beror på|berodde på|berott på|dépendre de'), W('v handla om|handlar om|handlade om|handlat om|parler de, concerner'), W('v ge upp|ger upp|gav upp|gett upp|abandonner'), W('v lägga till|lägger till|lade till|lagt till|ajouter'), W('v fylla i|fyller i|fyllde i|fyllt i|remplir')],
+      phrases: [P(`Vi tog upp problemet på mötet.`, `Nous avons abordé le problème en réunion.`), P(`Jag kom plötsligt på lösningen.`, `J'ai soudain trouvé la solution.`), P(`Det beror på vädret.`, `Ça dépend de la météo.`), P(`Filmen handlar om en familj.`, `Le film parle d'une famille.`), P(`Kan du fylla i formuläret?`, `Peux-tu remplir le formulaire ?`)],
+      cloze: [
+        Z(`Vi tog ___ problemet på mötet. (abordé)`, `upp`, `Nous avons abordé le problème en réunion.`, [`ut`, `bort`, `in`], `ta upp = aborder.`),
+        Z(`Det ___ på vädret. (dépend)`, `beror`, `Ça dépend de la météo.`, [`håller`, `räknar`, `handlar`], `bero på = dépendre de.`),
+        Z(`Filmen ___ om en familj. (parle)`, `handlar`, `Le film parle d'une famille.`, [`beror`, `håller`, `kommer`], `handla om = parler de.`),
+        Z(`Jag ___ plötsligt på lösningen. (ai trouvé)`, `kom`, `J'ai soudain trouvé la solution.`, [`tog`, `höll`, `gav`], `komma på = trouver.`)
+      ],
+      pit: [`Au parfait, la particule suit le supin : **Jag har tagit bort filen**.`, `**bero på** ne se dit pas « bero av » : la préposition est **på**.`]
+    },
+    {
+      id: 'b2g7', title: 'Le temps : i, på, om, sedan, under',
+      text: [
+        `Les prépositions de temps sont une source d'erreurs classique. **i** exprime une **durée en cours** ou le passé proche (**Jag har bott här i tre år**, **i går**), **på** une **durée pour accomplir** quelque chose (**Jag skrev rapporten på tre dagar**), **om** le **futur dans** (**Vi ses om en vecka**), **för … sedan** le **passé il y a** (**för tre dagar sedan**), **sedan** un **point de départ** (**sedan 2020**), **under** une **période** (**under sommaren**).`,
+        `On dit aussi **till** pour l'échéance (**till fredag**), **efter** (après), **innan** (avant) et **medan** (pendant que). Pour les moments de la journée : **på morgonen, på kvällen, i morse, i kväll, i natt**.`
+      ],
+      tables: [T('Prépositions de temps', ['Préposition', 'Sens', 'Exemple'], [
+        ['**i**', 'durée en cours', 'Jag har bott här **i** tre år.'], ['**på**', 'durée pour faire qch', 'Jag skrev den **på** tre dagar.'], ['**om**', 'dans (futur)', 'Vi ses **om** en vecka.'],
+        ['**för … sedan**', 'il y a', 'Det hände **för** tre år **sedan**.'], ['**sedan**', 'depuis (point de départ)', 'Jag har bott här **sedan** 2020.'], ['**under**', 'pendant (période)', '**Under** sommaren reser vi.']
+      ])],
+      keys: [`**i** = durée en cours, **på** = « en … » pour faire, **om** = futur.`, `**för … sedan** = il y a ; **sedan** = depuis.`, `**under** + période : **under sommaren**.`],
+      vocab: [W('en period|perioder|période'), W('en stund|stunder|moment'), W('ett ögonblick|ögonblick|instant'), W('en gång|gånger|fois'), W('ett århundrade|århundraden|siècle'), W('ett årtionde|årtionden|décennie'), W('en tidpunkt|tidpunkter|moment précis'), W('en deadline|deadlines|date limite'), W('ett schema|scheman|emploi du temps'), W('en semester|semestrar|vacances')],
+      phrases: [P(`Jag har bott här i tre år.`, `J'habite ici depuis trois ans.`), P(`Vi ses om en vecka.`, `On se voit dans une semaine.`), P(`Det hände för tre år sedan.`, `C'est arrivé il y a trois ans.`), P(`Hon skrev rapporten på två dagar.`, `Elle a écrit le rapport en deux jours.`), P(`Under sommaren reser vi mycket.`, `Pendant l'été, nous voyageons beaucoup.`)],
+      cloze: [
+        Z(`Vi ses ___ en vecka. (dans)`, `om`, `On se voit dans une semaine.`, [`under`, `på`, `sedan`], `om = dans (futur).`),
+        Z(`Det hände ___ tre år sedan. (il y a)`, `för`, `C'est arrivé il y a trois ans.`, [`i`, `på`, `om`], `för … sedan = il y a.`),
+        Z(`Jag har bott här ___ tre år. (depuis / pendant)`, `i`, `J'habite ici depuis trois ans.`, [`på`, `om`, `för`], `Durée en cours : i.`),
+        Z(`Hon skrev rapporten ___ två dagar. (en)`, `på`, `Elle a écrit le rapport en deux jours.`, [`sedan`, `om`, `för`], `Durée pour accomplir : på.`)
+      ],
+      pit: [`**i tre år** (durée jusqu'à maintenant) ≠ **på tre år** (en trois ans pour le faire) ≠ **om tre år** (dans trois ans).`, `Avec **sedan**, le verbe est au **parfait** : **Jag har bott här sedan 2020** (pas « bor » comme en français).`]
+    },
+    {
+      id: 'b2g8', title: 'Mots composés et suffixes',
+      text: [
+        `Le suédois colle volontiers les mots : **arbets + plats = arbetsplats**. Le **genre** du mot composé est celui de son **dernier élément** : **ett hus + en dörr = en husdörr**. Entre les deux éléments, on trouve parfois une **lettre de liaison** : **-s** (**arbetsplats**), **-e** (**flickvän**), **-o** (**kvinnokläder**), ou rien (**bokhylla**).`,
+        `Les **suffixes** fabriquent des familles de mots : **-het** (**ärlig → ärlighet**), **-ning** (**träna → träning**), **-else** (**känna → känsla**), **-dom** (**sjuk → sjukdom**), **-are** (**arbeta → arbetare**). Reconnaître ces suffixes aide à **deviner le genre** : **-het, -ning, -else, -are** → presque toujours **en**.`
+      ],
+      tables: [T('Suffixes utiles', ['Suffixe', 'Exemple', 'Genre'], [
+        ['-het', 'ärlig → ärlighet (honnêteté)', 'en'], ['-ning', 'träna → träning (entraînement)', 'en'], ['-else', 'känna → känsla (sentiment)', 'en'], ['-dom', 'sjuk → sjukdom (maladie)', 'en'], ['-are', 'arbeta → arbetare (ouvrier)', 'en'], ['-eri', 'bagare → bageri (boulangerie)', 'ett']
+      ])],
+      keys: [`Le genre = celui du **dernier élément** : **en husdörr**.`, `Liaison : **-s, -e, -o** ou rien.`, `**-het, -ning, -else, -are** → **en** ; **-eri, -um** → **ett**.`],
+      vocab: [W('en arbetsplats|arbetsplatser|lieu de travail'), W('en tidtabell|tidtabeller|horaire'), W('en hemsida|hemsidor|site web'), W('ett kylskåp|kylskåp|réfrigérateur'), W('en barnvakt|barnvakter|baby-sitter'), W('en bokhylla|bokhyllor|bibliothèque (meuble)'), W('ett handtag|handtag|poignée'), W('en färdplan|färdplaner|feuille de route'), W('ett skyltfönster|skyltfönster|vitrine'), W('en matlåda|matlådor|boîte à repas')],
+      phrases: [P(`Min arbetsplats ligger i centrum.`, `Mon lieu de travail est dans le centre.`), P(`Titta på tidtabellen.`, `Regarde l'horaire.`), P(`Vi har en ny hemsida.`, `Nous avons un nouveau site web.`), P(`Maten står i kylskåpet.`, `La nourriture est dans le réfrigérateur.`)],
+      cloze: [
+        Z(`Jag har med mig en ___ . (boîte à repas)`, `matlåda`, `J'ai une boîte à repas avec moi.`, [`matlåd`, `mat låda`, `matlådan`], `mat + låda : mot composé, genre de låda (en).`),
+        Z(`Han vill ha ett nytt ___ . (réfrigérateur)`, `kylskåp`, `Il veut un nouveau réfrigérateur.`, [`kylskåpet`, `kylskåpa`, `kylskåpen`], `skåp est ett-ord : ett kylskåp.`),
+        Z(`En ___ är en person som arbetar. (ouvrier)`, `arbetare`, `Un ouvrier est une personne qui travaille.`, [`arbetning`, `arbetet`, `arbetsam`], `-are = personne qui fait.`),
+        Z(`Hon tycker om ___ . (honnêteté, mot en -het)`, `ärlighet`, `Elle aime l'honnêteté.`, [`ärlig`, `ärligt`, `ärlighets`], `-het fabrique un nom : ärlig → ärlighet.`)
+      ],
+      pit: [`Ne sépare **pas** un mot composé comme en anglais ou en français : **arbetsplats**, pas « arbets plats ».`, `La lettre de liaison **-s** ne se devine pas : apprends **arbetsplats** (avec -s) et **bokhylla** (sans).`]
+    },
+    {
+      id: 'b2g9', title: 'Det, den, man : les sujets formels',
+      text: [
+        `Le suédois a beaucoup d'expressions avec un sujet **neutre « det »** qui ne désigne rien : **Det regnar** (il pleut), **Det finns** (il y a), **Det verkar** (il semble), **Det händer** (il se passe). Ce **det** est obligatoire : on ne peut pas dire « Regnar » ni « Finns ».`,
+        `Pour « on » indéfini, **man** : **Man säger att …**. À l'objet, on utilise **en** : **Det gör en glad** (ça rend heureux). Pour reprendre un nom précis, on choisit **den** (mot en) ou **det** (mot ett) : **Bilen? Den är röd.** **Huset? Det är stort.**`
+      ],
+      keys: [`**Det** est obligatoire avec **regnar, finns, verkar, händer**.`, `**man** = on (sujet), **en** = on (objet).`, `Reprise : **den** (en), **det** (ett), **de** (pluriel).`],
+      vocab: [W('det finns|il y a, il existe'), W('det händer|il se passe'), W('det gäller|il s\'agit de, c\'est valable pour'), W('det verkar|il semble'), W('det beror på|ça dépend de'), W('det lönar sig|ça vaut la peine'), W('det spelar ingen roll|peu importe'), W('det handlar om|il s\'agit de'), W('det är dags|il est temps'), W('det går bra|ça va bien, ça marche')],
+      phrases: [P(`Det finns många kaféer i stan.`, `Il y a beaucoup de cafés en ville.`), P(`Det verkar som att det blir regn.`, `Il semble qu'il va pleuvoir.`), P(`Man säger att svenskar är tysta.`, `On dit que les Suédois sont silencieux.`), P(`Det spelar ingen roll vad du väljer.`, `Peu importe ce que tu choisis.`)],
+      cloze: [
+        Z(`___ finns många kaféer här. (il y a)`, `Det`, `Il y a beaucoup de cafés ici.`, [`Den`, `Man`, `De`], `Sujet formel obligatoire : det finns.`),
+        Z(`___ säger att det blir regn. (on)`, `Man`, `On dit qu'il va pleuvoir.`, [`Det`, `En`, `Den`], `man = on (sujet).`),
+        Z(`Bilen? ___ är röd. (elle)`, `Den`, `La voiture ? Elle est rouge.`, [`Det`, `Han`, `Hon`], `bil est en-ord → den.`),
+        Z(`Huset? ___ är stort. (elle)`, `Det`, `La maison ? Elle est grande.`, [`Den`, `Hon`, `De`], `hus est ett-ord → det.`)
+      ],
+      pit: [`Le français « Il y a » ne se traduit **pas** par « Det har » : c'est **det finns**.`, `Pour un objet, on dit **den** ou **det** selon le genre, jamais **han / hon** (réservés aux personnes, sauf animaux de compagnie).`]
+    },
+    {
+      id: 'b2g10', title: 'Le futur : ska, kommer att, tänker',
+      text: [
+        `Le suédois n'a pas de futur simple. On choisit entre plusieurs formes. **Ska** + infinitif exprime une **intention, un plan ou un ordre** : **Jag ska resa i morgon**. **Kommer att** + infinitif exprime une **prédiction ou une certitude** : **Det kommer att regna**. **Tänker** exprime l'**intention personnelle** : **Jag tänker flytta**. Et on emploie souvent le **présent** avec un mot de temps : **Jag åker i morgon**.`,
+        `Plus formel : **ämnar** (avoir l'intention) et **avser** : **Vi ämnar öppna i höst**. Pour une action sur le point de se produire : **håller på att** (être sur le point de) : **Tåget håller på att gå**.`
+      ],
+      tables: [T('Exprimer l\'avenir', ['Forme', 'Nuance', 'Exemple'], [
+        ['**ska** + inf.', 'plan, intention, ordre', 'Jag ska resa i morgon.'], ['**kommer att** + inf.', 'prédiction, certitude', 'Det kommer att regna.'], ['**tänker** + inf.', 'intention personnelle', 'Jag tänker flytta.'], ['présent + temps', 'futur proche', 'Jag åker på fredag.'], ['**ämnar** + inf.', 'formel', 'Vi ämnar öppna i höst.']
+      ])],
+      keys: [`**ska** = plan, **kommer att** = prédiction, **tänker** = intention.`, `Le présent avec **i morgon** suffit souvent.`, `**ämnar** est plus formel.`],
+      vocab: [W('en plan|planer|plan'), W('en avsikt|avsikter|intention'), W('ett mål|mål|objectif'), W('en framtid|framtider|avenir'), W('en förhoppning|förhoppningar|espoir'), W('en förändring|förändringar|changement'), W('en utveckling|utvecklingar|développement'), W('ett löfte|löften|promesse'), W('en ambition|ambitioner|ambition'), W('en prognos|prognoser|prévision')],
+      phrases: [P(`Jag ska resa till Sverige i sommar.`, `Je vais voyager en Suède cet été.`), P(`Det kommer att bli kallt i natt.`, `Il va faire froid cette nuit.`), P(`Hon tänker bli läkare.`, `Elle compte devenir médecin.`), P(`Vi ses imorgon klockan åtta.`, `On se voit demain à huit heures.`)],
+      cloze: [
+        Z(`Jag ___ resa i morgon. (vais, plan)`, `ska`, `Je vais voyager demain.`, [`kommer`, `vill att`, `tänk`], `ska = plan.`),
+        Z(`Det ___ att regna i kväll. (va)`, `kommer`, `Il va pleuvoir ce soir.`, [`ska`, `tänker`, `vill`], `kommer att = prédiction.`),
+        Z(`Hon ___ flytta till Malmö. (compte)`, `tänker`, `Elle compte déménager à Malmö.`, [`kommer`, `ska att`, `håller`], `tänker = intention.`),
+        Z(`Tåget ___ på att gå. (est sur le point de)`, `håller`, `Le train est sur le point de partir.`, [`ska`, `kommer`, `tänker`], `håller på att = sur le point de.`)
+      ],
+      pit: [`**kommer att** a toujours **att** avant l'infinitif, **ska** jamais : **ska resa**, **kommer att resa**.`, `**Jag vill** n'est **pas** un futur : c'est « je veux ».`]
+    }
+  ]
+});
+
+/* SY Svenska 0.5 : niveau B2, vocabulaire thématique complet (genre, pluriel, phrases, trous). */
+
+CG.themes.push({
+  id: 'b2v', name: 'Vocabulaire B2 : société et vie', icon: '🌍', color: '#B45309', lvl: 'B2', fiches: [
+    {
+      id: 'b2v1', title: 'Société et politique',
+      text: [
+        `La Suède est une monarchie constitutionnelle et une démocratie parlementaire. Le Parlement (**riksdagen**) compte **349 membres**, élus tous les **quatre ans** le **deuxième dimanche de septembre**. Le pays est divisé en **290 communes** (**kommuner**) et **21 régions** (**regioner**), qui gèrent surtout la santé et les transports.`,
+        `Le vocabulaire politique repose sur des **mots composés réguliers** : **riksdagsledamot** (député), **valdeltagande** (participation électorale). Si tu connais les mots de base ci-dessous, tu comprends déjà la plupart des titres de presse.`
+      ],
+      keys: [`**riksdagen** = Parlement, **regeringen** = gouvernement, **kommunen** = commune.`, `**rösta** = voter ; **en röst** = une voix.`, `Élections tous les **4 ans**, en septembre.`],
+      vocab: [W('ett samhälle|samhällen|société'), W('en regering|regeringar|gouvernement'), W('en riksdag|riksdagar|parlement'), W('en kommun|kommuner|commune'), W('en skatt|skatter|impôt'), W('en medborgare|medborgare|citoyen'), W('en demokrati|demokratier|démocratie'), W('ett parti|partier|parti'), W('en debatt|debatter|débat'), W('en röst|röster|voix, vote'), W('en minister|ministrar|ministre'), W('v rösta|röstar|röstade|röstat|voter')],
+      phrases: [P(`Riksdagen har trehundrafyrtionio ledamöter.`, `Le Parlement compte 349 députés.`), P(`Valet hålls vart fjärde år.`, `Les élections ont lieu tous les quatre ans.`), P(`Alla medborgare har rätt att rösta.`, `Tous les citoyens ont le droit de voter.`), P(`Regeringen presenterade en ny budget.`, `Le gouvernement a présenté un nouveau budget.`)],
+      cloze: [
+        Z(`Varje medborgare har rätt att ___. (voter)`, `rösta`, `Chaque citoyen a le droit de voter.`, [`röstar`, `röstade`, `röst`], `Après « att » : l'infinitif.`),
+        Z(`Det finns flera ___ i riksdagen. (partis)`, `partier`, `Il y a plusieurs partis au Parlement.`, [`parti`, `partin`, `partit`], `ett parti → partier.`),
+        Z(`Valet hålls vart fjärde ___. (an)`, `år`, `Les élections ont lieu tous les quatre ans.`, [`året`, `åren`, `års`], `ett år → år (inchangé).`),
+        Z(`Hon blev ___ i den nya regeringen. (ministre)`, `minister`, `Elle est devenue ministre dans le nouveau gouvernement.`, [`ministrar`, `ministern`, `ministers`], `en minister (sing.).`)
+      ],
+      pit: [`**ett val** veut dire à la fois « un choix » et « une élection » : le contexte décide.`, `**regeringen** (gouvernement) ≠ **regionen** (région) : lis bien la lettre.`]
+    },
+    {
+      id: 'b2v2', title: 'Travail et carrière',
+      text: [
+        `La plupart des salariés suédois sont couverts par une **convention collective** (**kollektivavtal**), négociée entre syndicats (**fackföreningar**) et employeurs. Le taux de syndicalisation est élevé. Le congé parental est généreux : **480 jours** par enfant, que les parents se partagent.`,
+        `Dans une offre d'emploi, tu liras **erfarenhet** (expérience), **meriter** (références, titres) et **tjänst** (poste). Un entretien d'embauche s'appelle **anställningsintervju** ; on y mêle souvent un peu de **fika**, tout comme au bureau.`
+      ],
+      keys: [`**kollektivavtal** = convention collective, **fackförening** = syndicat.`, `**anställning** = emploi, **lön** = salaire, **erfarenhet** = expérience.`, `**föräldraledighet** : 480 jours par enfant.`],
+      vocab: [W('en anställning|anställningar|emploi, contrat'), W('en lön|löner|salaire'), W('en arbetsgivare|arbetsgivare|employeur'), W('en arbetstagare|arbetstagare|salarié'), W('en uppsägning|uppsägningar|licenciement, démission'), W('ett kollektivavtal|kollektivavtal|convention collective'), W('en fackförening|fackföreningar|syndicat'), W('en befordran|befordringar|promotion'), W('en erfarenhet|erfarenheter|expérience'), W('en intervju|intervjuer|entretien'), W('en praktik|praktiker|stage'), W('en tjänst|tjänster|poste, service')],
+      phrases: [P(`Jag söker en tjänst som projektledare.`, `Je cherche un poste de chef de projet.`), P(`Hon har lång erfarenhet av försäljning.`, `Elle a une longue expérience de la vente.`), P(`Lönen betalas den tjugofemte varje månad.`, `Le salaire est versé le vingt-cinq de chaque mois.`), P(`Företaget har ett kollektivavtal.`, `L'entreprise a une convention collective.`)],
+      cloze: [
+        Z(`Jag har en ___ på ett stort företag. (emploi)`, `anställning`, `J'ai un emploi dans une grande entreprise.`, [`anställningen`, `anställd`, `anställa`], `en anställning.`),
+        Z(`Hon fick en ___ efter två år. (promotion)`, `befordran`, `Elle a obtenu une promotion après deux ans.`, [`befordra`, `befordrad`, `befordrar`], `en befordran (nom).`),
+        Z(`Vi har två ___ på kontoret. (stages)`, `praktiker`, `Nous avons deux stages au bureau.`, [`praktik`, `praktikar`, `praktiken`], `en praktik → praktiker.`),
+        Z(`Han sa upp sig, och hans ___ gäller från första maj. (démission)`, `uppsägning`, `Il a démissionné, et sa démission prend effet le premier mai.`, [`uppsägningar`, `uppsagd`, `uppsäga`], `en uppsägning.`)
+      ],
+      pit: [`**en lön** (salaire) ≠ **ett lån** (prêt) : lis bien les voyelles (**ö** et **å**).`, `**en tjänst** peut aussi vouloir dire « un service » : **en bra tjänst**.`]
+    },
+    {
+      id: 'b2v3', title: 'Santé et médecine',
+      text: [
+        `En Suède, on commence en général par le **centre de santé** (**vårdcentral**). Pour un conseil par téléphone, on appelle le **1177** (Vårdguiden), service national de conseil médical. Pour un spécialiste, il faut souvent une **lettre d'orientation** (**remiss**). Les médicaments sur ordonnance se retirent au **apotek** avec un **recept**.`,
+        `Les mots de la santé sont presque tous **en** : **en feber, en smärta, en förkylning, en behandling**. Tu verras souvent le suffixe **-ning** pour les actions : **behandling** (traitement), **undersökning** (examen).`
+      ],
+      keys: [`**vårdcentral** = centre de santé, **recept** = ordonnance, **remiss** = lettre d'orientation.`, `Le conseil médical national : **1177**.`, `**-ning** → nom d'action, genre **en**.`],
+      vocab: [W('en vårdcentral|vårdcentraler|centre de santé'), W('ett recept|recept|ordonnance'), W('en remiss|remisser|lettre d\'orientation'), W('ett prov|prov|analyse, examen'), W('en diagnos|diagnoser|diagnostic'), W('en behandling|behandlingar|traitement'), W('en smärta|smärtor|douleur'), W('en feber|febrar|fièvre'), W('en förkylning|förkylningar|rhume'), W('en allergi|allergier|allergie'), W('en sjuksköterska|sjuksköterskor|infirmière'), W('ett läkemedel|läkemedel|médicament')],
+      phrases: [P(`Jag har ont i halsen och feber.`, `J'ai mal à la gorge et de la fièvre.`), P(`Läkaren skrev ut ett recept.`, `Le médecin a rédigé une ordonnance.`), P(`Du måste boka en tid på vårdcentralen.`, `Tu dois prendre rendez-vous au centre de santé.`), P(`Jag är allergisk mot pollen.`, `Je suis allergique au pollen.`)],
+      cloze: [
+        Z(`Läkaren skrev ut ett ___. (ordonnance)`, `recept`, `Le médecin a rédigé une ordonnance.`, [`recepten`, `receptet`, `recepter`], `ett recept (inchangé au pluriel).`),
+        Z(`Jag har hög ___. (fièvre)`, `feber`, `J'ai de la forte fièvre.`, [`febern`, `febrar`, `febre`], `en feber.`),
+        Z(`Hon har en ___ och snuva. (rhume)`, `förkylning`, `Elle a un rhume et le nez qui coule.`, [`förkyld`, `förkylt`, `förkyla`], `en förkylning (nom).`),
+        Z(`Sjuksköterskan tog ett ___ . (analyse)`, `prov`, `L'infirmière a fait une analyse.`, [`provet`, `prova`, `provar`], `ett prov.`)
+      ],
+      pit: [`**prov** veut dire « examen » (à l'école) et « analyse » (à l'hôpital) : le contexte décide.`, `**ont** (mal) : **ont i magen** (mal au ventre) ; ne pas confondre avec **ond** (méchant, mauvais).`]
+    },
+    {
+      id: 'b2v4', title: 'Environnement et énergie',
+      text: [
+        `La Suède est connue pour son **recyclage** et son système de **consigne** (**pant**) : on rend ses bouteilles et canettes dans des machines et on reçoit un petit bon. Le pays produit une grande partie de son électricité avec l'**énergie hydraulique** (**vattenkraft**), le **nucléaire** (**kärnkraft**) et l'**éolien** (**vindkraft**).`,
+        `Beaucoup de mots de ce domaine sont **ett-ord** (**ett utsläpp, ett kraftverk, ett klimat**) ou des mots **en** en **-ing / -het** (**en förorening, en hållbarhet**). Tu retrouveras ce lexique dans les journaux et dans les conversations sur le **klimatförändring** (changement climatique).`
+      ],
+      keys: [`**pant** = consigne, **återvinning** = recyclage, **utsläpp** = émission.`, `**vattenkraft, kärnkraft, vindkraft** : trois sources d'énergie.`, `**klimatförändring** = changement climatique.`],
+      vocab: [W('en miljö|miljöer|environnement'), W('ett klimat|klimat|climat'), W('ett utsläpp|utsläpp|émission, rejet'), W('en vindkraft|vindkrafter|énergie éolienne'), W('en kärnkraft|kärnkrafter|énergie nucléaire'), W('ett kraftverk|kraftverk|centrale électrique'), W('en återvinning|återvinningar|recyclage'), W('en förorening|föroreningar|pollution'), W('ett hot|hot|menace'), W('en naturresurs|naturresurser|ressource naturelle'), W('en hållbarhet||durabilité'), W('ett pant|pant|consigne')],
+      phrases: [P(`Vi måste minska utsläppen av koldioxid.`, `Nous devons réduire les émissions de dioxyde de carbone.`), P(`Jag lämnar flaskorna i pantautomaten.`, `Je dépose les bouteilles dans la machine à consigne.`), P(`Klimatet förändras snabbt.`, `Le climat change vite.`), P(`Vindkraft är en förnybar energikälla.`, `L'énergie éolienne est une source d'énergie renouvelable.`)],
+      cloze: [
+        Z(`Vi måste minska ___ . (les émissions, défini pluriel)`, `utsläppen`, `Nous devons réduire les émissions.`, [`utsläpp`, `utsläppet`, `utsläppar`], `ett utsläpp → utsläpp (pl.) → utsläppen (pl. défini).`),
+        Z(`Jag lämnar flaskorna för ___ . (consigne)`, `pant`, `Je rends les bouteilles pour la consigne.`, [`pantar`, `panten`, `pantet`], `ett pant (mot massif ici).`),
+        Z(`___ är ett stort hot mot jorden. (Le changement climatique)`, `Klimatförändringen`, `Le changement climatique est une grande menace pour la Terre.`, [`Klimatförändring`, `Klimatförändringar`, `Klimatförändrar`], `en klimatförändring → défini : klimatförändringen.`),
+        Z(`Sverige har många ___ . (centrales)`, `kraftverk`, `La Suède a beaucoup de centrales.`, [`kraftverken`, `kraftverket`, `kraftverkar`], `ett kraftverk (inchangé).`)
+      ],
+      pit: [`**ett hot** (menace) ressemble à **het** (chaud) : mais **hot** s'écrit avec un **o**.`, `**klimat** et **väder** ne se confondent pas : **klimat** = climat, **väder** = météo du moment.`]
+    },
+    {
+      id: 'b2v5', title: 'Médias et technologie',
+      text: [
+        `La presse suédoise a une longue tradition : la **liberté de la presse** est inscrite dans la loi depuis **1766**, la plus ancienne au monde. Les journaux (**tidningar**) ont presque tous une version en ligne ; les réseaux sociaux (**sociala medier**) sont très présents, et le **BankID** sert à s'identifier presque partout.`,
+        `Un anglicisme est souvent adopté avec un genre : **en app, en uppdatering, ett lösenord, ett konto, en algoritm**. Retiens leur genre : il ne se devine pas toujours (**ett nätverk, en server**).`
+      ],
+      keys: [`**tidning** = journal, **rubrik** = titre, **källa** = source.`, `**app, uppdatering, lösenord, konto** : vocabulaire numérique de base.`, `Liberté de la presse en Suède depuis **1766**.`],
+      vocab: [W('en tidning|tidningar|journal'), W('en rubrik|rubriker|titre'), W('en artikel|artiklar|article'), W('en journalist|journalister|journaliste'), W('en källa|källor|source'), W('en reklam|reklamer|publicité'), W('ett inlägg|inlägg|publication, post'), W('en app|appar|appli'), W('en uppdatering|uppdateringar|mise à jour'), W('ett lösenord|lösenord|mot de passe'), W('ett nätverk|nätverk|réseau'), W('ett konto|konton|compte')],
+      phrases: [P(`Jag läser tidningen varje morgon.`, `Je lis le journal chaque matin.`), P(`Rubriken var mycket missvisande.`, `Le titre était très trompeur.`), P(`Glöm inte att uppdatera din app.`, `N'oublie pas de mettre à jour ton appli.`), P(`Vilken källa har du för uppgiften?`, `Quelle source as-tu pour cette information ?`)],
+      cloze: [
+        Z(`Jag har glömt mitt ___ . (mot de passe)`, `lösenord`, `J'ai oublié mon mot de passe.`, [`lösenorden`, `lösenorda`, `lösenordar`], `ett lösenord (inchangé au pluriel).`),
+        Z(`Vilken ___ har du? (source)`, `källa`, `Quelle source as-tu ?`, [`källor`, `källan`, `källar`], `en källa.`),
+        Z(`Hon skrev en ___ om klimatet. (article)`, `artikel`, `Elle a écrit un article sur le climat.`, [`artiklar`, `artikeln`, `artikelar`], `en artikel.`),
+        Z(`Jag har två ___ på telefonen. (appli, pluriel)`, `appar`, `J'ai deux applis sur le téléphone.`, [`app`, `appen`, `apper`], `en app → appar.`)
+      ],
+      pit: [`**en reklam** (publicité) ≠ **en reklamation** (réclamation) : le dernier est un faux ami évident.`, `**en nyhet** (une nouvelle) est au singulier ; au pluriel, **nyheter** = les infos.`]
+    },
+    {
+      id: 'b2v6', title: 'Économie et argent',
+      text: [
+        `La Suède est un pays où la **carte bancaire** et le **Swish** (paiement mobile) dominent : l'argent liquide est rare, certains commerces n'en acceptent plus. La monnaie est la **couronne** (**krona, pl. kronor**), abrégée **kr** ou **SEK**.`,
+        `Pour acheter un logement, on parle de **lån** (prêt), **ränta** (taux), **kontantinsats** (apport). L'**inflation**, la **ränta** de la banque centrale (**Riksbanken**) et la **bostadsmarknad** reviennent dans toutes les discussions d'actualité.`
+      ],
+      keys: [`**kr / SEK** = couronne suédoise ; **Swish** = paiement mobile.`, `**lån** = prêt, **ränta** = taux d'intérêt, **inflation** = inflation.`, `**en vinst ≠ en förlust** : bénéfice / perte.`],
+      vocab: [W('en ekonomi|ekonomier|économie'), W('en inflation||inflation'), W('en ränta|räntor|taux d\'intérêt'), W('ett lån|lån|prêt'), W('en skuld|skulder|dette'), W('ett sparande||épargne'), W('en aktie|aktier|action'), W('en budget|budgetar|budget'), W('en kostnad|kostnader|coût'), W('en vinst|vinster|bénéfice'), W('en förlust|förluster|perte'), W('en pension|pensioner|retraite')],
+      phrases: [P(`Räntan har stigit under året.`, `Le taux d'intérêt a augmenté dans l'année.`), P(`Vi har ett lån på banken.`, `Nous avons un prêt à la banque.`), P(`Företaget gjorde en stor vinst.`, `L'entreprise a fait un gros bénéfice.`), P(`Jag sparar till pensionen.`, `J'épargne pour la retraite.`)],
+      cloze: [
+        Z(`Jag har ett ___ på banken. (prêt)`, `lån`, `J'ai un prêt à la banque.`, [`lånet`, `låna`, `lånar`], `ett lån.`),
+        Z(`___ har stigit. (Le taux, défini)`, `Räntan`, `Le taux a augmenté.`, [`Ränta`, `Räntor`, `Räntorna`], `en ränta → räntan.`),
+        Z(`Företaget gjorde en stor ___ . (bénéfice)`, `vinst`, `L'entreprise a fait un gros bénéfice.`, [`förlust`, `skuld`, `kostnad`], `Le bénéfice s'oppose à la perte.`),
+        Z(`Hon betalar av sina ___ . (dettes)`, `skulder`, `Elle rembourse ses dettes.`, [`skuld`, `skulden`, `skuldar`], `en skuld → skulder.`)
+      ],
+      pit: [`**en skuld** veut dire « dette » **et** « faute, culpabilité » : **Det är inte din skuld.**`, `**lån** (prêt) ressemble à **lön** (salaire) : attention aux voyelles.`]
+    },
+    {
+      id: 'b2v7', title: 'Éducation et recherche',
+      text: [
+        `En Suède, l'école est obligatoire de **6 à 16 ans** (**grundskolan**), suivie du **gymnasiet** (lycée, non obligatoire mais fréquenté par presque tous). Les études supérieures sont gratuites pour les citoyens de l'UE ; les étudiants peuvent demander un soutien de l'État (**studiemedel**), en partie don, en partie prêt.`,
+        `À l'université, on parle de **kurs** (cours), **poäng** (crédits), **uppsats** (mémoire). Presque tous les mots d'éducation sont **en** : **en utbildning, en examen, en kurs, en föreläsning, en forskare**.`
+      ],
+      keys: [`**grundskola** (obligatoire) puis **gymnasium** (lycée).`, `**kurs, föreläsning, uppsats, examen** : le vocabulaire universitaire.`, `**studiemedel** = aide aux études.`],
+      vocab: [W('en utbildning|utbildningar|formation, éducation'), W('ett universitet|universitet|université'), W('en examen|examina|diplôme'), W('en kurs|kurser|cours'), W('en uppsats|uppsatser|mémoire, dissertation'), W('en forskare|forskare|chercheur'), W('en forskning||recherche'), W('ett betyg|betyg|note, appréciation'), W('ett stipendium|stipendier|bourse'), W('en föreläsning|föreläsningar|cours magistral'), W('ett ämne|ämnen|matière, sujet'), W('en kunskap|kunskaper|connaissance')],
+      phrases: [P(`Hon studerar historia på universitetet.`, `Elle étudie l'histoire à l'université.`), P(`Jag skriver en uppsats om klimatet.`, `J'écris un mémoire sur le climat.`), P(`Föreläsningen börjar klockan tio.`, `Le cours magistral commence à dix heures.`), P(`Han fick ett stipendium.`, `Il a obtenu une bourse.`)],
+      cloze: [
+        Z(`Hon har en ___ i biologi. (diplôme)`, `examen`, `Elle a un diplôme en biologie.`, [`examinen`, `examnar`, `examens`], `en examen.`),
+        Z(`Jag läser en ___ i svenska. (cours)`, `kurs`, `Je suis un cours de suédois.`, [`kursen`, `kurser`, `kursar`], `en kurs.`),
+        Z(`___ arbetar på universitetet. (Le chercheur)`, `Forskaren`, `Le chercheur travaille à l'université.`, [`Forskare`, `Forskning`, `Forskarna`], `en forskare → forskaren.`),
+        Z(`Han fick ett ___ för sina studier. (bourse)`, `stipendium`, `Il a obtenu une bourse pour ses études.`, [`stipendier`, `stipendiet`, `stipendiem`], `ett stipendium.`)
+      ],
+      pit: [`Pluriel de **en examen** : **examina** (forme latine) ; **examnar** n'existe pas.`, `**en kunskap** (une connaissance) s'emploie souvent au pluriel : **kunskaper**.`]
+    },
+    {
+      id: 'b2v8', title: 'Émotions et caractère',
+      text: [
+        `Le suédois a beaucoup de **noms abstraits** pour les émotions, souvent sans pluriel : **oro** (inquiétude), **glädje** (joie), **stolthet** (fierté), **nyfikenhet** (curiosité). Ils prennent l'article défini quand on parle de façon générale : **Glädjen var stor.**`,
+        `Pour décrire quelqu'un, on emploie des noms et des adjectifs proches : **ärlighet / ärlig**, **envishet / envis**, **självförtroende** (confiance en soi). Un mot particulier : **lagom** (ni trop, ni trop peu) exprime une valeur culturelle importante.`
+      ],
+      keys: [`**oro, glädje, stolthet** : noms abstraits, rarement au pluriel.`, `**-het** et **-else** font des noms en **en**.`, `**lagom** = juste ce qu'il faut.`],
+      vocab: [W('en känsla|känslor|sentiment'), W('en oro||inquiétude'), W('en glädje||joie'), W('en sorg|sorger|chagrin'), W('en rädsla|rädslor|peur'), W('en stolthet||fierté'), W('en besvikelse|besvikelser|déception'), W('en avundsjuka||jalousie'), W('ett tålamod||patience'), W('ett självförtroende||confiance en soi'), W('en nyfikenhet||curiosité'), W('en lättnad||soulagement')],
+      phrases: [P(`Hon kände stor glädje när hon hörde nyheten.`, `Elle a ressenti une grande joie en apprenant la nouvelle.`), P(`Jag förstår din besvikelse.`, `Je comprends ta déception.`), P(`Han saknar tålamod.`, `Il manque de patience.`), P(`Det var en stor lättnad.`, `C'était un grand soulagement.`)],
+      cloze: [
+        Z(`Hon kände stor ___ . (joie)`, `glädje`, `Elle a ressenti une grande joie.`, [`glad`, `glatt`, `glädjer`], `en glädje (nom).`),
+        Z(`Barn har ofta stor ___ . (curiosité)`, `nyfikenhet`, `Les enfants ont souvent une grande curiosité.`, [`nyfiken`, `nyfiket`, `nyfikna`], `-het : nom abstrait.`),
+        Z(`Jag har inget ___ med mig. (patience)`, `tålamod`, `Je n'ai aucune patience.`, [`tålamoden`, `tålmodig`, `tålig`], `ett tålamod (pas de pluriel).`),
+        Z(`Han kände en stor ___ efter provet. (soulagement)`, `lättnad`, `Il a ressenti un grand soulagement après l'examen.`, [`lätt`, `lättare`, `lätta`], `en lättnad.`)
+      ],
+      pit: [`**ett tålamod** est un **ett-ord** (surprenant) : **mitt tålamod**.`, `**rädsla** (la peur) vs **rädd** (qui a peur) : **Jag är rädd** (adjectif), **Rädslan är stor** (nom).`]
+    },
+    {
+      id: 'b2v9', title: 'Logement et vie en ville',
+      text: [
+        `Trouver un logement en Suède est souvent difficile, surtout à **Stockholm** : les **files d'attente** (**bostadskö**) pour un appartement locatif peuvent durer des années. On distingue **hyresrätt** (logement locatif) et **bostadsrätt** (on achète une part de l'association de copropriétaires).`,
+        `Dans un immeuble, on trouve souvent une **tvättstuga** (buanderie commune, avec un horaire de réservation), un **källarförråd** (cave) et un **hiss** (ascenseur). La relation avec les voisins (**grannar**) suit des règles de politesse précises : calme après 22 h, par exemple.`
+      ],
+      keys: [`**hyresrätt** = louer, **bostadsrätt** = acheter une part.`, `**bostadskö** = file d'attente pour un logement.`, `**tvättstuga** = buanderie commune à réserver.`],
+      vocab: [W('en hyresrätt|hyresrätter|logement locatif'), W('en hyra|hyror|loyer'), W('en bostad|bostäder|logement'), W('en lägenhet|lägenheter|appartement'), W('en förening|föreningar|association'), W('en avgift|avgifter|frais, redevance'), W('ett kontrakt|kontrakt|contrat'), W('en bostadskö|bostadsköer|file d\'attente pour un logement'), W('en hyresvärd|hyresvärdar|propriétaire (bailleur)'), W('en hiss|hissar|ascenseur'), W('en tvättstuga|tvättstugor|buanderie commune'), W('en förort|förorter|banlieue')],
+      phrases: [P(`Hyran är fjorton tusen kronor i månaden.`, `Le loyer est de quatorze mille couronnes par mois.`), P(`Jag står i bostadskö sedan fem år.`, `Je suis dans la file d'attente pour un logement depuis cinq ans.`), P(`Tvättstugan är bokad på lördag.`, `La buanderie est réservée samedi.`), P(`Hissen fungerar inte.`, `L'ascenseur ne fonctionne pas.`)],
+      cloze: [
+        Z(`Jag betalar ___ den första varje månad. (le loyer)`, `hyran`, `Je paie le loyer le premier de chaque mois.`, [`hyra`, `hyror`, `hyrorna`], `en hyra → hyran.`),
+        Z(`Vi har en liten ___ i centrum. (appartement)`, `lägenhet`, `Nous avons un petit appartement dans le centre.`, [`lägenheten`, `lägenheter`, `lägenhete`], `en lägenhet.`),
+        Z(`Jag har skrivit under ___ . (le contrat)`, `kontraktet`, `J'ai signé le contrat.`, [`kontrakt`, `kontraktat`, `kontrakten`], `ett kontrakt → kontraktet.`),
+        Z(`___ fungerar inte. (L'ascenseur)`, `Hissen`, `L'ascenseur ne fonctionne pas.`, [`Hiss`, `Hissar`, `Hisset`], `en hiss → hissen.`)
+      ],
+      pit: [`**en bostad** (logement, concept) ≠ **en lägenhet** (appartement précis) ≠ **ett hus** (maison).`, `**hyra** est un verbe **et** un nom : **hyra en bil** (louer), **en hyra** (un loyer).`]
+    },
+    {
+      id: 'b2v10', title: 'Voyage et administration',
+      text: [
+        `En Suède, presque tout passe par le **personnummer** (numéro d'identité à 10 chiffres, attribué par **Skatteverket**), et par le **BankID** pour s'identifier en ligne. Pour voyager, on garde le **pass** (passeport) ou le **id-kort** (carte d'identité) ; le **körkort** (permis de conduire) sert aussi de pièce d'identité.`,
+        `Dans les gares et aéroports, les mots à connaître : **avgång** (départ), **ankomst** (arrivée), **försening** (retard), **biljett** (billet), **bagage** (bagages). Pour les formulaires : **blankett**, **bekräftelse**, **underskrift** (signature).`
+      ],
+      keys: [`**personnummer** : numéro d'identité, clé de toutes les démarches.`, `**avgång / ankomst / försening** : tableau des départs.`, `**blankett** = formulaire, **underskrift** = signature.`],
+      vocab: [W('ett pass|pass|passeport'), W('ett körkort|körkort|permis de conduire'), W('en blankett|blanketter|formulaire'), W('ett personnummer|personnummer|numéro d\'identité'), W('ett id-kort|id-kort|carte d\'identité'), W('en bekräftelse|bekräftelser|confirmation'), W('en försening|förseningar|retard'), W('en avgång|avgångar|départ'), W('en ankomst|ankomster|arrivée'), W('ett bagage|bagage|bagage'), W('en biljett|biljetter|billet'), W('ett visum|visum|visa')],
+      phrases: [P(`Tåget har en försening på tjugo minuter.`, `Le train a vingt minutes de retard.`), P(`Jag har glömt mitt pass hemma.`, `J'ai oublié mon passeport à la maison.`), P(`Vi har fått en bekräftelse på mejlet.`, `Nous avons reçu une confirmation par e-mail.`), P(`Fyll i blanketten och skriv under.`, `Remplis le formulaire et signe.`)],
+      cloze: [
+        Z(`Jag har glömt mitt ___ hemma. (passeport)`, `pass`, `J'ai oublié mon passeport à la maison.`, [`passet`, `passar`, `pas`], `ett pass.`),
+        Z(`Tåget har en ___ på tjugo minuter. (retard)`, `försening`, `Le train a vingt minutes de retard.`, [`förseningen`, `försenad`, `försena`], `en försening.`),
+        Z(`Var är ___ ? (le formulaire, défini)`, `blanketten`, `Où est le formulaire ?`, [`blankett`, `blanketter`, `blankettet`], `en blankett → blanketten.`),
+        Z(`Jag köpte två ___ till Göteborg. (billets)`, `biljetter`, `J'ai acheté deux billets pour Göteborg.`, [`biljett`, `biljetten`, `biljetts`], `en biljett → biljetter.`)
+      ],
+      pit: [`**en försening** (retard, nom) ≠ **försenad** (en retard, adjectif) : **Tåget är försenat**.`, `**ett pass** veut dire « passeport » **et** « passage, col » ; le contexte décide.`]
+    }
+  ]
+});
+
+/* SY Svenska 0.5 : niveau C1, nuances, registres, style. */
+
+CG.themes.push({
+  id: 'c1a', name: 'Nuances et registres', icon: '🎓', color: '#7C3AED', lvl: 'C1', fiches: [
+    {
+      id: 'c1a1', title: 'Particules modales : ju, väl, nog, ändå, liksom',
+      text: [
+        `Ce sont les petits mots qui donnent la **couleur** d'une phrase suédoise. **Ju** rappelle une évidence partagée : **Det är ju fredag** (c'est vendredi, tu sais bien). **Väl** cherche une confirmation : **Du kommer väl?** (tu viens, n'est-ce pas ?). **Nog** exprime une supposition : **Han kommer nog snart** (il viendra sans doute bientôt).`,
+        `**Ändå** marque la concession (« quand même »), **liksom** adoucit à l'oral (« genre »), **faktiskt** insiste (« vraiment, en fait »), **bara** minimise (« juste »), **alltså** conclut (« donc, c'est-à-dire »). Elles se placent en général **après le verbe** (et avant **inte** pour **ju** et **väl**). Elles ne se traduisent presque jamais mot à mot.`
+      ],
+      tables: [T('Particules modales', ['Mot', 'Effet', 'Exemple'], [
+        ['**ju**', 'évidence partagée', 'Du vet **ju** det.'], ['**väl**', 'demande de confirmation', 'Du kommer **väl**?'], ['**nog**', 'supposition', 'Han kommer **nog**.'], ['**ändå**', 'quand même', 'Jag gick **ändå**.'], ['**faktiskt**', 'insistance', 'Det är **faktiskt** sant.'], ['**liksom**', 'adoucisseur oral', 'Det var **liksom** konstigt.']
+      ])],
+      keys: [`**ju** = « tu sais bien », **väl** = « n'est-ce pas ? », **nog** = « sans doute ».`, `Elles suivent le verbe, avant **inte** : **Du vet ju inte**.`, `Traduire le **ton**, pas le mot.`],
+      vocab: [W('ju|(évidence partagée)'), W('väl|n\'est-ce pas, probablement'), W('nog|sans doute'), W('ändå|quand même'), W('faktiskt|en fait, vraiment'), W('liksom|genre, en quelque sorte'), W('alltså|donc, c\'est-à-dire'), W('förresten|au fait'), W('knappast|à peine, guère'), W('visserligen|certes')],
+      phrases: [P(`Det är ju fredag i dag!`, `Mais c'est vendredi aujourd'hui !`), P(`Du kommer väl på festen?`, `Tu viens à la fête, n'est-ce pas ?`), P(`Han är nog sjuk.`, `Il est sans doute malade.`), P(`Jag gick dit ändå.`, `J'y suis quand même allé.`), P(`Det är faktiskt inte så svårt.`, `Ce n'est en fait pas si difficile.`)],
+      cloze: [
+        Z(`Du kommer ___ på festen? (n'est-ce pas)`, `väl`, `Tu viens à la fête, n'est-ce pas ?`, [`ju`, `nog`, `bara`], `väl cherche une confirmation.`),
+        Z(`Det är ___ fredag! (tu sais bien)`, `ju`, `Mais c'est vendredi !`, [`väl`, `nog`, `alltså`], `ju = évidence partagée.`),
+        Z(`Han kommer ___ snart. (sans doute)`, `nog`, `Il viendra sans doute bientôt.`, [`ju`, `väl`, `ändå`], `nog = supposition.`),
+        Z(`Det regnade, men vi gick ___ . (quand même)`, `ändå`, `Il pleuvait, mais nous y sommes allés quand même.`, [`ju`, `nog`, `alltså`], `ändå = concession.`)
+      ],
+      pit: [`**ju** ne veut pas dire « déjà » (c'est **redan**) : **Han har redan gått**.`, `Ne les place pas en début de phrase : **Du vet ju det**, pas « Ju du vet det ».`]
+    },
+    {
+      id: 'c1a2', title: 'Registre : formel et informel',
+      text: [
+        `Le suédois n'a pas de **vouvoiement** courant (le **ni** vieillit et sonne distant) : tout le monde se tutoie avec **du**, y compris le patron et le roi. La formalité passe donc par le **vocabulaire** et la **syntaxe**, pas par le pronom.`,
+        `À l'écrit officiel, on choisit des mots plus longs et plus précis : **erhålla** (obtenir) à la place de **få**, **inleda** (entamer) à la place de **börja**, **ange** (indiquer) à la place de **säga**, **vänligen** (veuillez), **med anledning av** (à propos de). Dans un mail formel : **Hej** + prénom reste normal ; on termine par **Med vänliga hälsningar** (cordialement).`
+      ],
+      tables: [T('Neutre → formel', ['Courant', 'Formel', 'Sens'], [
+        ['få', 'erhålla', 'obtenir'], ['börja', 'inleda', 'entamer'], ['säga, skriva', 'ange', 'indiquer'], ['fråga', 'förfråga sig', 's\'enquérir'], ['hjälpa', 'bistå', 'assister'], ['därför', 'följaktligen', 'par conséquent']
+      ])],
+      keys: [`**du** pour tous ; **ni** = distance (ou pluriel poli).`, `Formel = mots plus longs : **erhålla, inleda, ange**.`, `**Med vänliga hälsningar** = cordialement.`],
+      vocab: [W('v erhålla|erhåller|erhöll|erhållit|obtenir (formel)'), W('v inleda|inleder|inledde|inlett|entamer'), W('v ange|anger|angav|angett|indiquer'), W('v bistå|bistår|bistod|bistått|assister'), W('vänligen|veuillez'), W('följaktligen|par conséquent'), W('med anledning av|à propos de, suite à'), W('en förfrågan|förfrågningar|demande de renseignements'), W('en hälsning|hälsningar|salutation'), W('ett meddelande|meddelanden|message')],
+      phrases: [P(`Med vänliga hälsningar, Anna Lind.`, `Cordialement, Anna Lind.`), P(`Vi har erhållit er förfrågan.`, `Nous avons bien reçu votre demande.`), P(`Vänligen ange ditt personnummer.`, `Veuillez indiquer votre numéro d'identité.`), P(`Med anledning av ert mejl vill vi meddela följande.`, `Suite à votre e-mail, nous souhaitons vous informer de ce qui suit.`)],
+      cloze: [
+        Z(`___ ange ditt namn. (veuillez)`, `Vänligen`, `Veuillez indiquer votre nom.`, [`Vänlig`, `Vänligt`, `Vänner`], `vänligen = adverbe de politesse.`),
+        Z(`Vi har ___ ert mejl. (reçu, formel)`, `erhållit`, `Nous avons reçu votre e-mail.`, [`erhållt`, `erhöll`, `erhålla`], `erhålla : erhöll, erhållit.`),
+        Z(`___ vänliga hälsningar. (Cordialement)`, `Med`, `Cordialement.`, [`Av`, `Till`, `För`], `Formule : Med vänliga hälsningar.`),
+        Z(`Vi ___ projektet i maj. (entamerons, formel)`, `inleder`, `Nous entamons le projet en mai.`, [`inledde`, `inlett`, `inleda`], `Présent : inleder.`)
+      ],
+      pit: [`Ne dis pas **ni** à une personne seule : cela sonne distant ou suranné.`, `Formel ne veut pas dire pompeux : n'abuse pas de **erhålla** dans un message amical.`]
+    },
+    {
+      id: 'c1a3', title: 'Suédois parlé : dom, mej, e, nåt',
+      text: [
+        `Le suédois parlé abrège beaucoup : **de/dem** devient **dom**, **mig/dig/sig** devient **mej/dej/sej**, **är** devient **e**, **något** devient **nåt**, **inte** devient **inte** ou **ente**, **vad** devient **va**. On l'entend partout, mais on l'écrit surtout dans les messages informels et les dialogues.`,
+        `Quelques réflexes : **Vad gör du?** → **Va gör du?** ; **Jag vet inte** → **Jag vet ente / jag vet inte**. À l'écrit soigné, on garde les formes complètes. Savoir les **reconnaître** suffit à comprendre films et conversations.`
+      ],
+      tables: [T('Formes parlées', ['Écrit', 'Parlé', 'Sens'], [
+        ['de, dem', 'dom', 'ils, eux'], ['mig, dig, sig', 'mej, dej, sej', 'me, te, se'], ['är', 'e', 'est'], ['något', 'nåt', 'quelque chose'], ['vad', 'va', 'quoi'], ['inte', 'inte / ente', 'ne pas'], ['och', 'å', 'et']
+      ])],
+      keys: [`**dom** = ils / eux ; **mej, dej, sej** = me, te, se.`, `**e** = est ; **nåt** = quelque chose.`, `À écrire seulement en contexte informel.`],
+      vocab: [W('dom|ils, eux (parlé)'), W('mej|moi (parlé)'), W('dej|toi (parlé)'), W('nåt|quelque chose (parlé)'), W('nån|quelqu\'un (parlé)'), W('va|quoi (parlé)'), W('e|est (parlé)'), W('typ|genre, environ'), W('asså|enfin, genre'), W('sjukt|super, très (argot)')],
+      phrases: [P(`Dom e hemma nu.`, `Ils sont chez eux maintenant.`), P(`Jag såg dej igår.`, `Je t'ai vu hier.`), P(`Har du nåt att äta?`, `Tu as quelque chose à manger ?`), P(`Det var sjukt bra!`, `C'était super bien !`)],
+      cloze: [
+        Z(`___ e hemma nu. (Ils, parlé)`, `Dom`, `Ils sont chez eux maintenant.`, [`Dem`, `Vem`, `Den`], `dom = de/dem à l'oral.`),
+        Z(`Jag såg ___ igår. (toi, parlé)`, `dej`, `Je t'ai vu hier.`, [`dom`, `mej`, `sej`], `dej = dig.`),
+        Z(`Har du ___ att äta? (quelque chose, parlé)`, `nåt`, `Tu as quelque chose à manger ?`, [`nån`, `va`, `dom`], `nåt = något.`),
+        Z(`Det ___ bra! (c'est, parlé)`, `e`, `C'est bien !`, [`ä`, `dom`, `va`], `e = är.`)
+      ],
+      pit: [`**mej / dej** s'écrivent dans les SMS mais pas dans une lettre officielle.`, `**dom** ne se confond pas avec **dom** (le jugement, « une décision de justice ») : le contexte tranche.`]
+    },
+    {
+      id: 'c1a4', title: 'Expressions et proverbes',
+      text: [
+        `Les expressions imagées donnent du relief. Quelques classiques : **Det är ingen ko på isen** (il n'y a pas de danger), **Att slå två flugor i en smäll** (faire d'une pierre deux coups), **Att ha is i magen** (garder son sang-froid), **Det är kört** (c'est fichu), **Tji fick han** (il en a été pour ses frais).`,
+        `Autres : **Att ta sig själv i kragen** (se reprendre), **Det ligger en hund begraven** (il y a un lézard), **Ingen ko på isen** (pas d'urgence). Certaines se devinent, d'autres non : apprends-les comme des blocs.`
+      ],
+      keys: [`**ingen ko på isen** = pas de souci.`, `**slå två flugor i en smäll** = deux coups d'une pierre.`, `**ha is i magen** = garder son calme.`],
+      vocab: [W('en ko|kor|vache'), W('en fluga|flugor|mouche'), W('en smäll|smällar|claque, bruit sec'), W('is|glace'), W('en hund|hundar|chien'), W('en krage|kragar|col'), W('ett ordspråk|ordspråk|proverbe'), W('ett uttryck|uttryck|expression'), W('en liknelse|liknelser|comparaison'), W('en betydelse|betydelser|sens, importance')],
+      phrases: [P(`Det är ingen ko på isen.`, `Il n'y a pas de danger.`), P(`Jag slog två flugor i en smäll.`, `J'ai fait d'une pierre deux coups.`), P(`Hon hade is i magen under hela mötet.`, `Elle a gardé son sang-froid pendant toute la réunion.`), P(`Nu är det kört.`, `Là, c'est fichu.`)],
+      cloze: [
+        Z(`Det är ingen ___ på isen. (vache)`, `ko`, `Il n'y a pas de danger.`, [`kor`, `ko på`, `kon`], `ko, forme du singulier.`),
+        Z(`Hon slog två flugor i en ___ . (coup)`, `smäll`, `Elle a fait d'une pierre deux coups.`, [`smälla`, `smällar`, `smällen`], `en smäll.`),
+        Z(`Han hade ___ i magen. (de la glace)`, `is`, `Il gardait son sang-froid.`, [`snö`, `vatten`, `kyla`], `ha is i magen.`),
+        Z(`Nu är det ___ . (fichu)`, `kört`, `Là, c'est fichu.`, [`kör`, `körd`, `köra`], `Familier : det är kört.`)
+      ],
+      pit: [`Ne traduis pas ces expressions mot à mot en français : **ko på isen** n'a rien à voir avec « la vache qui rit ».`, `**ordspråk** (proverbe) ≠ **uttryck** (expression) : le premier est une phrase complète.`]
+    },
+    {
+      id: 'c1a5', title: 'Connecteurs logiques avancés',
+      text: [
+        `Pour structurer un texte argumenté, on a besoin de connecteurs précis. **Dessutom** (en outre), **därtill** (de plus), **emellertid** (cependant), **trots att** (bien que), **eftersom** (puisque), **således** (ainsi), **däremot** (par contre), **i synnerhet** (en particulier), **med andra ord** (autrement dit).`,
+        `Attention à l'ordre des mots : après un connecteur en tête de phrase, le **verbe** vient en deuxième position (inversion) : **Dessutom är det billigare.** Dans la subordonnée (après **trots att, eftersom, medan**), l'adverbe **inte** passe avant le verbe : **trots att han inte kom**.`
+      ],
+      tables: [T('Connecteurs', ['Connecteur', 'Sens'], [
+        ['dessutom, därtill', 'en outre'], ['emellertid, dock', 'cependant'], ['däremot', 'par contre'], ['således, följaktligen', 'ainsi, par conséquent'], ['trots att', 'bien que'], ['medan', 'tandis que'], ['i synnerhet', 'en particulier'], ['med andra ord', 'autrement dit']
+      ])],
+      keys: [`**dessutom** = en outre, **däremot** = par contre, **således** = ainsi.`, `En tête de phrase : **verbe en 2ᵉ** (inversion).`, `Dans la subordonnée : **inte** avant le verbe.`],
+      vocab: [W('dessutom|en outre'), W('emellertid|cependant'), W('däremot|par contre'), W('således|ainsi'), W('trots att|bien que'), W('medan|tandis que'), W('i synnerhet|en particulier'), W('med andra ord|autrement dit'), W('å ena sidan|d\'un côté'), W('å andra sidan|de l\'autre côté')],
+      phrases: [P(`Dessutom är det billigare.`, `En outre, c'est moins cher.`), P(`Han kom, trots att han var sjuk.`, `Il est venu, bien qu'il fût malade.`), P(`Å ena sidan är det dyrt, å andra sidan är det bra.`, `D'un côté c'est cher, de l'autre c'est bien.`), P(`Hon är duktig, i synnerhet på matematik.`, `Elle est douée, en particulier en mathématiques.`)],
+      cloze: [
+        Z(`___ är det billigare. (En outre)`, `Dessutom`, `En outre, c'est moins cher.`, [`Däremot`, `Medan`, `Eftersom`], `dessutom = en outre.`),
+        Z(`Han kom, ___ han var sjuk. (bien que)`, `trots att`, `Il est venu, bien qu'il fût malade.`, [`eftersom`, `medan`, `därför att`], `trots att + subordonnée.`),
+        Z(`Jag gillar fisk, ___ gillar hon kött. (par contre)`, `däremot`, `J'aime le poisson, elle par contre aime la viande.`, [`dessutom`, `således`, `medan det`], `däremot oppose deux faits.`),
+        Z(`Å ena sidan är det dyrt, ___ är det bra. (de l'autre)`, `å andra sidan`, `D'un côté c'est cher, de l'autre c'est bien.`, [`å tredje sidan`, `å ena sidan`, `å sidan`], `å ena … å andra sidan.`)
+      ],
+      pit: [`**medan** (tandis que, pendant que) ne se confond pas avec **under** (préposition) : **under sommaren**, **medan vi väntar**.`, `**eftersom** (puisque) n'est pas **trots att** (bien que) : sens opposés.`]
+    },
+    {
+      id: 'c1a6', title: 'Nuances de sens : synonymes proches',
+      text: [
+        `Beaucoup de verbes suédois « se ressemblent » mais portent des **nuances** différentes. **Se** (voir), **titta** (regarder), **kolla** (jeter un œil, familier), **betrakta** (contempler, considérer). **Prata** (parler, familier), **tala** (parler, plus formel), **snacka** (bavarder), **diskutera** (discuter).`,
+        `De même **börja / starta / inleda** (commencer), **sluta / avsluta / upphöra** (finir). Les choix de verbe donnent le **registre** : **kolla** et **snacka** sont oraux, **betrakta** et **tala** plus soutenus. Un bon C1 se reconnaît à ce choix subtil.`
+      ],
+      tables: [T('Verbes proches', ['Famille', 'Du familier au soutenu'], [
+        ['voir / regarder', 'kolla → titta → se → betrakta'], ['parler', 'snacka → prata → tala → orera'], ['commencer', 'dra igång → börja → starta → inleda'], ['finir', 'sluta → avsluta → upphöra'], ['penser', 'tro → tycka → anse → hävda']
+      ])],
+      keys: [`**kolla** et **snacka** = familier ; **betrakta** et **tala** = soutenu.`, `**tycka** = avoir un avis, **tro** = croire, **anse** = estimer.`, `Choisis le verbe selon le **registre**.`],
+      vocab: [W('v kolla|kollar|kollade|kollat|jeter un œil (fam.)'), W('v titta|tittar|tittade|tittat|regarder'), W('v betrakta|betraktar|betraktade|betraktat|contempler, considérer'), W('v snacka|snackar|snackade|snackat|bavarder (fam.)'), W('v tala|talar|talade|talat|parler (soutenu)'), W('v anse|anser|ansåg|ansett|estimer, juger'), W('v tycka|tycker|tyckte|tyckt|trouver, avoir l\'avis'), W('v avsluta|avslutar|avslutade|avslutat|terminer'), W('v upphöra|upphör|upphörde|upphört|cesser'), W('v starta|startar|startade|startat|démarrer')],
+      phrases: [P(`Kolla den här filmen!`, `Regarde ce film !`), P(`Hon talar flytande svenska.`, `Elle parle couramment le suédois.`), P(`Jag anser att förslaget är bra.`, `J'estime que la proposition est bonne.`), P(`Hon betraktade tavlan länge.`, `Elle a longuement contemplé le tableau.`)],
+      cloze: [
+        Z(`___ den här filmen! (Regarde, fam.)`, `Kolla`, `Regarde ce film !`, [`Betrakta`, `Tala`, `Anse`], `kolla = familier.`),
+        Z(`Hon ___ flytande svenska. (parle)`, `talar`, `Elle parle couramment le suédois.`, [`snackar`, `tittar`, `anser`], `tala = parler (une langue).`),
+        Z(`Jag ___ att förslaget är bra. (estime)`, `anser`, `J'estime que la proposition est bonne.`, [`tittar`, `talar`, `startar`], `anse = estimer.`),
+        Z(`Vi ___ projektet i morgon. (démarrons)`, `startar`, `Nous démarrons le projet demain.`, [`upphör`, `avslutar`, `kollar`], `starta = démarrer.`)
+      ],
+      pit: [`**tala** est suivi d'une langue : **tala svenska** ; **prata svenska** s'entend aussi, mais plus familier.`, `**tro** (croire) et **tycka** (trouver) : **Jag tror att det regnar** (croyance), **Jag tycker att filmen är bra** (avis).`]
+    },
+    {
+      id: 'c1a7', title: 'Mots intraduisibles et culture',
+      text: [
+        `Certains mots résument une valeur culturelle suédoise. **Lagom** : ni trop, ni trop peu (la mesure juste). **Fika** : pause café-gâteau sociale. **Mysig** : douillet, chaleureux. **Jantelagen** : la norme sociale qui décourage de se croire supérieur aux autres. **Allemansrätten** : le droit d'accès à la nature. **Förtjust** : ravi. **Hen** : pronom neutre.`,
+        `Autres : **Sambo** (concubin), **Kramas** (se faire des câlins), **Orka** (avoir l'énergie de), **Pyssla** (bricoler, s'occuper tranquillement), **Gökotta** (se lever tôt pour écouter les oiseaux). Ces mots n'ont pas d'équivalent exact en français.`
+      ],
+      keys: [`**lagom** = juste ce qu'il faut ; **fika** = pause sociale.`, `**Jantelagen** = ne te crois pas meilleur que les autres.`, `**allemansrätten** = droit d'accès à la nature.`],
+      vocab: [W('lagom|juste ce qu\'il faut'), W('en fika|fikor|pause café'), W('mysig|douillet, chaleureux'), W('en jantelag||loi de Jante'), W('en allemansrätt||droit d\'accès à la nature'), W('en sambo|sambor|concubin(e)'), W('v orka|orkar|orkade|orkat|avoir l\'énergie de'), W('v pyssla|pysslar|pysslade|pysslat|bricoler tranquillement'), W('v mysa|mysar|mös|mysat|se la couler douce'), W('ett midsommar||solstice d\'été')],
+      phrases: [P(`Det är lagom varmt i dag.`, `Il fait ni trop chaud ni trop froid aujourd'hui.`), P(`Ska vi ta en fika?`, `On prend une pause café ?`), P(`Vi har det mysigt hemma.`, `Nous sommes bien au chaud chez nous.`), P(`Jag orkar inte mer.`, `Je n'ai plus d'énergie.`)],
+      cloze: [
+        Z(`Det är ___ varmt i dag. (juste ce qu'il faut)`, `lagom`, `Il fait juste ce qu'il faut de chaud.`, [`lagomt`, `lagoma`, `mysigt`], `lagom est invariable.`),
+        Z(`Ska vi ta en ___ ? (pause café)`, `fika`, `On prend une pause café ?`, [`fik`, `fikor`, `fikan`], `en fika.`),
+        Z(`Vi har det ___ hemma. (cosy)`, `mysigt`, `Nous sommes bien au chaud chez nous.`, [`mysig`, `mysiga`, `mysen`], `Adverbe/neutre : mysigt.`),
+        Z(`Jag ___ inte mer. (n'ai plus l'énergie)`, `orkar`, `Je n'ai plus d'énergie.`, [`orka`, `orkade`, `orkat`], `orka au présent : orkar.`)
+      ],
+      pit: [`**lagom** est invariable : il ne s'accorde jamais.`, `**en fika** (la pause) et **att fika** (faire la pause) : nom et verbe ont la même forme.`]
+    },
+    {
+      id: 'c1a8', title: 'Style académique et écrit formel',
+      text: [
+        `Un texte académique suédois privilégie les **phrases à sujet formel**, les **passifs en -s** et des **connecteurs de structure** : **Syftet med denna uppsats är att …** (le but de ce mémoire est de…), **Det kan konstateras att …** (on peut constater que…), **Resultaten visar att …** (les résultats montrent que…), **Sammanfattningsvis …** (en résumé).`,
+        `On évite les **tournures orales** et les **abréviations familières**. On cite ses sources avec **enligt** (selon) ou **såsom** (comme). Pour nuancer : **tycks** (semble), **förefaller** (paraît), **torde** (devrait, probablement), **kan antas** (on peut supposer).`
+      ],
+      tables: [T('Formules académiques', ['Formule', 'Sens'], [
+        ['Syftet med … är att', 'Le but de … est de'], ['Det kan konstateras att', 'On peut constater que'], ['Resultaten visar att', 'Les résultats montrent que'], ['enligt', 'selon'], ['Sammanfattningsvis', 'En résumé'], ['torde', 'devrait (probable)']
+      ])],
+      keys: [`**Syftet med … är att** = le but est de…`, `**enligt** = selon ; **sammanfattningsvis** = en résumé.`, `**torde / förefaller / tycks** = nuances prudentes.`],
+      vocab: [W('ett syfte|syften|but, objectif'), W('en slutsats|slutsatser|conclusion'), W('en hypotes|hypoteser|hypothèse'), W('en metod|metoder|méthode'), W('en teori|teorier|théorie'), W('ett argument|argument|argument'), W('en analys|analyser|analyse'), W('en sammanfattning|sammanfattningar|résumé'), W('v konstatera|konstaterar|konstaterade|konstaterat|constater'), W('v antyda|antyder|antydde|antytt|suggérer')],
+      phrases: [P(`Syftet med uppsatsen är att undersöka klimatet.`, `Le but du mémoire est d'étudier le climat.`), P(`Resultaten visar att kunskapen ökar.`, `Les résultats montrent que les connaissances augmentent.`), P(`Sammanfattningsvis kan man säga att …`, `En résumé, on peut dire que …`), P(`Enligt forskningen minskar utsläppen.`, `Selon la recherche, les émissions diminuent.`)],
+      cloze: [
+        Z(`___ med uppsatsen är att undersöka klimatet. (Le but)`, `Syftet`, `Le but du mémoire est d'étudier le climat.`, [`Syfte`, `Syften`, `Syftar`], `ett syfte → syftet.`),
+        Z(`___ kan man säga att det fungerar. (En résumé)`, `Sammanfattningsvis`, `En résumé, on peut dire que cela fonctionne.`, [`Dessutom`, `Däremot`, `Emellertid`], `Conclusion.`),
+        Z(`___ forskningen minskar utsläppen. (Selon)`, `Enligt`, `Selon la recherche, les émissions diminuent.`, [`Trots`, `Medan`, `Under`], `enligt = selon.`),
+        Z(`Man kan ___ att resultatet är positivt. (constater)`, `konstatera`, `On peut constater que le résultat est positif.`, [`konstaterar`, `konstaterade`, `konstaterat`], `Après « kan » : infinitif.`)
+      ],
+      pit: [`Ne dis pas « Enligt min åsikt » à l'oral courant : **Jag tycker** est plus naturel ; **enligt** convient à l'écrit et aux sources.`, `**torde** est rare et soutenu : à ne pas mélanger avec un registre familier.`]
+    }
+  ]
+});
+
+CG.themes.push({
+  id: 'c1b', name: 'Vocabulaire C1 : idées et institutions', icon: '📚', color: '#BE185D', lvl: 'C1', fiches: [
+    {
+      id: 'c1b1', title: 'Noms abstraits courants',
+      text: [
+        `Au niveau C1, on lit et on écrit beaucoup de **noms abstraits**. La plupart se terminent par **-het, -ning, -else, -ande** et sont de genre **en**. Ceux en **-um, -eri, -ment** sont **ett** : **ett faktum, ett bageri, ett argument**.`,
+        `Ces mots n'ont pas toujours de pluriel (**frihet, rättvisa, trygghet**), ou le pluriel change de sens. Retiens leur genre et leur famille : **fri → frihet**, **säker → säkerhet**, **trygg → trygghet**.`
+      ],
+      keys: [`**-het, -ning, -else** → **en** ; **-um, -eri, -ment** → **ett**.`, `Pas de pluriel pour **frihet, rättvisa, trygghet**.`, `Adjectif → nom : **fri → frihet**.`],
+      vocab: [W('en frihet|friheter|liberté'), W('en rättvisa||justice'), W('en trygghet||sécurité, tranquillité'), W('en säkerhet|säkerheter|sûreté'), W('ett ansvar||responsabilité'), W('en rättighet|rättigheter|droit'), W('en skyldighet|skyldigheter|devoir, obligation'), W('en jämlikhet||égalité'), W('ett faktum|fakta|fait'), W('en sanning|sanningar|vérité'), W('en tolerans||tolérance'), W('en moral||morale')],
+      phrases: [P(`Yttrandefrihet är en grundläggande rättighet.`, `La liberté d'expression est un droit fondamental.`), P(`Alla har ett ansvar för miljön.`, `Chacun a une responsabilité envers l'environnement.`), P(`Tryggheten i samhället är hög.`, `La sécurité dans la société est élevée.`), P(`Det är ett faktum att klimatet förändras.`, `C'est un fait que le climat change.`)],
+      cloze: [
+        Z(`Alla har ___ för miljön. (une responsabilité)`, `ansvar`, `Chacun a une responsabilité envers l'environnement.`, [`ansvaret`, `ansvarar`, `ansvarig`], `ett ansvar.`),
+        Z(`Det är ett ___ att klimatet förändras. (fait)`, `faktum`, `C'est un fait que le climat change.`, [`fakta`, `faktumen`, `faktisk`], `ett faktum (pluriel fakta).`),
+        Z(`___ är en grundläggande rättighet. (La liberté d'expression)`, `Yttrandefrihet`, `La liberté d'expression est un droit fondamental.`, [`Yttrandefri`, `Yttrande`, `Yttrandefriheter`], `-het : mot abstrait.`),
+        Z(`Barn behöver ___ . (sécurité, tranquillité)`, `trygghet`, `Les enfants ont besoin de sécurité.`, [`trygg`, `tryggt`, `trygga`], `trygg → trygghet.`)
+      ],
+      pit: [`**ett faktum** a le pluriel latin **fakta**, pas « faktum-ar ».`, `**säkerhet** peut dire « sécurité » (safety / security) ou « garantie » : le contexte tranche.`]
+    },
+    {
+      id: 'c1b2', title: 'Droit et justice',
+      text: [
+        `Le système juridique suédois repose sur le **droit civil** et un **principe d'ouverture** : presque tous les documents officiels sont publics (**offentlighetsprincipen**). Les tribunaux sont **tingsrätt** (première instance), **hovrätt** (appel) et **Högsta domstolen** (cour suprême). Le **JO** (justitieombudsmannen) surveille les autorités.`,
+        `Les mots clés : **en lag** (loi), **en dom** (jugement), **en rättegång** (procès), **en åklagare** (procureur), **en advokat** (avocat), **ett vittne** (témoin). Les verbes : **döma** (juger), **åtala** (poursuivre), **frikänna** (acquitter), **fälla** (condamner).`
+      ],
+      keys: [`**tingsrätt** → **hovrätt** → **Högsta domstolen**.`, `**offentlighetsprincipen** = transparence des documents publics.`, `**döma, åtala, frikänna** : juger, poursuivre, acquitter.`],
+      vocab: [W('en domstol|domstolar|tribunal'), W('en dom|domar|jugement'), W('en rättegång|rättegångar|procès'), W('en åklagare|åklagare|procureur'), W('en advokat|advokater|avocat'), W('ett vittne|vittnen|témoin'), W('ett brott|brott|crime, délit'), W('ett straff|straff|peine'), W('v döma|dömer|dömde|dömt|juger, condamner'), W('v åtala|åtalar|åtalade|åtalat|poursuivre'), W('v frikänna|frikänner|frikände|frikänt|acquitter'), W('en rättighet|rättigheter|droit')],
+      phrases: [P(`Domstolen dömde honom till böter.`, `Le tribunal l'a condamné à une amende.`), P(`Åklagaren väckte åtal.`, `Le procureur a engagé des poursuites.`), P(`Hon frikändes i rätten.`, `Elle a été acquittée au tribunal.`), P(`Vittnet berättade vad hon sett.`, `Le témoin a raconté ce qu'elle avait vu.`)],
+      cloze: [
+        Z(`Domstolen ___ honom till böter. (a condamné)`, `dömde`, `Le tribunal l'a condamné à une amende.`, [`dömer`, `dömt`, `döma`], `Prétérit de döma : dömde.`),
+        Z(`___ väckte åtal. (Le procureur)`, `Åklagaren`, `Le procureur a engagé des poursuites.`, [`Åklagare`, `Advokaten`, `Åklagarna`], `en åklagare → åklagaren.`),
+        Z(`Hon ___ i rätten. (a été acquittée)`, `frikändes`, `Elle a été acquittée au tribunal.`, [`frikände`, `frikänns`, `frikänd`], `Passif au prétérit : frikändes.`),
+        Z(`Det var ett allvarligt ___ . (crime)`, `brott`, `C'était un crime grave.`, [`brottet`, `brotts`, `brotten`], `ett brott.`)
+      ],
+      pit: [`**en dom** (jugement) ≠ **ett dom** n'existe pas ; mais **dom** parlé (ils) est un autre mot.`, `**ett straff** : « peine » ; le verbe est **straffa**.`]
+    },
+    {
+      id: 'c1b3', title: 'Science et technique',
+      text: [
+        `La Suède a une grande tradition scientifique : **Linné** (classification des espèces), **Celsius** (échelle de température), **Nobel** (les prix, décernés à Stockholm). Les institutions : **Karolinska institutet** (médecine), **KTH** (technique) et **Chalmers**.`,
+        `Le vocabulaire scientifique est international : **teori, hypotes, experiment**. Les mots suédois propres : **forskning** (recherche), **upptäckt** (découverte), **uppfinning** (invention), **mätning** (mesure), **bevis** (preuve).`
+      ],
+      keys: [`**forskning** = recherche, **upptäckt** = découverte, **uppfinning** = invention.`, `**mätning** = mesure, **bevis** = preuve.`, `Prix Nobel : décernés à **Stockholm** (sauf le prix de la paix, à Oslo).`],
+      vocab: [W('ett experiment|experiment|expérience'), W('en upptäckt|upptäckter|découverte'), W('en uppfinning|uppfinningar|invention'), W('en mätning|mätningar|mesure'), W('ett bevis|bevis|preuve'), W('en laboratorium|laboratorier|laboratoire'), W('ett resultat|resultat|résultat'), W('en tillämpning|tillämpningar|application'), W('v undersöka|undersöker|undersökte|undersökt|examiner'), W('v bevisa|bevisar|bevisade|bevisat|prouver'), W('v mäta|mäter|mätte|mätt|mesurer'), W('v upptäcka|upptäcker|upptäckte|upptäckt|découvrir')],
+      phrases: [P(`Forskarna gjorde en viktig upptäckt.`, `Les chercheurs ont fait une découverte importante.`), P(`Experimentet bevisade teorin.`, `L'expérience a prouvé la théorie.`), P(`Man mäter temperaturen varje dag.`, `On mesure la température chaque jour.`), P(`Hon undersöker hur ljuset beter sig.`, `Elle étudie comment la lumière se comporte.`)],
+      cloze: [
+        Z(`Forskarna gjorde en viktig ___ . (découverte)`, `upptäckt`, `Les chercheurs ont fait une découverte importante.`, [`upptäcka`, `upptäckte`, `upptäcker`], `en upptäckt (nom).`),
+        Z(`Experimentet ___ teorin. (a prouvé)`, `bevisade`, `L'expérience a prouvé la théorie.`, [`bevisar`, `bevis`, `bevisat`], `Prétérit de bevisa.`),
+        Z(`Man ___ temperaturen varje dag. (mesure)`, `mäter`, `On mesure la température chaque jour.`, [`mätte`, `mätt`, `mäta`], `Présent de mäta : mäter.`),
+        Z(`Det finns inget ___ för det. (preuve)`, `bevis`, `Il n'y a aucune preuve pour cela.`, [`bevisen`, `beviset`, `bevisar`], `ett bevis.`)
+      ],
+      pit: [`**en upptäckt** (découverte) vs **en uppfinning** (invention) : on découvre ce qui existe, on invente ce qui n'existait pas.`, `**mätt** veut aussi dire « rassasié » : **Jag är mätt**.`]
+    },
+    {
+      id: 'c1b4', title: 'Littérature et arts',
+      text: [
+        `La littérature suédoise est riche : **Astrid Lindgren** (Fifi Brindacier), **August Strindberg** (théâtre), **Selma Lagerlöf** (première femme Nobel de littérature, 1909), **Tomas Tranströmer** et **Stieg Larsson** (polar). Les musées et institutions : **Nationalmuseum**, **Moderna museet**, **Kungliga operan**.`,
+        `Le vocabulaire utile : **en roman** (roman), **en novell** (nouvelle), **en dikt** (poème), **en författare** (auteur), **en läsare** (lecteur), **ett verk** (œuvre), **en skådespelare** (acteur), **en regissör** (réalisateur). Les verbes : **skriva, översätta, utge, recensera** (critiquer).`
+      ],
+      keys: [`**roman, novell, dikt** : roman, nouvelle, poème.`, `**författare, regissör, skådespelare** : créateurs.`, `**recensera** = critiquer (une œuvre).`],
+      vocab: [W('en roman|romaner|roman'), W('en novell|noveller|nouvelle'), W('en dikt|dikter|poème'), W('en författare|författare|auteur'), W('en regissör|regissörer|réalisateur'), W('en skådespelare|skådespelare|acteur'), W('ett verk|verk|œuvre'), W('en utställning|utställningar|exposition'), W('en recension|recensioner|critique'), W('v översätta|översätter|översatte|översatt|traduire'), W('v utge|ger ut|gav ut|gett ut|publier'), W('v recensera|recenserar|recenserade|recenserat|critiquer (une œuvre)')],
+      phrases: [P(`Hon har skrivit flera romaner.`, `Elle a écrit plusieurs romans.`), P(`Romanen har översatts till femtio språk.`, `Le roman a été traduit en cinquante langues.`), P(`Utställningen öppnar i september.`, `L'exposition ouvre en septembre.`), P(`Tidningen recenserade filmen.`, `Le journal a critiqué le film.`)],
+      cloze: [
+        Z(`Hon har skrivit flera ___ . (romans)`, `romaner`, `Elle a écrit plusieurs romans.`, [`roman`, `romanen`, `romans`], `en roman → romaner.`),
+        Z(`Boken har ___ till femtio språk. (a été traduit)`, `översatts`, `Le livre a été traduit en cinquante langues.`, [`översatt`, `översätter`, `översatte`], `Passif au parfait : har översatts.`),
+        Z(`___ öppnar i september. (L'exposition)`, `Utställningen`, `L'exposition ouvre en septembre.`, [`Utställning`, `Utställningar`, `Utställer`], `en utställning → utställningen.`),
+        Z(`Tidningen ___ filmen. (a critiqué)`, `recenserade`, `Le journal a critiqué le film.`, [`recenserar`, `recension`, `recenserat`], `Prétérit : recenserade.`)
+      ],
+      pit: [`**en dikt** (poème) ≠ **ett dikt** : seul **en dikt** existe.`, `**översätta** est un verbe à particule inséparable : **översatt** au supin.`]
+    },
+    {
+      id: 'c1b5', title: 'UE, politique internationale et économie',
+      text: [
+        `La Suède est membre de l'**UE** depuis **1995**, mais n'a pas adopté l'euro : elle garde la **krona**. Elle a rejoint l'**OTAN** en **2024**. Les mots clés : **medlemsland** (État membre), **kommission** (commission), **parlament** (parlement), **avtal** (accord), **sanktion** (sanction), **handel** (commerce).`,
+        `En économie avancée, on lit **BNP** (PIB), **tillväxt** (croissance), **arbetslöshet** (chômage), **underskott** (déficit), **överskott** (excédent), **konjunktur** (conjoncture). Beaucoup de ces mots sont **en** ; **ett underskott** et **ett överskott** sont **ett**.`
+      ],
+      keys: [`**medlemsland** = État membre, **avtal** = accord.`, `**BNP, tillväxt, arbetslöshet** : indicateurs économiques.`, `Suède dans l'UE depuis **1995**, pas dans la zone euro.`],
+      vocab: [W('ett medlemsland|medlemsländer|État membre'), W('en kommission|kommissioner|commission'), W('ett avtal|avtal|accord'), W('en sanktion|sanktioner|sanction'), W('en handel||commerce'), W('en tillväxt||croissance'), W('en arbetslöshet||chômage'), W('ett underskott|underskott|déficit'), W('ett överskott|överskott|excédent'), W('en konjunktur|konjunkturer|conjoncture'), W('en union|unioner|union'), W('en gräns|gränser|frontière')],
+      phrases: [P(`Sverige blev medlem i EU år nittonhundranittiofem.`, `La Suède est devenue membre de l'UE en 1995.`), P(`Arbetslösheten har sjunkit.`, `Le chômage a baissé.`), P(`Landet har ett stort underskott.`, `Le pays a un gros déficit.`), P(`Länderna undertecknade ett nytt avtal.`, `Les pays ont signé un nouvel accord.`)],
+      cloze: [
+        Z(`___ har sjunkit. (Le chômage)`, `Arbetslösheten`, `Le chômage a baissé.`, [`Arbetslöshet`, `Arbetslösa`, `Arbetslösheter`], `en arbetslöshet → arbetslösheten.`),
+        Z(`Landet har ett stort ___ . (déficit)`, `underskott`, `Le pays a un gros déficit.`, [`underskottet`, `underskotter`, `överskott`], `ett underskott.`),
+        Z(`Länderna skrev under ett nytt ___ . (accord)`, `avtal`, `Les pays ont signé un nouvel accord.`, [`avtalet`, `avtaler`, `avtalar`], `ett avtal.`),
+        Z(`Sverige är ett ___ i EU. (État membre)`, `medlemsland`, `La Suède est un État membre de l'UE.`, [`medlemsländer`, `medlemslandet`, `medlemslandar`], `ett medlemsland.`)
+      ],
+      pit: [`**underskott** (déficit) ≠ **överskott** (excédent) : lis bien le préfixe **under- / över-**.`, `**en union** ≠ **ett fackförbund** : le premier est politique, le second est un syndicat.`]
+    },
+    {
+      id: 'c1b6', title: 'Éthique, société et débat',
+      text: [
+        `Dans un débat, on parle de **värderingar** (valeurs), **principer** (principes), **dilemman** (dilemmes), **ansvar** (responsabilité). La Suède est connue pour sa **jämställdhet** (égalité entre les sexes), son **individualism** et sa confiance dans les institutions.`,
+        `Pour argumenter, on emploie des verbes comme **hävda** (affirmer), **invända** (objecter), **anse** (estimer), **bestrida** (contester), **kräva** (exiger), **motivera** (justifier). Et des adjectifs : **rimlig** (raisonnable), **orimlig** (déraisonnable), **etisk**, **moralisk**, **kontroversiell**.`
+      ],
+      keys: [`**hävda, invända, bestrida** : affirmer, objecter, contester.`, `**rimlig / orimlig** = raisonnable / déraisonnable.`, `**jämställdhet** = égalité entre les sexes.`],
+      vocab: [W('en värdering|värderingar|valeur, jugement de valeur'), W('en princip|principer|principe'), W('ett dilemma|dilemman|dilemme'), W('en jämställdhet||égalité des sexes'), W('en åsikt|åsikter|opinion'), W('en kritik||critique'), W('v invända|invänder|invände|invänt|objecter'), W('v bestrida|bestrider|bestred|bestridit|contester'), W('v kräva|kräver|krävde|krävt|exiger'), W('v motivera|motiverar|motiverade|motiverat|justifier'), W('rimlig|raisonnable'), W('kontroversiell|controversé')],
+      phrases: [P(`Jag invänder mot förslaget.`, `Je m'oppose à la proposition.`), P(`Hon bestred anklagelserna.`, `Elle a contesté les accusations.`), P(`Kravet är fullt rimligt.`, `L'exigence est tout à fait raisonnable.`), P(`Frågan är mycket kontroversiell.`, `La question est très controversée.`)],
+      cloze: [
+        Z(`Jag ___ mot förslaget. (m'oppose)`, `invänder`, `Je m'oppose à la proposition.`, [`invände`, `invänt`, `invända`], `Présent : invänder.`),
+        Z(`Hon ___ anklagelserna. (a contesté)`, `bestred`, `Elle a contesté les accusations.`, [`bestrider`, `bestridit`, `bestrida`], `Prétérit fort : bestred.`),
+        Z(`Förslaget är ___ . (raisonnable)`, `rimligt`, `La proposition est raisonnable.`, [`rimlig`, `rimliga`, `rimligen`], `förslag est ett-ord : rimligt.`),
+        Z(`Det är ett svårt ___ . (dilemme)`, `dilemma`, `C'est un dilemme difficile.`, [`dilemman`, `dilemmat`, `dilemmer`], `ett dilemma (pluriel dilemman).`)
+      ],
+      pit: [`**invända mot** (objecter à) : la préposition est **mot**.`, `**rimlig** et **rimligen** : adjectif vs adverbe (« raisonnablement »).`]
+    }
+  ]
+});
+
 /* Mots en tuiles (comme Nemo) : thème → liste de mots {sv, fr}. Un mot signalé « à apprendre » entre dans la répétition espacée
    (2 exercices : suédois → français, français → suédois). Ids : w<thème>-s<k> / w<thème>-f<k> : AJOUTER À LA FIN, ne jamais réordonner. */
 CG.words.push(
@@ -937,7 +1805,7 @@ CG.words.push(
   ] },
   { id: 'xj', name: 'Météo', icon: '⛅', color: '#F76B15', words: [
     V(`en sol`, `un soleil`), V(`ett regn`, `une pluie`), V(`en snö`, `de la neige`), V(`en vind`, `un vent`), V(`ett moln`, `un nuage`), V(`en åska`, `un orage, du tonnerre`),
-    V(`en dimma`, `un brouillard`), V(`en is`, `de la glace`), V(`en himmel`, `un ciel`), V(`en temperatur`, `une température`), V(`ett grad`, `un degré`),
+    V(`en dimma`, `un brouillard`), V(`en is`, `de la glace`), V(`en himmel`, `un ciel`), V(`en temperatur`, `une température`), V(`en grad`, `un degré`),
     V(`det regnar`, `il pleut`), V(`det snöar`, `il neige`), V(`det blåser`, `il y a du vent`)
   ] },
   { id: 'xs', name: 'Nombres', icon: '🔢', color: '#7C66DC', words: [
@@ -952,6 +1820,391 @@ CG.words.push(
   ] }
 );
 
+/* SY Svenska 0.5 : tuiles supplémentaires (genre en/ett, pluriel, formes verbales). Ids append-only. */
+CG.words.push(
+  { id: 'nat', name: 'Nature et animaux', icon: '🌲', color: '#2F9E44', words: [
+    W('en skog|skogar|forêt'), W('en sjö|sjöar|lac'), W('ett hav|hav|mer, océan'), W('ett berg|berg|montagne'), W('en å|åar|rivière'), W('en strand|stränder|plage'), W('en ö|öar|île'),
+    W('en äng|ängar|prairie'), W('ett träd|träd|arbre'), W('en blomma|blommor|fleur'), W('ett gräs|gräs|herbe'), W('en sten|stenar|pierre'), W('en vind|vindar|vent'),
+    W('en älg|älgar|élan'), W('en räv|rävar|renard'), W('en varg|vargar|loup'), W('en björn|björnar|ours'), W('en hare|harar|lièvre'), W('en fågel|fåglar|oiseau'),
+    W('en fisk|fiskar|poisson'), W('en groda|grodor|grenouille'), W('en myra|myror|fourmi'), W('en fjäril|fjärilar|papillon'), W('en bi|bin|abeille'), W('en hjort|hjortar|cerf'),
+    W('en ekorre|ekorrar|écureuil'), W('en orm|ormar|serpent'), W('en uggla|ugglor|chouette'), W('en svan|svanar|cygne'), W('en säl|sälar|phoque')
+  ]},
+  { id: 'kro', name: 'Corps et santé', icon: '🩺', color: '#E5484D', words: [
+    W('ett huvud|huvuden|tête'), W('en hals|halsar|cou, gorge'), W('en axel|axlar|épaule'), W('en rygg|ryggar|dos'), W('en mage|magar|ventre, estomac'), W('ett ben|ben|jambe, os'),
+    W('ett knä|knän|genou'), W('en fot|fötter|pied'), W('en tå|tår|orteil'), W('en armbåge|armbågar|coude'), W('en handled|handleder|poignet'), W('ett finger|fingrar|doigt'),
+    W('ett hjärta|hjärtan|cœur'), W('en lunga|lungor|poumon'), W('ett blod||sang'), W('ett öga|ögon|œil'), W('ett öra|öron|oreille'), W('en näsa|näsor|nez'), W('en tand|tänder|dent'),
+    W('en hud||peau'), W('ett hår|hår|cheveux'), W('en röst|röster|voix'), W('en läkare|läkare|médecin'), W('en tandläkare|tandläkare|dentiste'), W('ett sjukhus|sjukhus|hôpital'),
+    W('en medicin|mediciner|médicament'), W('en skada|skador|blessure'), W('en huvudvärk||mal de tête'), W('en hosta||toux'), W('en kropp|kroppar|corps')
+  ]},
+  { id: 'job', name: 'Métiers', icon: '👷', color: '#F76B15', words: [
+    W('en lärare|lärare|enseignant'), W('en sjuksköterska|sjuksköterskor|infirmier(ère)'), W('en snickare|snickare|menuisier'), W('en elektriker|elektriker|électricien'), W('en kock|kockar|cuisinier'),
+    W('en bagare|bagare|boulanger'), W('en frisör|frisörer|coiffeur'), W('en polis|poliser|policier'), W('en brandman|brandmän|pompier'), W('en bonde|bönder|agriculteur'),
+    W('en förare|förare|conducteur'), W('en pilot|piloter|pilote'), W('en ingenjör|ingenjörer|ingénieur'), W('en arkitekt|arkitekter|architecte'), W('en konstnär|konstnärer|artiste'),
+    W('en musiker|musiker|musicien'), W('en skådespelare|skådespelare|acteur'), W('en journalist|journalister|journaliste'), W('en advokat|advokater|avocat'), W('en revisor|revisorer|expert-comptable'),
+    W('en säljare|säljare|vendeur'), W('en chef|chefer|chef'), W('en städare|städare|agent d\'entretien'), W('en mekaniker|mekaniker|mécanicien'), W('en forskare|forskare|chercheur'),
+    W('en veterinär|veterinärer|vétérinaire'), W('en fotograf|fotografer|photographe'), W('en servitör|servitörer|serveur'), W('en bibliotekarie|bibliotekarier|bibliothécaire'), W('en designer|designers|designer')
+  ]},
+  { id: 'sta', name: 'Ville et transport', icon: '🚆', color: '#0091FF', words: [
+    W('en stad|städer|ville'), W('en by|byar|village'), W('en gata|gator|rue'), W('ett torg|torg|place (marché)'), W('en bro|broar|pont'), W('en park|parker|parc'),
+    W('en station|stationer|gare, station'), W('ett tåg|tåg|train'), W('en buss|bussar|bus'), W('en spårvagn|spårvagnar|tramway'), W('en tunnelbana|tunnelbanor|métro'), W('en färja|färjor|ferry'),
+    W('en cykel|cyklar|vélo'), W('en bil|bilar|voiture'), W('ett flygplan|flygplan|avion'), W('en flygplats|flygplatser|aéroport'), W('en hamn|hamnar|port'), W('en väg|vägar|route, chemin'),
+    W('en motorväg|motorvägar|autoroute'), W('ett trafikljus|trafikljus|feu de circulation'), W('en korsning|korsningar|carrefour'), W('en hållplats|hållplatser|arrêt'), W('en biljett|biljetter|billet'),
+    W('en karta|kartor|carte'), W('en adress|adresser|adresse'), W('ett hörn|hörn|coin'), W('en trottoar|trottoarer|trottoir'), W('en parkering|parkeringar|parking'), W('ett bibliotek|bibliotek|bibliothèque'), W('ett museum|museer|musée')
+  ]},
+  { id: 'kon', name: 'Magasin et argent', icon: '🛒', color: '#F5B800', words: [
+    W('en affär|affärer|magasin, affaire'), W('en butik|butiker|boutique'), W('en marknad|marknader|marché'), W('ett pris|priser|prix'), W('en rabatt|rabatter|remise'), W('ett kvitto|kvitton|reçu, ticket'),
+    W('en kassa|kassor|caisse'), W('en kund|kunder|client'), W('en påse|påsar|sac (plastique)'), W('en kasse|kassar|sac (grand)'), W('en vara|varor|marchandise, article'), W('ett erbjudande|erbjudanden|offre'),
+    W('en kortbetalning|kortbetalningar|paiement par carte'), W('en bank|banker|banque'), W('ett konto|konton|compte'), W('en lön|löner|salaire'), W('en räkning|räkningar|facture, addition'),
+    W('en skatt|skatter|impôt'), W('en avgift|avgifter|frais'), W('en försäkring|försäkringar|assurance'), W('en gåva|gåvor|cadeau'), W('en present|presenter|cadeau'), W('en storlek|storlekar|taille'),
+    W('v betala|betalar|betalade|betalat|payer'), W('v kosta|kostar|kostade|kostat|coûter'), W('v handla|handlar|handlade|handlat|faire les courses'), W('v spara|sparar|sparade|sparat|épargner, sauvegarder'),
+    W('v låna|lånar|lånade|lånat|emprunter, prêter'), W('v byta|byter|bytte|bytt|changer, échanger')
+  ]},
+  { id: 'sko', name: 'École et travail', icon: '📚', color: '#7C66DC', words: [
+    W('en skola|skolor|école'), W('ett klassrum|klassrum|salle de classe'), W('en elev|elever|élève'), W('en student|studenter|étudiant'), W('en lektion|lektioner|leçon'), W('ett prov|prov|examen'),
+    W('en läxa|läxor|devoir'), W('en bok|böcker|livre'), W('en penna|pennor|stylo, crayon'), W('en skrivbok|skrivböcker|cahier'), W('en tavla|tavlor|tableau'), W('en dator|datorer|ordinateur'),
+    W('ett kontor|kontor|bureau'), W('ett möte|möten|réunion'), W('en kollega|kollegor|collègue'), W('en chef|chefer|chef'), W('ett projekt|projekt|projet'), W('en uppgift|uppgifter|tâche'),
+    W('en rast|raster|pause'), W('en semester|semestrar|vacances'), W('en arbetsdag|arbetsdagar|journée de travail'), W('ett företag|företag|entreprise'), W('en kund|kunder|client'), W('en e-post||e-mail'),
+    W('v lära sig|lär sig|lärde sig|lärt sig|apprendre'), W('v studera|studerar|studerade|studerat|étudier'), W('v öva|övar|övade|övat|s\'entraîner'), W('v repetera|repeterar|repeterade|repeterat|réviser'),
+    W('v glömma|glömmer|glömde|glömt|oublier'), W('v komma ihåg|kommer ihåg|kom ihåg|kommit ihåg|se souvenir')
+  ]},
+  { id: 'mat', name: 'Cuisine et table', icon: '🍲', color: '#46A758', words: [
+    W('ett kök|kök|cuisine'), W('en spis|spisar|cuisinière'), W('en ugn|ugnar|four'), W('en kastrull|kastruller|casserole'), W('en stekpanna|stekpannor|poêle'), W('en kniv|knivar|couteau'),
+    W('en gaffel|gafflar|fourchette'), W('en sked|skedar|cuillère'), W('en tallrik|tallrikar|assiette'), W('ett glas|glas|verre'), W('en kopp|koppar|tasse'), W('en skål|skålar|bol'),
+    W('ett recept|recept|recette'), W('en ingrediens|ingredienser|ingrédient'), W('ett mjöl||farine'), W('ett salt||sel'), W('en peppar||poivre'), W('en vitlök|vitlökar|ail'), W('en lök|lökar|oignon'),
+    W('en potatis|potatisar|pomme de terre'), W('en morot|morötter|carotte'), W('en tomat|tomater|tomate'), W('en gurka|gurkor|concombre'), W('en svamp|svampar|champignon'), W('en köttbulle|köttbullar|boulette de viande'),
+    W('en sill|sillar|hareng'), W('en lax|laxar|saumon'), W('en kanelbulle|kanelbullar|brioche à la cannelle'), W('en gädda|gäddor|brochet'), W('ett knäckebröd|knäckebröd|pain croustillant')
+  ]},
+  { id: 'kul', name: 'Culture et loisirs', icon: '🎭', color: '#E93D82', words: [
+    W('en film|filmer|film'), W('en bio|biografer|cinéma'), W('en teater|teatrar|théâtre'), W('en konsert|konserter|concert'), W('en låt|låtar|chanson'), W('en sång|sånger|chant'),
+    W('ett band|band|groupe de musique'), W('ett instrument|instrument|instrument'), W('en gitarr|gitarrer|guitare'), W('ett piano|pianon|piano'), W('ett spel|spel|jeu'), W('en match|matcher|match'),
+    W('ett lag|lag|équipe'), W('en idrott|idrotter|sport'), W('en löprunda|löprundor|course (parcours)'), W('en promenad|promenader|promenade'), W('en resa|resor|voyage'), W('en semester|semestrar|vacances'),
+    W('ett museum|museer|musée'), W('ett konstverk|konstverk|œuvre d\'art'), W('en målning|målningar|peinture'), W('en bild|bilder|image'), W('en fest|fester|fête'), W('en helg|helger|week-end, fête'),
+    W('en hobby|hobbyer|hobby'), W('en trädgård|trädgårdar|jardin'), W('ett fotbollslag|fotbollslag|équipe de foot'), W('en stuga|stugor|maison de campagne, cabane'), W('en bastu|bastur|sauna'), W('ett skidspår|skidspår|piste de ski de fond')
+  ]},
+  { id: 'abs', name: 'Idées et pensées', icon: '💭', color: '#0F766E', words: [
+    W('en idé|idéer|idée'), W('en tanke|tankar|pensée'), W('en åsikt|åsikter|opinion'), W('en fråga|frågor|question'), W('ett svar|svar|réponse'), W('ett problem|problem|problème'),
+    W('en lösning|lösningar|solution'), W('en orsak|orsaker|cause'), W('en följd|följder|conséquence'), W('ett exempel|exempel|exemple'), W('en skillnad|skillnader|différence'), W('en likhet|likheter|ressemblance'),
+    W('en del|delar|partie'), W('en helhet|helheter|ensemble'), W('en början|början|début'), W('ett slut|slut|fin'), W('en gräns|gränser|limite'), W('en möjlighet|möjligheter|possibilité'),
+    W('en känsla|känslor|sentiment'), W('ett minne|minnen|souvenir'), W('en tro||croyance, foi'), W('en kunskap|kunskaper|connaissance'), W('en erfarenhet|erfarenheter|expérience'), W('en förklaring|förklaringar|explication'),
+    W('en plan|planer|plan'), W('en regel|regler|règle'), W('en ordning||ordre'), W('en vana|vanor|habitude'), W('en tur||chance'), W('ett val|val|choix, élection')
+  ]},
+  { id: 'vb2', name: 'Verbes forts et courants', icon: '⚙️', color: '#B45309', words: [
+    W('v skriva|skriver|skrev|skrivit|écrire'), W('v bli|blir|blev|blivit|devenir'), W('v bära|bär|bar|burit|porter'), W('v bjuda|bjuder|bjöd|bjudit|inviter, offrir'), W('v dricka|dricker|drack|druckit|boire'),
+    W('v falla|faller|föll|fallit|tomber'), W('v finna|finner|fann|funnit|trouver'), W('v flyga|flyger|flög|flugit|voler'), W('v ge|ger|gav|gett|donner'), W('v gripa|griper|grep|gripit|saisir'),
+    W('v hålla|håller|höll|hållit|tenir'), W('v kliva|kliver|klev|klivit|enjamber'), W('v ligga|ligger|låg|legat|être couché'), W('v sitta|sitter|satt|suttit|être assis'), W('v stå|står|stod|stått|être debout'),
+    W('v lyda|lyder|lydde|lytt|obéir'), W('v lägga|lägger|lade|lagt|poser, ranger'), W('v rinna|rinner|rann|runnit|couler'), W('v ringa|ringer|ringde|ringt|appeler'), W('v skina|skiner|sken|skinit|briller'),
+    W('v slå|slår|slog|slagit|frapper'), W('v smälta|smälter|smälte|smält|fondre'), W('v springa|springer|sprang|sprungit|courir'), W('v stiga|stiger|steg|stigit|monter'), W('v stjäla|stjäl|stal|stulit|voler'),
+    W('v svära|svär|svor|svurit|jurer'), W('v sjunga|sjunger|sjöng|sjungit|chanter'), W('v vinna|vinner|vann|vunnit|gagner'), W('v ljuga|ljuger|ljög|ljugit|mentir'), W('v dra|drar|drog|dragit|tirer'), W('v förlora|förlorar|förlorade|förlorat|perdre')
+  ]}
+);
+
+/* Genre (en / ett) et pluriel des mots déjà écrits avant 0.5 (clé = le mot sans article). Pluriel vide = pas de pluriel courant (mot massif). */
+GN(`en bil|bilar
+en bok|böcker
+en dag|dagar
+ett år|år
+en vecka|veckor
+en tid|tider
+en människa|människor
+en vän|vänner
+ett barn|barn
+en man|män
+en kvinna|kvinnor
+en stad|städer
+ett land|länder
+ett vatten|
+en mat|
+ett jobb|jobb
+en skola|skolor
+en väg|vägar
+ett rum|rum
+en dörr|dörrar
+ett fönster|fönster
+ett bord|bord
+en stol|stolar
+en säng|sängar
+en nyckel|nycklar
+en telefon|telefoner
+en dator|datorer
+ett namn|namn
+en fråga|frågor
+ett svar|svar
+ett problem|problem
+en idé|idéer
+ett tåg|tåg
+en buss|bussar
+ett flygplan|flygplan
+en båt|båtar
+ett hus|hus
+ett huvud|huvuden
+ett ansikte|ansikten
+ett öga|ögon
+ett öra|öron
+en näsa|näsor
+en mun|munnar
+en tand|tänder
+ett hår|hår
+en hals|halsar
+en axel|axlar
+en arm|armar
+en hand|händer
+ett finger|fingrar
+en mage|magar
+en rygg|ryggar
+ett ben|ben
+ett knä|knän
+en fot|fötter
+ett hjärta|hjärtan
+en hud|hudar
+en tröja|tröjor
+en skjorta|skjortor
+en kjol|kjolar
+en klänning|klänningar
+en jacka|jackor
+en kappa|kappor
+en sko|skor
+en strumpa|strumpor
+en mössa|mössor
+en handske|handskar
+en halsduk|halsdukar
+en hatt|hattar
+en väska|väskor
+ett bälte|bälten
+ett bröd|bröd
+en ost|ostar
+ett smör|
+en mjölk|
+ett ägg|ägg
+ett kött|
+en fisk|fiskar
+en kyckling|kycklingar
+en potatis|potatisar
+ett ris|
+en grönsak|grönsaker
+en frukt|frukter
+ett äpple|äpplen
+en apelsin|apelsiner
+en banan|bananer
+en tomat|tomater
+en sallad|sallader
+en soppa|soppor
+ett kaffe|
+ett te|
+en juice|juicer
+en öl|öl
+ett vin|viner
+ett socker|
+ett salt|
+en kaka|kakor
+en glass|glassar
+ett glas|glas
+en mamma|mammor
+en pappa|pappor
+en mor|mödrar
+en far|fäder
+en syster|systrar
+en bror|bröder
+en dotter|döttrar
+en son|söner
+en mormor|mormödrar
+en farmor|farmödrar
+en morfar|morfäder
+en farfar|farfäder
+en make|makar
+en fru|fruar
+en kompis|kompisar
+en granne|grannar
+en chef|chefer
+en lärare|lärare
+en läkare|läkare
+ett kök|kök
+ett badrum|badrum
+ett sovrum|sovrum
+ett vardagsrum|vardagsrum
+en trädgård|trädgårdar
+en trappa|trappor
+ett tak|tak
+ett golv|golv
+en vägg|väggar
+en lampa|lampor
+en spegel|speglar
+en soffa|soffor
+en matta|mattor
+ett kylskåp|kylskåp
+en spis|spisar
+en tvål|tvålar
+en handduk|handdukar
+en morgon|morgnar
+en kväll|kvällar
+en natt|nätter
+en eftermiddag|eftermiddagar
+en sol|solar
+ett regn|
+en snö|
+en vind|vindar
+ett moln|moln
+en åska|
+en dimma|dimmor
+en is|
+en himmel|himlar
+en temperatur|temperaturer
+en grad|grader
+en station|stationer
+en flygplats|flygplatser
+ett hotell|hotell
+en restaurang|restauranger
+en butik|butiker
+en bank|banker
+ett apotek|apotek
+ett sjukhus|sjukhus
+ett bibliotek|bibliotek
+ett museum|museer
+en park|parker
+en gata|gator
+ett torg|torg
+en bro|broar
+en kyrka|kyrkor
+en strand|stränder
+en skog|skogar
+en sjö|sjöar
+ett hav|hav
+ett berg|berg
+en katt|katter
+en kopp|koppar
+en kanelbulle|kanelbullar
+en måndag|måndagar
+en tisdag|tisdagar
+en onsdag|onsdagar
+en torsdag|torsdagar
+en fredag|fredagar
+en lördag|lördagar
+en söndag|söndagar
+ett möte|möten
+en kollega|kollegor
+ett företag|företag
+en uppgift|uppgifter
+ett mejl|mejl
+en frist|frister
+`);
+
+VF(`prata|pratar|pratade|pratat
+äta|äter|åt|ätit
+vilja|vill|ville|velat
+veta|vet|visste|vetat
+kunna|kan|kunde|kunnat
+gå|går|gick|gått
+komma|kommer|kom|kommit
+göra|gör|gjorde|gjort
+ha|har|hade|haft
+ta|tar|tog|tagit
+säga|säger|sa|sagt
+läsa|läser|läste|läst
+skriva|skriver|skrev|skrivit
+arbeta|arbetar|arbetade|arbetat
+vila|vilar|vilade|vilat
+köpa|köper|köpte|köpt
+sälja|säljer|sålde|sålt
+sova|sover|sov|sovit
+behöva|behöver|behövde|behövt
+se|ser|såg|sett
+höra|hör|hörde|hört
+hjälpa|hjälper|hjälpte|hjälpt
+förstå|förstår|förstod|förstått
+tycka|tycker|tyckte|tyckt
+tro|tror|trodde|trott
+älska|älskar|älskade|älskat
+bo|bor|bodde|bott
+heta|heter|hette|hetat
+vänta|väntar|väntade|väntat
+hitta|hittar|hittade|hittat
+öppna|öppnar|öppnade|öppnat
+stänga|stänger|stängde|stängt
+börja|börjar|började|börjat
+sluta|slutar|slutade|slutat
+ringa|ringer|ringde|ringt
+fråga|frågar|frågade|frågat
+svara|svarar|svarade|svarat
+glömma|glömmer|glömde|glömt
+resa|reser|reste|rest
+betala|betalar|betalade|betalat
+springa|springer|sprang|sprungit
+simma|simmar|simmade|simmat
+laga|lagar|lagade|lagat
+tvätta|tvättar|tvättade|tvättat
+ge|ger|gav|gett
+träffa|träffar|träffade|träffat
+lära sig|lär sig|lärde sig|lärt sig
+`);
+
+/* Enrichissements des fiches A1-B1 existantes : tableaux et pièges. Aucune carte n'est modifiée (les ids restent). */
+UP('gr1', {
+  tables: [
+    T('Un mot, quatre formes', ['Mot', 'Singulier', 'Défini', 'Pluriel', 'Pluriel défini'], [
+      ['en bil', 'en bil', 'bil**en**', 'bil**ar**', 'bil**arna**'],
+      ['en flicka', 'en flicka', 'flick**an**', 'flick**or**', 'flick**orna**'],
+      ['ett hus', 'ett hus', 'hus**et**', 'hus', 'hus**en**'],
+      ['ett äpple', 'ett äpple', 'äppl**et**', 'äpple**n**', 'äppl**ena**']
+    ], 'L\'article défini se colle à la fin du mot : **bilen** = la voiture, **huset** = la maison.'),
+    T('Deviner le genre (indices, pas des règles sûres)', ['Plutôt « en »', 'Plutôt « ett »'], [
+      ['personnes et animaux : **en man**, **en katt**', 'mots en **-um** : **ett museum**, **ett centrum**'],
+      ['mots en **-are** : **en lärare**', 'mots en **-eri** : **ett bageri**'],
+      ['mots en **-ing**, **-het**, **-ion** : **en träning**, **en frihet**, **en station**', 'beaucoup de mots courts : **ett hus**, **ett land**, **ett barn**'],
+      ['la plupart des mots en **-a** : **en flicka**', 'exceptions en -a ou -e : **ett öga**, **ett äpple**']
+    ], 'Aucun indice n\'est parfait : apprends **toujours** le mot avec son article.')
+  ],
+  pit: ['**en** et **ett** ne sont pas « masculin » et « féminin » : c\'est le genre **commun** et le genre **neutre**.', 'L\'adjectif s\'accorde : **en stor bil**, mais **ett stort hus**.', 'Le genre ne suit pas le français : « une maison » = **ett hus**, « une voiture » = **en bil**.']
+});
+UP('gr2', {
+  tables: [T('Être et avoir au présent', ['Personne', 'vara (être)', 'ha (avoir)'], [
+    ['jag (je)', 'är', 'har'], ['du (tu)', 'är', 'har'], ['han / hon / den / det', 'är', 'har'], ['vi (nous)', 'är', 'har'], ['ni (vous)', 'är', 'har'], ['de (ils, elles)', 'är', 'har']
+  ], 'Une seule forme pour toutes les personnes : le verbe ne se conjugue pas selon le sujet.')],
+  pit: ['Ne cherche pas de « je suis / tu es / il est » différents : **är** pour tout le monde.', 'À l\'écrit on met le sujet : **Är du trött?** (inversion pour la question).']
+});
+UP('gr4', {
+  tables: [T('Mots interrogatifs', ['Mot', 'Sens', 'Exemple'], [
+    ['vad', 'quoi, que', 'Vad gör du?'], ['var', 'où', 'Var bor du?'], ['vem', 'qui', 'Vem är det?'], ['när', 'quand', 'När kommer du?'],
+    ['varför', 'pourquoi', 'Varför är du här?'], ['hur', 'comment', 'Hur mår du?'], ['hur mycket', 'combien', 'Hur mycket kostar det?'], ['vilken / vilket / vilka', 'quel(le)(s)', 'Vilken bok läser du?']
+  ])],
+  pit: ['Attention : **var** (où) et **vad** (quoi) se ressemblent, et **när** (quand) ressemble à « near » en anglais.', 'Dans la question, le verbe vient **avant** le sujet : **Var bor du?** (pas « Var du bor »).']
+});
+UP('gr5', {
+  tables: [T('Les quatre groupes de verbes au présent', ['Groupe', 'Infinitif', 'Présent', 'Terminaison'], [
+    ['1 (infinitif en -a, le plus fréquent)', 'tala (parler)', 'talar', '**-ar**'],
+    ['2 (radical en consonne)', 'köpa (acheter)', 'köper', '**-er**'],
+    ['3 (une syllabe, voyelle finale)', 'bo (habiter)', 'bor', '**-r**'],
+    ['4 (verbes forts, passé irrégulier)', 'skriva (écrire)', 'skriver', '**-er**']
+  ], 'Le groupe se reconnaît à la forme du verbe : apprends l\'infinitif avec son présent.')],
+  pit: ['L\'infinitif se dit **att tala**, mais on n\'écrit **att** que devant un infinitif (pas après un verbe modal : **Jag kan tala**).', 'Pas de forme pour « il parle » différente de « je parle » : **jag talar, han talar**.']
+});
+UP('nd1', {
+  tables: [T('Les pluriels : six familles', ['Famille', 'Terminaison', 'Exemple', 'Concerne surtout'], [
+    ['1', '**-or**', 'en flicka → flick**or**', 'les mots en -a (genre en)'],
+    ['2', '**-ar**', 'en bil → bil**ar** · en pojke → pojk**ar**', 'beaucoup de mots en (consonne ou -e)'],
+    ['3', '**-er**', 'en station → station**er** · ett museum → muse**er**', 'mots finissant en consonne, mots étrangers'],
+    ['4', '**-r**', 'en sko → sko**r** · en bro → bro**ar**', 'mots en voyelle accentuée'],
+    ['5', '**-n**', 'ett äpple → äppl**en** · ett hjärta → hjärt**an**', 'mots ett en voyelle'],
+    ['6', 'inchangé', 'ett hus → hus · en lärare → lärare', 'mots ett en consonne, mots en -are / -er']
+  ], 'Irréguliers à connaître : en man → **män**, en bok → **böcker**, en fot → **fötter**, ett öga → **ögon**, ett barn → **barn**.')],
+  pit: ['Le pluriel s\'apprend **avec le mot** : **en bil, bilar**. Les cartes de pluriel de l\'app t\'y entraînent.', 'Beaucoup de mots ett ne changent pas au pluriel : **ett hus → två hus**.']
+});
+UP('nd2', {
+  tables: [T('Accord de l\'adjectif', ['Adjectif', 'en-ord', 'ett-ord', 'Pluriel', 'Défini'], [
+    ['stor (grand)', 'en stor bil', 'ett stor**t** hus', 'stor**a** bilar', 'den stor**a** bilen'],
+    ['gul (jaune)', 'en gul bil', 'ett gul**t** hus', 'gul**a** hus', 'det gul**a** huset'],
+    ['ny (neuf)', 'en ny bil', 'ett ny**tt** hus', 'ny**a** hus', 'den ny**a** bilen'],
+    ['vacker (beau)', 'en vacker bil', 'ett vacker**t** hus', 'vackr**a** hus', 'den vackr**a** bilen'],
+    ['liten (petit)', 'en liten bil', 'ett lit**et** hus', '**små** hus', 'den **lilla** bilen']
+  ], 'Règle : **-t** avec un mot ett, **-a** au pluriel et après l\'article défini (den / det / de).')],
+  pit: ['Au défini il faut **deux** marques : l\'article devant et la finale du nom : **det stora huset** (pas « det stort hus »).', '**liten** est irrégulier : **litet**, **små**, **lilla**. À apprendre par cœur.']
+});
+UP('vb3', {
+  tables: [T('Les verbes modaux', ['Verbe', 'Sens', 'Exemple'], [
+    ['kan', 'pouvoir, savoir faire', 'Jag kan simma.'], ['vill', 'vouloir', 'Jag vill åka hem.'], ['ska', 'aller (intention), devoir', 'Vi ska äta nu.'],
+    ['måste', 'devoir (obligation)', 'Du måste vänta.'], ['får', 'avoir le droit, pouvoir', 'Du får gå nu.'], ['borde', 'devrait', 'Du borde sova mer.']
+  ], 'Après un modal, l\'infinitif s\'emploie **sans « att »**.')],
+  pit: ['**måste** et **ska** ne se confondent pas : **måste** = obligation, **ska** = plan ou ordre.', 'La négation vient **après** le modal : **Jag kan inte komma.**']
+});
+
 /* SY Svenska : apprendre le suédois avec de courtes fiches et des cartes revues au bon moment (répétition espacée), voix suédoise. */
 'use strict';
 const $ = id => document.getElementById(id);
@@ -961,22 +2214,48 @@ const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.f
 const plural = (n, s, p) => n + ' ' + (n > 1 ? (p || s + 's') : s);
 
 /* ---------------------------------------------------------------- données */
+const svFull = v => v.g ? v.g + ' ' + v.sv : v.sv;                    /* « en bil » : le genre fait partie du mot */
+const wordInfo = v => [v.g && v.pl ? 'Pluriel : ' + v.pl : '', v.forms ? 'Formes : ' + v.forms.replace(/ · /g, ', ') : '', v.note].filter(Boolean).join(' · ');
+function fixWord(v) {
+  const m = /^(en|ett) (.+)$/.exec(v.sv); if (m) { v.g = m[1]; v.sv = m[2]; }
+  v.g = v.g || ''; v.pl = v.pl || ''; v.forms = v.forms || '';
+  const g = GENDERS[v.sv];
+  if (g && (!v.g || v.g === g.g) && !v.forms && !/\s/.test(v.sv) && (v.g || !v.pl)) { v.g = g.g; if (!v.pl) v.pl = g.pl; }
+  if (!v.g && !v.forms && !v.pl && VERBFORMS[v.sv]) v.forms = VERBFORMS[v.sv];
+  return v;
+}
+/* enrichissements de fiches existantes (tableaux, pièges, mots en plus) : les ids des cartes déjà faites ne bougent pas */
+CG.themes.forEach(t => t.fiches.forEach(f => {
+  const u = UPGRADES[f.id]; if (!u) return;
+  ['tables', 'pit'].forEach(k => { if (u[k]) f[k] = (f[k] || []).concat(u[k]); });
+  if (u.text) f.text = u.text; if (u.keys) f.keys = u.keys;
+  [['vocabAdd', 'vocab'], ['phrasesAdd', 'phrases'], ['clozeAdd', 'cloze'], ['extraAdd', 'extra']].forEach(([a, k]) => { if (u[a]) f[k] = (f[k] || []).concat(u[a]); });
+}));
+CG.themes.forEach(t => t.fiches.forEach(f => (f.vocab || []).forEach(fixWord)));
+CG.words.forEach(w => w.words.forEach(fixWord));
 const THEMES = CG.themes, FICHES = [], CARDS = {}, FBY = {}, TBY = {}, POOL = {};
 THEMES.forEach(t => {
   TBY[t.id] = t; POOL[t.id] = []; t.lvl = t.lvl || (['pm', 'gr', 'vq', 'cu'].includes(t.id) ? 'A1' : 'A2');
   t.fiches.forEach(f => (f.vocab || []).forEach(v => POOL[t.id].push(v)));
 });
+/* faux pluriels plausibles pour le QCM (jamais le bon) */
+function pluralDistractors(v) {
+  const stem = /[aeiouyåäö]$/.test(v.sv) ? v.sv.slice(0, -1) : v.sv;
+  const c = [v.sv + 'ar', v.sv + 'or', v.sv + 'er', stem + 'ar', stem + 'or', stem + 'er', v.sv + 'n', v.sv + 'r', v.sv, stem + 'en'].filter((x, i, a) => x !== v.pl && a.indexOf(x) === i);
+  return shuffle(c).slice(0, 3);
+}
 function genCards(f) {
   const cards = [];
   (f.vocab || []).forEach((v, k) => {
-    const listen = k % 3 === 0;   /* un mot sur trois : carte d'écoute (le texte suédois reste caché) */
-    cards.push({ id: f.id + '-s' + k, kind: listen ? 'listen' : 'sv-fr', q: listen ? 'Écoute, puis choisis la traduction.' : 'Que veut dire « ' + v.sv + ' » ?', qsv: v.sv, hide: listen, a: v.fr, pool: 'fr', v });
-    cards.push({ id: f.id + '-f' + k, kind: 'fr-sv', q: 'Comment dit-on « ' + v.fr + ' » en suédois ?', a: v.sv, asv: v.sv, type: true, pool: 'sv', v });
+    cards.push({ id: f.id + '-s' + k, kind: 'sv-fr', q: 'Que veut dire « ' + svFull(v) + ' » ?', qsv: v.sv, a: v.fr, pool: 'fr', v, x: wordInfo(v) });
+    cards.push({ id: f.id + '-f' + k, kind: 'fr-sv', q: 'Comment dit-on « ' + v.fr + ' » en suédois ?', qsub: v.g ? 'avec l\'article en ou ett' : '', a: svFull(v), asv: v.sv, type: true, pool: 'sv', v, x: wordInfo(v) });
+    if (v.g) cards.push({ id: f.id + '-g' + k, kind: 'gender', q: '« ' + v.sv + ' » (' + v.fr + ') : en ou ett ?', a: v.g, d: [v.g === 'en' ? 'ett' : 'en'], asv: v.sv, v, x: svFull(v) + (v.pl ? ' → ' + v.pl : '') + (v.note ? ' · ' + v.note : '') });
+    if (v.g && v.pl) cards.push({ id: f.id + '-p' + k, kind: 'plural', q: 'Pluriel de « ' + svFull(v) + ' » (' + v.fr + ') ?', a: v.pl, d: pluralDistractors(v), asv: v.pl, type: true, v, x: svFull(v) + ' → ' + v.pl });
+    if (v.forms) cards.push({ id: f.id + '-t' + k, kind: 'forms', q: 'Les formes de « ' + v.sv + ' » (' + v.fr + ')', qsub: 'présent · prétérit · supin', a: v.forms.replace(/ · /g, ', '), asv: v.sv, v, x: v.note || '' });
   });
   (f.extra || []).forEach((c, j) => cards.push(Object.assign({ id: f.id + '-c' + j, kind: 'custom' }, c)));
   (f.phrases || []).forEach((p, k) => {
     cards.push({ id: f.id + '-o' + k, kind: 'order', q: 'Traduis en suédois', qfr: p.fr, a: p.sv, asv: p.sv, type: true, x: p.note || '' });
-    cards.push({ id: f.id + '-d' + k, kind: 'dict', q: 'Écoute et écris la phrase.', qsv: p.sv, hide: true, a: p.sv, asv: p.sv, type: true, x: 'Traduction : ' + p.fr });
   });
   (f.cloze || []).forEach((z, j) => cards.push({ id: f.id + '-z' + j, kind: 'cloze', q: z.s, qfr: z.fr, a: z.a, d: z.d, x: z.x, asv: z.s.replace('___', z.a), type: true }));
   cards.forEach(c => { c.fiche = f; CARDS[c.id] = c; });
@@ -988,16 +2267,18 @@ const WSETS = CG.words.map(w => { const id = 'w' + w.id, f = { id, title: w.name
 const WBY = {}; WSETS.forEach(w => { WBY[w.id] = w; POOL[w.id] = w.vocab; });
 
 /* ordre d'apprentissage : 1re fiche de chaque thème, puis 2e de chaque thème, etc. */
-const ORDER = []; for (let i = 0; i < 12; i++) THEMES.forEach(t => { if (t.fiches[i]) ORDER.push(t.fiches[i]); });
-/* ordre des cartes d'une fiche neuve : suédois → français et écoute, puis cartes écrites à la main, puis français → suédois */
-const KR = { 'sv-fr': 0, listen: 0, custom: 1, cloze: 1, dict: 2, order: 3, 'fr-sv': 3 };
+const LVLS = ['A1', 'A2', 'B1', 'B2', 'C1'];
+const ORDER = []; LVLS.forEach(L => { for (let i = 0; i < 30; i++) THEMES.forEach(t => { if (t.lvl === L && t.fiches[i]) ORDER.push(t.fiches[i]); }); });
+/* ordre des cartes d'une fiche neuve : suédois → français, puis genre / cartes écrites à la main, puis pluriels et formes, puis français → suédois */
+const KR = { 'sv-fr': 0, custom: 1, cloze: 1, gender: 1, plural: 2, forms: 2, order: 3, 'fr-sv': 3 };
 const newOrder = cards => cards.map((c, i) => [c, i]).sort((a, b) => (KR[a[0].kind] - KR[b[0].kind]) || (a[1] - b[1])).map(x => x[0]);
 
 /* leurres : mots du même thème (jamais la bonne réponse) */
 function choicesOf(c) {
   if (c.d) return shuffle([c.a].concat(c.d));
-  const field = c.pool, pool = POOL[c.fiche.theme.id].map(v => v[field]).filter((x, i, a) => x !== c.a && a.indexOf(x) === i);
-  let all = pool.length >= 3 ? pool : FICHES.reduce((s, f) => s.concat((f.vocab || []).map(v => v[field])), []).filter((x, i, a) => x !== c.a && a.indexOf(x) === i);
+  const field = c.pool, val = v => field === 'sv' ? svFull(v) : v[field];
+  const pool = POOL[c.fiche.theme.id].map(val).filter((x, i, a) => x !== c.a && a.indexOf(x) === i);
+  let all = pool.length >= 3 ? pool : FICHES.reduce((s, f) => s.concat((f.vocab || []).map(val)), []).filter((x, i, a) => x !== c.a && a.indexOf(x) === i);
   return shuffle([c.a].concat(shuffle(all.slice()).slice(0, 3)));
 }
 
@@ -1009,7 +2290,8 @@ const KEY = 'sy-svenska.v1';
 let S = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.cards) return s; } catch (e) { /* ignoré */ } return null; })()
   || { cards: {}, fiches: {}, days: {}, opts: {}, tiles: {} };
 S.tiles = S.tiles || {};
-S.opts = Object.assign({ maxReviews: 30, alwaysChoice: false, autoSpeak: true, rate: 0.85, voice: '' }, S.opts);
+S.opts = Object.assign({ maxReviews: 30, alwaysChoice: false, autoSpeak: false, rate: 0.85, voice: '' }, S.opts);
+if (!S.opts.v5) { S.opts.v5 = 1; S.opts.autoSpeak = false; }   /* 0.5 : plus de lecture automatique (la voix ne marche pas partout) */
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ } };
 const dayNum = d => { d = d || new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 864e5); };
 const dayIso = n => new Date(n * 864e5).toISOString().slice(0, 10);
@@ -1066,7 +2348,8 @@ function markKnown(f) {
 }
 function setLevel(l) {
   S.opts.level = l;
-  if (l === 'bases') THEMES.filter(t => t.lvl === 'A1').forEach(t => t.fiches.forEach(markKnown));
+  const upto = l === 'avance' ? ['A1', 'A2', 'B1'] : l === 'bases' ? ['A1'] : [];
+  THEMES.filter(t => upto.includes(t.lvl)).forEach(t => t.fiches.forEach(markKnown));
   save();
 }
 
@@ -1124,9 +2407,9 @@ function render() {
 const bar = (pct, color) => '<span class="bar"><i style="width:' + Math.round(pct * 100) + '%;' + (color ? 'background:' + color : '') + '"></i></span>';
 
 function levelChooser() {
-  return '<section class="hero"><div><p class="eyebrow">Bienvenue</p><h1>Quel est ton niveau ?</h1><p class="lead">Je m\'adapte : avec de bonnes bases, tu commences directement par l\'ordre des mots, les verbes, les adjectifs et le vocabulaire B1, avec des exercices où tu écris et tu écoutes (dictée, phrases à remettre en ordre, phrases à trous).</p>' +
-    '<div class="actions"><button class="btn primary big" data-act="level" data-l="bases">J\'ai déjà de bonnes bases</button><button class="btn big" data-act="level" data-l="debut">Je débute</button></div>' +
-    '<p class="muted small">« Bonnes bases » : les 17 fiches A1 sont marquées comme connues et reviennent en révision éclair dans 10 à 30 jours. Tu peux aussi marquer n\'importe quelle fiche comme connue, ou la refaire, depuis l\'onglet Fiches.</p></div></section>';
+  return '<section class="hero"><div><p class="eyebrow">Bienvenue</p><h1>Quel est ton niveau ?</h1><p class="lead">L\'app te fait apprendre des <b>mots</b> (toujours avec leur genre, <span class="gb g-en">en</span> ou <span class="gb g-ett">ett</span>, leur pluriel et leurs formes) et des <b>fiches complètes</b> de A1 à C1. Les exercices servent à fixer le tout.</p>' +
+    '<div class="actions"><button class="btn big" data-act="level" data-l="debut">Je débute</button><button class="btn primary big" data-act="level" data-l="bases">J\'ai de bonnes bases (A1 connu)</button><button class="btn big" data-act="level" data-l="avance">Je suis à l\'aise (je commence à B2)</button></div>' +
+    '<p class="muted small">Les fiches des niveaux « connus » sont marquées comme acquises et reviennent en révision éclair dans 10 à 30 jours. Tu peux aussi marquer n\'importe quelle fiche comme connue, ou la refaire, depuis l\'onglet Fiches.</p></div></section>';
 }
 function home() {
   if (!S.opts.level && !Object.keys(S.cards).length) return levelChooser();
@@ -1151,7 +2434,7 @@ function home() {
     tiles += '<button class="theme" data-theme="' + t.id + '" style="--t:' + t.color + '"><span class="ti">' + t.icon + '</span><b>' + esc(t.name) + ' <span class="lvl">' + t.lvl + '</span></b><small>' + started + ' / ' + t.fiches.length + ' fiches commencées</small>' + bar(nCards ? nM / nCards : 0, t.color) + '<small>' + nM + ' / ' + nCards + ' exercices ancrés</small></button>';
   });
   tiles += '</div>';
-  return hero + tiles + '<p class="how">Comment ça marche : chaque fiche se lit en 2 minutes, puis ses exercices reviennent <b>le lendemain, puis 3 jours, 7 jours, 2 semaines, 1 mois…</b> Chaque erreur ramène l\'exercice au début. Un exercice est « ancré » après 4 bonnes réponses espacées. Le bouton ▶ lit le suédois à voix haute.</p>';
+  return hero + tiles + '<p class="how">Comment ça marche : chaque fiche se lit en 2 minutes, puis ses exercices reviennent <b>le lendemain, puis 3 jours, 7 jours, 2 semaines, 1 mois…</b> Chaque erreur ramène l\'exercice au début. Un exercice est « ancré » après 4 bonnes réponses espacées. Les mots sont toujours donnés avec leur genre : <span class="gb g-en">en</span> ou <span class="gb g-ett">ett</span>.</p>';
 }
 function heroSide() {
   const s = streak(), m = mastered(), tot = Object.keys(CARDS).filter(id => !CARDS[id].w).length;
@@ -1181,22 +2464,38 @@ function fiche(id) {
     '<div class="actions"><button class="btn primary" data-act="learn" data-id="' + f.id + '">' + learn + '</button>' + (ficheStarted(f) ? '' : '<button class="btn" data-act="known" data-id="' + f.id + '">Je connais déjà</button>') + '<span class="badge ' + s.cls + '">' + s.label + '</span></div></article>';
 }
 const readMins = f => Math.max(1, Math.round((f.text.join(' ').split(/\s+/).length + (f.keys || []).join(' ').split(/\s+/).length) / 180));
+const gBadge = g => g ? '<span class="gb g-' + g + '">' + g + '</span>' : '';
 function vocabRows(list) {
-  return '<div class="vocab">' + list.map(v => '<div class="vrow">' + playBtn(v.sv) + '<span class="vsv">' + esc(v.sv) + '</span><span class="vfr">' + esc(v.fr) + '</span>' + (v.note ? '<span class="vnote">' + esc(v.note) + '</span>' : '') + '</div>').join('') + '</div>';
+  return '<div class="vocab">' + list.map(v => {
+    const extra = [v.g && v.pl ? 'pl. ' + v.pl : '', v.forms || '', v.note || ''].filter(Boolean).join(' · ');
+    return '<div class="vrow' + (v.g ? ' g-' + v.g : '') + '">' + playBtn(v.sv) + '<span class="vsv">' + gBadge(v.g) + esc(v.sv) + '</span><span class="vfr">' + esc(v.fr) + '</span>' + (extra ? '<span class="vnote">' + esc(extra) + '</span>' : '') + '</div>';
+  }).join('') + '</div>';
+}
+function tableHtml(t) {
+  return '<div class="tbl"><h4>' + esc(t.title) + '</h4><div class="tscroll"><table><thead><tr>' + t.cols.map(c => '<th>' + md(c) + '</th>').join('') + '</tr></thead><tbody>' +
+    t.rows.map(r => '<tr>' + r.map((c, i) => '<td' + (i === 0 ? ' class="t0"' : '') + '>' + md(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>' + (t.note ? '<p class="tn">' + md(t.note) + '</p>' : '') + '</div>';
 }
 function lessonBody(f) {
   let h = '<p class="rd-meta">⏱ ' + readMins(f) + ' min de lecture · ' + plural(f.cards.length, 'exercice') + ' à la suite</p>';
   f.text.forEach(p => { h += '<p>' + md(p) + '</p>'; });
-  if (f.vocab && f.vocab.length) h += '<h3 class="vh">Mots et phrases <small>clique sur ▶ pour écouter</small></h3>' + vocabRows(f.vocab);
-  if (f.phrases && f.phrases.length) h += '<h3 class="vh">Phrases <small>écoute, puis lis la traduction</small></h3>' + vocabRows(f.phrases);
+  (f.tables || []).forEach(t => { h += tableHtml(t); });
   if (f.keys && f.keys.length) h += '<div class="keys"><h3>L\'essentiel</h3><ul class="ess">' + f.keys.map(k => '<li>' + md(k) + '</li>').join('') + '</ul></div>';
+  if (f.vocab && f.vocab.length) h += '<h3 class="vh">Mots à retenir <small>' + gBadge('en') + ' ' + gBadge('ett') + ' = le genre, à apprendre avec le mot</small></h3>' + vocabRows(f.vocab);
+  if (f.phrases && f.phrases.length) h += '<h3 class="vh">Phrases <small>avec leur traduction</small></h3>' + vocabRows(f.phrases);
+  if (f.pit && f.pit.length) h += '<div class="pits"><h3>⚠️ Pièges</h3><ul class="ess">' + f.pit.map(k => '<li>' + md(k) + '</li>').join('') + '</ul></div>';
   return h;
 }
 /* carnet de mots : tous les mots des fiches commencées */
 
 /* ---------------------------------------------------------------- tuiles de mots (façon Nemo) */
 const tileState = id => S.tiles[id] || '';
-const tileCards = (w, k) => [w.id + '-s' + k, w.id + '-f' + k];
+const tileCards = (w, k) => ['s', 'f', 'g', 'p', 't'].map(x => w.id + '-' + x + k).filter(id => CARDS[id]);
+/* mots déjà « à apprendre » : on ajoute les nouvelles cartes (genre, pluriel, formes) sans toucher aux anciennes */
+Object.keys(S.tiles).forEach(wid => {
+  if (S.tiles[wid] !== 'learn') return;
+  const i = wid.lastIndexOf('-'), w = WBY[wid.slice(0, i)]; if (!w) return;
+  tileCards(w, +wid.slice(i + 1)).forEach(id => { if (!S.cards[id]) S.cards[id] = { b: 0, due: today(), n: 0, ok: 0, last: today() }; });
+});
 function setTile(w, k, state) {
   const t = today(), wid = w.id + '-' + k;
   if (state) S.tiles[wid] = state; else delete S.tiles[wid];
@@ -1224,12 +2523,12 @@ function tileSet(w) {
     const s = tileState(w.id + '-' + k);
     if (s === 'out' || (hideKnown && s === 'known')) return;
     const c = st(w.id + '-s' + k), done = s === 'learn' && c && c.b >= MASTER;
-    h += '<button class="tile' + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + '" data-tile="' + k + '"><span>' + esc(flip[k] ? v.fr : v.sv) + '</span></button>';
+    h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + '" data-tile="' + k + '"><span>' + esc(flip[k] ? v.fr : svFull(v)) + '</span></button>';
   });
   h += '</div>';
   if (sel != null) {
     const v = w.vocab[sel], s = tileState(w.id + '-' + sel);
-    h += '<div class="tilebar"><b>' + esc(v.sv) + '</b> · ' + esc(v.fr) + ' ' + playBtn(v.sv) + '<div class="actions">' +
+    h += '<div class="tilebar"><b>' + gBadge(v.g) + esc(v.sv) + '</b> · ' + esc(v.fr) + ' ' + playBtn(v.sv) + (v.g && v.pl ? '<p class="muted small">pluriel : <b>' + esc(v.pl) + '</b></p>' : '') + (v.forms ? '<p class="muted small">' + esc(v.forms) + '</p>' : '') + (v.note ? '<p class="muted small">' + esc(v.note) + '</p>' : '') + '<div class="actions">' +
       '<button class="btn' + (s === 'learn' ? ' primary' : '') + '" data-act="tset" data-s="learn">À apprendre</button><button class="btn' + (s === 'known' ? ' primary' : '') + '" data-act="tset" data-s="known">Je connais</button><button class="btn" data-act="tset" data-s="out">Exclure</button>' + (s ? '<button class="link" data-act="tset" data-s="">Réinitialiser</button>' : '') + '</div></div>';
   }
   const hidden = w.vocab.filter((v, k) => tileState(w.id + '-' + k) === 'out').length;
@@ -1285,6 +2584,24 @@ function checkOrder() {
   const c = CARDS[it.id], given = it.pick.map(i => it.bank.find(b => b.i === i).w).join(' ');
   answer(norm(given) === norm(c.a), given);
 }
+/* mots de tuiles jamais vus : on les présente d'abord (5 par 5), puis on les teste, au lieu de les interroger à froid */
+const wordKey = id => id.replace(/-[sfgpt](\d+)$/, '-$1');
+const isNewWord = key => { const x = st(key.replace(/-(\d+)$/, '-s$1')); return !x || !x.n; };
+function withIntros(q) {
+  const rest = [], groups = new Map();
+  q.forEach(it => {
+    const c = CARDS[it.id];
+    if (c && c.w && it.id !== wordKey(it.id) && isNewWord(wordKey(it.id))) { const k = wordKey(it.id); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(it); }
+    else rest.push(it);
+  });
+  const keys = Array.from(groups.keys()), out = rest.slice();
+  for (let i = 0; i < keys.length; i += 5) {
+    const g = keys.slice(i, i + 5), items = [].concat(...g.map(k => groups.get(k)));
+    g.forEach(k => { const first = groups.get(k).find(x => /-s\d+$/.test(x.id)) || groups.get(k)[0]; out.push({ id: first.id, intro: true, tries: 0 }); });
+    ['s', 'f', 'g', 'p', 't'].forEach(t => items.filter(x => new RegExp('-' + t + '\\d+$').test(x.id)).forEach(x => out.push(x)));
+  }
+  return out;
+}
 function startSession(kind, ficheId) {
   const q = [], seen = new Set(), t = today();
   const add = (id, practice) => { if (!seen.has(id)) { seen.add(id); q.push({ id, practice: !!practice, tries: 0 }); } };
@@ -1299,13 +2616,20 @@ function startSession(kind, ficheId) {
     newOrder(f.cards).forEach(c => { const s = st(c.id); add(c.id, !!s && s.due > t); });
     S.fiches[f.id] = S.fiches[f.id] || { read: t }; save();
   }
-  sess = { kind, q, i: 0, lessons, li: 0, read: [], answered: false, results: [] };
+  sess = { kind, q: kind === 'fiche' ? q : withIntros(q), i: 0, lessons, li: 0, read: [], answered: false, results: [] };
   if (!q.length && !lessons.length) { go('home'); return; }
   go('session');
 }
 const current = () => sess.q[sess.i];
 function sessTop(done, total, color) {
   return '<div class="sess-top"><button class="link" data-act="stop">✕ Arrêter</button>' + bar(total ? done / total : 0, color) + '<span class="muted">' + done + ' / ' + total + '</span></div>';
+}
+function introCard(c, t) {
+  const v = c.v;
+  return '<div class="intro"><p class="eyebrow">Nouveau mot</p><div class="iw">' + gBadge(v.g) + '<span>' + esc(v.sv) + '</span>' + playBtn(v.sv) + '</div><p class="ifr">' + esc(v.fr) + '</p>' +
+    (v.g && v.pl ? '<p class="imeta">Pluriel : <b>' + esc(v.pl) + '</b></p>' : '') + (v.forms ? '<p class="imeta">' + esc(v.forms) + '</p>' : '') + (v.note ? '<p class="imeta">' + esc(v.note) + '</p>' : '') +
+    (v.g ? '<p class="imeta hint">' + (v.g === 'en' ? 'Un mot « en » : <b>en ' + esc(v.sv) + '</b>' : 'Un mot « ett » : <b>ett ' + esc(v.sv) + '</b>') + ' — apprends-le avec son article.</p>' : '') +
+    '<div class="actions"><button class="btn primary big" data-act="intro-ok">J\'ai vu <kbd>Entrée</kbd></button></div></div>';
 }
 function session() {
   const s = sess;
@@ -1314,12 +2638,15 @@ function session() {
     return endNow();
   }
   const it = current(), c = CARDS[it.id], stt = st(it.id), t = c.fiche.theme;
+  const done = s.results.length, total = done + s.q.slice(s.i).filter(x => !x.intro).length + s.lessons.slice(s.li).reduce((a, f) => a + f.cards.length, 0);
+  if (it.intro) return '<div class="sess" style="--t:' + t.color + '">' + sessTop(done, total, t.color) + '<div class="qcard">' + introCard(c, t) + '</div></div>';
   const wantsRecall = !S.opts.alwaysChoice && stt && stt.b >= RECALL && !it.tries;
   const deep = stt && stt.b >= RECALL && !it.tries;   /* la phrase se tape au lieu de se reconstruire */
   let mode;
-  if (c.kind === 'dict') mode = 'type';
-  else if (c.kind === 'order') mode = deep ? 'type' : 'order';
-  else if (c.kind === 'cloze') mode = wantsRecall ? 'type' : 'choice';
+  if (c.kind === 'order') mode = deep ? 'type' : 'order';
+  else if (c.kind === 'cloze' || c.kind === 'plural') mode = wantsRecall ? 'type' : 'choice';
+  else if (c.kind === 'gender') mode = 'choice';
+  else if (c.kind === 'forms') mode = 'reveal';
   else mode = wantsRecall ? (c.type ? 'type' : 'reveal') : 'choice';
   it.mode = mode;
   if (mode === 'order' && !it.bank) {
@@ -1327,18 +2654,16 @@ function session() {
     let b, n = 0; do { b = shuffle(words.slice()); n++; } while (n < 6 && b.every((x, i) => x.i === i) && words.length > 1);
     it.bank = b; it.pick = [];
   }
-  const done = s.results.length, total = done + (s.q.length - s.i) + s.lessons.slice(s.li).reduce((a, f) => a + f.cards.length, 0);
   let body;
   if (mode === 'order') body = '<div id="ordwrap">' + orderHtml(it) + '</div>';
   else if (mode === 'choice') {
-    it.choices = it.choices || choicesOf(c);
-    body = '<div class="choices">' + it.choices.map((x, i) => '<button class="choice" data-v="' + esc(x) + '"><kbd>' + (i + 1) + '</kbd><span>' + esc(x) + '</span></button>').join('') + '</div>';
-  } else if (mode === 'type') body = '<div class="typein"><input type="text" id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + (c.kind === 'dict' ? 'Écris ce que tu entends' : 'Écris en suédois') + ' (å ä ö)"><button class="btn primary" data-act="check">Valider <kbd>Entrée</kbd></button></div><p class="muted small">Les accents sont tolérés (a pour å ou ä), mais note l\'orthographe exacte.</p>';
+    it.choices = it.choices || (c.kind === 'gender' ? ['en', 'ett'] : choicesOf(c));
+    body = '<div class="choices' + (c.kind === 'gender' ? ' two' : '') + '">' + it.choices.map((x, i) => '<button class="choice' + (c.kind === 'gender' ? ' g-' + x : '') + '" data-v="' + esc(x) + '"><kbd>' + (i + 1) + '</kbd><span>' + esc(x) + '</span></button>').join('') + '</div>';
+  } else if (mode === 'type') body = '<div class="typein"><input type="text" id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + (c.kind === 'fr-sv' && c.v && c.v.g ? 'Écris en suédois avec en/ett' : 'Écris en suédois') + ' (å ä ö)"><button class="btn primary" data-act="check">Valider <kbd>Entrée</kbd></button></div><p class="muted small">Les accents sont tolérés (a pour å ou ä), mais note l\'orthographe exacte.</p>';
   else body = '<div class="recall"><button class="btn big" data-act="reveal">Afficher la réponse <kbd>Espace</kbd></button></div>';
-  const slow = c.kind === 'dict' && SP.ok ? '<button type="button" class="play slow" data-say="' + esc(c.qsv) + '" data-rate="0.6" title="Écouter lentement" aria-label="Écouter lentement">🐢</button>' : '';
-  const qsvBtn = c.qsv && SP.ok ? '<div class="sayline">' + playBtn(c.qsv, c.hide ? 'la phrase' : c.qsv) + slow + '<span class="muted small">' + (c.kind === 'dict' ? 'Écouter · lent' : c.hide ? 'Écoute le mot' : 'Écouter') + '</span></div>' : '';
+  const qsvBtn = c.qsv && SP.ok ? '<div class="sayline">' + playBtn(c.qsv, c.qsv) + '<span class="muted small">Écouter</span></div>' : '';
   const qHtml = c.kind === 'cloze' ? esc(c.q).replace('___', '<span class="blank">___</span>') : esc(c.q);
-  const qfrHtml = c.qfr ? '<p class="qfr">' + (c.kind === 'order' ? '« ' + esc(c.qfr) + ' »' : esc(c.qfr)) + '</p>' : '';
+  const qfrHtml = c.qfr ? '<p class="qfr">' + (c.kind === 'order' ? '« ' + esc(c.qfr) + ' »' : esc(c.qfr)) + '</p>' : (c.qsub ? '<p class="qfr">' + esc(c.qsub) + '</p>' : '');
   return '<div class="sess" style="--t:' + t.color + '">' + sessTop(done, total, t.color) +
     '<div class="qcard"><p class="eyebrow">' + t.icon + ' ' + esc(t.name) + ' · ' + esc(c.fiche.title) + (stt ? '' : ' · <span class="newtag">nouvelle</span>') + '</p><h2 class="q">' + qHtml + '</h2>' + qfrHtml + qsvBtn + body +
     '<div class="fb" id="fb"></div><div class="next" id="nextwrap" hidden><button class="btn primary" data-act="next">Continuer <kbd>Entrée</kbd></button></div></div></div>';
@@ -1348,7 +2673,7 @@ function afterSessionRender() {
   if (!it) { const f = document.querySelector('[data-act="lesson-ok"]'); if (f && f.focus) f.focus({ preventScroll: true }); return; }
   const c = CARDS[it.id];
   if (S.opts.autoSpeak && c.qsv && !it.tries) speak(c.qsv);
-  const f = document.getElementById('typed') || document.querySelector('.choice, [data-act="reveal"]'); if (f && f.focus) f.focus({ preventScroll: true });
+  const f = document.getElementById('typed') || document.querySelector('.choice, [data-act="reveal"], [data-act="intro-ok"]'); if (f && f.focus) f.focus({ preventScroll: true });
 }
 function lessonScreen() {
   const f = sess.lessons[sess.li], t = f.theme;
@@ -1369,17 +2694,18 @@ function answer(ok, given, note) {
   const ti = $('typed'); if (ti) { ti.disabled = true; ti.classList.add(ok ? 'ok' : 'bad'); }
   const chk = document.querySelector('[data-act="check"], [data-act="check-order"]'); if (chk) chk.disabled = true;
   document.querySelectorAll('.chip').forEach(x => { x.disabled = true; });
-  const asv = c.asv || (c.hide ? c.qsv : '');
-  $('fb').innerHTML = (ok ? '<p class="good">✓ Bonne réponse' + (note ? ' <span class="muted">· ' + esc(note) + '</span>' : '') + '</p>' : '<p class="wrong">✗ La réponse était : <b>' + esc(c.a) + '</b>' + (it.tries < 3 ? ' <span class="muted">· il reviendra dans quelques exercices</span>' : '') + '</p>') +
+  const asv = c.asv || '';
+  $('fb').innerHTML = (ok ? '<p class="good">✓ Bonne réponse' + (note ? ' <span class="muted">· ' + esc(note) + '</span>' : '') + '</p>' : '<p class="wrong">✗ La réponse était : <b>' + esc(c.a) + '</b>' + (it.tries < 3 ? ' <span class="muted">· il reviendra dans quelques exercices</span>' : '') + '</p>' + (note ? '<p class="expl warn">' + esc(note) + '</p>' : '')) +
     (!ok && given && (it.mode === 'type' || it.mode === 'order') ? '<p class="expl">Ta réponse : ' + diffHtml(given, c.a) + '</p>' : '') +
-    (c.hide && c.kind !== 'dict' ? '<p class="expl">Tu as entendu : <b>' + esc(c.qsv) + '</b> ' + playBtn(c.qsv) + '</p>' : '') +
-    (c.asv && !c.hide ? '<p class="expl">En suédois : <b>' + esc(c.asv) + '</b> ' + playBtn(c.asv) + '</p>' : '') + (c.x ? '<p class="expl">' + esc(c.x) + '</p>' : '');
+    (c.asv ? '<p class="expl">En suédois : <b>' + esc(c.asv) + '</b> ' + playBtn(c.asv) + '</p>' : '') + (c.x ? '<p class="expl">' + esc(c.x) + '</p>' : '');
   if (S.opts.autoSpeak && asv && SP.ok) speak(asv);
   $('nextwrap').hidden = false; const nb = document.querySelector('[data-act="next"]'); if (nb) nb.focus();
 }
 function checkTyped() {
   const ti = $('typed'), c = CARDS[current().id]; if (!ti || !ti.value.trim()) return;
   const given = ti.value, exact = norm(given) === norm(c.a), loose = fold(given) === fold(c.a);
+  const bare = c.a.replace(/^(en|ett) /, '');
+  if (!exact && !loose && bare !== c.a && fold(given) === fold(bare)) { answer(false, given, 'Le mot est bon, mais il manque l\'article : ' + c.a + '. En suédois, le genre (en / ett) s\'apprend avec le mot.'); return; }
   answer(exact || loose, given, exact ? '' : loose ? 'attention à l\'orthographe : ' + c.a : '');
 }
 function reveal() {
@@ -1387,7 +2713,7 @@ function reveal() {
   document.querySelector('.recall').innerHTML = '<p class="answer">' + esc(c.a) + '</p>' + (c.x ? '<p class="expl">' + esc(c.x) + '</p>' : '') +
     '<div class="selfgrade"><button class="btn bad" data-act="no"><kbd>1</kbd> Je ne savais pas</button><button class="btn good" data-act="yes"><kbd>2</kbd> Je savais</button></div>';
   sess.revealed = true;
-  const asv = c.asv || (c.hide ? c.qsv : ''); if (S.opts.autoSpeak && asv && SP.ok) speak(asv);
+  const asv = c.asv || ''; if (S.opts.autoSpeak && asv && SP.ok) speak(asv);
 }
 function nextCard() { const s = sess; s.answered = false; s.revealed = false; s.i++; render(); }
 function lessonOk() {
@@ -1439,6 +2765,7 @@ document.addEventListener('click', e => {
     startSession('ids', ids.slice(0, 40));
   }
   else if (a === 'lesson-ok') lessonOk();
+  else if (a === 'intro-ok') nextCard();
   else if (a === 'level') { setLevel(b.dataset.l); go('home'); }
   else if (a === 'known') { markKnown(FBY[b.dataset.id]); render(); }
   else if (a === 'check-order') checkOrder();
@@ -1469,6 +2796,7 @@ document.addEventListener('keydown', e => {
   if (document.querySelector('[data-act="lesson-ok"]')) { if (k === 'Enter') { e.preventDefault(); lessonOk(); } return; }
   if (sess.answered) { if (k === 'Enter' || k === ' ') { e.preventDefault(); nextCard(); } return; }
   const it = current(); if (!it) return;
+  if (it.intro) { if (k === 'Enter' || k === ' ') { e.preventDefault(); nextCard(); } return; }
   if (it.mode === 'order') { if (k === 'Enter') { e.preventDefault(); checkOrder(); } return; }
   if (it.mode === 'type') { if (k === 'Enter') { e.preventDefault(); checkTyped(); } return; }
   if (it.mode === 'choice') { const n = parseInt(k, 10); if (!typing && n >= 1 && n <= 4 && it.choices[n - 1] != null) answer(it.choices[n - 1] === CARDS[it.id].a, it.choices[n - 1]); }
@@ -1495,7 +2823,7 @@ function mergeS(a, b) {
   Object.keys(b.fiches || {}).forEach(f => { if (!m.fiches[f]) m.fiches[f] = b.fiches[f]; });
   const bt = b.tmod || {};
   Object.keys(bt).forEach(k => { if (!(m.tmod[k] >= bt[k])) { m.tmod[k] = bt[k]; if (b.tiles && b.tiles[k]) m.tiles[k] = b.tiles[k]; else delete m.tiles[k]; } });
-  Object.keys(m.tmod).forEach(k => { if (!m.tiles[k] || m.tiles[k] === 'out') { const i = k.lastIndexOf('-'); delete m.cards[k.slice(0, i) + '-s' + k.slice(i + 1)]; delete m.cards[k.slice(0, i) + '-f' + k.slice(i + 1)]; } });
+  Object.keys(m.tmod).forEach(k => { if (!m.tiles[k] || m.tiles[k] === 'out') { const i = k.lastIndexOf('-'); ['s', 'f', 'g', 'p', 't'].forEach(x => { delete m.cards[k.slice(0, i) + '-' + x + k.slice(i + 1)]; }); } });
   m.opts = Object.assign({}, b.opts, m.opts); m.mod = Math.max(a.mod || 0, b.mod || 0);
   return m;
 }
