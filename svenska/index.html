@@ -141,6 +141,28 @@ html,body{overflow-x:hidden}
 .intro .imeta { margin: 4px 0; color: #4b5d6e; } .intro .imeta.hint { margin-top: 12px; font-size: .95rem; }
 .intro .actions { justify-content: center; margin-top: 18px; }
 @media (max-width: 700px) { .intro .iw { font-size: 2.1rem; } }
+
+/* compact (0.5.1) */
+.qcard.done .selfgrade{display:none}
+.qcard.done .recall{padding:0}
+.qcard.done .typein,.qcard.done .typein+p{display:none}
+.fb p{margin:6px 0}.fb .expl{margin:6px 0;padding:8px 12px}
+.sayline .muted{display:none}.sayline{margin-bottom:8px}
+.next{position:sticky;bottom:calc(var(--tabs-h,0px) + 6px);background:linear-gradient(transparent,var(--card) 35%);padding-top:10px}
+@media(max-width:700px){
+  .qcard{padding:14px 14px 12px}
+  .eyebrow{font-size:11px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .q{font-size:19px;line-height:1.3;margin:2px 0 8px}
+  .qfr{font-size:15px;margin:-2px 0 8px}
+  .choices{gap:7px}.choice{padding:9px 12px;font-size:16px}.choices.two .choice{padding:14px 8px;font-size:1.25rem}
+  .recall{padding:4px 0}.answer{font-size:22px;margin:4px 0}
+  .selfgrade{gap:8px;margin-top:8px}.selfgrade .btn{flex:1;padding:10px 8px;font-size:15px}
+  .selfgrade kbd,.next kbd,.typein kbd{display:none}
+  .btn.big{margin-bottom:0}
+  .sess-top{margin-bottom:8px}
+  .fb{margin-top:8px}.next{margin-top:8px}.next .btn{width:100%}
+  .typein{gap:8px}
+}
 </style>
 </head>
 <body>
@@ -2695,9 +2717,12 @@ function answer(ok, given, note) {
   const chk = document.querySelector('[data-act="check"], [data-act="check-order"]'); if (chk) chk.disabled = true;
   document.querySelectorAll('.chip').forEach(x => { x.disabled = true; });
   const asv = c.asv || '';
-  $('fb').innerHTML = (ok ? '<p class="good">✓ Bonne réponse' + (note ? ' <span class="muted">· ' + esc(note) + '</span>' : '') + '</p>' : '<p class="wrong">✗ La réponse était : <b>' + esc(c.a) + '</b>' + (it.tries < 3 ? ' <span class="muted">· il reviendra dans quelques exercices</span>' : '') + '</p>' + (note ? '<p class="expl warn">' + esc(note) + '</p>' : '')) +
+  const pb = asv ? ' ' + playBtn(asv) : '';
+  const showX = c.x && !(it.mode === 'reveal') && c.x !== note;
+  $('fb').innerHTML = (ok ? '<p class="good">✓ Bonne réponse' + pb + (note ? ' <span class="muted">· ' + esc(note) + '</span>' : '') + '</p>' : '<p class="wrong">✗ La réponse était : <b>' + esc(c.a) + '</b>' + pb + (it.tries < 3 ? ' <span class="muted">· reviendra bientôt</span>' : '') + '</p>' + (note ? '<p class="expl warn">' + esc(note) + '</p>' : '')) +
     (!ok && given && (it.mode === 'type' || it.mode === 'order') ? '<p class="expl">Ta réponse : ' + diffHtml(given, c.a) + '</p>' : '') +
-    (c.asv ? '<p class="expl">En suédois : <b>' + esc(c.asv) + '</b> ' + playBtn(c.asv) + '</p>' : '') + (c.x ? '<p class="expl">' + esc(c.x) + '</p>' : '');
+    (showX ? '<p class="expl">' + esc(c.x) + '</p>' : '');
+  const qc = document.querySelector('.qcard'); if (qc) qc.classList.add('done');
   if (S.opts.autoSpeak && asv && SP.ok) speak(asv);
   $('nextwrap').hidden = false; const nb = document.querySelector('[data-act="next"]'); if (nb) nb.focus();
 }
