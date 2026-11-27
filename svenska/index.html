@@ -336,7 +336,7 @@ html{overflow-x:hidden}body{overflow-x:clip}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.8.1 · build du 27/11 à 19:10">v0.8.1</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.9.0 · build du 27/11 à 19:42">v0.9.0</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -366,7 +366,7 @@ const W = s => {
   const p = s.split('|').map(x => x.trim()); let m;
   if ((m = /^(en|ett) (.+)$/.exec(p[0]))) return { sv: m[2], g: m[1], pl: p[1] || '', fr: p[2], note: p[3] || '', forms: '' };
   if ((m = /^v (.+)$/.exec(p[0]))) return { sv: m[1], g: '', pl: '', fr: p[4], note: p[5] || '', forms: p[1] + ' · ' + p[2] + ' · ' + p[3] };
-  return { sv: p[0], g: '', pl: '', fr: p[1], note: p[2] || '', forms: '' };
+  return { sv: p[0], g: '', pl: '', fr: p[1], note: p[2] || '', forms: '', plain: true };   /* plain : ni genre ni formes ajoutés (adjectif, adverbe, pronom, phrase…) */
 };
 /* T(titre, [colonnes], [[ligne], …], note?) = un tableau dans une fiche */
 const T = (title, cols, rows, note) => ({ title, cols, rows, note: note || '' });
@@ -3513,6 +3513,3146 @@ v svida|svider|sved|svidit|piquer, brûler (douleur)
 v gjuta|gjuter|göt|gjutit|couler (du métal)
 `);
 
+/* SY Svenska 0.9 : nouveaux thèmes de tuiles (total 5 000 mots). Ids append-only : ajouter à la fin d'un thème, ne jamais réordonner. */
+CG.words.push({ id: 'emo', name: 'Émotions et caractère', icon: '😊', color: '#E93D82', words: [] });
+ADDW('emo', `
+orolig|inquiet
+stressad|stressé
+avslappnad|détendu
+förvånad|surpris
+chockad|choqué
+generad|gêné
+skamsen|honteux
+stolt|fier
+avundsjuk|envieux
+svartsjuk|jaloux (en amour)
+ensam|seul
+uttråkad|qui s'ennuie
+irriterad|agacé
+upprörd|bouleversé, indigné
+förtvivlad|désespéré
+hoppfull|plein d'espoir
+tacksam|reconnaissant
+förälskad|amoureux
+kär|amoureux
+nyfiken|curieux
+optimistisk|optimiste
+pessimistisk|pessimiste
+självsäker|sûr de soi
+osäker|pas sûr, hésitant
+tålmodig|patient
+otålig|impatient
+envis|têtu
+generös|généreux
+snål|avare
+ödmjuk|humble
+arrogant|arrogant
+artig|poli
+oartig|impoli
+pratsam|bavard
+tystlåten|réservé
+social|sociable
+självisk|égoïste
+omtänksam|attentionné
+pålitlig|fiable
+trogen|fidèle
+otrogen|infidèle
+ansvarsfull|responsable
+slarvig|négligent
+noggrann|soigneux, minutieux
+kreativ|créatif
+allvarlig|sérieux
+känslig|sensible
+tuff|dur, coriace
+sårbar|vulnérable
+fräck|insolent
+charmig|charmant
+sympatisk|sympathique
+vänlig|aimable
+ovänlig|désagréable
+hjälpsam|serviable
+lojal|loyal
+rättvis|juste
+orättvis|injuste
+naiv|naïf
+barnslig|puéril
+bortskämd|gâté
+utåtriktad|extraverti
+inåtvänd|introverti
+missnöjd|mécontent
+lättad|soulagé
+rörd|ému
+imponerad|impressionné
+förvirrad|confus, perdu
+skräckslagen|terrifié
+modfälld|découragé
+deprimerad|déprimé
+v skämmas|skäms|skämdes|skämts|avoir honte
+v oroa sig|oroar sig|oroade sig|oroat sig|s'inquiéter
+v glädja sig|gläder sig|gladde sig|glatt sig|se réjouir
+v bli arg|blir arg|blev arg|blivit arg|se fâcher
+v känna sig|känner sig|kände sig|känt sig|se sentir
+v avsky|avskyr|avskydde|avskytt|détester
+v beundra|beundrar|beundrade|beundrat|admirer
+v uppskatta|uppskattar|uppskattade|uppskattat|apprécier, estimer
+v lita på|litar på|litade på|litat på|faire confiance à
+v tvivla|tvivlar|tvivlade|tvivlat|douter
+v skämta|skämtar|skämtade|skämtat|plaisanter
+v bry sig om|bryr sig om|brydde sig om|brytt sig om|se soucier de
+v trösta|tröstar|tröstade|tröstat|consoler
+v bråka|bråkar|bråkade|bråkat|se disputer
+v gräla|grälar|grälade|grälat|se quereller
+v förolämpa|förolämpar|förolämpade|förolämpat|insulter
+v reta|retar|retade|retat|taquiner, agacer
+v överraska|överraskar|överraskade|överraskat|surprendre
+v lugna sig|lugnar sig|lugnade sig|lugnat sig|se calmer
+en avund||envie, jalousie
+en svartsjuka||jalousie (amoureuse)
+en stolthet||fierté
+en tacksamhet||gratitude
+en besvikelse|besvikelser|déception
+en lättnad||soulagement
+en skräck||terreur
+en panik||panique
+ett humör||humeur
+en personlighet|personligheter|personnalité
+ett beteende|beteenden|comportement
+ett leende|leenden|sourire
+ett skratt|skratt|rire
+en suck|suckar|soupir
+en kram|kramar|câlin
+en puss|pussar|bisou
+en kyss|kyssar|baiser
+ett gräl|gräl|dispute
+ett bråk|bråk|bagarre, dispute
+en ursäkt|ursäkter|excuse
+`);
+CG.words.push({ id: 'sam', name: 'Société et politique', icon: '🏛️', color: '#7C66DC', words: [] });
+ADDW('sam', `
+en regering|regeringar|gouvernement
+en riksdag|riksdagar|parlement (suédois)
+ett parlament|parlament|parlement
+en statsminister|statsministrar|Premier ministre
+en minister|ministrar|ministre
+en president|presidenter|président
+en kung|kungar|roi
+en drottning|drottningar|reine
+en prins|prinsar|prince
+en prinsessa|prinsessor|princesse
+en monarki|monarkier|monarchie
+en republik|republiker|république
+ett riksdagsval|riksdagsval|élections législatives
+en valsedel|valsedlar|bulletin de vote
+en väljare|väljare|électeur
+v rösta|röstar|röstade|röstat|voter
+ett parti|partier|parti
+en partiledare|partiledare|chef de parti
+en opposition|oppositioner|opposition
+en kommun|kommuner|commune
+en region|regioner|région
+ett län|län|département (suédois)
+en stat|stater|État
+en nation|nationer|nation
+en medborgare|medborgare|citoyen
+ett medborgarskap|medborgarskap|citoyenneté
+en invånare|invånare|habitant
+en befolkning|befolkningar|population
+en invandrare|invandrare|immigré
+en flykting|flyktingar|réfugié
+en asyl||asile
+en integration||intégration
+en minoritet|minoriteter|minorité
+en majoritet|majoriteter|majorité
+en lag|lagar|loi|ne pas confondre avec ett lag (une équipe)
+en grundlag|grundlagar|constitution
+en reform|reformer|réforme
+en välfärd||protection sociale
+ett bidrag|bidrag|allocation, aide
+en arbetslöshet||chômage
+en fattigdom||pauvreté
+en rikedom|rikedomar|richesse
+en ojämlikhet|ojämlikheter|inégalité
+en diskriminering|diskrimineringar|discrimination
+en rasism||racisme
+en jämställdhet||égalité femmes-hommes
+en yttrandefrihet||liberté d'expression
+en pressfrihet||liberté de la presse
+en censur||censure
+en diktatur|diktaturer|dictature
+en revolution|revolutioner|révolution
+en demonstration|demonstrationer|manifestation
+en strejk|strejker|grève
+en fackförening|fackföreningar|syndicat
+en protest|protester|protestation
+en kampanj|kampanjer|campagne
+en debatt|debatter|débat
+en ideologi|ideologier|idéologie
+en politik||politique
+en vänster||gauche (politique)
+en höger||droite (politique)
+en kompromiss|kompromisser|compromis
+en förhandling|förhandlingar|négociation
+ett avtal|avtal|accord
+ett fördrag|fördrag|traité
+en allians|allianser|alliance
+en union|unioner|union
+en ambassadör|ambassadörer|ambassadeur
+en diplomat|diplomater|diplomate
+ett försvar||défense
+en armé|arméer|armée
+en militär|militärer|militaire
+en säkerhet||sécurité
+en terrorism||terrorisme
+en myndighet|myndigheter|autorité, administration
+en byråkrati|byråkratier|bureaucratie
+en korruption||corruption
+en skandal|skandaler|scandale
+en opinionsundersökning|opinionsundersökningar|sondage
+en statistik||statistique
+en utbildning|utbildningar|formation, éducation
+en sjukvård||système de santé
+en kollektivtrafik||transports en commun
+en infrastruktur|infrastrukturer|infrastructure
+v styra|styr|styrde|styrt|gouverner, diriger
+v regera|regerar|regerade|regerat|régner, gouverner
+v avgå|avgår|avgick|avgått|démissionner
+v protestera|protesterar|protesterade|protesterat|protester
+v demonstrera|demonstrerar|demonstrerade|demonstrerat|manifester
+v strejka|strejkar|strejkade|strejkat|faire grève
+v förhandla|förhandlar|förhandlade|förhandlat|négocier
+v införa|inför|införde|infört|introduire, instaurer
+v avskaffa|avskaffar|avskaffade|avskaffat|abolir
+v kritisera|kritiserar|kritiserade|kritiserat|critiquer
+v stödja|stöder|stödde|stött|soutenir
+politisk|politique (adj.)
+demokratisk|démocratique
+konservativ|conservateur
+liberal|libéral
+radikal|radical
+offentlig|public
+privat|privé
+statlig|étatique, public
+internationell|international
+nationell|national
+lokal|local
+olaglig|illégal
+laglig|légal
+`);
+CG.words.push({ id: 'eko', name: 'Économie et entreprise', icon: '💼', color: '#B45309', words: [] });
+ADDW('eko', `
+en firma|firmor|entreprise
+ett bolag|bolag|société (entreprise)
+ett aktiebolag|aktiebolag|société anonyme (AB)
+en koncern|koncerner|groupe (industriel)
+en fabrik|fabriker|usine
+en industri|industrier|industrie
+en bransch|branscher|secteur
+en konkurrent|konkurrenter|concurrent
+en konkurrens||concurrence
+en leverantör|leverantörer|fournisseur
+en produkt|produkter|produit
+en produktion||production
+en försäljning||ventes
+en marknadsföring||marketing
+ett varumärke|varumärken|marque
+en strategi|strategier|stratégie
+en vd|vd:ar|PDG
+en styrelse|styrelser|conseil d'administration
+en ägare|ägare|propriétaire
+en delägare|delägare|associé
+en aktieägare|aktieägare|actionnaire
+en investerare|investerare|investisseur
+en investering|investeringar|investissement
+ett kapital||capital
+en omsättning|omsättningar|chiffre d'affaires
+ett resultat|resultat|résultat
+en årsredovisning|årsredovisningar|rapport annuel
+en bokföring||comptabilité
+en kalkyl|kalkyler|calcul, estimation
+en offert|offerter|devis
+en order|order|commande (d'entreprise)
+ett lager|lager|stock, entrepôt
+en export||exportation
+en import||importation
+en handel||commerce
+en valuta|valutor|devise
+en växelkurs|växelkurser|taux de change
+en inflation||inflation
+en lågkonjunktur|lågkonjunkturer|récession
+en konkurs|konkurser|faillite
+en börs|börser|bourse
+en aktiekurs|aktiekurser|cours de l'action
+en fond|fonder|fonds
+ett sparande||épargne
+en kredit|krediter|crédit
+ett bolån|bolån|prêt immobilier
+en amortering|amorteringar|remboursement
+en löneförhöjning|löneförhöjningar|augmentation de salaire
+en bonus|bonusar|prime
+en förmån|förmåner|avantage (en nature)
+en anställning|anställningar|emploi
+en uppsägning|uppsägningar|licenciement, démission
+en heltid||temps plein
+en deltid||temps partiel
+ett vikariat|vikariat|remplacement, CDD
+ett kollektivavtal|kollektivavtal|convention collective
+en arbetsmiljö|arbetsmiljöer|environnement de travail
+ett ledarskap||leadership
+en ledning|ledningar|direction
+en avdelning|avdelningar|service, département
+ett team|team|équipe
+ett samarbete|samarbeten|collaboration
+ett nätverk|nätverk|réseau
+en affärsidé|affärsidéer|idée d'entreprise
+en affärsplan|affärsplaner|business plan
+ett uppstartsbolag|uppstartsbolag|start-up
+en entreprenör|entreprenörer|entrepreneur
+en effektivitet||efficacité
+en tillväxt||croissance
+v investera|investerar|investerade|investerat|investir
+v avskeda|avskedar|avskedade|avskedat|licencier
+v producera|producerar|producerade|producerat|produire
+v exportera|exporterar|exporterade|exporterat|exporter
+v importera|importerar|importerade|importerat|importer
+v leda|leder|ledde|lett|diriger
+v fakturera|fakturerar|fakturerade|fakturerat|facturer
+v öka|ökar|ökade|ökat|augmenter
+v minska|minskar|minskade|minskat|diminuer
+v grunda|grundar|grundade|grundat|fonder
+gå i konkurs|faire faillite
+lönsam|rentable
+olönsam|non rentable
+ekonomisk|économique
+finansiell|financier
+kommersiell|commercial
+konkurrenskraftig|compétitif
+`);
+CG.words.push({ id: 'tek', name: 'Technologie et internet', icon: '💻', color: '#0091FF', words: [] });
+ADDW('tek', `
+en bärbar dator|bärbara datorer|ordinateur portable
+en surfplatta|surfplattor|tablette
+en smarttelefon|smarttelefoner|smartphone
+en hårddisk|hårddiskar|disque dur
+ett minneskort|minneskort|carte mémoire
+ett usb-minne|usb-minnen|clé USB
+en kabel|kablar|câble
+en router|routrar|routeur
+ett wifi||wifi
+ett internet||internet
+en webbplats|webbplatser|site web
+en webbsida|webbsidor|page web
+en länk|länkar|lien
+en webbläsare|webbläsare|navigateur
+en sökmotor|sökmotorer|moteur de recherche
+ett användarnamn|användarnamn|nom d'utilisateur
+en inloggning|inloggningar|connexion (compte)
+v logga in|loggar in|loggade in|loggat in|se connecter
+v logga ut|loggar ut|loggade ut|loggat ut|se déconnecter
+v ladda ner|laddar ner|laddade ner|laddat ner|télécharger
+v ladda upp|laddar upp|laddade upp|laddat upp|mettre en ligne
+v ladda|laddar|laddade|laddat|charger (une batterie)
+v installera|installerar|installerade|installerat|installer
+v uppdatera|uppdaterar|uppdaterade|uppdaterat|mettre à jour
+v radera|raderar|raderade|raderat|effacer
+v kopiera|kopierar|kopierade|kopierat|copier
+v klistra in|klistrar in|klistrade in|klistrat in|coller
+v klicka|klickar|klickade|klickat|cliquer
+v googla|googlar|googlade|googlat|chercher sur Google
+v surfa|surfar|surfade|surfat|surfer
+v streama|streamar|streamade|streamat|regarder en streaming
+v chatta|chattar|chattade|chattat|chatter
+v sms:a|sms:ar|sms:ade|sms:at|envoyer un SMS
+v mejla|mejlar|mejlade|mejlat|envoyer un e-mail
+v programmera|programmerar|programmerade|programmerat|programmer
+v starta om|startar om|startade om|startat om|redémarrer
+v stänga av|stänger av|stängde av|stängt av|éteindre
+v sätta på|sätter på|satte på|satt på|allumer
+en programvara|programvaror|logiciel
+en hårdvara|hårdvaror|matériel (informatique)
+ett operativsystem|operativsystem|système d'exploitation
+en uppdatering|uppdateringar|mise à jour
+en bilaga|bilagor|pièce jointe
+en inkorg|inkorgar|boîte de réception
+en skräppost||spam
+en hackare|hackare|pirate informatique
+en säkerhetskopia|säkerhetskopior|sauvegarde
+en molntjänst|molntjänster|service cloud
+en databas|databaser|base de données
+en server|servrar|serveur
+en algoritm|algoritmer|algorithme
+en kod|koder|code
+en bugg|buggar|bug
+AI|IA (intelligence artificielle)
+en robot|robotar|robot
+en drönare|drönare|drone
+en skärmdump|skärmdumpar|capture d'écran
+en ikon|ikoner|icône
+en markör|markörer|curseur
+en högtalare|högtalare|haut-parleur
+ett headset|headset|casque-micro
+hörlurar|écouteurs, casque|pluriel
+en mikrofon|mikrofoner|micro
+en webbkamera|webbkameror|webcam
+sociala medier|réseaux sociaux|pluriel
+ett inlägg|inlägg|publication, post
+en kommentar|kommentarer|commentaire
+en följare|följare|abonné (réseaux)
+en blogg|bloggar|blog
+en video|videor|vidéo
+en notis|notiser|notification
+en skärmtid||temps d'écran
+en ström||courant électrique
+digital|numérique
+trådlös|sans fil
+uppkopplad|connecté
+virtuell|virtuel
+automatisk|automatique
+`);
+CG.words.push({ id: 'vet', name: 'Sciences', icon: '🔬', color: '#0F766E', words: [] });
+ADDW('vet', `
+en forskning||recherche (scientifique)
+ett experiment|experiment|expérience
+ett laboratorium|laboratorier|laboratoire
+en hypotes|hypoteser|hypothèse
+en upptäckt|upptäckter|découverte
+en uppfinning|uppfinningar|invention
+en metod|metoder|méthode
+en analys|analyser|analyse
+en mätning|mätningar|mesure
+en formel|formler|formule
+en ekvation|ekvationer|équation
+en atom|atomer|atome
+en molekyl|molekyler|molécule
+en cell|celler|cellule
+en gen|gener|gène
+ett dna||ADN
+en bakterie|bakterier|bactérie
+en evolution||évolution
+en art|arter|espèce
+ett grundämne|grundämnen|élément chimique
+ett syre||oxygène
+ett väte||hydrogène
+ett kol||carbone, charbon
+ett kväve||azote
+ett järn||fer
+ett guld||or
+ett silver||argent (métal)
+en koppar||cuivre
+ett bly||plomb
+en metall|metaller|métal
+en plast|plaster|plastique
+en vätska|vätskor|liquide
+en gas|gaser|gaz
+en massa|massor|masse
+en volym|volymer|volume
+en densitet||densité
+ett tryck|tryck|pression
+en elektricitet||électricité
+en magnet|magneter|aimant
+en strålning|strålningar|rayonnement
+en hastighet|hastigheter|vitesse
+en tyngdkraft||gravité
+ett universum||univers
+en galax|galaxer|galaxie
+en planet|planeter|planète
+en stjärna|stjärnor|étoile
+en måne|månar|lune
+Jorden|la Terre
+en komet|kometer|comète
+ett svart hål|svarta hål|trou noir
+en astronaut|astronauter|astronaute
+ett teleskop|teleskop|télescope
+ett mikroskop|mikroskop|microscope
+en rymd||espace
+en satellit|satelliter|satellite
+en raket|raketer|fusée
+en geometri||géométrie
+en vinkel|vinklar|angle
+en linje|linjer|ligne
+en punkt|punkter|point
+en yta|ytor|surface
+en diameter|diametrar|diamètre
+en radie|radier|rayon (d'un cercle)
+en kub|kuber|cube
+ett klot|klot|sphère
+ett medelvärde|medelvärden|moyenne
+ett diagram|diagram|graphique
+en tabell|tabeller|tableau
+en skala|skalor|échelle
+en enhet|enheter|unité
+en meter|meter|mètre
+en centimeter|centimeter|centimètre
+en kilometer|kilometer|kilomètre
+en mil|mil|10 kilomètres (mile suédois)
+ett ton|ton|tonne
+v forska|forskar|forskade|forskat|faire de la recherche
+v upptäcka|upptäcker|upptäckte|upptäckt|découvrir
+v uppfinna|uppfinner|uppfann|uppfunnit|inventer
+v mäta|mäter|mätte|mätt|mesurer
+v beräkna|beräknar|beräknade|beräknat|calculer
+v bevisa|bevisar|bevisade|bevisat|prouver
+v analysera|analyserar|analyserade|analyserat|analyser
+v observera|observerar|observerade|observerat|observer
+v testa|testar|testade|testat|tester
+vetenskaplig|scientifique
+teoretisk|théorique
+praktisk|pratique
+kemisk|chimique
+fysisk|physique
+biologisk|biologique
+`);
+CG.words.push({ id: 'jur', name: 'Droit et justice', icon: '⚖️', color: '#5B5BD6', words: [] });
+ADDW('jur', `
+en domstol|domstolar|tribunal
+en rättegång|rättegångar|procès
+en åklagare|åklagare|procureur
+en försvarare|försvarare|avocat de la défense
+en jury|juryer|jury
+ett vittne|vittnen|témoin
+en tilltalad|tilltalade|accusé
+en misstänkt|misstänkta|suspect
+en brottsling|brottslingar|criminel
+ett brott|brott|crime, délit
+ett offer|offer|victime
+en tjuv|tjuvar|voleur
+en stöld|stölder|vol
+ett inbrott|inbrott|cambriolage
+ett rån|rån|braquage
+ett mord|mord|meurtre
+en mördare|mördare|meurtrier
+ett bedrägeri|bedrägerier|escroquerie
+ett hot|hot|menace
+ett fängelse|fängelser|prison
+en fånge|fångar|prisonnier
+ett straff|straff|peine, punition
+böter|amende|pluriel
+en dom|domar|jugement, verdict
+en polisanmälan|polisanmälningar|plainte (à la police)
+en anmälan|anmälningar|déclaration, signalement
+ett förhör|förhör|interrogatoire
+en utredning|utredningar|enquête
+en lagstiftning||législation
+en paragraf|paragrafer|article (de loi)
+ett testamente|testamenten|testament
+ett arv|arv|héritage
+en arvinge|arvingar|héritier
+ett skadestånd|skadestånd|dommages et intérêts
+ett överklagande|överklaganden|appel (en justice)
+ett tillstånd|tillstånd|autorisation, état
+en licens|licenser|licence
+ett id-kort|id-kort|carte d'identité
+en underskrift|underskrifter|signature
+ett intyg|intyg|attestation, certificat
+en blankett|blanketter|formulaire
+v anmäla|anmäler|anmälde|anmält|signaler, porter plainte
+v anhålla|anhåller|anhöll|anhållit|placer en garde à vue
+v åtala|åtalar|åtalade|åtalat|poursuivre en justice
+v döma|dömer|dömde|dömt|juger, condamner
+v straffa|straffar|straffade|straffat|punir
+v råna|rånar|rånade|rånat|braquer
+v mörda|mördar|mördade|mördat|assassiner
+v vittna|vittnar|vittnade|vittnat|témoigner
+v erkänna|erkänner|erkände|erkänt|avouer, reconnaître
+v neka|nekar|nekade|nekat|nier, refuser
+v skriva under|skriver under|skrev under|skrivit under|signer
+v överklaga|överklagar|överklagade|överklagat|faire appel
+bryta mot lagen|enfreindre la loi
+skyldig|coupable
+oskyldig|innocent
+rättslig|juridique
+straffbar|punissable
+`);
+CG.words.push({ id: 'bil', name: 'Voiture et route', icon: '🚗', color: '#E5484D', words: [] });
+ADDW('bil', `
+en personbil|personbilar|voiture particulière
+en elbil|elbilar|voiture électrique
+en hybridbil|hybridbilar|voiture hybride
+en kombi|kombibilar|break
+en släpvagn|släpvagnar|remorque
+en växellåda|växellådor|boîte de vitesses
+en koppling|kopplingar|embrayage
+en broms|bromsar|frein
+en gaspedal|gaspedaler|accélérateur
+en handbroms|handbromsar|frein à main
+en fälg|fälgar|jante
+ett hjul|hjul|roue
+ett reservhjul|reservhjul|roue de secours
+en strålkastare|strålkastare|phare (de voiture)
+en blinker|blinkers|clignotant
+en vindruta|vindrutor|pare-brise
+en vindrutetorkare|vindrutetorkare|essuie-glace
+en backspegel|backspeglar|rétroviseur
+en stötfångare|stötfångare|pare-chocs
+en motorhuv|motorhuvar|capot
+ett bagageutrymme|bagageutrymmen|coffre
+ett säte|säten|siège
+en bilbarnstol|bilbarnstolar|siège auto (enfant)
+en tank|tankar|réservoir
+en diesel||gazole
+en kylarvätska||liquide de refroidissement
+en avgas|avgaser|gaz d'échappement
+ett avgasrör|avgasrör|pot d'échappement
+en mätare|mätare|compteur
+en verkstad|verkstäder|garage (atelier)
+en bilprovning|bilprovningar|contrôle technique
+en reparation|reparationer|réparation
+en reservdel|reservdelar|pièce détachée
+en punktering|punkteringar|crevaison
+ett motorstopp|motorstopp|panne de moteur
+en bärgningsbil|bärgningsbilar|dépanneuse
+en krock|krockar|collision
+en p-skiva|p-skivor|disque de stationnement
+en landsväg|landsvägar|route de campagne
+en avfart|avfarter|sortie (d'autoroute)
+en påfart|påfarter|bretelle d'accès
+ett körfält|körfält|voie (de circulation)
+en vägtull|vägtullar|péage
+en omkörning|omkörningar|dépassement
+en fartkamera|fartkameror|radar
+ett vägarbete|vägarbeten|travaux routiers
+en omväg|omvägar|détour
+en körskola|körskolor|auto-école
+en körlektion|körlektioner|leçon de conduite
+en uppkörning|uppkörningar|examen du permis
+en hyrbil|hyrbilar|voiture de location
+en bilnyckel|bilnycklar|clé de voiture
+v tanka|tankar|tankade|tankat|faire le plein
+v bromsa|bromsar|bromsade|bromsat|freiner
+v växla|växlar|växlade|växlat|changer de vitesse
+v backa|backar|backade|backat|reculer
+v köra om|kör om|körde om|kört om|doubler
+v krocka|krockar|krockade|krockat|entrer en collision
+v blinka|blinkar|blinkade|blinkat|cligner, mettre le clignotant
+v starta|startar|startade|startat|démarrer
+v reparera|reparerar|reparerade|reparerat|réparer
+v hyra|hyr|hyrde|hyrt|louer
+v skjutsa|skjutsar|skjutsade|skjutsat|conduire, déposer (quelqu'un)
+`);
+CG.words.push({ id: 'byg', name: 'Bricolage et construction', icon: '🔨', color: '#F76B15', words: [] });
+ADDW('byg', `
+ett verktyg|verktyg|outil
+en hammare|hammare|marteau
+en spik|spikar|clou
+en skruv|skruvar|vis
+en skruvmejsel|skruvmejslar|tournevis
+en borrmaskin|borrmaskiner|perceuse
+en såg|sågar|scie
+en tång|tänger|pince|aussi : algue (tång, sans pluriel)
+en skiftnyckel|skiftnycklar|clé à molette
+en mutter|muttrar|écrou
+en bult|bultar|boulon
+en plugg|pluggar|cheville
+ett måttband|måttband|mètre ruban
+ett vattenpass|vattenpass|niveau à bulle
+en stege|stegar|échelle
+en pensel|penslar|pinceau
+en roller|rollrar|rouleau (de peinture)
+ett lim|lim|colle
+en tejp|tejper|ruban adhésif
+ett sandpapper|sandpapper|papier de verre
+en planka|plankor|planche
+ett trä||bois (matière)
+en tegelsten|tegelstenar|brique
+en betong||béton
+ett cement||ciment
+ett stål||acier
+ett kakel|kakel|carrelage
+en parkett|parketter|parquet
+en tapet|tapeter|papier peint
+en grund|grunder|fondations
+en balk|balkar|poutre
+en pelare|pelare|pilier
+en byggarbetsplats|byggarbetsplatser|chantier
+en grävmaskin|grävmaskiner|pelleteuse
+en skottkärra|skottkärror|brouette
+en spade|spadar|bêche
+en skyffel|skyfflar|pelle
+en ritning|ritningar|plan (dessin)
+en hantverkare|hantverkare|artisan
+en tillbyggnad|tillbyggnader|extension (de maison)
+en isolering||isolation
+ett rör|rör|tuyau
+en säkring|säkringar|fusible
+en skarvsladd|skarvsladdar|rallonge
+v borra|borrar|borrade|borrat|percer
+v såga|sågar|sågade|sågat|scier
+v spika|spikar|spikade|spikat|clouer
+v skruva|skruvar|skruvade|skruvat|visser
+v tapetsera|tapetserar|tapetserade|tapetserat|tapisser
+v limma|limmar|limmade|limmat|coller
+v slipa|slipar|slipade|slipat|poncer, aiguiser
+v montera|monterar|monterade|monterat|monter, assembler
+v renovera|renoverar|renoverade|renoverat|rénover
+v riva|river|rev|rivit|démolir, déchirer
+v gräva|gräver|grävde|grävt|creuser
+v fixa|fixar|fixade|fixat|arranger, réparer
+`);
+CG.words.push({ id: 'tra', name: 'Jardin et plantes', icon: '🌷', color: '#2F9E44', words: [] });
+ADDW('tra', `
+en blomsterrabatt|blomsterrabatter|parterre de fleurs
+ett växthus|växthus|serre
+en kruka|krukor|pot (de fleurs)
+en kompost|komposter|compost
+en gödsel||engrais
+en planta|plantor|plant
+en växt|växter|plante
+ett blad|blad|feuille
+en knopp|knoppar|bourgeon
+ett kronblad|kronblad|pétale
+en stjälk|stjälkar|tige
+en tagg|taggar|épine
+ett ogräs|ogräs|mauvaise herbe
+en gräsklippare|gräsklippare|tondeuse
+en kratta|krattor|râteau
+en vattenkanna|vattenkannor|arrosoir
+en slang|slangar|tuyau d'arrosage
+en sekatör|sekatörer|sécateur
+ett trädgårdsland|trädgårdsland|potager
+ett äppelträd|äppelträd|pommier
+ett körsbärsträd|körsbärsträd|cerisier
+ett päronträd|päronträd|poirier
+en syren|syrener|lilas
+en lavendel||lavande
+en lilja|liljor|lys
+en orkidé|orkidéer|orchidée
+en pion|pioner|pivoine
+en nejlika|nejlikor|œillet
+en prästkrage|prästkragar|marguerite
+en blåklocka|blåklockor|campanule
+en krokus|krokusar|crocus
+en påsklilja|påskliljor|jonquille
+en snödroppe|snödroppar|perce-neige
+en kaktus|kaktusar|cactus
+en ormbunke|ormbunkar|fougère
+en murgröna||lierre
+en vass||roseau
+en näckros|näckrosor|nénuphar
+en ljung||bruyère
+en kastanj|kastanjer|marronnier, châtaigne
+en asp|aspar|tremble
+en al|alar|aulne
+en alm|almar|orme
+en lind|lindar|tilleul
+en pil|pilar|saule|aussi : flèche
+en ask|askar|frêne|aussi : boîte
+en hassel|hasslar|noisetier
+en en|enar|genévrier
+en rönn|rönnar|sorbier
+en palm|palmer|palmier
+en kotte|kottar|pomme de pin
+ett ekollon|ekollon|gland
+en kantarell|kantareller|girolle
+ett hjortron|hjortron|plaquebière (baie)
+ett smultron|smultron|fraise des bois
+ett krusbär|krusbär|groseille à maquereau
+ett vinbär|vinbär|groseille, cassis
+en rabarber||rhubarbe
+en timjan||thym
+en rosmarin||romarin
+en mynta||menthe
+en gräslök||ciboulette
+v plantera|planterar|planterade|planterat|planter
+v vattna|vattnar|vattnade|vattnat|arroser
+rensa ogräs|désherber
+v klippa|klipper|klippte|klippt|couper, tondre
+v kratta|krattar|krattade|krattat|ratisser
+v skörda|skördar|skördade|skördat|récolter
+v blomma|blommar|blommade|blommat|fleurir
+v vissna|vissnar|vissnade|vissnat|faner
+v gro|gror|grodde|grott|germer
+`);
+CG.words.push({ id: 'dju', name: 'Animaux (plus)', icon: '🐾', color: '#A35829', words: [] });
+ADDW('dju', `
+en valp|valpar|chiot
+en kattunge|kattungar|chaton
+ett föl|föl|poulain
+en kalv|kalvar|veau
+ett lamm|lamm|agneau
+en tjur|tjurar|taureau
+en oxe|oxar|bœuf
+en åsna|åsnor|âne
+en ponny|ponnyer|poney
+ett marsvin|marsvin|cochon d'Inde
+en hamster|hamstrar|hamster
+en undulat|undulater|perruche
+en papegoja|papegojor|perroquet
+en guldfisk|guldfiskar|poisson rouge
+en kalkon|kalkoner|dinde
+en struts|strutsar|autruche
+en flamingo|flamingor|flamant rose
+en påfågel|påfåglar|paon
+en kolibri|kolibrier|colibri
+en hök|hökar|épervier
+en falk|falkar|faucon
+en gam|gamar|vautour
+en hackspett|hackspettar|pic
+en koltrast|koltrastar|merle
+en svala|svalor|hirondelle
+en stork|storkar|cigogne
+en trana|tranor|grue (oiseau)
+en häger|hägrar|héron
+en lunnefågel|lunnefåglar|macareux
+en grävling|grävlingar|blaireau
+en utter|uttrar|loutre
+en bäver|bävrar|castor
+ett vildsvin|vildsvin|sanglier
+ett rådjur|rådjur|chevreuil
+en fladdermus|fladdermöss|chauve-souris
+en mullvad|mullvadar|taupe
+en lämmel|lämlar|lemming
+en leopard|leoparder|léopard
+en gepard|geparder|guépard
+en noshörning|noshörningar|rhinocéros
+en flodhäst|flodhästar|hippopotame
+en kamel|kameler|chameau
+en känguru|kängurur|kangourou
+en koala|koalor|koala
+en panda|pandor|panda
+en gorilla|gorillor|gorille
+en schimpans|schimpanser|chimpanzé
+en ödla|ödlor|lézard
+en padda|paddor|crapaud
+en huggorm|huggormar|vipère
+en hummer|humrar|homard
+en krabba|krabbor|crabe
+en bläckfisk|bläckfiskar|pieuvre, calmar
+en manet|maneter|méduse
+en sjöstjärna|sjöstjärnor|étoile de mer
+en mussla|musslor|moule, coquillage
+ett ostron|ostron|huître
+en abborre|abborrar|perche (poisson)
+en öring|öringar|truite
+en ål|ålar|anguille
+en skalbagge|skalbaggar|scarabée
+en nyckelpiga|nyckelpigor|coccinelle
+en gräshoppa|gräshoppor|sauterelle
+en trollslända|trollsländor|libellule
+en larv|larver|chenille, larve
+en kackerlacka|kackerlackor|cafard
+en loppa|loppor|puce
+en lus|löss|pou
+en näbb|näbbar|bec
+en fjäder|fjädrar|plume
+en vinge|vingar|aile
+en svans|svansar|queue
+en tass|tassar|patte
+en klo|klor|griffe
+en päls|pälsar|fourrure
+ett horn|horn|corne
+en fena|fenor|nageoire
+ett bo|bon|nid
+en flock|flockar|troupeau, meute
+ett husdjur|husdjur|animal de compagnie
+ett koppel|koppel|laisse
+v skälla|skäller|skällde|skällt|aboyer
+v jama|jamar|jamade|jamat|miauler
+v kvittra|kvittrar|kvittrade|kvittrat|gazouiller
+v rasta|rastar|rastade|rastat|sortir (le chien)
+v mata|matar|matade|matat|nourrir
+`);
+CG.words.push({ id: 'hav', name: 'Mer et bateaux', icon: '⚓', color: '#0E6A7A', words: [] });
+ADDW('hav', `
+en ocean|oceaner|océan
+en vik|vikar|baie
+en fjord|fjordar|fjord
+ett sund|sund|détroit
+en skärgård|skärgårdar|archipel
+ett skär|skär|récif, îlot rocheux
+ett rev|rev|récif
+en sandstrand|sandstränder|plage de sable
+ett tidvatten||marée
+en bölja|böljor|houle, flot
+ett skum||écume
+en brygga|bryggor|ponton
+en pir|pirer|jetée
+ett kryssningsfartyg|kryssningsfartyg|bateau de croisière
+en roddbåt|roddbåtar|barque
+en kanot|kanoter|canoë
+en kajak|kajaker|kayak
+en motorbåt|motorbåtar|bateau à moteur
+en ubåt|ubåtar|sous-marin
+en fiskebåt|fiskebåtar|bateau de pêche
+ett segel|segel|voile
+en mast|master|mât
+ett ankare|ankare|ancre
+en åra|åror|rame
+ett roder|roder|gouvernail
+en kapten|kaptener|capitaine
+en sjöman|sjömän|marin
+en besättning|besättningar|équipage
+en livboj|livbojar|bouée de sauvetage
+en flytväst|flytvästar|gilet de sauvetage
+en sjökarta|sjökartor|carte marine
+en kompass|kompasser|boussole
+ett skeppsbrott|skeppsbrott|naufrage
+ett skepp|skepp|navire
+en pirat|pirater|pirate
+en snäcka|snäckor|coquillage
+en dykare|dykare|plongeur
+en dykmask|dykmasker|masque de plongée
+en snorkel|snorklar|tuba
+ett badlakan|badlakan|serviette de plage
+en solkräm|solkrämer|crème solaire
+ett parasoll|parasoll|parasol
+en surfbräda|surfbrädor|planche de surf
+v segla|seglar|seglade|seglat|faire de la voile
+v ro|ror|rodde|rott|ramer
+v paddla|paddlar|paddlade|paddlat|pagayer
+v dyka|dyker|dök|dykt|plonger
+v bada|badar|badade|badat|se baigner
+v sola|solar|solade|solat|bronzer
+v drunkna|drunknar|drunknade|drunknat|se noyer
+v ankra|ankrar|ankrade|ankrat|jeter l'ancre
+sjösjuk|qui a le mal de mer
+`);
+CG.words.push({ id: 'spo', name: 'Sports', icon: '🏅', color: '#46A758', words: [] });
+ADDW('spo', `
+en sport|sporter|sport
+en idrottare|idrottare|athlète
+en tränare|tränare|entraîneur
+en lagkapten|lagkaptener|capitaine (d'équipe)
+en motståndare|motståndare|adversaire
+en supporter|supportrar|supporter
+en arena|arenor|stade, arène
+en idrottsplats|idrottsplatser|terrain de sport
+en bana|banor|piste
+en sporthall|sporthallar|gymnase
+en turnering|turneringar|tournoi
+ett mästerskap|mästerskap|championnat
+en final|finaler|finale
+en semifinal|semifinaler|demi-finale
+en seger|segrar|victoire
+oavgjort|match nul
+en poäng|poäng|point
+en medalj|medaljer|médaille
+en pokal|pokaler|coupe, trophée
+ett rekord|rekord|record
+en vinnare|vinnare|gagnant
+en förlorare|förlorare|perdant
+en löpning||course à pied
+ett maraton|maraton|marathon
+en sprint|sprinter|sprint
+ett höjdhopp||saut en hauteur
+ett längdhopp||saut en longueur
+en friidrott||athlétisme
+en gymnastik||gymnastique
+en boxning||boxe
+en brottning||lutte
+en judo||judo
+en fäktning||escrime
+en ridning||équitation
+en cykling||cyclisme
+en rodd||aviron
+en segling||voile (sport)
+en längdskidåkning||ski de fond
+en utförsåkning||ski alpin
+ett skidskytte||biathlon
+en bandy||bandy
+en innebandy||floorball
+en volleyboll||volley-ball
+en badminton||badminton
+ett bordtennis||tennis de table
+en klättring||escalade
+en skateboard|skateboards|skateboard
+ett racket|racketar|raquette
+en klubba|klubbor|crosse
+en puck|puckar|palet
+ett nät|nät|filet
+en visselpipa|visselpipor|sifflet
+en skida|skidor|ski
+en stav|stavar|bâton
+en pjäxa|pjäxor|chaussure de ski
+en löparsko|löparskor|chaussure de course
+en uppvärmning|uppvärmningar|échauffement
+en stretching||étirements
+en kondition||condition physique
+en styrka|styrkor|force
+en uthållighet||endurance
+en halvtid||mi-temps
+en straffspark|straffsparkar|penalty
+en hörna|hörnor|corner
+v tävla|tävlar|tävlade|tävlat|participer à une compétition
+v hoppa|hoppar|hoppade|hoppat|sauter
+v fånga|fångar|fångade|fångat|attraper
+v sparka|sparkar|sparkade|sparkat|donner un coup de pied
+v göra mål|gör mål|gjorde mål|gjort mål|marquer un but
+v heja|hejar|hejade|hejat|encourager (supporter)
+v klättra|klättrar|klättrade|klättrat|grimper
+v åka skridskor|åker skridskor|åkte skridskor|åkt skridskor|patiner
+v jogga|joggar|joggade|joggat|faire du jogging
+vältränad|en forme, musclé
+otränad|pas entraîné
+`);
+CG.words.push({ id: 'mus', name: 'Musique', icon: '🎵', color: '#D6409F', words: [] });
+ADDW('mus', `
+en musik||musique
+en melodi|melodier|mélodie
+en rytm|rytmer|rythme
+en takt|takter|mesure (musique)
+en ton|toner|ton, note
+en not|noter|note (de partition)
+ett notblad|notblad|partition
+ett ackord|ackord|accord (musique)
+en text|texter|paroles, texte
+en refräng|refränger|refrain
+en vers|verser|couplet
+en singel|singlar|single
+en spellista|spellistor|playlist
+en turné|turnéer|tournée
+en sångerska|sångerskor|chanteuse
+en kompositör|kompositörer|compositeur
+en dirigent|dirigenter|chef d'orchestre
+en pianist|pianister|pianiste
+en gitarrist|gitarrister|guitariste
+en trummis|trummisar|batteur
+en dj|dj:ar|DJ
+en grupp|grupper|groupe
+en duett|duetter|duo
+en solist|solister|soliste
+en bas|basar|basse
+en elgitarr|elgitarrer|guitare électrique
+en cello|cellor|violoncelle
+en harpa|harpor|harpe
+en trumpet|trumpeter|trompette
+en trombon|tromboner|trombone
+en saxofon|saxofoner|saxophone
+en klarinett|klarinetter|clarinette
+ett munspel|munspel|harmonica
+ett dragspel|dragspel|accordéon
+en synt|syntar|synthétiseur
+ett trumset|trumset|batterie
+en förstärkare|förstärkare|amplificateur
+en studio|studior|studio
+en inspelning|inspelningar|enregistrement
+en genre|genrer|genre
+en pop||pop
+en jazz||jazz
+en blues||blues
+en hiphop||hip-hop
+en folkmusik||musique folk
+en schlager|schlager|chanson de variété
+en musikal|musikaler|comédie musicale
+en applåd|applåder|applaudissement
+ett extranummer|extranummer|rappel (bis)
+v komponera|komponerar|komponerade|komponerat|composer
+v dirigera|dirigerar|dirigerade|dirigerat|diriger (un orchestre)
+v stämma|stämmer|stämde|stämt|accorder (un instrument)
+v nynna|nynnar|nynnade|nynnat|fredonner
+v vissla|visslar|visslade|visslat|siffler
+v applådera|applåderar|applåderade|applåderat|applaudir
+v spela in|spelar in|spelade in|spelat in|enregistrer
+v uppträda|uppträder|uppträdde|uppträtt|se produire (sur scène)
+musikalisk|musical
+ostämd|désaccordé
+`);
+CG.words.push({ id: 'art', name: 'Arts et médias', icon: '🎨', color: '#8E4EC6', words: [] });
+ADDW('art', `
+en skiss|skisser|esquisse
+en teckning|teckningar|dessin
+en akvarell|akvareller|aquarelle
+en oljemålning|oljemålningar|peinture à l'huile
+ett porträtt|porträtt|portrait
+ett stilleben|stilleben|nature morte
+ett staffli|stafflier|chevalet
+en krita|kritor|craie
+ett galleri|gallerier|galerie
+en vernissage|vernissager|vernissage
+en skulptör|skulptörer|sculpteur
+en arkitektur||architecture
+en design|designer|design
+en stil|stilar|style
+en epok|epoker|époque
+en renässans||Renaissance
+en barock||baroque
+ett mästerverk|mästerverk|chef-d'œuvre
+en litteratur||littérature
+en poet|poeter|poète
+en poesi||poésie
+en novell|noveller|nouvelle (récit)
+en saga|sagor|conte
+en deckare|deckare|polar
+en biografi|biografier|biographie
+ett kapitel|kapitel|chapitre
+en handling|handlingar|intrigue, action
+en karaktär|karaktärer|personnage, caractère
+en huvudperson|huvudpersoner|personnage principal
+en berättelse|berättelser|récit
+ett manus|manus|scénario, manuscrit
+en skådespelerska|skådespelerskor|actrice
+en roll|roller|rôle
+en premiär|premiärer|première
+en dokumentär|dokumentärer|documentaire
+en komedi|komedier|comédie
+ett drama|draman|drame
+en skräckfilm|skräckfilmer|film d'horreur
+en tecknad film|tecknade filmer|dessin animé
+en undertext|undertexter|sous-titre
+en trailer|trailrar|bande-annonce
+medier|médias|pluriel
+en tidskrift|tidskrifter|magazine, revue
+en artikel|artiklar|article
+en rubrik|rubriker|titre (d'article)
+ett reportage|reportage|reportage
+en ledare|ledare|éditorial|aussi : dirigeant
+en tv-kanal|tv-kanaler|chaîne de télé
+en programledare|programledare|présentateur
+en reklamfilm|reklamfilmer|spot publicitaire
+en radio||radio
+en lyssnare|lyssnare|auditeur
+en tittare|tittare|téléspectateur
+en läsare|läsare|lecteur
+en recension|recensioner|critique (avis)
+en kritiker|kritiker|critique (personne)
+v teckna|tecknar|tecknade|tecknat|dessiner
+v skapa|skapar|skapade|skapat|créer
+v ställa ut|ställer ut|ställde ut|ställt ut|exposer
+v publicera|publicerar|publicerade|publicerat|publier
+v filma|filmar|filmade|filmat|filmer
+v regissera|regisserar|regisserade|regisserat|réaliser (un film)
+v recensera|recenserar|recenserade|recenserat|faire la critique de
+konstnärlig|artistique
+klassisk|classique
+modern|moderne
+abstrakt|abstrait
+realistisk|réaliste
+`);
+CG.words.push({ id: 'kom', name: 'Communication et langage', icon: '🗣️', color: '#12A594', words: [] });
+ADDW('kom', `
+ett modersmål|modersmål|langue maternelle
+ett uttryck|uttryck|expression
+ett ordspråk|ordspråk|proverbe
+en grammatik||grammaire
+ett verb|verb|verbe
+ett substantiv|substantiv|nom (grammaire)
+ett adjektiv|adjektiv|adjectif
+ett adverb|adverb|adverbe
+en preposition|prepositioner|préposition
+ett pronomen|pronomen|pronom
+en böjning|böjningar|conjugaison, déclinaison
+ett uttal|uttal|prononciation
+en accent|accenter|accent
+en dialekt|dialekter|dialecte
+en stavning||orthographe
+en bokstav|bokstäver|lettre (de l'alphabet)
+ett alfabet|alfabet|alphabet
+en vokal|vokaler|voyelle
+en konsonant|konsonanter|consonne
+en stavelse|stavelser|syllabe
+en synonym|synonymer|synonyme
+en översättning|översättningar|traduction
+en tolkning|tolkningar|interprétation
+ett samtal|samtal|conversation, appel
+en diskussion|diskussioner|discussion
+ett vykort|vykort|carte postale
+ett kuvert|kuvert|enveloppe
+ett frimärke|frimärken|timbre
+en avsändare|avsändare|expéditeur
+en mottagare|mottagare|destinataire
+en hälsning|hälsningar|salutation
+en föreläsning|föreläsningar|cours magistral, conférence
+ett rykte|rykten|rumeur, réputation
+ett skvaller||ragots
+en viskning|viskningar|chuchotement
+ett rop|rop|cri, appel
+en gest|gester|geste
+ett kroppsspråk||langage corporel
+en ögonkontakt||contact visuel
+en missuppfattning|missuppfattningar|malentendu
+ett påstående|påståenden|affirmation
+ett förslag|förslag|proposition
+en begäran|begäranden|demande
+en inbjudan|inbjudningar|invitation
+ett klagomål|klagomål|réclamation, plainte
+en varning|varningar|avertissement
+v diskutera|diskuterar|diskuterade|diskuterat|discuter
+v viska|viskar|viskade|viskat|chuchoter
+v ropa|ropar|ropade|ropat|appeler (à voix haute)
+v upprepa|upprepar|upprepade|upprepat|répéter
+v tolka|tolkar|tolkade|tolkat|interpréter
+v uttala|uttalar|uttalade|uttalat|prononcer
+v beskriva|beskriver|beskrev|beskrivit|décrire
+v nämna|nämner|nämnde|nämnt|mentionner
+v påstå|påstår|påstod|påstått|affirmer, prétendre
+v föreslå|föreslår|föreslog|föreslagit|proposer
+v övertala|övertalar|övertalade|övertalat|persuader
+v hälsa|hälsar|hälsade|hälsat|saluer
+v tacka|tackar|tackade|tackat|remercier
+v be om ursäkt|ber om ursäkt|bad om ursäkt|bett om ursäkt|s'excuser
+v klaga|klagar|klagade|klagat|se plaindre
+v varna|varnar|varnade|varnat|avertir
+v avbryta|avbryter|avbröt|avbrutit|interrompre
+v hålla med|håller med|höll med|hållit med|être d'accord
+v skvallra|skvallrar|skvallrade|skvallrat|cancaner, rapporter
+tydlig|clair, net
+otydlig|peu clair
+flytande|courant (langue), liquide
+muntlig|oral
+skriftlig|écrit
+`);
+CG.words.push({ id: 'rel', name: 'Fêtes et religion', icon: '🎄', color: '#C2410C', words: [] });
+ADDW('rel', `
+en högtid|högtider|grande fête
+julafton|veille de Noël (24 décembre)
+juldagen|jour de Noël (25 décembre)
+ett julbord|julbord|buffet de Noël
+en julgran|julgranar|sapin de Noël
+en jultomte|jultomtar|père Noël
+en julklapp|julklappar|cadeau de Noël
+en adventsljusstake|adventsljusstakar|chandelier de l'Avent
+advent|l'Avent
+lucia|Sainte-Lucie (13 décembre)
+ett luciatåg|luciatåg|procession de la Sainte-Lucie
+en lussekatt|lussekatter|brioche au safran
+en pepparkaka|pepparkakor|biscuit au gingembre
+en glögg||vin chaud
+nyårsafton|Saint-Sylvestre
+ett fyrverkeri|fyrverkerier|feu d'artifice
+ett nyårslöfte|nyårslöften|bonne résolution
+ett påskägg|påskägg|œuf de Pâques
+en påskhare|påskharar|lapin de Pâques
+en påskkärring|påskkärringar|petite sorcière de Pâques
+midsommarafton|veille de la Saint-Jean
+en midsommarstång|midsommarstänger|mât de la Saint-Jean
+en blomsterkrans|blomsterkransar|couronne de fleurs
+en nubbe|nubbar|petit verre d'aquavit
+en snapsvisa|snapsvisor|chanson à boire
+en kräftskiva|kräftskivor|fête des écrevisses
+en kräfta|kräftor|écrevisse
+en surströmming||hareng fermenté
+valborg|nuit de Walpurgis (30 avril)
+en majbrasa|majbrasor|feu de joie de Walpurgis
+en nationaldag|nationaldagar|fête nationale
+kanelbullens dag|jour de la brioche à la cannelle (4 octobre)
+en semla|semlor|semla (brioche à la crème)
+fettisdagen|Mardi gras
+alla hjärtans dag|Saint-Valentin
+morsdag|fête des mères
+farsdag|fête des pères
+alla helgons dag|Toussaint
+en gud|gudar|dieu
+en bön|böner|prière
+en biskop|biskopar|évêque
+en påve|påvar|pape
+en kristendom||christianisme
+en islam||islam
+en judendom||judaïsme
+en buddhism||bouddhisme
+en kristen|kristna|chrétien
+en muslim|muslimer|musulman
+en jude|judar|juif
+en ateist|ateister|athée
+en bibel|biblar|bible
+en moské|moskéer|mosquée
+en synagoga|synagogor|synagogue
+ett tempel|tempel|temple
+ett kloster|kloster|monastère, couvent
+en munk|munkar|moine
+en nunna|nunnor|nonne
+en ängel|änglar|ange
+en djävul|djävlar|diable
+ett helvete|helveten|enfer
+en själ|själar|âme
+ett mirakel|mirakel|miracle
+en ceremoni|ceremonier|cérémonie
+en konfirmation|konfirmationer|confirmation
+v fira|firar|firade|firat|fêter
+v välsigna|välsignar|välsignade|välsignat|bénir
+v gratulera|gratulerar|gratulerade|gratulerat|féliciter
+v dekorera|dekorerar|dekorerade|dekorerat|décorer
+v skåla|skålar|skålade|skålat|trinquer
+helig|saint, sacré
+religiös|religieux
+troende|croyant
+traditionell|traditionnel
+`);
+CG.words.push({ id: 'his', name: 'Histoire', icon: '🏰', color: '#7A5C3A', words: [] });
+ADDW('his', `
+en forntid||préhistoire
+en stenålder||âge de pierre
+en bronsålder||âge du bronze
+en järnålder||âge du fer
+en vikingatid||ère viking
+en viking|vikingar|viking
+ett vikingaskepp|vikingaskepp|drakkar
+en runsten|runstenar|pierre runique
+en runa|runor|rune
+en medeltid||Moyen Âge
+en riddare|riddare|chevalier
+ett kungarike|kungariken|royaume
+ett rike|riken|royaume, empire
+ett imperium|imperier|empire
+en kejsare|kejsare|empereur
+en adel||noblesse
+en adelsman|adelsmän|noble
+en träl|trälar|esclave (époque viking)
+en slav|slavar|esclave
+ett slag|slag|bataille, coup
+en strid|strider|combat
+ett svärd|svärd|épée
+en sköld|sköldar|bouclier
+en rustning|rustningar|armure
+en båge|bågar|arc
+ett spjut|spjut|lance
+en kanon|kanoner|canon
+en erövring|erövringar|conquête
+en koloni|kolonier|colonie
+en upptäcktsresande|upptäcktsresande|explorateur
+ett uppror|uppror|révolte
+en reformation||Réforme
+en industrialisering||industrialisation
+en utvandring|utvandringar|émigration
+ett världskrig|världskrig|guerre mondiale
+en ockupation|ockupationer|occupation
+en neutralitet||neutralité
+kalla kriget|la guerre froide
+en mur|murar|mur (d'enceinte)
+ett arkiv|arkiv|archives
+en källa|källor|source
+en arkeolog|arkeologer|archéologue
+ett fynd|fynd|trouvaille, découverte
+en grav|gravar|tombe
+en pyramid|pyramider|pyramide
+en farao|faraoner|pharaon
+antiken|l'Antiquité
+en era|eror|ère
+en dynasti|dynastier|dynastie
+en tron|troner|trône
+v erövra|erövrar|erövrade|erövrat|conquérir
+v besegra|besegrar|besegrade|besegrat|vaincre
+v kriga|krigar|krigade|krigat|faire la guerre
+v härska|härskar|härskade|härskat|régner, dominer
+v kröna|kröner|krönte|krönt|couronner
+v utvandra|utvandrar|utvandrade|utvandrat|émigrer
+v invandra|invandrar|invandrade|invandrat|immigrer
+v förstöra|förstör|förstörde|förstört|détruire
+v befria|befriar|befriade|befriat|libérer
+historisk|historique
+medeltida|médiéval
+forntida|préhistorique, antique
+kunglig|royal
+`);
+CG.words.push({ id: 'geo', name: 'Pays et langues', icon: '🌍', color: '#2F80ED', words: [] });
+ADDW('geo', `
+Sverige|Suède
+Norge|Norvège
+Danmark|Danemark
+Finland|Finlande
+Island|Islande
+Frankrike|France
+Tyskland|Allemagne
+Spanien|Espagne
+Italien|Italie
+Portugal|Portugal
+England|Angleterre
+Storbritannien|Royaume-Uni
+Irland|Irlande
+Nederländerna|Pays-Bas
+Belgien|Belgique
+Schweiz|Suisse
+Österrike|Autriche
+Polen|Pologne
+Ryssland|Russie
+Ukraina|Ukraine
+Grekland|Grèce
+Turkiet|Turquie
+USA|États-Unis
+Kanada|Canada
+Mexiko|Mexique
+Brasilien|Brésil
+Argentina|Argentine
+Kina|Chine
+Japan|Japon
+Indien|Inde
+Australien|Australie
+Egypten|Égypte
+Marocko|Maroc
+Sydafrika|Afrique du Sud
+Europa|Europe
+Afrika|Afrique
+Asien|Asie
+Amerika|Amérique
+Norden|les pays nordiques
+Skandinavien|Scandinavie
+svensk|suédois (adj.)
+norsk|norvégien
+dansk|danois
+finsk|finlandais
+fransk|français (adj.)
+tysk|allemand
+spansk|espagnol
+italiensk|italien
+engelsk|anglais
+amerikansk|américain
+rysk|russe
+kinesisk|chinois
+japansk|japonais
+en svensk|svenskar|un Suédois
+en norrman|norrmän|un Norvégien
+en dansk|danskar|un Danois
+en finländare|finländare|un Finlandais
+en fransman|fransmän|un Français
+en fransyska|fransyskor|une Française
+en tysk|tyskar|un Allemand
+en spanjor|spanjorer|un Espagnol
+en italienare|italienare|un Italien
+en engelsman|engelsmän|un Anglais
+en amerikan|amerikaner|un Américain
+en ryss|ryssar|un Russe
+en kines|kineser|un Chinois
+en japan|japaner|un Japonais
+norska|norvégien (langue)
+danska|danois (langue)
+finska|finnois (langue)
+tyska|allemand (langue)
+spanska|espagnol (langue)
+italienska|italien (langue)
+ryska|russe (langue)
+kinesiska|chinois (langue)
+arabiska|arabe (langue)
+Stockholm|Stockholm
+Göteborg|Göteborg
+Malmö|Malmö
+Köpenhamn|Copenhague
+Helsingfors|Helsinki
+London|Londres
+Rom|Rome
+en utlänning|utlänningar|étranger (personne)
+`);
+CG.words.push({ id: 'vb3', name: 'Verbes du quotidien', icon: '🧩', color: '#0091FF', words: [] });
+ADDW('vb3', `
+v borsta tänderna|borstar tänderna|borstade tänderna|borstat tänderna|se brosser les dents
+v kamma sig|kammar sig|kammade sig|kammat sig|se peigner
+v raka sig|rakar sig|rakade sig|rakat sig|se raser
+v sminka sig|sminkar sig|sminkade sig|sminkat sig|se maquiller
+v torka|torkar|torkade|torkat|sécher, essuyer
+v dammsuga|dammsuger|dammsög|dammsugit|passer l'aspirateur
+v bädda|bäddar|bäddade|bäddat|faire le lit
+laga mat|faire à manger
+v duka av|dukar av|dukade av|dukat av|débarrasser la table
+v hänga|hänger|hängde|hängt|pendre, accrocher
+v låsa|låser|låste|låst|fermer à clé
+v låsa upp|låser upp|låste upp|låst upp|ouvrir (à clé)
+v knacka|knackar|knackade|knackat|frapper (à la porte)
+v ringa på|ringer på|ringde på|ringt på|sonner (à la porte)
+v gå ut|går ut|gick ut|gått ut|sortir
+v komma hem|kommer hem|kom hem|kommit hem|rentrer à la maison
+v stiga upp|stiger upp|steg upp|stigit upp|se lever
+v möta|möter|mötte|mött|rencontrer, aller au-devant
+v följa med|följer med|följde med|följt med|accompagner
+v hälsa på|hälsar på|hälsade på|hälsat på|rendre visite à
+v bjuda in|bjuder in|bjöd in|bjudit in|inviter
+v ta med|tar med|tog med|tagit med|emporter, amener
+v märka|märker|märkte|märkt|remarquer
+v kolla|kollar|kollade|kollat|vérifier, regarder
+v kontrollera|kontrollerar|kontrollerade|kontrollerat|contrôler
+v bestämma sig|bestämmer sig|bestämde sig|bestämt sig|se décider
+v ångra|ångrar|ångrade|ångrat|regretter
+v lyckas|lyckas|lyckades|lyckats|réussir
+v misslyckas|misslyckas|misslyckades|misslyckats|échouer
+v satsa|satsar|satsade|satsat|miser, parier
+v tappa|tappar|tappade|tappat|faire tomber, perdre
+v gömma|gömmer|gömde|gömt|cacher
+v dela|delar|delade|delat|partager
+v låna ut|lånar ut|lånade ut|lånat ut|prêter
+v ge tillbaka|ger tillbaka|gav tillbaka|gett tillbaka|rendre
+v trycka|trycker|tryckte|tryckt|appuyer, imprimer
+v lyfta|lyfter|lyfte|lyft|soulever, décoller
+v sträcka|sträcker|sträckte|sträckt|étirer, tendre
+v böja|böjer|böjde|böjt|plier, courber
+v vända|vänder|vände|vänt|tourner, retourner
+v snurra|snurrar|snurrade|snurrat|tourner (sur soi)
+v ramla|ramlar|ramlade|ramlat|tomber, dégringoler
+v snubbla|snubblar|snubblade|snubblat|trébucher
+v halka|halkar|halkade|halkat|glisser
+v slå sig|slår sig|slog sig|slagit sig|se faire mal (en tombant)
+v sitta ner|sitter ner|satt ner|suttit ner|être assis
+v ställa sig|ställer sig|ställde sig|ställt sig|se mettre debout
+v luta sig|lutar sig|lutade sig|lutat sig|se pencher, s'appuyer
+v gäspa|gäspar|gäspade|gäspat|bâiller
+v snarka|snarkar|snarkade|snarkat|ronfler
+v drömma|drömmer|drömde|drömt|rêver
+v andas|andas|andades|andats|respirer
+v svettas|svettas|svettades|svettats|transpirer
+v huttra|huttrar|huttrade|huttrat|grelotter
+v rodna|rodnar|rodnade|rodnat|rougir
+v nicka|nickar|nickade|nickat|hocher la tête
+v peka|pekar|pekade|pekat|montrer du doigt
+v klappa|klappar|klappade|klappat|caresser, tapoter
+v kittla|kittlar|kittlade|kittlat|chatouiller
+v tugga|tuggar|tuggade|tuggat|mâcher
+v svälja|sväljer|svalde|svalt|avaler
+v smutta|smuttar|smuttade|smuttat|siroter
+v slicka|slickar|slickade|slickat|lécher
+v spilla|spiller|spillde|spillt|renverser (un liquide)
+v tömma|tömmer|tömde|tömt|vider
+v sortera|sorterar|sorterade|sorterat|trier
+v återvinna|återvinner|återvann|återvunnit|recycler
+v ta hand om|tar hand om|tog hand om|tagit hand om|s'occuper de
+v sköta|sköter|skötte|skött|s'occuper de, gérer
+v uppfostra|uppfostrar|uppfostrade|uppfostrat|élever (des enfants)
+v föda|föder|födde|fött|donner naissance, nourrir
+v födas|föds|föddes|fötts|naître
+v växa upp|växer upp|växte upp|vuxit upp|grandir
+v åldras|åldras|åldrades|åldrats|vieillir
+v leva|lever|levde|levt|vivre
+v överleva|överlever|överlevde|överlevt|survivre
+`);
+CG.words.push({ id: 'vb4', name: 'Verbes avancés', icon: '🧠', color: '#6E56CF', words: [] });
+ADDW('vb4', `
+v påverka|påverkar|påverkade|påverkat|influencer
+v orsaka|orsakar|orsakade|orsakat|causer
+v innebära|innebär|innebar|inneburit|impliquer
+v bero på|beror på|berodde på|berott på|dépendre de
+v handla om|handlar om|handlade om|handlat om|parler de, traiter de
+v gälla|gäller|gällde|gällt|concerner, être valable
+v innehålla|innehåller|innehöll|innehållit|contenir
+v utgöra|utgör|utgjorde|utgjort|constituer
+v ingå|ingår|ingick|ingått|être inclus
+v omfatta|omfattar|omfattade|omfattat|englober
+v kräva|kräver|krävde|krävt|exiger
+v tillåta|tillåter|tillät|tillåtit|permettre
+v förhindra|förhindrar|förhindrade|förhindrat|empêcher
+v undvika|undviker|undvek|undvikit|éviter
+v förebygga|förebygger|förebyggde|förebyggt|prévenir
+v åstadkomma|åstadkommer|åstadkom|åstadkommit|accomplir
+v genomföra|genomför|genomförde|genomfört|réaliser, mener à bien
+v utföra|utför|utförde|utfört|exécuter
+v uppnå|uppnår|uppnådde|uppnått|atteindre
+v förverkliga|förverkligar|förverkligade|förverkligat|réaliser (un rêve)
+v utveckla|utvecklar|utvecklade|utvecklat|développer
+v förbättra|förbättrar|förbättrade|förbättrat|améliorer
+v försämra|försämrar|försämrade|försämrat|détériorer
+v förändra|förändrar|förändrade|förändrat|changer, transformer
+v ersätta|ersätter|ersatte|ersatt|remplacer
+v skilja|skiljer|skilde|skilt|séparer, distinguer
+v avgöra|avgör|avgjorde|avgjort|décider, trancher
+v bedöma|bedömer|bedömde|bedömt|évaluer
+v värdera|värderar|värderade|värderat|estimer, évaluer
+v överväga|överväger|övervägde|övervägt|envisager
+v anta|antar|antog|antagit|supposer, adopter
+v förutsätta|förutsätter|förutsatte|förutsatt|présupposer
+v förvänta sig|förväntar sig|förväntade sig|förväntat sig|s'attendre à
+v förutse|förutser|förutsåg|förutsett|prévoir
+v inse|inser|insåg|insett|se rendre compte
+v uppfatta|uppfattar|uppfattade|uppfattat|percevoir
+v begripa|begriper|begrep|begripit|comprendre, saisir
+v ifrågasätta|ifrågasätter|ifrågasatte|ifrågasatt|remettre en question
+v hävda|hävdar|hävdade|hävdat|affirmer, soutenir
+v betona|betonar|betonade|betonat|souligner
+v påpeka|påpekar|påpekade|påpekat|faire remarquer
+v antyda|antyder|antydde|antytt|laisser entendre
+v medge|medger|medgav|medgett|admettre
+v förneka|förnekar|förnekade|förnekat|nier
+v bekräfta|bekräftar|bekräftade|bekräftat|confirmer
+v motsäga|motsäger|motsade|motsagt|contredire
+v hänvisa|hänvisar|hänvisade|hänvisat|renvoyer, faire référence
+v bidra|bidrar|bidrog|bidragit|contribuer
+v delta|deltar|deltog|deltagit|participer
+v samarbeta|samarbetar|samarbetade|samarbetat|collaborer
+v samordna|samordnar|samordnade|samordnat|coordonner
+v organisera|organiserar|organiserade|organiserat|organiser
+v ansvara|ansvarar|ansvarade|ansvarat|être responsable
+v hantera|hanterar|hanterade|hanterat|gérer, manipuler
+v lösa|löser|löste|löst|résoudre
+v åtgärda|åtgärdar|åtgärdade|åtgärdat|remédier à
+v prioritera|prioriterar|prioriterade|prioriterat|donner la priorité à
+v skaffa|skaffar|skaffade|skaffat|se procurer
+v förse|förser|försåg|försett|fournir, munir
+v sträva|strävar|strävade|strävat|s'efforcer
+v anstränga sig|anstränger sig|ansträngde sig|ansträngt sig|faire des efforts
+v tveka|tvekar|tvekade|tvekat|hésiter
+v våga|vågar|vågade|vågat|oser
+v vägra|vägrar|vägrade|vägrat|refuser
+v acceptera|accepterar|accepterade|accepterat|accepter
+v godkänna|godkänner|godkände|godkänt|approuver
+v avstå|avstår|avstod|avstått|renoncer
+v ge upp|ger upp|gav upp|gett upp|abandonner
+v avsluta|avslutar|avslutade|avslutat|terminer
+v inleda|inleder|inledde|inlett|commencer, entamer
+v förekomma|förekommer|förekom|förekommit|exister, se produire
+v framgå|framgår|framgick|framgått|ressortir (de)
+v visa sig|visar sig|visade sig|visat sig|s'avérer
+v tyckas|tycks|tycktes|tytts|sembler
+v verka|verkar|verkade|verkat|sembler, agir
+v framstå|framstår|framstod|framstått|apparaître (comme)
+v motsvara|motsvarar|motsvarade|motsvarat|correspondre à
+v anpassa|anpassar|anpassade|anpassat|adapter
+v utnyttja|utnyttjar|utnyttjade|utnyttjat|exploiter, utiliser
+v skydda|skyddar|skyddade|skyddat|protéger
+v försvara|försvarar|försvarade|försvarat|défendre
+v hota|hotar|hotade|hotat|menacer
+v utsätta|utsätter|utsatte|utsatt|exposer
+v drabba|drabbar|drabbade|drabbat|toucher, frapper
+v återhämta sig|återhämtar sig|återhämtade sig|återhämtat sig|se remettre
+`);
+CG.words.push({ id: 'ad2', name: 'Adjectifs (plus)', icon: '🎨', color: '#D6409F', words: [] });
+ADDW('ad2', `
+underbar|merveilleux
+fantastisk|fantastique
+härlig|délicieux, super
+otrolig|incroyable
+hemsk|horrible
+fruktansvärd|terrible
+förfärlig|épouvantable
+utmärkt|excellent
+perfekt|parfait
+okej|d'accord, correct
+värdelös|nul, sans valeur
+användbar|utile
+onödig|inutile
+nödvändig|nécessaire
+särskild|particulier
+speciell|spécial
+allmän|général
+typisk|typique
+unik|unique
+enorm|énorme
+jättestor|gigantesque
+pytteliten|minuscule
+djup|profond
+grund|peu profond
+brant|raide, escarpé
+platt|plat
+rak|droit
+krokig|tordu
+spetsig|pointu
+trubbig|émoussé
+vass|tranchant
+slät|lisse
+sträv|rugueux
+klibbig|collant
+lös|lâche, détaché
+tät|dense, étanche
+gles|clairsemé
+ljummen|tiède
+iskall|glacial
+kokhet|bouillant
+frusen|gelé, frigorifié
+fläckig|taché
+dammig|poussiéreux
+prydlig|soigné, net
+stökig|en désordre
+gammaldags|démodé
+sliten|usé
+begagnad|d'occasion
+äkta|authentique
+konstgjord|artificiel
+naturlig|naturel
+ekologisk|bio, écologique
+hållbar|durable
+giftig|toxique
+hälsosam|sain
+ohälsosam|malsain
+nyttig|bon pour la santé
+fet|gras
+mager|maigre
+kryddig|épicé
+saftig|juteux
+krispig|croustillant
+seg|coriace, dur à mâcher
+mör|tendre
+rå|cru
+kokt|cuit (à l'eau)
+stekt|frit, poêlé
+tillgänglig|disponible, accessible
+populär|populaire
+okänd|inconnu
+dyrbar|précieux
+prisvärd|bon rapport qualité-prix
+lyxig|luxueux
+avancerad|avancé
+grundläggande|fondamental
+vag|vague, flou
+ungefärlig|approximatif
+fullständig|complet
+ofullständig|incomplet
+tillfällig|temporaire
+permanent|permanent
+regelbunden|régulier
+oregelbunden|irrégulier
+sällsynt|rare
+frivillig|volontaire
+obligatorisk|obligatoire
+`);
+CG.words.push({ id: 'adv', name: 'Adverbes et connecteurs', icon: '🔗', color: '#12A594', words: [] });
+ADDW('adv', `
+alltså|donc
+dessutom|en outre
+däremot|en revanche
+ändå|quand même
+trots allt|malgré tout
+till exempel|par exemple
+framför allt|surtout
+särskilt|particulièrement
+egentligen|en fait, au fond
+förmodligen|probablement
+troligen|vraisemblablement
+antagligen|sans doute
+säkert|sûrement
+absolut|absolument
+definitivt|définitivement
+självklart|évidemment
+naturligtvis|naturellement
+givetvis|bien entendu
+tydligen|apparemment
+uppenbarligen|manifestement
+lyckligtvis|heureusement
+olyckligtvis|malheureusement
+knappt|à peine
+väldigt|très
+extremt|extrêmement
+otroligt|incroyablement
+lagom|juste ce qu'il faut
+för mycket|trop
+för lite|trop peu
+tillräckligt|suffisamment
+endast|uniquement
+bland annat|entre autres
+och så vidare|et ainsi de suite
+med andra ord|en d'autres termes
+å ena sidan|d'un côté
+å andra sidan|d'un autre côté
+till slut|finalement
+till sist|en dernier
+först|d'abord
+därefter|ensuite
+slutligen|enfin
+hittills|jusqu'ici
+numera|de nos jours
+nuförtiden|de nos jours
+förut|auparavant
+efteråt|après coup
+emellanåt|de temps en temps
+då och då|de temps en temps
+sällan|rarement
+oftast|le plus souvent
+vanligtvis|habituellement
+omedelbart|immédiatement
+snabbt|vite
+långsamt|lentement
+försiktigt|prudemment
+högt|fort, à voix haute
+lågt|bas, à voix basse
+tillsammans|ensemble
+på riktigt|pour de vrai
+på allvar|sérieusement
+på skoj|pour rire
+i alla fall|en tout cas
+i stället|à la place
+i princip|en principe
+i själva verket|en réalité
+på grund av|à cause de
+tack vare|grâce à
+trots att|bien que
+så länge|tant que
+så snart|dès que
+förrän|avant que (après une négation)
+därför att|parce que
+för att|pour (+ infinitif), parce que
+varken … eller|ni … ni
+antingen … eller|soit … soit
+både … och|à la fois … et
+inte bara … utan också|non seulement … mais aussi
+ju … desto|plus … plus
+dock|cependant
+således|ainsi
+annars|sinon
+`);
+CG.words.push({ id: 'utt', name: 'Expressions courantes', icon: '💬', color: '#E5484D', words: [] });
+ADDW('utt', `
+Hur mår du?|Comment vas-tu ?
+Bara bra, tack.|Ça va bien, merci.
+Hur är läget?|Ça va ? (Quoi de neuf ?)
+Vad heter du?|Comment t'appelles-tu ?
+Var bor du?|Où habites-tu ?
+Varifrån kommer du?|D'où viens-tu ?
+Trevligt att träffas!|Enchanté !
+Ha det bra!|Bonne continuation !
+Vi ses!|À plus !
+Vi hörs!|On se parle !
+Sov gott!|Dors bien !
+God natt!|Bonne nuit !
+God morgon!|Bonjour ! (le matin)
+God kväll!|Bonsoir !
+Lycka till!|Bonne chance !
+Grattis på födelsedagen!|Joyeux anniversaire !
+God jul!|Joyeux Noël !
+Gott nytt år!|Bonne année !
+Glad påsk!|Joyeuses Pâques !
+Trevlig helg!|Bon week-end !
+Krya på dig!|Remets-toi vite !
+Ingen fara.|Pas de souci.
+Det gör inget.|Ce n'est pas grave.
+Ingen orsak.|De rien.
+Tack så mycket!|Merci beaucoup !
+Tack för maten!|Merci pour le repas !
+Tack för senast!|Merci pour la dernière fois !
+Förlåt, jag förstår inte.|Pardon, je ne comprends pas.
+Kan du upprepa?|Peux-tu répéter ?
+Kan du prata långsammare?|Peux-tu parler plus lentement ?
+Vad betyder det?|Qu'est-ce que ça veut dire ?
+Jag talar lite svenska.|Je parle un peu suédois.
+Talar du engelska?|Parles-tu anglais ?
+Vad kostar det?|Combien ça coûte ?
+Kan jag få notan?|L'addition, s'il vous plaît.
+Kan jag betala med kort?|Puis-je payer par carte ?
+Var ligger toaletten?|Où sont les toilettes ?
+Jag har gått vilse.|Je suis perdu.
+Hjälp!|À l'aide !
+Ring polisen!|Appelez la police !
+Jag mår inte bra.|Je ne me sens pas bien.
+Det spelar ingen roll.|Peu importe.
+Det beror på.|Ça dépend.
+Jag vet inte.|Je ne sais pas.
+Jag håller med.|Je suis d'accord.
+Det stämmer.|C'est exact.
+Precis!|Exactement !
+Absolut inte!|Absolument pas !
+Javisst!|Bien sûr !
+Inte alls.|Pas du tout.
+Det är lugnt.|Pas de souci, c'est tranquille.
+Ta det lugnt!|Du calme !
+Skynda dig!|Dépêche-toi !
+Vänta lite!|Attends un peu !
+Kom igen!|Allez !
+Strunt samma.|Tant pis, peu importe.
+Vad synd!|Quel dommage !
+Vad roligt!|Super !
+Vad trevligt!|Comme c'est sympa !
+Herregud!|Mon Dieu !
+Oj!|Oh là !
+Aj!|Aïe !
+Usch!|Beurk !
+Hoppsan!|Oups !
+Det var länge sedan!|Ça fait longtemps !
+Hur gick det?|Comment ça s'est passé ?
+Vad gör du?|Qu'est-ce que tu fais ?
+Vad händer?|Qu'est-ce qui se passe ?
+Vad tycker du?|Qu'en penses-tu ?
+Jag tycker om det.|Ça me plaît.
+Jag är hungrig.|J'ai faim.
+Jag är trött.|Je suis fatigué.
+Jag längtar hem.|J'ai hâte de rentrer.
+Hur gammal är du?|Quel âge as-tu ?
+Har du tid?|As-tu le temps ?
+Ses vi i morgon?|On se voit demain ?
+Ska vi ta en fika?|On prend un café ?
+Allt väl?|Tout va bien ?
+Jag älskar dig.|Je t'aime.
+Jag saknar dig.|Tu me manques.
+Sköt om dig!|Prends soin de toi !
+`);
+CG.words.push({ id: 'liv', name: 'Objets du quotidien', icon: '🧺', color: '#F5B800', words: [] });
+ADDW('liv', `
+en nyckelring|nyckelringar|porte-clés
+en ficklampa|ficklampor|lampe de poche
+en tändare|tändare|briquet
+en väckarklocka|väckarklockor|réveil
+en anteckningsbok|anteckningsböcker|carnet
+en kulspetspenna|kulspetspennor|stylo à bille
+en blyertspenna|blyertspennor|crayon à papier
+en överstrykningspenna|överstrykningspennor|surligneur
+ett gem|gem|trombone
+en häftapparat|häftapparater|agrafeuse
+en pärm|pärmar|classeur
+ett snöre|snören|ficelle
+ett gummiband|gummiband|élastique
+en säkerhetsnål|säkerhetsnålar|épingle de nourrice
+en nål|nålar|aiguille
+en hårtork|hårtorkar|sèche-cheveux
+en rakapparat|rakapparater|rasoir électrique
+en rakhyvel|rakhyvlar|rasoir
+en deodorant|deodoranter|déodorant
+en parfym|parfymer|parfum
+ett smink||maquillage
+ett läppstift|läppstift|rouge à lèvres
+en nagelfil|nagelfilar|lime à ongles
+en duschkräm|duschkrämer|gel douche
+ett balsam|balsam|après-shampooing
+en tops|topsar|coton-tige
+en näsduk|näsdukar|mouchoir
+en pappersnäsduk|pappersnäsdukar|mouchoir en papier
+ett hushållspapper||essuie-tout
+en diskborste|diskborstar|brosse à vaisselle
+ett diskmedel|diskmedel|liquide vaisselle
+ett tvättmedel|tvättmedel|lessive
+en tvättkorg|tvättkorgar|panier à linge
+en klädnypa|klädnypor|pince à linge
+en strykbräda|strykbrädor|planche à repasser
+en galge|galgar|cintre
+en plastpåse|plastpåsar|sac plastique
+en matlåda|matlådor|boîte repas
+en vattenflaska|vattenflaskor|gourde, bouteille d'eau
+en korkskruv|korkskruvar|tire-bouchon
+en kapsylöppnare|kapsylöppnare|décapsuleur
+en konservöppnare|konservöppnare|ouvre-boîte
+en handväska|handväskor|sac à main
+en portfölj|portföljer|porte-documents
+en fjärrkontroll|fjärrkontroller|télécommande
+en adapter|adaptrar|adaptateur
+en lampskärm|lampskärmar|abat-jour
+ett stearinljus|stearinljus|bougie
+en tändsticksask|tändsticksaskar|boîte d'allumettes
+en brandvarnare|brandvarnare|détecteur de fumée
+en brandsläckare|brandsläckare|extincteur
+en förbandslåda|förbandslådor|trousse de secours
+en badrumsvåg|badrumsvågar|pèse-personne
+en termometer|termometrar|thermomètre
+en sovsäck|sovsäckar|sac de couchage
+en luftmadrass|luftmadrasser|matelas pneumatique
+en kortlek|kortlekar|jeu de cartes
+en tärning|tärningar|dé
+ett gosedjur|gosedjur|peluche
+en docka|dockor|poupée
+en leksaksbil|leksaksbilar|petite voiture (jouet)
+en ballong|ballonger|ballon de baudruche
+en drake|drakar|cerf-volant, dragon
+en gunga|gungor|balançoire
+en rutschkana|rutschkanor|toboggan
+en sandlåda|sandlådor|bac à sable
+en barnvagn|barnvagnar|poussette
+en blöja|blöjor|couche (bébé)
+en napp|nappar|tétine
+en nappflaska|nappflaskor|biberon
+en haklapp|haklappar|bavoir
+en spjälsäng|spjälsängar|lit à barreaux
+`);
+CG.words.push({ id: 'mil', name: 'Environnement et climat', icon: '♻️', color: '#2F9E44', words: [] });
+ADDW('mil', `
+en miljö|miljöer|environnement
+en klimatförändring|klimatförändringar|changement climatique
+en växthuseffekt||effet de serre
+en koldioxid||dioxyde de carbone
+ett utsläpp|utsläpp|émission (de gaz)
+en förorening|föroreningar|pollution
+ett avfall||déchets
+sopor|ordures|pluriel
+en återvinning||recyclage
+en sopsortering||tri des déchets
+en återvinningsstation|återvinningsstationer|point de recyclage
+en pant||consigne
+v panta|pantar|pantade|pantat|rapporter (les bouteilles consignées)
+en solenergi||énergie solaire
+en vindkraft||énergie éolienne
+ett vindkraftverk|vindkraftverk|éolienne
+en solcell|solceller|panneau solaire (cellule)
+en vattenkraft||énergie hydraulique
+en kärnkraft||énergie nucléaire
+ett kärnkraftverk|kärnkraftverk|centrale nucléaire
+en naturgas||gaz naturel
+en energiförbrukning||consommation d'énergie
+en hållbarhet||durabilité
+en naturresurs|naturresurser|ressource naturelle
+en mångfald||diversité
+ett ekosystem|ekosystem|écosystème
+en regnskog|regnskogar|forêt tropicale
+en avskogning||déforestation
+en havsnivå|havsnivåer|niveau de la mer
+en glaciär|glaciärer|glacier
+en naturvård||protection de la nature
+en nationalpark|nationalparker|parc national
+ett naturreservat|naturreservat|réserve naturelle
+en aktivist|aktivister|militant
+en plastflaska|plastflaskor|bouteille en plastique
+en mikroplast||microplastique
+en förpackning|förpackningar|emballage
+en elcykel|elcyklar|vélo électrique
+ett fotavtryck|fotavtryck|empreinte
+ett matsvinn||gaspillage alimentaire
+en vegetarian|vegetarianer|végétarien
+en vegan|veganer|végan
+miljövänlig|écologique
+klimatsmart|bon pour le climat
+förnybar|renouvelable
+fossil|fossile
+v förorena|förorenar|förorenade|förorenat|polluer
+v bevara|bevarar|bevarade|bevarat|préserver
+v släppa ut|släpper ut|släppte ut|släppt ut|émettre, rejeter
+`);
+CG.words.push({ id: 'adm', name: 'Administration et services', icon: '🏢', color: '#5B5BD6', words: [] });
+ADDW('adm', `
+ett personnummer|personnummer|numéro d'identité (suédois)
+en legitimation|legitimationer|pièce d'identité
+Skatteverket|l'administration fiscale
+Försäkringskassan|la caisse d'assurance sociale
+Arbetsförmedlingen|l'agence pour l'emploi
+en handläggare|handläggare|agent (chargé du dossier)
+ett ärende|ärenden|affaire, dossier
+ett formulär|formulär|formulaire
+en deklaration|deklarationer|déclaration (d'impôts)
+ett besked|besked|réponse, avis
+en kölapp|kölappar|ticket d'attente
+en väntetid|väntetider|temps d'attente
+en tidsbokning|tidsbokningar|prise de rendez-vous
+ett besök|besök|visite
+en adressändring|adressändringar|changement d'adresse
+en postadress|postadresser|adresse postale
+ett postnummer|postnummer|code postal
+en e-legitimation|e-legitimationer|identité numérique
+ett bankkonto|bankkonton|compte bancaire
+en överföring|överföringar|virement
+ett autogiro|autogiron|prélèvement automatique
+en tandvård||soins dentaires
+en äldreomsorg||soins aux personnes âgées
+ett äldreboende|äldreboenden|maison de retraite
+en socialtjänst||services sociaux
+ett barnbidrag||allocations familiales
+en föräldraledighet||congé parental
+en sjukskrivning|sjukskrivningar|arrêt maladie
+en a-kassa|a-kassor|caisse d'assurance chômage
+en hyresrätt|hyresrätter|logement locatif
+en bostadsrätt|bostadsrätter|appartement en copropriété
+en bostadskö|bostadsköer|file d'attente pour un logement
+v ansöka|ansöker|ansökte|ansökt|faire une demande
+v fylla i|fyller i|fyllde i|fyllt i|remplir (un formulaire)
+v registrera|registrerar|registrerade|registrerat|enregistrer
+v boka tid|bokar tid|bokade tid|bokat tid|prendre rendez-vous
+v legitimera sig|legitimerar sig|legitimerade sig|legitimerat sig|montrer sa pièce d'identité
+v förnya|förnyar|förnyade|förnyat|renouveler
+v säga upp|säger upp|sade upp|sagt upp|résilier, licencier
+v betala in|betalar in|betalade in|betalat in|verser (de l'argent)
+v föra över|för över|förde över|fört över|virer (de l'argent)
+`);
+CG.words.push({ id: 'krp', name: 'Apparence', icon: '🪞', color: '#E93D82', words: [] });
+ADDW('krp', `
+kortväxt|petit (de taille)
+överviktig|en surpoids
+smärt|svelte
+muskulös|musclé
+blond|blond
+mörkhårig|brun (cheveux)
+rödhårig|roux
+gråhårig|aux cheveux gris
+skallig|chauve
+lockig|bouclé
+blåögd|aux yeux bleus
+brunögd|aux yeux marron
+solbränd|bronzé
+snygg|beau, joli
+stilig|élégant, beau
+attraktiv|attirant
+elegant|élégant
+välklädd|bien habillé
+ovårdad|négligé
+medelålders|d'âge moyen
+äldre|âgé
+en frisyr|frisyrer|coiffure
+en lugg|luggar|frange
+en hästsvans|hästsvansar|queue de cheval
+en knut|knutar|chignon, nœud
+en tatuering|tatueringar|tatouage
+en piercing|piercingar|piercing
+en finne|finnar|bouton (acné)
+ett födelsemärke|födelsemärken|grain de beauté
+en hy||teint
+en hållning||posture
+ett utseende||apparence
+en skönhetssalong|skönhetssalonger|institut de beauté
+v klippa sig|klipper sig|klippte sig|klippt sig|se faire couper les cheveux
+v färga håret|färgar håret|färgade håret|färgat håret|se teindre les cheveux
+v se ut|ser ut|såg ut|sett ut|avoir l'air
+v likna|liknar|liknade|liknat|ressembler à
+v gå ner i vikt|går ner i vikt|gick ner i vikt|gått ner i vikt|perdre du poids
+v gå upp i vikt|går upp i vikt|gick upp i vikt|gått upp i vikt|prendre du poids
+`);
+CG.words.push({ id: 'ali', name: 'Aliments (plus)', icon: '🥕', color: '#46A758', words: [] });
+ADDW('ali', `
+en sparris|sparrisar|asperge
+en kronärtskocka|kronärtskockor|artichaut
+en selleri||céleri
+en fänkål||fenouil
+en rädisa|rädisor|radis
+en kålrot|kålrötter|rutabaga
+en palsternacka|palsternackor|panais
+en sötpotatis|sötpotatisar|patate douce
+en chilifrukt|chilifrukter|piment
+en schalottenlök|schalottenlökar|échalote
+en rödlök|rödlökar|oignon rouge
+en ruccola||roquette
+en champinjon|champinjoner|champignon de Paris
+en oliv|oliver|olive
+en kapris||câpres
+en lins|linser|lentille|aussi : lentille (optique)
+en kikärta|kikärtor|pois chiche
+en tofu||tofu
+ett fullkornsbröd|fullkornsbröd|pain complet
+en baguette|baguetter|baguette (pain)
+en tortilla|tortillor|tortilla
+ett kex|kex|biscuit
+en skorpa|skorpor|biscotte
+en croissant|croissanter|croissant
+en muffin|muffins|muffin
+en kladdkaka|kladdkakor|gâteau au chocolat fondant
+en glasstrut|glasstrutar|cornet de glace
+en pudding|puddingar|pudding, flan
+en vaniljsås||crème anglaise
+en marmelad|marmelader|marmelade
+ett jordnötssmör||beurre de cacahuète
+en färskost||fromage frais
+en mesost||fromage brun suédois
+en kvarg||fromage blanc
+ett margarin||margarine
+en buljong|buljonger|bouillon
+en muskot||muscade
+en saffran||safran
+en vanilj||vanille
+en curry||curry
+en oregano||origan
+en koriander||coriandre
+ett florsocker||sucre glace
+en sirap|siraper|sirop (de sucre)
+en jäst||levure
+ett bakpulver||levure chimique
+ett vetemjöl||farine de blé
+havregryn|flocons d'avoine|pluriel
+en couscous||couscous
+en köttfärs||viande hachée
+en kotlett|kotletter|côtelette
+en fläskfilé|fläskfiléer|filet de porc
+ett renkött||viande de renne
+en räkmacka|räkmackor|tartine aux crevettes
+en fiskpinne|fiskpinnar|bâtonnet de poisson
+en sushi||sushi
+en kebab|kebaber|kebab
+en lasagne|lasagner|lasagnes
+en ärtsoppa||soupe aux pois
+en pyttipanna||poêlée de restes (plat suédois)
+en kåldolme|kåldolmar|chou farci
+en raggmunk|raggmunkar|galette de pommes de terre
+en lingonsylt||confiture d'airelles
+en gravlax||saumon mariné
+en espresso|espressor|expresso
+en latte|latter|café latte
+en smoothie|smoothies|smoothie
+ett mineralvatten||eau minérale
+ett kranvatten||eau du robinet
+en cider|cidrar|cidre
+en snaps|snapsar|schnaps
+ett rödvin|rödviner|vin rouge
+ett vitt vin|vita viner|vin blanc
+en drink|drinkar|cocktail
+`);
+CG.words.push({ id: 'kto', name: 'Bureau et travail', icon: '🗂️', color: '#0F766E', words: [] });
+ADDW('kto', `
+en arbetstid|arbetstider|horaires de travail
+en flextid||horaires flexibles
+ett distansarbete||télétravail
+ett hemmakontor|hemmakontor|bureau à domicile
+en medarbetare|medarbetare|collaborateur
+en uppdragsgivare|uppdragsgivare|client, donneur d'ordre
+ett uppdrag|uppdrag|mission
+en projektledare|projektledare|chef de projet
+en tidsplan|tidsplaner|planning
+en milstolpe|milstolpar|jalon
+en agenda|agendor|ordre du jour
+ett protokoll|protokoll|procès-verbal
+ett bildspel|bildspel|diaporama
+en återkoppling||retour (feedback)
+ett utvecklingssamtal|utvecklingssamtal|entretien annuel
+en löneförhandling|löneförhandlingar|négociation salariale
+en befordran|befordringar|promotion
+en provanställning|provanställningar|période d'essai
+en sjukdag|sjukdagar|jour de maladie
+en friskvård||activité de bien-être (au travail)
+en fikapaus|fikapauser|pause café
+ett fikarum|fikarum|salle café
+en kontorsstol|kontorsstolar|chaise de bureau
+en whiteboard|whiteboards|tableau blanc
+en projektor|projektorer|projecteur
+en kopiator|kopiatorer|photocopieuse
+ett passerkort|passerkort|badge d'accès
+ett kontorslandskap|kontorslandskap|open space
+ett konferensrum|konferensrum|salle de conférence
+ett videomöte|videomöten|visioconférence
+en signatur|signaturer|signature (e-mail)
+en rutin|rutiner|routine
+en process|processer|processus
+en policy|policyer|politique (d'entreprise)
+en riktlinje|riktlinjer|ligne directrice
+ett nyckeltal|nyckeltal|indicateur clé
+en kompetens|kompetenser|compétence
+ett certifikat|certifikat|certificat
+ett personligt brev|personliga brev|lettre de motivation
+en referens|referenser|référence
+en rekrytering|rekryteringar|recrutement
+en rekryterare|rekryterare|recruteur
+en arbetssökande|arbetssökande|demandeur d'emploi
+en tjänsteman|tjänstemän|employé de bureau, fonctionnaire
+en arbetare|arbetare|ouvrier
+ett skyddsombud|skyddsombud|délégué à la sécurité
+v jobba hemifrån|jobbar hemifrån|jobbade hemifrån|jobbat hemifrån|travailler de chez soi
+v delegera|delegerar|delegerade|delegerat|déléguer
+v presentera|presenterar|presenterade|presenterat|présenter
+v rapportera|rapporterar|rapporterade|rapporterat|faire un rapport
+v avboka|avbokar|avbokade|avbokat|annuler (une réservation)
+v skjuta upp|skjuter upp|sköt upp|skjutit upp|reporter
+v stressa|stressar|stressade|stressat|stresser, se dépêcher
+v fokusera|fokuserar|fokuserade|fokuserat|se concentrer
+v befordra|befordrar|befordrade|befordrat|promouvoir
+v pendla|pendlar|pendlade|pendlat|faire la navette
+yrkesverksam|actif (professionnellement)
+effektiv|efficace
+produktiv|productif
+`);
+CG.words.push({ id: 'res', name: 'Voyage et hôtel', icon: '🧳', color: '#E93D82', words: [] });
+ADDW('res', `
+en charterresa|charterresor|voyage organisé
+en weekendresa|weekendresor|escapade de week-end
+en affärsresa|affärsresor|voyage d'affaires
+en tågresa|tågresor|voyage en train
+en flygresa|flygresor|voyage en avion
+ett resesällskap|resesällskap|compagnons de voyage
+en resplan|resplaner|programme de voyage
+en reseguide|reseguider|guide de voyage
+en turistinformation||office de tourisme
+en stadsvandring|stadsvandringar|visite guidée à pied
+en utflykt|utflykter|excursion
+ett flygbolag|flygbolag|compagnie aérienne
+en terminal|terminaler|terminal
+ett boardingkort|boardingkort|carte d'embarquement
+en säkerhetskontroll|säkerhetskontroller|contrôle de sécurité
+ett handbagage||bagage à main
+ett bagageband|bagageband|tapis à bagages
+en avgångshall|avgångshallar|hall des départs
+en ankomsthall|ankomsthallar|hall des arrivées
+en mellanlandning|mellanlandningar|escale
+ett direktflyg|direktflyg|vol direct
+en jetlag||décalage horaire (fatigue)
+en tidsskillnad|tidsskillnader|décalage horaire
+en sovvagn|sovvagnar|wagon-lit
+en sittplats|sittplatser|place assise
+en fönsterplats|fönsterplatser|place côté fenêtre
+en gångplats|gångplatser|place côté couloir
+en enkelbiljett|enkelbiljetter|aller simple
+en returbiljett|returbiljetter|aller-retour
+ett hotellrum|hotellrum|chambre d'hôtel
+en svit|sviter|suite
+ett nyckelkort|nyckelkort|carte-clé
+en minibar|minibarer|minibar
+en utcheckning|utcheckningar|départ (de l'hôtel)
+en frukostbuffé|frukostbufféer|petit-déjeuner buffet
+en halvpension||demi-pension
+en helpension||pension complète
+en stugby|stugbyar|village de chalets
+en husvagn|husvagnar|caravane
+en campingplats|campingplatser|emplacement de camping
+en valutaväxling|valutaväxlingar|bureau de change
+en resförsäkring|resförsäkringar|assurance voyage
+ett vaccin|vacciner|vaccin
+en turistfälla|turistfällor|attrape-touristes
+en utsiktsplats|utsiktsplatser|point de vue
+en badort|badorter|station balnéaire
+en skidort|skidorter|station de ski
+ett liftkort|liftkort|forfait de ski
+en skidlift|skidliftar|remontée mécanique
+v checka in|checkar in|checkade in|checkat in|s'enregistrer
+v checka ut|checkar ut|checkade ut|checkat ut|libérer la chambre
+v landa|landar|landade|landat|atterrir
+v missa|missar|missade|missat|rater
+v packa upp|packar upp|packade upp|packat upp|défaire ses bagages
+v utforska|utforskar|utforskade|utforskat|explorer
+v övernatta|övernattar|övernattade|övernattat|passer la nuit
+v tälta|tältar|tältade|tältat|camper (sous la tente)
+v lifta|liftar|liftade|liftat|faire du stop
+fullbokad|complet
+försenad|en retard
+inställd|annulé
+`);
+CG.words.push({ id: 'pv', name: 'Verbes à particule', icon: '🧲', color: '#B45309', words: [] });
+ADDW('pv', `
+v ta upp|tar upp|tog upp|tagit upp|ramasser, aborder (un sujet)
+v ta emot|tar emot|tog emot|tagit emot|recevoir, accueillir
+v ta reda på|tar reda på|tog reda på|tagit reda på|se renseigner, découvrir
+v ta slut|tar slut|tog slut|tagit slut|s'épuiser, se terminer
+v ta tag i|tar tag i|tog tag i|tagit tag i|s'attaquer à
+v ta över|tar över|tog över|tagit över|reprendre (le relais)
+v ta bort|tar bort|tog bort|tagit bort|enlever, supprimer
+v ta fram|tar fram|tog fram|tagit fram|sortir, élaborer
+v ta sig|tar sig|tog sig|tagit sig|se rendre (quelque part)
+v komma fram|kommer fram|kom fram|kommit fram|arriver (à destination)
+v komma tillbaka|kommer tillbaka|kom tillbaka|kommit tillbaka|revenir
+v komma in|kommer in|kom in|kommit in|entrer
+v komma ut|kommer ut|kom ut|kommit ut|sortir, paraître
+v komma överens|kommer överens|kom överens|kommit överens|s'entendre, se mettre d'accord
+v komma på|kommer på|kom på|kommit på|trouver (une idée)
+v komma bort|kommer bort|kom bort|kommit bort|se perdre, disparaître
+v gå bort|går bort|gick bort|gått bort|décéder, s'en aller
+v gå sönder|går sönder|gick sönder|gått sönder|se casser
+v gå över|går över|gick över|gått över|passer (douleur), traverser
+v gå igenom|går igenom|gick igenom|gått igenom|passer en revue, traverser
+v gå med|går med|gick med|gått med|adhérer, accepter
+v gå upp|går upp|gick upp|gått upp|monter, se lever
+v gå ner|går ner|gick ner|gått ner|descendre
+v gå till|går till|gick till|gått till|se dérouler
+v hålla på|håller på|höll på|hållit på|être en train de
+v hålla ut|håller ut|höll ut|hållit ut|tenir le coup
+v se fram emot|ser fram emot|såg fram emot|sett fram emot|attendre avec impatience
+v se till|ser till|såg till|sett till|veiller à
+v se upp|ser upp|såg upp|sett upp|faire attention
+v se över|ser över|såg över|sett över|revoir, examiner
+v slå på|slår på|slog på|slagit på|allumer
+v slå av|slår av|slog av|slagit av|éteindre
+v slå upp|slår upp|slog upp|slagit upp|chercher (dans un dico), rompre
+v slå igen|slår igen|slog igen|slagit igen|claquer, fermer
+v sätta igång|sätter igång|satte igång|satt igång|démarrer, lancer
+v sätta upp|sätter upp|satte upp|satt upp|installer, accrocher
+v lägga av|lägger av|lade av|lagt av|arrêter (familier)
+v lägga till|lägger till|lade till|lagt till|ajouter
+v lägga ner|lägger ner|lade ner|lagt ner|fermer (définitivement), consacrer
+v lägga märke till|lägger märke till|lade märke till|lagt märke till|remarquer
+v stå ut|står ut|stod ut|stått ut|supporter
+v stå upp|står upp|stod upp|stått upp|se lever, être debout
+v stå för|står för|stod för|stått för|représenter, assumer
+v hänga med|hänger med|hängde med|hängt med|suivre, venir avec
+v höra av sig|hör av sig|hörde av sig|hört av sig|donner des nouvelles
+v höra till|hör till|hörde till|hört till|appartenir à
+v känna igen|känner igen|kände igen|känt igen|reconnaître
+v leta efter|letar efter|letade efter|letat efter|chercher
+v leta upp|letar upp|letade upp|letat upp|retrouver
+v plocka upp|plockar upp|plockade upp|plockat upp|ramasser
+v hälla upp|häller upp|hällde upp|hällt upp|servir (à boire)
+v städa upp|städar upp|städade upp|städat upp|ranger
+v äta upp|äter upp|åt upp|ätit upp|finir (son assiette)
+v dricka upp|dricker upp|drack upp|druckit upp|finir (son verre)
+v köra fast|kör fast|körde fast|kört fast|s'enliser, être bloqué
+v springa på|springer på|sprang på|sprungit på|tomber sur (quelqu'un)
+v stöta på|stöter på|stötte på|stött på|tomber sur, rencontrer
+v hitta på|hittar på|hittade på|hittat på|inventer
+v tycka om|tycker om|tyckte om|tyckt om|aimer
+v tycka till|tycker till|tyckte till|tyckt till|donner son avis
+v tänka på|tänker på|tänkte på|tänkt på|penser à
+v tänka över|tänker över|tänkte över|tänkt över|réfléchir à
+v ha på sig|har på sig|hade på sig|haft på sig|porter (un vêtement)
+v ha kvar|har kvar|hade kvar|haft kvar|avoir encore, garder
+v ha råd|har råd|hade råd|haft råd|avoir les moyens
+v ha tråkigt|har tråkigt|hade tråkigt|haft tråkigt|s'ennuyer
+v ha roligt|har roligt|hade roligt|haft roligt|s'amuser
+v ha bråttom|har bråttom|hade bråttom|haft bråttom|être pressé
+v ha sönder|har sönder|hade sönder|haft sönder|casser
+v göra slut|gör slut|gjorde slut|gjort slut|rompre
+v göra ont|gör ont|gjorde ont|gjort ont|faire mal
+v göra sig av med|gör sig av med|gjorde sig av med|gjort sig av med|se débarrasser de
+v bli av med|blir av med|blev av med|blivit av med|perdre, se débarrasser de
+v bli kvar|blir kvar|blev kvar|blivit kvar|rester
+v bli kär|blir kär|blev kär|blivit kär|tomber amoureux
+v bli sjuk|blir sjuk|blev sjuk|blivit sjuk|tomber malade
+v bli av|blir av|blev av|blivit av|avoir lieu
+v få tag på|får tag på|fick tag på|fått tag på|trouver, se procurer
+v få syn på|får syn på|fick syn på|fått syn på|apercevoir
+v ge bort|ger bort|gav bort|gett bort|offrir, donner
+v ge med sig|ger med sig|gav med sig|gett med sig|céder
+v ringa upp|ringer upp|ringde upp|ringt upp|appeler (au téléphone)
+v ringa tillbaka|ringer tillbaka|ringde tillbaka|ringt tillbaka|rappeler
+v skriva upp|skriver upp|skrev upp|skrivit upp|noter
+v klä av sig|klär av sig|klädde av sig|klätt av sig|se déshabiller
+v klä om sig|klär om sig|klädde om sig|klätt om sig|se changer
+v flytta in|flyttar in|flyttade in|flyttat in|emménager
+v flytta ut|flyttar ut|flyttade ut|flyttat ut|quitter un logement
+v hoppa av|hoppar av|hoppade av|hoppat av|abandonner, descendre
+v hoppa över|hoppar över|hoppade över|hoppat över|sauter (une étape)
+v kasta bort|kastar bort|kastade bort|kastat bort|jeter
+v lära känna|lär känna|lärde känna|lärt känna|faire connaissance
+`);
+CG.words.push({ id: 'id2', name: 'Idées et notions (plus)', icon: '💡', color: '#0F766E', words: [] });
+ADDW('id2', `
+en situation|situationer|situation
+en omständighet|omständigheter|circonstance
+ett sammanhang|sammanhang|contexte
+en bakgrund|bakgrunder|contexte, arrière-plan
+ett perspektiv|perspektiv|perspective
+en synvinkel|synvinklar|point de vue
+en uppfattning|uppfattningar|opinion, perception
+en inställning|inställningar|attitude, réglage
+en attityd|attityder|attitude
+en vilja||volonté
+en motivation||motivation
+en inspiration||inspiration
+en ambition|ambitioner|ambition
+en vision|visioner|vision
+en prioritet|prioriteter|priorité
+ett behov|behov|besoin
+ett krav|krav|exigence
+en förväntning|förväntningar|attente
+en begränsning|begränsningar|limite
+ett hinder|hinder|obstacle
+en utmaning|utmaningar|défi
+en konsekvens|konsekvenser|conséquence
+en effekt|effekter|effet
+en påverkan||influence
+ett inflytande||influence, pouvoir
+en förutsättning|förutsättningar|condition préalable
+ett villkor|villkor|condition
+ett undantag|undantag|exception
+en princip|principer|principe
+en norm|normer|norme
+en moral||morale
+en etik||éthique
+en värdering|värderingar|valeur (morale)
+en identitet|identiteter|identité
+en gemenskap|gemenskaper|communauté
+en tillhörighet||appartenance
+en integritet||vie privée, intégrité
+en respekt||respect
+en tolerans||tolérance
+en empati||empathie
+en sympati|sympatier|sympathie
+en medkänsla||compassion
+en vänlighet||gentillesse
+en ärlighet||honnêteté
+en trygghet||sécurité (sentiment)
+ett välbefinnande||bien-être
+en balans||équilibre
+en harmoni||harmonie
+en press||pression
+en spänning|spänningar|tension, suspense
+en osäkerhet||incertitude
+en tvekan||hésitation
+ett tvivel|tvivel|doute
+en förvirring||confusion
+en klarhet||clarté
+en insikt|insikter|prise de conscience
+en aning|aningar|idée, pressentiment
+en intuition||intuition
+en logik||logique
+ett förnuft||raison
+en visdom||sagesse
+en okunskap||ignorance
+en talang|talanger|talent
+en svaghet|svagheter|faiblesse
+en ovana|ovanor|mauvaise habitude
+ett beroende|beroenden|dépendance
+en frestelse|frestelser|tentation
+en lust||envie
+en längtan||désir, nostalgie
+en saknad||manque (de quelqu'un)
+en nostalgi||nostalgie
+en upplevelse|upplevelser|expérience vécue
+ett äventyr|äventyr|aventure
+en slump|slumpar|hasard
+ett öde|öden|destin
+en otur||malchance
+en katastrof|katastrofer|catastrophe
+en dåtid||passé
+en evighet||éternité
+`);
+CG.words.push({ id: 'idi', name: 'Expressions imagées', icon: '🎭', color: '#D6409F', words: [] });
+ADDW('idi', `
+Det är ingen ko på isen.|Il n'y a pas le feu (pas de souci).
+Inte min kopp te.|Ce n'est pas ma tasse de thé.
+Ta det med en nypa salt.|Prendre ça avec des pincettes.
+Att glida in på en räkmacka.|Avoir tout cuit dans le bec.
+Att ha tummen mitt i handen.|Être maladroit (avoir deux mains gauches).
+Det är inte hela världen.|Ce n'est pas la fin du monde.
+Att gå över ån efter vatten.|Chercher midi à quatorze heures.
+Smaken är som baken, delad.|Les goûts et les couleurs…
+Borta bra men hemma bäst.|Rien ne vaut son chez-soi.
+Lagom är bäst.|Rien de trop (juste ce qu'il faut).
+Ingen rök utan eld.|Il n'y a pas de fumée sans feu.
+Bättre sent än aldrig.|Mieux vaut tard que jamais.
+Övning ger färdighet.|C'est en forgeant qu'on devient forgeron.
+Morgonstund har guld i mund.|L'avenir appartient à ceux qui se lèvent tôt.
+Tala är silver, tiga är guld.|La parole est d'argent, le silence est d'or.
+Sälj inte skinnet förrän björnen är skjuten.|Ne vends pas la peau de l'ours avant de l'avoir tué.
+Där ligger en hund begraven.|Il y a anguille sous roche.
+Att slå två flugor i en smäll.|Faire d'une pierre deux coups.
+Att ha is i magen.|Garder son sang-froid.
+Att ha många järn i elden.|Avoir plusieurs fers au feu.
+Att dra alla över en kam.|Mettre tout le monde dans le même sac.
+Att lägga näsan i blöt.|Fourrer son nez partout.
+Att få kalla fötter.|Avoir la frousse, se dégonfler.
+Att vara ute och cykla.|Être complètement à côté de la plaque.
+Att prata i nattmössan.|Dire n'importe quoi.
+Att sätta käppar i hjulet.|Mettre des bâtons dans les roues.
+Att gå som katten kring het gröt.|Tourner autour du pot.
+Att ta tjuren vid hornen.|Prendre le taureau par les cornes.
+Att köpa grisen i säcken.|Acheter chat en poche.
+Att ha en räv bakom örat.|Être malin, rusé.
+Att sova som en stock.|Dormir comme une souche.
+Att vara ute på hal is.|Être sur un terrain glissant.
+Att hålla tummarna.|Croiser les doigts.
+Att trampa i klaveret.|Mettre les pieds dans le plat.
+Att tappa tråden.|Perdre le fil.
+Att stå med skägget i brevlådan.|Se retrouver le bec dans l'eau.
+Att bita i det sura äpplet.|Avaler la pilule.
+Att gå över där gärdesgården är lägst.|Choisir la solution de facilité.
+Att vända kappan efter vinden.|Retourner sa veste.
+Att ana ugglor i mossen.|Flairer quelque chose de louche.
+Att få på moppe.|Se faire gronder.
+Lugn som en filbunke.|Calme comme tout.
+Klart som korvspad.|Clair comme de l'eau de roche.
+`);
+CG.words.push({ id: 'bar', name: 'Enfance et école', icon: '🧸', color: '#F5B800', words: [] });
+ADDW('bar', `
+ett dagis|dagis|crèche, maternelle (familier)
+en lekplats|lekplatser|aire de jeux
+en lek|lekar|jeu
+en kurragömma||cache-cache
+ett hopprep|hopprep|corde à sauter
+en klätterställning|klätterställningar|structure à grimper
+en målarbok|målarböcker|livre de coloriage
+en färgpenna|färgpennor|crayon de couleur
+en byggkloss|byggklossar|cube (jouet)
+en legobit|legobitar|pièce de Lego
+en nalle|nallar|ours en peluche
+en godnattsaga|godnattsagor|histoire du soir
+en vaggvisa|vaggvisor|berceuse
+ett barnprogram|barnprogram|émission pour enfants
+en barnbok|barnböcker|livre pour enfants
+en skolväska|skolväskor|cartable
+ett pennfodral|pennfodral|trousse
+en matsäck|matsäckar|casse-croûte
+en skolmatsal|skolmatsalar|cantine
+en skollunch|skolluncher|repas à la cantine
+en skolgård|skolgårdar|cour d'école
+en fröken|fröknar|maîtresse (familier)
+en bästis|bästisar|meilleur ami
+en mobbning||harcèlement
+en termin|terminer|semestre
+ett lov|lov|vacances scolaires
+ett sommarlov|sommarlov|grandes vacances
+ett sportlov|sportlov|vacances d'hiver
+ett jullov|jullov|vacances de Noël
+en skolavslutning|skolavslutningar|fête de fin d'année scolaire
+en klassresa|klassresor|voyage scolaire
+ett barnkalas|barnkalas|goûter d'anniversaire
+en barnvakt|barnvakter|baby-sitter
+en barnstol|barnstolar|chaise haute
+tonåren|l'adolescence
+en uppfostran||éducation (des enfants)
+en belöning|belöningar|récompense
+en veckopeng|veckopengar|argent de poche
+en mjölktand|mjölktänder|dent de lait
+v gunga|gungar|gungade|gungat|se balancer
+v busa|busar|busade|busat|faire des bêtises
+v gnälla|gnäller|gnällde|gnällt|pleurnicher, râler
+v trotsa|trotsar|trotsade|trotsat|désobéir, braver
+v skolka|skolkar|skolkade|skolkat|sécher les cours
+v plugga|pluggar|pluggade|pluggat|bûcher, étudier
+v räcka upp handen|räcker upp handen|räckte upp handen|räckt upp handen|lever la main
+v lära ut|lär ut|lärde ut|lärt ut|enseigner
+busig|espiègle
+lydig|obéissant
+olydig|désobéissant
+`);
+CG.words.push({ id: 'mtt', name: 'Mesures et quantités', icon: '📏', color: '#7C66DC', words: [] });
+ADDW('mtt', `
+en mängd|mängder|quantité
+ett antal|antal|nombre (de)
+en bredd|bredder|largeur
+en höjd|höjder|hauteur
+ett djup|djup|profondeur
+en tjocklek|tjocklekar|épaisseur
+ett avstånd|avstånd|distance
+en sträcka|sträckor|trajet, distance
+en millimeter|millimeter|millimètre
+en decimeter|decimeter|décimètre
+en kvadratmeter|kvadratmeter|mètre carré
+en kubikmeter|kubikmeter|mètre cube
+en hektar|hektar|hectare
+en centiliter|centiliter|centilitre
+en milliliter|milliliter|millilitre
+ett hekto|hekto|100 grammes
+en tum|tum|pouce (mesure)
+en klunk|klunkar|gorgée
+en munsbit|munsbitar|bouchée
+en näve|nävar|poignée
+en hög|högar|tas
+en rad|rader|rang, ligne
+en kartong|kartonger|carton
+en säck|säckar|sac (grand)
+en balja|baljor|bassine
+en bunt|buntar|botte, liasse
+en limpa|limpor|miche (de pain)
+en droppe|droppar|goutte
+en smula|smulor|miette
+en gnutta|gnuttor|pointe, brin
+en hälft|hälfter|moitié
+en tidpunkt|tidpunkter|moment précis
+en varaktighet||durée
+v väga|väger|vägde|vägt|peser
+v multiplicera|multiplicerar|multiplicerade|multiplicerat|multiplier
+v dividera|dividerar|dividerade|dividerat|diviser
+v addera|adderar|adderade|adderat|additionner
+v subtrahera|subtraherar|subtraherade|subtraherat|soustraire
+v avrunda|avrundar|avrundade|avrundat|arrondir
+halvfull|à moitié plein
+dubbel|double
+jämn|pair, régulier
+udda|impair, bizarre
+`);
+CG.words.push({ id: 'lan', name: 'Géographie physique', icon: '🗻', color: '#0E6A7A', words: [] });
+ADDW('lan', `
+en kontinent|kontinenter|continent
+en ekvator||équateur
+en pol|poler|pôle
+Nordpolen|le pôle Nord
+Sydpolen|le pôle Sud
+en älv|älvar|grand fleuve (nordique)
+ett delta|deltan|delta
+en mynning|mynningar|embouchure
+en slätt|slätter|plaine
+en platå|platåer|plateau
+en bergskedja|bergskedjor|chaîne de montagnes
+en topp|toppar|sommet
+en sluttning|sluttningar|pente
+en ravin|raviner|ravin
+en kanjon|kanjoner|canyon
+en jordbävning|jordbävningar|tremblement de terre
+ett jordskred|jordskred|glissement de terrain
+en lavin|laviner|avalanche
+en tsunami|tsunamier|tsunami
+ett isberg|isberg|iceberg
+en tundra|tundror|toundra
+en savann|savanner|savane
+en stäpp|stäpper|steppe
+ett träsk|träsk|marécage
+en mosse|mossar|tourbière
+en hed|hedar|lande
+en granskog|granskogar|forêt d'épicéas
+en lövskog|lövskogar|forêt de feuillus
+en glänta|gläntor|clairière
+en ås|åsar|crête (glaciaire)
+en udde|uddar|cap, pointe
+en holme|holmar|îlot
+ett stenblock|stenblock|rocher (bloc)
+ett grus||gravier
+en lera||argile, boue
+ett mineral|mineraler|minéral
+en kristall|kristaller|cristal
+en diamant|diamanter|diamant
+en kartbok|kartböcker|atlas
+en jordglob|jordglober|globe terrestre
+en latitud|latituder|latitude
+en longitud|longituder|longitude
+en tidszon|tidszoner|fuseau horaire
+ett norrsken|norrsken|aurore boréale
+en midnattssol||soleil de minuit
+ett mörker||obscurité
+nordlig|du nord
+sydlig|du sud
+östlig|de l'est
+västlig|de l'ouest
+tropisk|tropical
+arktisk|arctique
+bergig|montagneux
+`);
+CG.words.push({ id: 'pro', name: 'Pronoms et mots-outils', icon: '👉', color: '#1F5F99', words: [] });
+ADDW('pro', `
+jag|je
+du|tu
+han|il
+hon|elle
+den|il, elle (nom en « en »)
+det|il, ce (nom en « ett »)
+vi|nous
+ni|vous
+de|ils, elles
+mig|me, moi
+dig|te, toi
+sig|se, soi
+honom|le, lui
+henne|la, elle
+oss|nous (complément)
+er|vous (complément), votre
+dem|les, eux
+min|mon, ma (nom en « en »)
+mitt|mon, ma (nom en « ett »)
+mina|mes
+din|ton, ta
+ditt|ton, ta (nom en « ett »)
+dina|tes
+sin|son, sa (au sujet lui-même)
+sitt|son, sa (nom en « ett », réfléchi)
+sina|ses (réfléchi)
+hans|son, sa (à lui)
+hennes|son, sa (à elle)
+dess|son, sa (d'une chose)
+vår|notre
+vårt|notre (nom en « ett »)
+våra|nos
+ert|votre (nom en « ett »)
+era|vos
+deras|leur, leurs
+den här|ce … -ci (nom en « en »)
+det här|ce … -ci (nom en « ett »)
+de här|ces … -ci
+den där|ce … -là
+det där|ce … -là (nom en « ett »)
+de där|ces … -là
+denna|ce, cette (écrit)
+detta|ce (nom en « ett », écrit)
+dessa|ces (écrit)
+som|qui, que (relatif)
+vars|dont
+vilket|lequel (nom en « ett »)
+vilka|lesquels
+ingenting|rien
+inget|aucun (nom en « ett »)
+inga|aucuns
+någon annan|quelqu'un d'autre
+något annat|autre chose
+alla andra|tous les autres
+var och en|chacun
+man|on
+`);
+CG.words.push({ id: 'jmf', name: 'Comparatifs', icon: '📊', color: '#8E4EC6', words: [] });
+ADDW('jmf', `
+bra – bättre – bäst|bon – meilleur – le meilleur
+dålig – sämre – sämst|mauvais – pire – le pire
+gammal – äldre – äldst|vieux – plus vieux – le plus vieux
+ung – yngre – yngst|jeune – plus jeune – le plus jeune
+stor – större – störst|grand – plus grand – le plus grand
+liten – mindre – minst|petit – plus petit – le plus petit
+lång – längre – längst|long – plus long – le plus long
+hög – högre – högst|haut – plus haut – le plus haut
+låg – lägre – lägst|bas – plus bas – le plus bas
+tung – tyngre – tyngst|lourd – plus lourd – le plus lourd
+få – färre – färst|peu – moins (nombre) – le moins
+många – fler – flest|beaucoup – plus – le plus (nombre)
+mycket – mer – mest|beaucoup – plus – le plus (quantité)
+lite – mindre – minst|peu – moins – le moins
+nära – närmare – närmast|proche – plus proche – le plus proche
+varm – varmare – varmast|chaud – plus chaud – le plus chaud
+kall – kallare – kallast|froid – plus froid – le plus froid
+snabb – snabbare – snabbast|rapide – plus rapide – le plus rapide
+dyr – dyrare – dyrast|cher – plus cher – le plus cher
+billig – billigare – billigast|bon marché – moins cher – le moins cher
+lätt – lättare – lättast|facile – plus facile – le plus facile
+svår – svårare – svårast|difficile – plus difficile – le plus difficile
+rolig – roligare – roligast|amusant – plus amusant – le plus amusant
+vacker – vackrare – vackrast|beau – plus beau – le plus beau
+enkel – enklare – enklast|simple – plus simple – le plus simple
+god – godare – godast|bon (goût) – meilleur – le meilleur
+tidig – tidigare – tidigast|tôt – plus tôt – le plus tôt
+sen – senare – senast|tard – plus tard – le plus tard
+viktig – viktigare – viktigast|important – plus important – le plus important
+intressant – mer intressant – mest intressant|intéressant – plus – le plus intéressant
+lika … som|aussi … que
+mer … än|plus … que
+mindre … än|moins … que
+så … som möjligt|aussi … que possible
+allt bättre|de mieux en mieux
+allt fler|de plus en plus nombreux
+bäst av allt|le mieux de tout
+`);
+CG.words.push({ id: 'alm', name: 'Noms courants (plus)', icon: '📦', color: '#F76B15', words: [] });
+ADDW('alm', `
+en förening|föreningar|association
+en klubb|klubbar|club
+en medlem|medlemmar|membre
+ett medlemskap|medlemskap|adhésion
+en ordförande|ordförande|président (d'association)
+ett evenemang|evenemang|événement
+en händelse|händelser|événement, incident
+ett tillfälle|tillfällen|occasion, moment
+en jämförelse|jämförelser|comparaison
+ett urval|urval|sélection
+ett alternativ|alternativ|alternative, option
+ett sätt|sätt|manière, façon
+ett steg|steg|pas, étape
+en nivå|nivåer|niveau
+en signal|signaler|signal
+ett märke|märken|marque, trace
+en etikett|etiketter|étiquette
+en lista|listor|liste
+en kategori|kategorier|catégorie
+en typ|typer|type
+ett exemplar|exemplar|exemplaire
+en kopia|kopior|copie
+ett original|original|original
+ett innehåll||contenu
+en titel|titlar|titre
+ett efternamn|efternamn|nom de famille
+ett förnamn|förnamn|prénom
+ett smeknamn|smeknamn|surnom
+en ingång|ingångar|entrée
+en utgång|utgångar|sortie
+en nödutgång|nödutgångar|sortie de secours
+en korridor|korridorer|couloir
+en kant|kanter|bord
+en mitt||milieu
+en framsida|framsidor|devant, recto
+en baksida|baksidor|arrière, verso
+en insida|insidor|intérieur
+en utsida|utsidor|extérieur
+en botten|bottnar|fond
+ett material|material|matériau
+ett stycke|stycken|morceau, paragraphe
+en rest|rester|reste
+ett överskott|överskott|excédent
+en brist|brister|manque, défaut
+ett misstag|misstag|erreur
+en överraskning|överraskningar|surprise
+ett tack||remerciement
+en hjälp||aide
+ett stöd||soutien
+en instruktion|instruktioner|instruction
+en bruksanvisning|bruksanvisningar|mode d'emploi
+`);
+CG.words.push({ id: 'vb5', name: 'Verbes (plus)', icon: '🏃', color: '#E5484D', words: [] });
+ADDW('vb5', `
+v kämpa|kämpar|kämpade|kämpat|se battre, lutter
+v rädda|räddar|räddade|räddat|sauver
+v samla|samlar|samlade|samlat|collectionner, rassembler
+v skynda sig|skyndar sig|skyndade sig|skyndat sig|se dépêcher
+v slappna av|slappnar av|slappnade av|slappnat av|se détendre
+v tillverka|tillverkar|tillverkade|tillverkat|fabriquer
+v tjata|tjatar|tjatade|tjatat|rabâcher, harceler
+v tvinga|tvingar|tvingade|tvingat|forcer
+v undersöka|undersöker|undersökte|undersökt|examiner, enquêter
+v uppleva|upplever|upplevde|upplevt|vivre, éprouver
+v utbilda|utbildar|utbildade|utbildat|former
+v vakta|vaktar|vaktade|vaktat|garder, surveiller
+v värma|värmer|värmde|värmt|chauffer
+v väcka|väcker|väckte|väckt|réveiller
+v välkomna|välkomnar|välkomnade|välkomnat|accueillir
+v ägna|ägnar|ägnade|ägnat|consacrer
+v ändra sig|ändrar sig|ändrade sig|ändrat sig|changer d'avis
+v anmäla sig|anmäler sig|anmälde sig|anmält sig|s'inscrire
+v behålla|behåller|behöll|behållit|garder
+v bekymra sig|bekymrar sig|bekymrade sig|bekymrat sig|se faire du souci
+v belysa|belyser|belyste|belyst|éclairer
+v beskydda|beskyddar|beskyddade|beskyddat|protéger
+v betyda|betyder|betydde|betytt|signifier
+v bevaka|bevakar|bevakade|bevakat|surveiller, couvrir
+v blanda sig i|blandar sig i|blandade sig i|blandat sig i|se mêler de
+v dra sig tillbaka|drar sig tillbaka|drog sig tillbaka|dragit sig tillbaka|se retirer
+v dölja|döljer|dolde|dolt|dissimuler
+v fastna|fastnar|fastnade|fastnat|rester coincé
+v framföra|framför|framförde|framfört|présenter, interpréter
+v frysa in|fryser in|frös in|frusit in|congeler
+v fundera|funderar|funderade|funderat|réfléchir
+v förbereda|förbereder|förberedde|förberett|préparer
+v förbruka|förbrukar|förbrukade|förbrukat|consommer
+v föredra|föredrar|föredrog|föredragit|préférer
+v föreställa sig|föreställer sig|föreställde sig|föreställt sig|s'imaginer
+v förklara sig|förklarar sig|förklarade sig|förklarat sig|s'expliquer
+v förlänga|förlänger|förlängde|förlängt|prolonger
+v förstora|förstorar|förstorade|förstorat|agrandir
+v förvandla|förvandlar|förvandlade|förvandlat|transformer
+v förvara|förvarar|förvarade|förvarat|conserver, ranger
+v glädja|gläder|gladde|glatt|réjouir
+v hälla ut|häller ut|hällde ut|hällt ut|renverser, vider
+v häpna|häpnar|häpnade|häpnat|s'étonner
+v jaga|jagar|jagade|jagat|chasser, poursuivre
+v klara|klarar|klarade|klarat|réussir, se débrouiller
+v klara sig|klarar sig|klarade sig|klarat sig|s'en sortir
+v knäppa|knäpper|knäppte|knäppt|boutonner, claquer des doigts
+v koka upp|kokar upp|kokade upp|kokat upp|porter à ébullition
+v krympa|krymper|krympte|krympt|rétrécir
+v laga till|lagar till|lagade till|lagat till|préparer (un plat)
+v lysa|lyser|lyste|lyst|briller, éclairer
+v låtsas|låtsas|låtsades|låtsats|faire semblant
+v lämna in|lämnar in|lämnade in|lämnat in|remettre, déposer
+v nå|når|nådde|nått|atteindre
+v offra|offrar|offrade|offrat|sacrifier
+v ordna|ordnar|ordnade|ordnat|arranger, organiser
+v placera|placerar|placerade|placerat|placer
+v pröva|prövar|prövade|prövat|essayer, mettre à l'épreuve
+v putsa|putsar|putsade|putsat|astiquer, nettoyer
+v ringa in|ringer in|ringde in|ringt in|entourer, cerner
+v rulla|rullar|rullade|rullat|rouler
+v rusa|rusar|rusade|rusat|se précipiter
+v samtala|samtalar|samtalade|samtalat|converser
+v skaka|skakar|skakade|skakat|secouer, trembler
+v skölja|sköljer|sköljde|sköljt|rincer
+v slösa bort|slösar bort|slösade bort|slösat bort|gaspiller
+v smaksätta|smaksätter|smaksatte|smaksatt|assaisonner
+v spana|spanar|spanade|spanat|guetter, observer
+v sprida ut|sprider ut|spred ut|spridit ut|étaler, répandre
+v stänga in|stänger in|stängde in|stängt in|enfermer
+v störa|stör|störde|stört|déranger
+v svepa|sveper|svepte|svept|balayer, envelopper
+v synas|syns|syntes|synts|se voir, être visible
+v säkra|säkrar|säkrade|säkrat|sécuriser
+v tillbringa|tillbringar|tillbringade|tillbringat|passer (du temps)
+v träna upp|tränar upp|tränade upp|tränat upp|entraîner, développer
+v tvätta sig|tvättar sig|tvättade sig|tvättat sig|se laver
+v undra över|undrar över|undrade över|undrat över|se poser des questions sur
+v vara rädd|är rädd|var rädd|varit rädd|avoir peur
+v vila sig|vilar sig|vilade sig|vilat sig|se reposer
+v vinka av|vinkar av|vinkade av|vinkat av|dire au revoir de la main
+v värna|värnar|värnade|värnat|défendre, protéger
+`);
+CG.words.push({ id: 'hal', name: 'Santé (plus)', icon: '🏥', color: '#E5484D', words: [] });
+ADDW('hal', `
+en läkarundersökning|läkarundersökningar|examen médical
+en röntgen||radio (rayons X)
+ett blodprov|blodprov|prise de sang
+en remiss|remisser|ordonnance de renvoi (vers un spécialiste)
+en specialist|specialister|spécialiste
+en barnläkare|barnläkare|pédiatre
+en ögonläkare|ögonläkare|ophtalmologue
+en hudläkare|hudläkare|dermatologue
+en fysioterapeut|fysioterapeuter|kinésithérapeute
+en kirurg|kirurger|chirurgien
+en narkos||anesthésie
+ett gips|gips|plâtre
+ett stygn|stygn|point de suture
+en bedövning|bedövningar|anesthésie locale
+en smärtstillande tablett|smärtstillande tabletter|antidouleur
+en hostmedicin|hostmediciner|sirop contre la toux
+en näsdroppe|näsdroppar|goutte nasale
+en salva|salvor|pommade
+en kräm|krämer|crème
+en biverkning|biverkningar|effet secondaire
+en dos|doser|dose
+ett symtom|symtom|symptôme
+en hjärtattack|hjärtattacker|crise cardiaque
+en stroke|stroker|AVC
+en diabetes||diabète
+en astma||asthme
+en migrän|migräner|migraine
+en ryggvärk||mal de dos
+en magsjuka||gastro-entérite
+en matförgiftning|matförgiftningar|intoxication alimentaire
+ett utslag|utslag|éruption cutanée
+en klåda||démangeaison
+en svullnad|svullnader|enflure
+en stukning|stukningar|entorse
+en brännskada|brännskador|brûlure
+en hjärnskakning|hjärnskakningar|commotion cérébrale
+en blodförgiftning|blodförgiftningar|septicémie
+en graviditet|graviditeter|grossesse
+en förlossning|förlossningar|accouchement
+en barnmorskemottagning|barnmorskemottagningar|centre de suivi de grossesse
+en tandläkartid|tandläkartider|rendez-vous chez le dentiste
+ett hål i tanden|hål i tänderna|carie
+en tandborstning||brossage des dents
+ett friskintyg|friskintyg|certificat médical d'aptitude
+en sjukförsäkring|sjukförsäkringar|assurance maladie
+en vårdavgift|vårdavgifter|frais de consultation
+en akut||urgences (familier)
+en återhämtning||rétablissement
+en rehabilitering||rééducation
+en vila||repos
+frisk som en nötkärna|en pleine forme
+smittsam|contagieux
+allergisk|allergique
+yr|qui a le vertige
+illamående|nauséeux
+`);
+CG.words.push({ id: 'bti', name: 'Commerces et services', icon: '🏪', color: '#F5B800', words: [] });
+ADDW('bti', `
+ett bageri|bagerier|boulangerie
+ett konditori|konditorier|pâtisserie, salon de thé
+en slakteributik|slakteributiker|boucherie
+en fiskaffär|fiskaffärer|poissonnerie
+en blomsteraffär|blomsteraffärer|fleuriste
+en järnhandel|järnhandlar|quincaillerie
+en skobutik|skobutiker|magasin de chaussures
+en leksaksaffär|leksaksaffärer|magasin de jouets
+en optiker|optiker|opticien
+en frisersalong|frisersalonger|salon de coiffure
+en tvättomat|tvättomater|laverie
+en kemtvätt|kemtvättar|pressing
+en skomakare|skomakare|cordonnier
+en reparatör|reparatörer|réparateur
+en guldsmed|guldsmeder|bijoutier
+ett systembolag|systembolag|magasin d'alcool d'État (Systembolaget)
+en tobaksaffär|tobaksaffärer|bureau de tabac
+en elektronikbutik|elektronikbutiker|magasin d'électronique
+en möbelaffär|möbelaffärer|magasin de meubles
+en sportaffär|sportaffärer|magasin de sport
+en second hand-butik|second hand-butiker|friperie
+en galleria|gallerior|galerie marchande
+en marknadsplats|marknadsplatser|place du marché
+en expedit|expediter|vendeur
+ett biträde|biträden|employé de magasin
+en kundtjänst||service client
+en reklamation|reklamationer|réclamation
+ett byte|byten|échange
+en stängningstid|stängningstider|heure de fermeture
+en självscanning||caisse automatique
+en kassakö|kassaköer|file à la caisse
+en extrapris|extrapriser|prix promotionnel
+ett kampanjpris|kampanjpriser|prix de lancement
+ett presentkort|presentkort|carte cadeau
+ett medlemskort|medlemskort|carte de fidélité
+v slå in|slår in|slog in|slagit in|emballer (un cadeau)
+v reklamera|reklamerar|reklamerade|reklamerat|faire une réclamation
+v fynda|fyndar|fyndade|fyndat|faire une bonne affaire
+v pruta|prutar|prutade|prutat|marchander
+v shoppa|shoppar|shoppade|shoppat|faire du shopping
+v fönstershoppa|fönstershoppar|fönstershoppade|fönstershoppat|faire du lèche-vitrines
+`);
+CG.words.push({ id: 'ac2', name: 'Vêtements et accessoires (plus)', icon: '👜', color: '#E93D82', words: [] });
+ADDW('ac2', `
+en tröja med luva|tröjor med luva|sweat à capuche
+en polotröja|polotröjor|col roulé
+en stickad tröja|stickade tröjor|pull tricoté
+en blus|blusar|chemisier
+en tunika|tunikor|tunique
+en kjol med veck|kjolar med veck|jupe plissée
+ett par byxor|par byxor|un pantalon
+mjukisbyxor|pantalon de jogging|pluriel
+en träningsoverall|träningsoveraller|survêtement
+en dunjacka|dunjackor|doudoune
+en skinnjacka|skinnjackor|blouson en cuir
+en trenchcoat|trenchcoats|trench
+en poncho|ponchor|poncho
+en sjal|sjalar|châle
+en scarf|scarfar|foulard
+en hårsnodd|hårsnoddar|élastique à cheveux
+ett hårspänne|hårspännen|barrette
+ett diadem|diadem|serre-tête
+en manschettknapp|manschettknappar|bouton de manchette
+en brosch|broscher|broche
+ett armbandsur|armbandsur|montre-bracelet
+en axelväska|axelväskor|sac en bandoulière
+en kuvertväska|kuvertväskor|pochette
+en bandana|bandanor|bandana
+en baskermössa|baskermössor|béret
+en solhatt|solhattar|chapeau de soleil
+ett par strumpor|par strumpor|une paire de chaussettes
+knästrumpor|chaussettes hautes|pluriel
+ett par skor|par skor|une paire de chaussures
+en högklackad sko|högklackade skor|chaussure à talons
+en klack|klackar|talon (de chaussure)
+en träsko|träskor|sabot
+en gummistövel|gummistövlar|botte en caoutchouc
+en flipflopp|flipfloppar|tong
+en passform|passformer|coupe (d'un vêtement)
+en söm|sömmar|couture
+ett hål|hål|trou
+en fläck|fläckar|tache
+v knäppa upp|knäpper upp|knäppte upp|knäppt upp|déboutonner
+v sy|syr|sydde|sytt|coudre
+v sitta bra|sitter bra|satt bra|suttit bra|bien tomber (vêtement)
+v matcha|matchar|matchade|matchat|être assorti à
+tajt|moulant
+löst sittande|ample
+`);
+CG.words.push({ id: 'rst', name: 'Au restaurant', icon: '🍷', color: '#46A758', words: [] });
+ADDW('rst', `
+Ett bord för två, tack.|Une table pour deux, s'il vous plaît.
+Har ni ett ledigt bord?|Avez-vous une table libre ?
+Jag har bokat bord.|J'ai réservé une table.
+Kan jag få menyn?|Puis-je avoir la carte ?
+Vad rekommenderar du?|Que recommandez-vous ?
+Jag tar dagens rätt.|Je prends le plat du jour.
+Jag är vegetarian.|Je suis végétarien.
+Innehåller det nötter?|Est-ce que ça contient des noix ?
+Kan jag få det utan lök?|Puis-je l'avoir sans oignon ?
+Ett glas vatten, tack.|Un verre d'eau, s'il vous plaît.
+Kan vi få notan?|L'addition, s'il vous plaît.
+Kan vi betala var för sig?|Pouvons-nous payer séparément ?
+Det var jättegott!|C'était délicieux !
+Behåll växeln.|Gardez la monnaie.
+en servitris|servitriser|serveuse
+en hovmästare|hovmästare|maître d'hôtel
+en dagens rätt|dagens rätter|plat du jour
+en bordsbeställning|bordsbeställningar|réservation de table
+en barnmeny|barnmenyer|menu enfant
+en vinlista|vinlistor|carte des vins
+ett tillbehör|tillbehör|accompagnement
+en buffé|bufféer|buffet
+en brunch|brunchar|brunch
+en avhämtning||plat à emporter
+en hemleverans|hemleveranser|livraison à domicile
+en pizzeria|pizzerior|pizzeria
+ett gatukök|gatukök|kiosque à frites et saucisses
+en korvkiosk|korvkiosker|stand à hot-dogs
+ett café|caféer|café (lieu)
+en lunchrestaurang|lunchrestauranger|restaurant du midi
+en krog|krogar|bistrot, bar
+en pub|pubar|pub
+blodig|saignant
+medium|à point
+genomstekt|bien cuit
+vegetarisk|végétarien (adj.)
+glutenfri|sans gluten
+laktosfri|sans lactose
+`);
+CG.words.push({ id: 'hem', name: 'Maison (plus)', icon: '🛋️', color: '#0091FF', words: [] });
+ADDW('hem', `
+ett vardagsrumsbord|vardagsrumsbord|table de salon
+en matsal|matsalar|salle à manger
+ett arbetsrum|arbetsrum|bureau (pièce)
+ett gästrum|gästrum|chambre d'amis
+ett barnrum|barnrum|chambre d'enfant
+en klädkammare|klädkammare|dressing
+ett skafferi|skafferier|garde-manger
+en trappuppgång|trappuppgångar|cage d'escalier
+en entré|entréer|entrée (d'immeuble)
+en port|portar|porte d'immeuble, portail
+en portkod|portkoder|code de la porte
+en dörrmatta|dörrmattor|paillasson
+en hatthylla|hatthyllor|porte-chapeaux
+en skohylla|skohyllor|étagère à chaussures
+en sänggavel|sänggavlar|tête de lit
+ett nattduksbord|nattduksbord|table de chevet
+en sänglampa|sänglampor|lampe de chevet
+en golvlampa|golvlampor|lampadaire (d'intérieur)
+en taklampa|taklampor|plafonnier
+ett överkast|överkast|couvre-lit
+ett örngott|örngott|taie d'oreiller
+ett påslakan|påslakan|housse de couette
+en badmatta|badmattor|tapis de bain
+ett duschdraperi|duschdraperier|rideau de douche
+ett tvättställ|tvättställ|lavabo
+ett spegelskåp|spegelskåp|armoire à pharmacie
+en köksfläkt|köksfläktar|hotte
+en spishäll|spishällar|plaque de cuisson
+en ugnsform|ugnsformar|plat à four
+en köksbänk|köksbänkar|plan de travail
+en kökslåda|kökslådor|tiroir de cuisine
+ett soprum|soprum|local poubelles
+ett cykelrum|cykelrum|local à vélos
+en tvättid|tvättider|créneau de laverie
+en bostad|bostäder|logement
+ett boende|boenden|logement, hébergement
+ett hushåll|hushåll|foyer, ménage
+en flyttkartong|flyttkartonger|carton de déménagement
+en inflyttningsfest|inflyttningsfester|pendaison de crémaillère
+v flytta ihop|flyttar ihop|flyttade ihop|flyttat ihop|emménager ensemble
+v vädra|vädrar|vädrade|vädrat|aérer
+v damma|dammar|dammade|dammat|dépoussiérer
+v moppa|moppar|moppade|moppat|passer la serpillière
+v skura|skurar|skurade|skurat|récurer
+v inreda|inreder|inredde|inrett|aménager, décorer
+v möblera|möblerar|möblerade|möblerat|meubler
+v hyra ut|hyr ut|hyrde ut|hyrt ut|louer (à quelqu'un)
+mysig|douillet, agréable
+rymlig|spacieux
+trång|étroit, à l'étroit
+ljus och luftig|clair et aéré
+möblerad|meublé
+omöblerad|non meublé
+`);
+CG.words.push({ id: 'ord', name: 'Questions et réponses', icon: '❓', color: '#12A594', words: [] });
+ADDW('ord', `
+Vad är det här?|Qu'est-ce que c'est ?
+Vem är det?|Qui est-ce ?
+Var är du?|Où es-tu ?
+Vart ska du?|Où vas-tu ?
+När kommer du?|Quand viens-tu ?
+Hur länge stannar du?|Combien de temps restes-tu ?
+Varför det?|Pourquoi ça ?
+Hur då?|Comment ça ?
+Vilken dag är det i dag?|Quel jour sommes-nous ?
+Vad blir det för väder?|Quel temps va-t-il faire ?
+Får jag fråga en sak?|Puis-je poser une question ?
+Kan du hjälpa mig?|Peux-tu m'aider ?
+Har du en penna?|As-tu un stylo ?
+Är det ledigt här?|Cette place est libre ?
+Får jag sitta här?|Puis-je m'asseoir ici ?
+Vill du ha kaffe?|Veux-tu du café ?
+Ja, gärna!|Oui, volontiers !
+Nej tack.|Non merci.
+Kanske senare.|Peut-être plus tard.
+Det vet jag inte.|Ça, je ne sais pas.
+Jag tror det.|Je crois.
+Jag tror inte det.|Je ne crois pas.
+Självklart!|Évidemment !
+Det låter bra.|Ça a l'air bien.
+Det passar bra.|Ça me convient.
+Det går inte.|Ce n'est pas possible.
+Ingen aning.|Aucune idée.
+Det är okej.|C'est d'accord.
+Visst!|Bien sûr !
+`);
+
 /* Genre (en / ett) et pluriel des mots déjà écrits avant 0.5 (clé = le mot sans article). Pluriel vide = pas de pluriel courant (mot massif). */
 GN(`en bil|bilar
 en bok|böcker
@@ -3835,8 +6975,8 @@ function fixWord(v) {
   const m = /^(en|ett) (.+)$/.exec(v.sv); if (m) { v.g = m[1]; v.sv = m[2]; }
   v.g = v.g || ''; v.pl = v.pl || ''; v.forms = v.forms || '';
   const g = GENDERS[v.sv];
-  if (g && (!v.g || v.g === g.g) && !v.forms && !/\s/.test(v.sv) && (v.g || !v.pl)) { v.g = g.g; if (!v.pl) v.pl = g.pl; }
-  if (!v.g && !v.forms && !v.pl && VERBFORMS[v.sv]) v.forms = VERBFORMS[v.sv];
+  if (g && !v.plain && (!v.g || v.g === g.g) && !v.forms && !/\s/.test(v.sv) && (v.g || !v.pl)) { v.g = g.g; if (!v.pl) v.pl = g.pl; }
+  if (!v.plain && !v.g && !v.forms && !v.pl && VERBFORMS[v.sv]) v.forms = VERBFORMS[v.sv];
   return v;
 }
 /* enrichissements de fiches existantes (tableaux, pièges, mots en plus) : les ids des cartes déjà faites ne bougent pas */
