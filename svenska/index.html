@@ -369,7 +369,8 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .vb-top b { font-size: 16.5px; color: var(--blue); }
 .vb-fr { flex: 1; color: var(--muted); font-size: 14px; min-width: 0; }
 .vb-top .play { width: 28px; height: 28px; font-size: 11px; }
-.vb-forms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-weight: 600; font-size: 15px; }
+.vb-forms { display: grid; grid-template-columns: 1fr 1fr 1fr .8fr; gap: 5px; font-weight: 600; font-size: 14.5px; }
+.vb-forms span { overflow-wrap: anywhere; } .vb-forms .vb-imp { background: #eef3fa; color: var(--blue); font-weight: 500; }
 .vb-forms span { background: #f3f1ea; border-radius: 7px; padding: 3px 8px; }
 .vb-show { justify-self: start; border: 1px dashed #b9c3cc; background: #fff; border-radius: 8px; padding: 4px 10px; font: inherit; font-size: 13.5px; color: var(--blue); }
 .lesson.gram .tbl td:first-child { font-weight: 600; }
@@ -378,7 +379,7 @@ html{overflow-x:hidden}body{overflow-x:clip}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.10.0 · build du 27/11 à 21:52">v0.10.0</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.10.1 · build du 27/11 à 22:01">v0.10.1</span></h1></div>
   <button type="button" class="syncb" id="syncb" data-act="gh-box" title="Synchronisation PC ↔ iPhone">☁️</button>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
@@ -6703,29 +6704,29 @@ const GRAM = { verbs: [], fiches: [] };
 GRAM.verbs = [
   { g: 'i – e – i', rule: 'Infinitif en -i-, prétérit en -e-, supin en -i-it.', list: [
     ['bita', 'biter', 'bet', 'bitit', 'mordre'], ['bli', 'blir', 'blev', 'blivit', 'devenir'], ['driva', 'driver', 'drev', 'drivit', 'pousser, diriger'],
-    ['glida', 'glider', 'gled', 'glidit', 'glisser'], ['gnida', 'gnider', 'gned', 'gnidit', 'frotter'], ['gripa', 'griper', 'grep', 'gripit', 'saisir, arrêter'],
+    ['glida', 'glider', 'gled', 'glidit', 'glisser'], ['gnida', 'gnider', 'gned', 'gnidit', 'frotter'], ['knipa', 'kniper', 'knep', 'knipit', 'pincer'], ['niga', 'niger', 'neg', 'nigit', 'faire la révérence'], ['gripa', 'griper', 'grep', 'gripit', 'saisir, arrêter'],
     ['kliva', 'kliver', 'klev', 'klivit', 'enjamber, monter'], ['lida', 'lider', 'led', 'lidit', 'souffrir'], ['pipa', 'piper', 'pep', 'pipit', 'piailler'],
     ['rida', 'rider', 'red', 'ridit', 'monter à cheval'], ['riva', 'river', 'rev', 'rivit', 'déchirer, démolir'], ['skina', 'skiner', 'sken', 'skinit', 'briller'],
-    ['skrika', 'skriker', 'skrek', 'skrikit', 'crier'], ['skriva', 'skriver', 'skrev', 'skrivit', 'écrire'], ['slita', 'sliter', 'slet', 'slitit', 'user, arracher'],
+    ['skrida', 'skrider', 'skred', 'skridit', 'avancer lentement'], ['skrika', 'skriker', 'skrek', 'skrikit', 'crier'], ['skriva', 'skriver', 'skrev', 'skrivit', 'écrire'], ['slita', 'sliter', 'slet', 'slitit', 'user, arracher'],
     ['sprida', 'sprider', 'spred', 'spridit', 'répandre'], ['stiga', 'stiger', 'steg', 'stigit', 'monter, s\'élever'], ['strida', 'strider', 'stred', 'stridit', 'combattre'],
-    ['svika', 'sviker', 'svek', 'svikit', 'trahir, décevoir'], ['tiga', 'tiger', 'teg', 'tigit', 'se taire'], ['vika', 'viker', 'vek', 'vikit', 'plier'],
+    ['svida', 'svider', 'sved', 'svidit', 'brûler, piquer (douleur)'], ['svika', 'sviker', 'svek', 'svikit', 'trahir, décevoir'], ['tiga', 'tiger', 'teg', 'tigit', 'se taire'], ['vika', 'viker', 'vek (vikte)', 'vikit (vikt)', 'plier, céder'],
     ['vrida', 'vrider', 'vred', 'vridit', 'tordre, tourner']
   ]},
   { g: 'i – a – u', rule: 'Infinitif en -i-, prétérit en -a-, supin en -u-it.', list: [
-    ['binda', 'binder', 'band', 'bundit', 'lier, attacher'], ['brinna', 'brinner', 'brann', 'brunnit', 'brûler'], ['dricka', 'dricker', 'drack', 'druckit', 'boire'],
+    ['binda', 'binder', 'band', 'bundit', 'lier, attacher'], ['brista', 'brister', 'brast', 'brustit', 'se rompre, éclater'], ['brinna', 'brinner', 'brann', 'brunnit', 'brûler'], ['dricka', 'dricker', 'drack', 'druckit', 'boire'],
     ['finna', 'finner', 'fann', 'funnit', 'trouver'], ['finnas', 'finns', 'fanns', 'funnits', 'exister, il y a'], ['försvinna', 'försvinner', 'försvann', 'försvunnit', 'disparaître'],
     ['hinna', 'hinner', 'hann', 'hunnit', 'avoir le temps de'], ['rinna', 'rinner', 'rann', 'runnit', 'couler'], ['slippa', 'slipper', 'slapp', 'sluppit', 'être dispensé de'],
     ['spinna', 'spinner', 'spann', 'spunnit', 'filer, ronronner'], ['spricka', 'spricker', 'sprack', 'spruckit', 'se fendre'], ['springa', 'springer', 'sprang', 'sprungit', 'courir'],
-    ['sticka', 'sticker', 'stack', 'stuckit', 'piquer, filer'], ['vinna', 'vinner', 'vann', 'vunnit', 'gagner'], ['sitta', 'sitter', 'satt', 'suttit', 'être assis']
+    ['sticka', 'sticker', 'stack', 'stuckit', 'piquer, filer'], ['stinka', 'stinker', 'stank', 'stunkit', 'puer'], ['vinna', 'vinner', 'vann', 'vunnit', 'gagner'], ['sitta', 'sitter', 'satt', 'suttit', 'être assis']
   ]},
   { g: 'y / ju / u – ö – u', rule: 'Infinitif en -y-, -ju- ou -u-, prétérit en -ö-, supin en -u-it.', list: [
-    ['bjuda', 'bjuder', 'bjöd', 'bjudit', 'inviter, offrir'], ['bryta', 'bryter', 'bröt', 'brutit', 'casser, rompre'], ['flyga', 'flyger', 'flög', 'flugit', 'voler (en l\'air)'],
+    ['bjuda', 'bjuder', 'bjöd', 'bjudit', 'inviter, offrir'], ['bryta', 'bryter', 'bröt', 'brutit', 'casser, rompre'], ['duga', 'duger', 'dög (dugde)', 'dugt', 'convenir, faire l\'affaire'], ['flyga', 'flyger', 'flög', 'flugit', 'voler (en l\'air)'],
     ['flyta', 'flyter', 'flöt', 'flutit', 'flotter'], ['frysa', 'fryser', 'frös', 'frusit', 'geler, avoir froid'], ['gjuta', 'gjuter', 'göt', 'gjutit', 'couler (du métal)'],
     ['klyva', 'klyver', 'klöv', 'kluvit', 'fendre'], ['knyta', 'knyter', 'knöt', 'knutit', 'nouer'], ['krypa', 'kryper', 'kröp', 'krupit', 'ramper'],
-    ['ljuga', 'ljuger', 'ljög', 'ljugit', 'mentir'], ['njuta', 'njuter', 'njöt', 'njutit', 'profiter, savourer'], ['nysa', 'nyser', 'nös', 'nysit', 'éternuer'],
-    ['ryta', 'ryter', 'röt', 'rutit', 'rugir'], ['sjunga', 'sjunger', 'sjöng', 'sjungit', 'chanter'], ['sjunka', 'sjunker', 'sjönk', 'sjunkit', 'couler, baisser'],
-    ['skjuta', 'skjuter', 'sköt', 'skjutit', 'tirer, pousser'], ['smyga', 'smyger', 'smög', 'smugit', 'se faufiler'], ['stryka', 'stryker', 'strök', 'strukit', 'repasser, rayer'],
-    ['suga', 'suger', 'sög', 'sugit', 'sucer, aspirer'], ['tjuta', 'tjuter', 'tjöt', 'tjutit', 'hurler'], ['dyka', 'dyker', 'dök', 'dykt', 'plonger']
+    ['ljuga', 'ljuger', 'ljög', 'ljugit', 'mentir'], ['njuta', 'njuter', 'njöt', 'njutit', 'profiter, savourer'], ['nypa', 'nyper', 'nöp (nypte)', 'nypt', 'pincer'], ['nysa', 'nyser', 'nös (nyste)', 'nysit (nyst)', 'éternuer'], ['rysa', 'ryser', 'ryste (rös)', 'ryst (rysit)', 'frissonner'],
+    ['ryta', 'ryter', 'röt', 'rutit', 'rugir'], ['sjuda', 'sjuder', 'sjöd', 'sjudit', 'mijoter, bouillonner'], ['sjunga', 'sjunger', 'sjöng', 'sjungit', 'chanter'], ['sjunka', 'sjunker', 'sjönk', 'sjunkit', 'couler, baisser'],
+    ['skjuta', 'skjuter', 'sköt', 'skjutit', 'tirer, pousser'], ['skryta', 'skryter', 'skröt', 'skrutit', 'se vanter'], ['smyga', 'smyger', 'smög', 'smugit', 'se faufiler'], ['snyta', 'snyter', 'snöt', 'snutit', 'moucher'], ['stryka', 'stryker', 'strök', 'strukit', 'repasser, rayer'],
+    ['suga', 'suger', 'sög', 'sugit', 'sucer, aspirer'], ['supa', 'super', 'söp', 'supit', 'boire (de l\'alcool), picoler'], ['tjuta', 'tjuter', 'tjöt', 'tjutit', 'hurler'], ['dyka', 'dyker', 'dök', 'dykt', 'plonger']
   ]},
   { g: 'a – o – a', rule: 'Infinitif en -a-, prétérit en -o-, supin en -a-it.', list: [
     ['dra', 'drar', 'drog', 'dragit', 'tirer'], ['fara', 'far', 'for', 'farit', 'partir, voyager'], ['ta', 'tar', 'tog', 'tagit', 'prendre'],
@@ -8064,6 +8065,8 @@ document.addEventListener('keydown', e => {
 
 /* ---------------------------------------------------------------- Grammaire : verbes irréguliers + fiches */
 const GV = GRAM.verbs.flatMap(g => g.list.map(v => ({ g: g.g, inf: v[0], pres: v[1], pret: v[2], sup: v[3], fr: v[4] })));
+const IMP_X = { vara: 'var', 'göra': 'gör', komma: 'kom', 'äta': 'ät', 'säga': 'säg', 'glädja': 'gläd' }, IMP_NO = /^(finnas|slåss|töras|kunna|vilja|ska|måste|böra|veta)/;
+GV.forEach(v => { v.imp = v.g === 'Verbes de modalité' || IMP_NO.test(v.inf) ? '–' : IMP_X[v.inf] || (/[^aeiouyåäö]a$/.test(v.inf) && v.inf.length > 3 ? v.inf.slice(0, -1) : v.inf) + '!'; if (IMP_X[v.inf]) v.imp += '!'; });
 GV.forEach((v, i) => { v.i = i; v.k = dnorm([v.inf, v.pres, v.pret, v.sup, v.fr].join(' ')); });
 const GF = GRAM.fiches, gRead = f => !!((S.glu || {})[f.id]);
 function gram(arg) {
@@ -8073,7 +8076,7 @@ function gram(arg) {
   if (arg.sec === 'fiches') return '<button class="back" data-gsec="">← Grammaire</button><h1 class="pt">Fiches de grammaire <small class="muted">' + GF.filter(gRead).length + ' / ' + GF.length + ' lues</small></h1><div class="tlist">' +
     GF.map(f => '<button class="trow gfrow" data-gf="' + f.id + '"><span class="tr-ico" style="background:#6E56CF">' + f.icon + '</span><b>' + esc(f.title) + '<small>' + esc(f.sub) + '</small></b><small>' + (gRead(f) ? '<span class="tr-k">✓ lue</span>' : '') + '</small></button>').join('') + '</div>';
   return '<h1 class="pt">Grammaire</h1><div class="gcards">' +
-    '<button class="gcard" data-gsec="verbs" style="--c:#E5484D"><span class="gc-ico">📋</span><b>Verbes irréguliers</b><small>' + GV.length + ' verbes rangés par modèle (i – e – i, i – a – u…), avec présent, prétérit et supin</small></button>' +
+    '<button class="gcard" data-gsec="verbs" style="--c:#E5484D"><span class="gc-ico">📋</span><b>Verbes irréguliers</b><small>' + GV.length + ' verbes rangés par modèle (i – e – i, i – a – u…), avec présent, prétérit, supin et impératif</small></button>' +
     '<button class="gcard" data-gsec="fiches" style="--c:#6E56CF"><span class="gc-ico">📘</span><b>Fiches de grammaire</b><small>' + GF.length + ' fiches : les temps, les noms, les adjectifs, l\'ordre des mots…</small></button></div>';
 }
 function gramVList(arg) {
@@ -8084,14 +8087,14 @@ function gramVList(arg) {
     if (!L.length) return;
     h += '<h3 class="vg">' + esc(G.g) + '<small>' + esc(G.rule) + '</small></h3><div class="tlist vlist">' + L.map(v => '<div class="vb">' +
       '<div class="vb-top"><b>' + esc(v.inf) + '</b><span class="vb-fr">' + esc(v.fr) + '</span>' + playBtn(v.inf + ', ' + v.pres + ', ' + v.pret.replace(/ \(.*\)/, '') + ', ' + v.sup, v.inf) + '</div>' +
-      (arg.hide && !rev[v.i] ? '<button class="vb-show" data-vrev="' + v.i + '">Afficher les formes</button>' : '<div class="vb-forms"><span>' + esc(v.pres) + '</span><span>' + esc(v.pret) + '</span><span>' + esc(v.sup) + '</span></div>') + '</div>').join('') + '</div>';
+      (arg.hide && !rev[v.i] ? '<button class="vb-show" data-vrev="' + v.i + '">Afficher les formes</button>' : '<div class="vb-forms"><span>' + esc(v.pres) + '</span><span>' + esc(v.pret) + '</span><span>' + esc(v.sup) + '</span><span class="vb-imp">' + esc(v.imp) + '</span></div>') + '</div>').join('') + '</div>';
   });
   return h || '<p class="muted dnone">Aucun verbe pour « ' + esc(arg.q) + ' ».</p>';
 }
 function gramVerbs(arg) {
   return '<button class="back" data-gsec="">← Grammaire</button><h1 class="pt">Verbes irréguliers <small class="muted">' + GV.length + '</small></h1>' +
     '<div class="vhead"><input type="search" class="search" id="gq" placeholder="Chercher un verbe (suédois ou français)" value="' + esc(arg.q || '') + '" autocomplete="off" autocapitalize="off" spellcheck="false">' +
-    '<div class="vtools"><span class="vcols">présent · prétérit · supin</span><button class="btn sm' + (arg.hide ? ' primary' : '') + '" data-act="vhide">' + (arg.hide ? '👀 Tout afficher' : '🙈 S\'entraîner (cacher)') + '</button></div></div>' +
+    '<div class="vtools"><span class="vcols">présent · prétérit · supin · impératif</span><button class="btn sm' + (arg.hide ? ' primary' : '') + '" data-act="vhide">' + (arg.hide ? '👀 Tout afficher' : '🙈 S\'entraîner') + '</button></div></div>' +
     '<div id="vlist">' + gramVList(arg) + '</div>';
 }
 function gramFiche(id) {
