@@ -299,11 +299,28 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .drow.open.s-learn, .dopen { background: #fffaf0; }
 .dcount { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
 .tlegend.dleg { margin: 0; font-size: 12px; }
+
+/* Tuiles : listes compactes (façon Nemo) */
+.tlist { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 0 0 14px; }
+.trow { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; border-bottom: 1px solid #ece9df; background: #fff; padding: 0 12px 0 0; font: inherit; color: inherit; text-align: left; min-height: 48px; }
+.trow:last-child { border-bottom: 0; }
+.trow:active { background: #f6f4ee; }
+.tr-ico { display: grid; place-items: center; width: 48px; align-self: stretch; font-size: 22px; flex: none; }
+.trow b { flex: 1; font-size: 16px; font-weight: 600; }
+.trow small { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; }
+.tr-l { color: #b38600; font-weight: 600; } .tr-k { color: #2f8a3a; font-weight: 600; }
+
+/* en-tête d'un thème de tuiles : une seule ligne */
+.tilehead { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin: 0 0 14px; text-align: left; border-radius: 12px; }
+.tilehead .link { float: none; order: 0; flex: none; }
+.tilehead .tbig { font-size: 1.5rem; order: 1; flex: none; }
+.tilehead h1 { margin: 0; font-size: 1.15rem; order: 2; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tilehead .tspeak { position: static; order: 3; width: 34px; height: 34px; font-size: 16px; flex: none; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.4 · build du 27/11 à 18:53">v0.7.4</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.5 · build du 27/11 à 18:58">v0.7.5</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -4159,7 +4176,21 @@ function setDailyN(n) {
 const tref = (w, k) => w.refs ? w.refs[k] : [w, k];
 const tst = (w, k) => { const [W, K] = tref(w, k); return tileState(W.id + '-' + K); };
 const tcard = (w, k) => { const [W, K] = tref(w, k); return st(W.id + '-s' + K); };
-const curSet = () => view.arg.set === 'daily' ? dailySet() : WBY[view.arg.set];
+/* listes « Mes mots » (façon Nemo) : la liste est figée à l'ouverture (view.arg.refs) pour que marquer un mot ne fasse pas sauter la grille */
+const VLISTS = {
+  'v-learn': { title: 'Mots actifs', sub: 'à apprendre', icon: '🔁', color: '#F5B800', ok: s => s === 'learn' },
+  'v-wait': { title: 'Mots en attente', sub: 'pas encore triés', icon: '⏳', color: '#2f8fdb', ok: s => !s },
+  'v-known': { title: 'Mots connus', sub: '', icon: '✅', color: '#46A758', ok: s => s === 'known' },
+  'v-out': { title: 'Mots exclus', sub: '', icon: '🚫', color: '#8a8f98', ok: s => s === 'out' }
+};
+const vlistIds = id => { const out = []; WSETS.forEach(w => w.vocab.forEach((v, k) => { if (VLISTS[id].ok(tileState(w.id + '-' + k))) out.push(w.id + '-' + k); })); return out; };
+function refSet(ids, id, title, icon, color) {
+  const R = ids.map(x => { const i = x.lastIndexOf('-'); return [WBY[x.slice(0, i)], +x.slice(i + 1)]; }).filter(([w, k]) => w && w.vocab[k]);
+  return { id, title, vocab: R.map(([w, k]) => w.vocab[k]), refs: R, theme: { id, name: title, icon, color } };
+}
+function vlistSet(arg) { const L = VLISTS[arg.set]; if (!arg.refs) arg.refs = vlistIds(arg.set); return refSet(arg.refs, arg.set, L.title, L.icon, L.color); }
+const setById = (id, arg) => id === 'daily' ? dailySet() : VLISTS[id] ? vlistSet(arg || view.arg) : WBY[id];
+const curSet = () => setById(view.arg.set);
 function dailyCard() {
   const d = dailySet(), n = d.refs.length, done = d.refs.filter(([w, k]) => tileState(w.id + '-' + k)).length;
   return '<div class="dailycard"><div class="dc-top"><span class="dc-ico">🎲</span><b>Mots du jour</b><small>' + (n ? done + ' / ' + n + ' triés' : 'tout est trié 🎉') + '</small></div>' +
@@ -4167,11 +4198,14 @@ function dailyCard() {
     '<button class="btn primary dc-go" data-tset="daily">Découvrir →</button></div></div>';
 }
 function tiles(arg) {
-  if (arg && arg.set) return tileSet(arg.set === 'daily' ? dailySet() : WBY[arg.set]);
-  let h = '<h1 class="pt">Tuiles de mots</h1>' + dailyCard() + '<div class="themes">';
+  if (arg && arg.set) return tileSet(setById(arg.set, arg));
+  const row = (id, icon, color, title, right) => '<button class="trow" data-tset="' + id + '"><span class="tr-ico" style="background:' + color + '">' + icon + '</span><b>' + esc(title) + '</b><small>' + right + '</small></button>';
+  let h = '<h1 class="pt">Tuiles de mots</h1>' + dailyCard() + '<div class="tlist">';
+  Object.keys(VLISTS).forEach(id => { const L = VLISTS[id]; h += row(id, L.icon, L.color, L.title, String(vlistIds(id).length)); });
+  h += '</div><div class="tlist">';
   WSETS.forEach(w => {
     const n = w.vocab.length, c = { learn: 0, known: 0, out: 0 }; w.vocab.forEach((v, k) => { const s = tileState(w.id + '-' + k); if (s) c[s]++; });
-    h += '<button class="theme" data-tset="' + w.id + '" style="--t:' + w.theme.color + '"><span class="ti">' + w.theme.icon + '</span><b>' + esc(w.title) + '</b><small>' + plural(n, 'mot') + '</small>' + bar((c.known + c.learn) / n, w.theme.color) + '<small>' + c.learn + ' à apprendre · ' + c.known + ' connus</small></button>';
+    h += row(w.id, w.theme.icon, w.theme.color, w.title, (c.learn ? '<span class="tr-l">★ ' + c.learn + '</span>' : '') + (c.known ? '<span class="tr-k">✓ ' + c.known + '</span>' : '') + n);
   });
   return h + '</div>';
 }
@@ -4181,7 +4215,7 @@ function tileSet(w) {
   let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div>' + '<p class="tlegend"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre du mot</span><span><b class="lg l-learn">★</b> à apprendre</span><span><b class="lg l-known">✓</b> connu</span><span><b class="lg l-fr">FR</b> côté français</span></p>' + '<div class="tilegrid">';
   w.vocab.forEach((v, k) => {
     const s = tst(w, k);
-    if (s === 'out' || (hideKnown && s === 'known')) return;
+    if ((s === 'out' && w.id !== 'v-out') || (hideKnown && s === 'known')) return;
     const c = tcard(w, k), done = s === 'learn' && c && c.b >= MASTER;
     h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + ((flip[k] ? v.fr : svFull(v)).length > 15 ? ' long' : '') + '" data-tile="' + k + '">' +
       (s === 'learn' || s === 'known' ? '<b class="tmark">' + (s === 'known' || done ? '✓' : '★') + '</b>' : '') +
@@ -4198,7 +4232,7 @@ function tileSet(w) {
       (s ? '<button class="tb-btn reset" data-act="tset" data-s="" title="Réinitialiser" aria-label="Réinitialiser">↺</button>' : '') + '</div></div>';
   }
   const hidden = w.vocab.filter((v, k) => tst(w, k) === 'out').length;
-  h += '<div class="actions"><button class="btn primary" data-act="tlearn" data-id="' + w.id + '">' + (nl ? 'Réviser mes ' + plural(nl, 'mot') + ' à apprendre' : 'Tout apprendre (' + n + ')') + '</button>' + (w.refs ? '<button class="btn" data-act="dmore">🎲 Encore ' + dailyN() + ' mots</button>' : '') + '<button class="btn" data-act="tflip">Tout retourner</button><button class="btn" data-act="thide">' + (hideKnown ? 'Afficher les mots connus' : 'Masquer les mots connus') + '</button>' + (hidden ? '<button class="link" data-act="trestore">Remettre les ' + hidden + ' exclus</button>' : '') + '</div>';
+  h += '<div class="actions"><button class="btn primary" data-act="tlearn" data-id="' + w.id + '">' + (nl ? 'Réviser mes ' + plural(nl, 'mot') + ' à apprendre' : 'Tout apprendre (' + n + ')') + '</button>' + (w.id === 'daily' ? '<button class="btn" data-act="dmore">🎲 Encore ' + dailyN() + ' mots</button>' : '') + '<button class="btn" data-act="tflip">Tout retourner</button><button class="btn" data-act="thide">' + (hideKnown ? 'Afficher les mots connus' : 'Masquer les mots connus') + '</button>' + (hidden ? '<button class="link" data-act="trestore">Remettre les ' + hidden + ' exclus</button>' : '') + '</div>';
   return h;
 }
 /* ---------------------------------------------------------------- Rechercher : dictionnaire suédois ⇄ français (tuiles + mots des fiches) */
@@ -4496,7 +4530,7 @@ document.addEventListener('click', e => {
   else if (a === 'thide') { view.arg.hide = !view.arg.hide; render(); }
   else if (a === 'trestore') { const w = curSet(); w.vocab.forEach((v, k) => { if (tst(w, k) === 'out') { const [W, K] = tref(w, k); setTile(W, K, ''); } }); render(); }
   else if (a === 'tlearn') {
-    const w = b.dataset.id === 'daily' ? dailySet() : WBY[b.dataset.id]; let ks = w.vocab.map((v, k) => k).filter(k => tst(w, k) === 'learn');
+    const w = setById(b.dataset.id); let ks = w.vocab.map((v, k) => k).filter(k => tst(w, k) === 'learn');
     if (!ks.length) { ks = w.vocab.map((v, k) => k).filter(k => !tst(w, k)).slice(0, 30); ks.forEach(k => { const [W, K] = tref(w, k); setTile(W, K, 'learn'); }); }
     const ids = []; ks.forEach(k => { const [W, K] = tref(w, k); tileCards(W, K).forEach(id => { const s = st(id); if (!s || s.due <= today() || s.b < 2) ids.push(id); }); });
     startSession('ids', ids.slice(0, 60));
