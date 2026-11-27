@@ -345,11 +345,19 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .fam.on .trow { padding-left: 14px; } .fam.on .trow .tr-ico { width: 38px; font-size: 18px; border-radius: 8px; align-self: center; height: 38px; }
 /* en-tête d'un thème : reste visible sous l'en-tête principal pendant le défilement */
 .tilehead { position: sticky; top: var(--toph, 56px); z-index: 6; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+
+/* bouton de synchro dans l'en-tête */
+.syncb { margin-left: auto; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.15); font-size: 16px; line-height: 1; padding: 0; flex: none; }
+.syncb.warn { background: #ffe08a; }
+.syncb.spin { animation: syspin 1s linear infinite; }
+@keyframes syspin { to { transform: rotate(360deg); } }
+@media (min-width: 701px) { .syncb { order: 3; margin-left: 0; } .nav { margin-left: auto; } }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.9.1 · build du 27/11 à 21:07">v0.9.1</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.9.2 · build du 27/11 à 21:14">v0.9.2</span></h1></div>
+  <button type="button" class="syncb" id="syncb" data-act="gh-box" title="Synchronisation PC ↔ iPhone">☁️</button>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -7057,11 +7065,12 @@ const RECALL = 3;                                  /* à partir de la boîte 3 :
 const KEY = 'sy-svenska.v1';
 let S = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.cards) return s; } catch (e) { /* ignoré */ } return null; })()
   || { cards: {}, fiches: {}, days: {}, opts: {}, tiles: {} };
-S.tiles = S.tiles || {};
+S.tiles = S.tiles || {}; S.tmod = S.tmod || {};
+Object.keys(S.tiles).forEach(k => { if (!S.tmod[k]) S.tmod[k] = 1; });   /* tuiles marquées avant 0.9.2 : transmises aux autres appareils qui ne les ont pas */
 S.opts = Object.assign({ maxReviews: 30, alwaysChoice: false, autoSpeak: false, rate: 0.85, voice: '' }, S.opts);
 S.lu = S.lu || {};   /* fiches lues (lecture libre, sans exercices) : id → jour */
 if (!S.opts.v5) { S.opts.v5 = 1; S.opts.autoSpeak = false; }   /* 0.5 : plus de lecture automatique (la voix ne marche pas partout) */
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ } };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ } if (typeof ghSoon === 'function') ghSoon(); };
 const dayNum = d => { d = d || new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 864e5); };
 const dayIso = n => new Date(n * 864e5).toISOString().slice(0, 10);
 const today = () => dayNum();
@@ -7317,6 +7326,7 @@ Object.keys(S.tiles).forEach(wid => {
 function setTile(w, k, state) {
   const t = today(), wid = w.id + '-' + k;
   if (state) S.tiles[wid] = state; else delete S.tiles[wid];
+  S.tmod = S.tmod || {}; S.tmod[wid] = Date.now();
   tileCards(w, k).forEach(id => {
     if (state === 'learn') { if (!S.cards[id]) S.cards[id] = { b: 0, due: t, n: 0, ok: 0, last: t }; }
     else if (state === 'known') S.cards[id] = { b: MASTER, due: t + 10 + Math.floor(Math.random() * 20), n: 0, ok: 0, last: t, known: true };
@@ -7545,6 +7555,7 @@ function stats() {
     '<label class="chk"><input type="checkbox" id="opt-auto"' + (S.opts.autoSpeak ? ' checked' : '') + '> Lire le suédois automatiquement pendant les séances</label>' +
     '<label class="chk"><input type="checkbox" id="opt-choice"' + (S.opts.alwaysChoice ? ' checked' : '') + '> Toujours répondre avec des choix (pas de rappel libre)</label>' +
     (voiceNote ? '<p class="muted small">' + esc(voiceNote) + '</p>' : '') + '<p><button class="btn sm" data-say="Hej! Jag heter Anna. Trevligt att träffas.">▶ Tester la voix</button></p></div>' +
+    '<h2 class="sec" id="sync-sec">Synchronisation</h2>' + (typeof ghPanel === 'function' ? ghPanel() : '') +
     '<p><button class="link" data-act="reset">Effacer toute la progression</button></p>';
 }
 
@@ -7772,7 +7783,7 @@ document.addEventListener('click', e => {
   else if (a === 'no') answer(false);
   else if (a === 'next') nextCard();
   else if (a === 'stop') { view = { name: 'end', arg: sess.results }; render(); }
-  else if (a === 'reset' && confirm('Effacer toute la progression de SY Svenska ?')) { S = { cards: {}, fiches: {}, days: {}, opts: S.opts }; save(); go('home'); }
+  else if (a === 'reset' && confirm('Effacer toute la progression de SY Svenska ?')) { S = { cards: {}, fiches: {}, days: {}, tiles: {}, tmod: {}, opts: S.opts }; save(); go('home'); }
 });
 document.addEventListener('change', e => {
   const id = e.target.id;
@@ -7845,6 +7856,8 @@ function mergeS(a, b) {
 function ghBadge(state) {
   GH.state = state;
   const txt = { syncing: '🔄 Synchronisation…', ok: '☁️ Synchronisé', offline: '☁️ Hors ligne · enregistré ici', auth: '⚠️ Jeton GitHub refusé', error: '⚠️ Synchro en échec' }[state] || '';
+  const hb = document.getElementById('syncb');
+  if (hb) { hb.textContent = !GH.token ? '🔑' : state === 'syncing' ? '🔄' : state === 'auth' || state === 'error' ? '⚠️' : '☁️'; hb.className = 'syncb' + (state === 'syncing' ? ' spin' : '') + (state === 'auth' || state === 'error' ? ' warn' : ''); hb.title = GH.token ? (txt || 'Synchronisation') + (GH.lastOk ? ' · ' + new Date(GH.lastOk).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '') + ' · toucher pour synchroniser' : 'Synchro non activée : toucher pour coller le jeton'; }
   const s = document.getElementById('gh-status'); if (s) s.textContent = txt + (GH.lastOk ? ' · dernière synchro ' + new Date(GH.lastOk).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '');
 }
 async function ghFindOrCreate() {
@@ -7918,12 +7931,23 @@ async function ghActivate() {
   const v = ($('gh-token') || {}).value ? $('gh-token').value.trim() : '';
   if (!/^(ghp_|github_pat_)[A-Za-z0-9_]{20,}$/.test(v)) { alert('Ce n\'est pas un jeton GitHub (il commence par ghp_).'); return; }
   GH.token = v; GH.gist = ''; GH.lastOk = 0; ghSave();
+  /* un seul jeton pour toutes les pages (Culture, France, Monde, Svenska) */
+  try { const c = JSON.parse(localStorage.getItem('sy-culture-gh')) || {}; if (!c.token) localStorage.setItem('sy-culture-gh', JSON.stringify({ token: v, gist: '' })); } catch (e) { /* ignoré */ }
   await ghSync();
   if (GH.state === 'auth') { GH.token = ''; ghSave(); alert('GitHub refuse ce jeton : vérifie qu\'il a bien la case « gist ».'); }
   else ghStart();
   render();
 }
 ghStart();
+ghBadge(GH.token ? 'ok' : '');
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act;
+  if (a === 'gh-box') { if (GH.token) ghSync(); else { go('stats'); setTimeout(() => { const x = document.getElementById('sync-sec'); if (x) x.scrollIntoView({ block: 'start' }); const i = document.getElementById('gh-token'); if (i) i.focus(); }, 50); } }
+  else if (a === 'gh-now') ghSync();
+  else if (a === 'gh-save') ghActivate();
+  else if (a === 'gh-off' && confirm('Retirer le jeton GitHub de cet appareil ? Ta progression reste ici et sur GitHub.')) { GH.token = ''; GH.gist = ''; ghSave(); ghBadge(''); render(); }
+});
 
 /* le menu SY Culture (page parente) demande l'état ou une synchro */
 window.addEventListener('message', async e => {

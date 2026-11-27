@@ -458,7 +458,7 @@ body.playing .rd-nav { bottom: 88px; }
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">C</span><h1>Culture générale<span class="ver" title="Culture 0.20.3 · build du 27/11 à 15:23">v0.20.3</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">C</span><h1>Culture générale<span class="ver" title="Culture 0.20.4 · build du 27/11 à 21:14">v0.20.4</span></h1></div>
   <span class="sync" id="sync" hidden></span>
   <button type="button" class="syncbtn" data-act="sync-box" title="Synchroniser la progression entre le PC et l'iPhone" aria-label="Synchro">🔄<span class="lbl"> Synchro</span></button>
   <nav class="nav" aria-label="Sections">
@@ -3577,6 +3577,8 @@ syncStart();
    la synchro suivante rattrape. */
 var GH = (() => { try { return Object.assign({ token: '', gist: '' }, JSON.parse(localStorage.getItem('sy-culture-gh')) || {}); } catch (e) { return { token: '', gist: '' }; } })();
 GH.busy = false; GH.timer = null; GH.state = ''; GH.lastOk = 0;
+/* un seul jeton pour toutes les pages : sans jeton propre, on reprend celui de Svenska */
+if (!GH.token) { try { const sv = JSON.parse(localStorage.getItem('sy-svenska-gh')); if (sv && sv.token) { GH.token = sv.token; localStorage.setItem('sy-culture-gh', JSON.stringify({ token: sv.token, gist: '' })); } } catch (e) { /* ignoré */ } }
 const GH_DESC = 'SY Culture : progression (ne pas supprimer)', GH_FILE = 'progression.json';
 const ghSave = () => { try { localStorage.setItem('sy-culture-gh', JSON.stringify({ token: GH.token, gist: GH.gist, lastOk: GH.lastOk })); } catch (e) { /* ignoré */ } };
 const ghApi = (path, opt) => fetch('https://api.github.com' + path, Object.assign({ cache: 'no-store' }, opt || {}, {
