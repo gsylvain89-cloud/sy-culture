@@ -259,11 +259,24 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .dc-n button { flex: 1; border: 0; background: none; border-radius: 7px; padding: 6px 0; font: inherit; font-weight: 600; color: var(--muted); }
 .dc-n button.on { background: #fff; color: #1F5F99; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .btn.dc-go { flex: none; width: auto !important; padding: 8px 14px; margin: 0; }
+
+/* tuiles : grille fixe (colonnes égales, hauteur fixe) : retourner une tuile ne déplace plus les autres */
+.tilegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; justify-content: stretch; }
+.tile { min-width: 0; width: 100%; height: 64px; padding: 6px 8px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 1.1rem; line-height: 1.15; }
+.tile span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; hyphens: auto; }
+.tile.flip { font-size: .98rem; }
+@media (max-width: 700px) {
+  .tilegrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+  .tile { height: 58px; font-size: 15px; padding: 4px 5px; border-radius: 13px; }
+  .tile.flip { font-size: 13.5px; }
+}
+.tile.long { font-size: .92rem; } .tile.long span { -webkit-line-clamp: 3; line-height: 1.1; }
+@media (max-width: 700px) { .tile.long, .tile.flip.long { font-size: 12px; } }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.1 · build du 27/11 à 16:59">v0.7.1</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.2 · build du 27/11 à 17:09">v0.7.2</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -4143,7 +4156,7 @@ function tileSet(w) {
     const s = tst(w, k);
     if (s === 'out' || (hideKnown && s === 'known')) return;
     const c = tcard(w, k), done = s === 'learn' && c && c.b >= MASTER;
-    h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + '" data-tile="' + k + '"><span>' + esc(flip[k] ? v.fr : svFull(v)) + '</span></button>';
+    h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + ((flip[k] ? v.fr : svFull(v)).length > 15 ? ' long' : '') + '" data-tile="' + k + '"><span>' + esc(flip[k] ? v.fr : svFull(v)) + '</span></button>';
   });
   h += '</div>';
   if (sel != null) {
