@@ -222,16 +222,41 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .tb-btn.known.on { background: #46A758; border-color: #46A758; color: #fff; }
 .tb-btn.out.on { background: #e9e6da; }
 .tb-btn.reset { padding: 6px 10px; color: var(--muted); }
+
+/* Rechercher (dictionnaire) */
+.dict { position: relative; padding-right: 22px; }
+.dhead { position: sticky; top: var(--toph, 56px); z-index: 4; background: var(--bg, #f6f4ee); padding: 8px 0 8px; margin: -8px 0 4px; }
+.dhead .search { font-size: 16px; padding: 10px 14px; }
+.dseg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: #e6e3d7; border-radius: 10px; padding: 3px; margin-top: 8px; }
+.dseg button { border: 0; background: none; border-radius: 8px; padding: 7px; font: inherit; font-weight: 600; color: var(--muted); }
+.dseg button.on { background: #fff; color: var(--ink, #222); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.dcount { margin: 6px 2px 0; font-size: 12px; color: var(--muted); }
+.dlet { margin: 14px 0 2px; padding: 0 4px; font-size: 13px; color: var(--muted); font-weight: 600; scroll-margin-top: calc(var(--toph, 56px) + 120px); }
+.drow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; text-align: left; border: 0; border-bottom: 1px solid #e3dfd2; background: #fff; padding: 10px 12px; font: inherit; color: inherit; border-left: 5px solid transparent; }
+.drow .dl { color: var(--blue); font-weight: 600; font-size: 16.5px; overflow-wrap: anywhere; }
+.drow .dl.fr { color: var(--ink, #222); }
+.drow .dr { color: #555; font-size: 15px; overflow-wrap: anywhere; }
+.drow .dr:not(.fr) { color: var(--blue); }
+.drow.s-learn { border-left-color: #F5B800; } .drow.s-known { border-left-color: #46A758; } .drow.s-out { opacity: .55; }
+.drow.open { background: #fffaf0; }
+.dopen { background: #fffaf0; border-bottom: 1px solid #e3dfd2; padding: 4px 12px 10px 17px; display: grid; gap: 6px; }
+.dindex { position: fixed; right: 2px; top: calc(var(--toph, 56px) + 130px); bottom: calc(var(--tabs-h, 0px) + 12px); display: flex; flex-direction: column; justify-content: space-between; z-index: 3; }
+.dindex button { border: 0; background: none; color: var(--blue); font-weight: 700; font-size: 11px; line-height: 1; padding: 1px 4px; }
+.dnone { padding: 16px 4px; }
+@media (min-width: 701px) { .dindex { right: max(4px, calc((100vw - 980px) / 2 - 18px)); } }
+.drow .dl, .drow .dr { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 2px; min-width: 0; }
+.drow .gb { flex: none; }
+.dopen .tb-info { flex: 1; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.6.2 · build du 27/11 à 15:26">v0.6.2</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.0 · build du 27/11 à 16:48">v0.7.0</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
     <button type="button" data-nav="tiles">Tuiles</button>
-    <button type="button" data-nav="words">Mes mots</button>
+    <button type="button" data-nav="words">Rechercher</button>
     <button type="button" data-nav="stats">Progrès</button>
   </nav>
 </header>
@@ -1979,6 +2004,1430 @@ CG.words.push(
   ]}
 );
 
+/* SY Svenska 0.7 : 2 000 tuiles au total. Mots AJOUTÉS À LA FIN de chaque thème (l'id d'une tuile = son rang) : ne jamais réordonner. */
+const ADDW = (id, lines) => { const w = CG.words.find(x => x.id === id); lines.split('\n').forEach(l => { l = l.trim(); if (l) w.words.push(W(l)); }); };
+ADDW('xv', `
+v använda|använder|använde|använt|utiliser
+v bestämma|bestämmer|bestämde|bestämt|décider
+v besöka|besöker|besökte|besökt|visiter
+v bygga|bygger|byggde|byggt|construire
+v försöka|försöker|försökte|försökt|essayer
+v förklara|förklarar|förklarade|förklarat|expliquer
+v fortsätta|fortsätter|fortsatte|fortsatt|continuer
+v flytta|flyttar|flyttade|flyttat|déménager, déplacer
+v följa|följer|följde|följt|suivre
+v hämta|hämtar|hämtade|hämtat|aller chercher
+v hoppas|hoppas|hoppades|hoppats|espérer
+v känna|känner|kände|känt|sentir, connaître
+v köra|kör|körde|kört|conduire
+v lyssna|lyssnar|lyssnade|lyssnat|écouter
+v titta|tittar|tittade|tittat|regarder
+v tänka|tänker|tänkte|tänkt|penser
+v visa|visar|visade|visat|montrer
+v välja|väljer|valde|valt|choisir
+v åka|åker|åkte|åkt|aller (en véhicule)
+v spela|spelar|spelade|spelat|jouer (jeu, musique)
+v leka|leker|lekte|lekt|jouer (enfants)
+v leta|letar|letade|letat|chercher
+v lämna|lämnar|lämnade|lämnat|laisser, quitter
+v skicka|skickar|skickade|skickat|envoyer
+v berätta|berättar|berättade|berättat|raconter
+v tala|talar|talade|talat|parler
+v mena|menar|menade|menat|vouloir dire
+v minnas|minns|mindes|mints|se souvenir
+v sakna|saknar|saknade|saknat|manquer (quelqu'un)
+v skratta|skrattar|skrattade|skrattat|rire
+v sätta|sätter|satte|satt|mettre, poser
+v ställa|ställer|ställde|ställt|poser (debout)
+v städa|städar|städade|städat|faire le ménage
+v vakna|vaknar|vaknade|vaknat|se réveiller
+v somna|somnar|somnade|somnat|s'endormir
+v stanna|stannar|stannade|stannat|rester, s'arrêter
+v hända|händer|hände|hänt|arriver, se passer
+v passa|passar|passade|passat|convenir, aller bien
+v gilla|gillar|gillade|gillat|aimer bien
+v må|mår|mådde|mått|aller (bien ou mal)|hur mår du ? = comment vas-tu ?
+v orka|orkar|orkade|orkat|avoir la force de
+v trivas|trivs|trivdes|trivts|se plaire
+v längta|längtar|längtade|längtat|avoir hâte, languir
+v fika|fikar|fikade|fikat|prendre le café (la fika)
+v jobba|jobbar|jobbade|jobbat|bosser
+`);
+ADDW('xn', `
+en sak|saker|chose
+ett ord|ord|mot
+ett papper|papper|papier
+en låda|lådor|boîte, tiroir
+en flaska|flaskor|bouteille
+en burk|burkar|pot, boîte de conserve
+en klocka|klockor|horloge, montre
+en ryggsäck|ryggsäckar|sac à dos
+en resväska|resväskor|valise
+ett paraply|paraplyer|parapluie
+en plånbok|plånböcker|portefeuille
+ett kort|kort|carte
+ett brev|brev|lettre
+ett paket|paket|colis, paquet
+en tidning|tidningar|journal
+ett meddelande|meddelanden|message
+ett nummer|nummer|numéro
+en sida|sidor|page, côté
+en bit|bitar|morceau
+en sort|sorter|sorte
+en plats|platser|place, lieu
+ett ställe|ställen|endroit
+en gång|gånger|fois
+en dröm|drömmar|rêve
+ett liv|liv|vie
+en värld|världar|monde
+ett hem|hem|foyer, chez-soi
+ett folk|folk|peuple
+en ålder|åldrar|âge
+en historia|historier|histoire
+en nyhet|nyheter|nouvelle (information)
+ett mål|mål|but, objectif, repas
+ett ljud|ljud|son, bruit
+ett ljus|ljus|lumière, bougie
+en eld|eldar|feu
+en luft||air
+en tråd|trådar|fil
+ett rep|rep|corde
+en sax|saxar|ciseaux
+en kam|kammar|peigne
+en tändsticka|tändstickor|allumette
+ett batteri|batterier|pile, batterie
+en laddare|laddare|chargeur
+en skärm|skärmar|écran
+ett tangentbord|tangentbord|clavier
+en mobil|mobiler|téléphone portable
+en app|appar|appli
+ett lösenord|lösenord|mot de passe
+en sladd|sladdar|câble, fil électrique
+en leksak|leksaker|jouet
+en boll|bollar|ballon, balle
+ett fel|fel|erreur, faute
+en kö|köer|file d'attente
+en vikt|vikter|poids
+`);
+ADDW('xk', `
+en panna|pannor|front
+en kind|kinder|joue
+en haka|hakor|menton
+en läpp|läppar|lèvre
+en tunga|tungor|langue (organe)
+ett ögonbryn|ögonbryn|sourcil
+en ögonfrans|ögonfransar|cil
+ett ögonlock|ögonlock|paupière
+ett skägg|skägg|barbe
+en mustasch|mustascher|moustache
+en nacke|nackar|nuque
+ett bröst|bröst|poitrine, sein
+en midja|midjor|taille
+en höft|höfter|hanche
+en navel|navlar|nombril
+en tumme|tummar|pouce
+en nagel|naglar|ongle
+en handflata|handflator|paume
+en knytnäve|knytnävar|poing
+ett lår|lår|cuisse
+en vad|vader|mollet
+en fotled|fotleder|cheville
+en häl|hälar|talon
+en fotsula|fotsulor|plante du pied
+en hjärna|hjärnor|cerveau
+en lever|levrar|foie
+en njure|njurar|rein
+ett skelett|skelett|squelette
+en muskel|muskler|muscle
+en sena|senor|tendon
+en led|leder|articulation
+en ryggrad|ryggrader|colonne vertébrale
+ett revben|revben|côte (os)
+en skalle|skallar|crâne
+en käke|käkar|mâchoire
+ett tandkött||gencive
+en strupe|strupar|gorge
+en ven|vener|veine
+en svett||sueur
+en tår|tårar|larme
+en andning||respiration
+en puls|pulsar|pouls
+en armhåla|armhålor|aisselle
+en rumpa|rumpor|fesses
+en kroppsdel|kroppsdelar|partie du corps
+en fräkne|fräknar|tache de rousseur
+en rynka|rynkor|ride
+ett ärr|ärr|cicatrice
+en lock|lockar|boucle (de cheveux)|ne pas confondre avec ett lock (couvercle)
+en fläta|flätor|tresse
+`);
+ADDW('xc', `
+en t-shirt|t-shirtar|t-shirt
+en kofta|koftor|gilet
+en luvtröja|luvtröjor|sweat à capuche
+en kostym|kostymer|costume
+en kavaj|kavajer|veste (de costume)
+en väst|västar|gilet sans manches
+en slips|slipsar|cravate
+en fluga|flugor|nœud papillon|aussi : mouche
+jeans|jean|toujours au pluriel en suédois
+shorts|short|toujours au pluriel en suédois
+en overall|overaller|salopette, combinaison
+en regnjacka|regnjackor|imperméable
+en vinterjacka|vinterjackor|manteau d'hiver
+en rock|rockar|manteau long
+en morgonrock|morgonrockar|peignoir
+en pyjamas|pyjamasar|pyjama
+ett nattlinne|nattlinnen|chemise de nuit
+en baddräkt|baddräkter|maillot de bain (une pièce)
+en bikini|bikinier|bikini
+badbyxor|maillot de bain (homme)|toujours au pluriel
+kalsonger|caleçon|toujours au pluriel
+trosor|culotte|toujours au pluriel
+en behå|behåar|soutien-gorge
+ett linne|linnen|débardeur
+en strumpbyxa|strumpbyxor|collant
+en känga|kängor|bottine
+en stövel|stövlar|botte
+en sandal|sandaler|sandale
+en toffel|tofflor|pantoufle
+en gymnastiksko|gymnastikskor|basket (chaussure)
+en keps|kepsar|casquette
+ett pannband|pannband|bandeau
+en vante|vantar|moufle
+glasögon|lunettes|toujours au pluriel
+solglasögon|lunettes de soleil|toujours au pluriel
+ett halsband|halsband|collier
+ett armband|armband|bracelet
+en ring|ringar|bague
+ett örhänge|örhängen|boucle d'oreille
+en ficka|fickor|poche
+en knapp|knappar|bouton
+en dragkedja|dragkedjor|fermeture éclair
+en krage|kragar|col
+en ärm|ärmar|manche
+ett skosnöre|skosnören|lacet
+en sula|sulor|semelle
+ett tyg|tyger|tissu
+en bomull||coton
+en ull||laine
+ett siden||soie
+ett läder||cuir
+en uniform|uniformer|uniforme
+ett förkläde|förkläden|tablier
+en klädhängare|klädhängare|cintre
+en garderob|garderober|penderie
+v ta på sig|tar på sig|tog på sig|tagit på sig|mettre (un vêtement)
+v ta av sig|tar av sig|tog av sig|tagit av sig|enlever (un vêtement)
+`);
+ADDW('xm', `
+ett päron|päron|poire
+en citron|citroner|citron
+en jordgubbe|jordgubbar|fraise
+ett hallon|hallon|framboise
+ett blåbär|blåbär|myrtille
+ett lingon|lingon|airelle
+ett körsbär|körsbär|cerise
+ett plommon|plommon|prune
+en persika|persikor|pêche (fruit)
+en vindruva|vindruvor|raisin
+en melon|meloner|melon
+en ananas|ananaser|ananas
+en avokado|avokador|avocat (fruit)
+en paprika|paprikor|poivron
+en ärta|ärtor|petit pois
+en böna|bönor|haricot
+en majs||maïs
+en broccoli||brocoli
+en blomkål||chou-fleur
+en kål||chou
+en spenat||épinards
+en purjolök|purjolökar|poireau
+en rödbeta|rödbetor|betterave
+en squash|squashar|courgette
+en aubergine|auberginer|aubergine
+en pumpa|pumpor|citrouille
+en nöt|nötter|noix
+en mandel|mandlar|amande
+en jordnöt|jordnötter|cacahuète
+en korv|korvar|saucisse
+en skinka|skinkor|jambon
+ett bacon||bacon
+en biff|biffar|steak
+ett fläsk||porc (viande)
+ett nötkött||bœuf (viande)
+ett lammkött||agneau (viande)
+en räka|räkor|crevette
+en torsk|torskar|cabillaud
+en tonfisk|tonfiskar|thon
+en yoghurt|yoghurtar|yaourt
+en grädde||crème
+en filmjölk||lait fermenté
+en pasta||pâtes
+en nudel|nudlar|nouille
+en gröt|grötar|porridge, bouillie
+en pannkaka|pannkakor|crêpe
+en våffla|våfflor|gaufre
+en bulle|bullar|petit pain brioché
+en tårta|tårtor|gâteau (à la crème)
+en paj|pajer|tarte
+en choklad||chocolat
+ett godis||bonbons
+en sylt|sylter|confiture
+en honung||miel
+en läsk|läskar|soda
+en saft|safter|sirop (boisson)
+en smörgås|smörgåsar|tartine
+en macka|mackor|sandwich (familier)
+en hamburgare|hamburgare|hamburger
+en pizza|pizzor|pizza
+pommes frites|frites|pluriel
+en sås|såser|sauce
+en senap||moutarde
+en olja|oljor|huile
+en frukost|frukostar|petit-déjeuner
+`);
+ADDW('xf', `
+en familj|familjer|famille
+en förälder|föräldrar|parent
+ett syskon|syskon|frère ou sœur
+en farbror|farbröder|oncle (frère du père)
+en morbror|morbröder|oncle (frère de la mère)
+en faster|fastrar|tante (sœur du père)
+en moster|mostrar|tante (sœur de la mère)
+en kusin|kusiner|cousin, cousine
+en brorson|brorsöner|neveu (fils du frère)
+en systerdotter|systerdöttrar|nièce (fille de la sœur)
+ett barnbarn|barnbarn|petit-enfant
+en sambo|sambor|concubin, concubine
+en pojkvän|pojkvänner|petit ami
+en flickvän|flickvänner|petite amie
+en partner|partner|partenaire
+en svärmor|svärmödrar|belle-mère (mère du conjoint)
+en svärfar|svärfäder|beau-père (père du conjoint)
+en svåger|svågrar|beau-frère
+en svägerska|svägerskor|belle-sœur
+en tvilling|tvillingar|jumeau, jumelle
+en bebis|bebisar|bébé
+en pojke|pojkar|garçon
+en flicka|flickor|fille
+en tjej|tjejer|fille, nana (familier)
+en kille|killar|garçon, mec (familier)
+en tonåring|tonåringar|adolescent
+en vuxen|vuxna|adulte
+en pensionär|pensionärer|retraité
+en gäst|gäster|invité
+en främling|främlingar|inconnu
+en bekant|bekanta|connaissance (personne)
+en person|personer|personne
+en släkting|släktingar|parent (de la famille)
+en släkt|släkter|famille élargie
+en generation|generationer|génération
+ett bröllop|bröllop|mariage (fête)
+en födelsedag|födelsedagar|anniversaire
+en begravning|begravningar|enterrement
+ett dop|dop|baptême
+en skilsmässa|skilsmässor|divorce
+en änka|änkor|veuve
+en änkling|änklingar|veuf
+en fästman|fästmän|fiancé
+en fästmö|fästmör|fiancée
+ett par|par|couple, paire
+en herre|herrar|monsieur
+en dam|damer|dame
+en barndom||enfance
+en ungdom|ungdomar|jeunesse, jeune
+en relation|relationer|relation
+en kärlek||amour
+en vänskap|vänskaper|amitié
+en styvmor|styvmödrar|belle-mère (épouse du père)
+en styvfar|styvfäder|beau-père (époux de la mère)
+en förebild|förebilder|modèle (personne)
+`);
+ADDW('xh', `
+en lägenhet|lägenheter|appartement
+en villa|villor|maison individuelle
+ett radhus|radhus|maison mitoyenne
+en hall|hallar|entrée (de la maison)
+en balkong|balkonger|balcon
+en källare|källare|cave
+ett garage|garage|garage
+en tvättstuga|tvättstugor|buanderie
+ett förråd|förråd|débarras
+en hiss|hissar|ascenseur
+en våning|våningar|étage
+en ytterdörr|ytterdörrar|porte d'entrée
+ett staket|staket|clôture
+en grind|grindar|portail
+en brevlåda|brevlådor|boîte aux lettres
+en dörrklocka|dörrklockor|sonnette
+en fåtölj|fåtöljer|fauteuil
+ett soffbord|soffbord|table basse
+en bokhylla|bokhyllor|bibliothèque (meuble)
+en hylla|hyllor|étagère
+ett skåp|skåp|placard
+en byrå|byråer|commode
+ett skrivbord|skrivbord|bureau (meuble)
+en gardin|gardiner|rideau
+en persienn|persienner|store
+en kudde|kuddar|coussin, oreiller
+ett täcke|täcken|couette
+ett lakan|lakan|drap
+en filt|filtar|couverture
+en madrass|madrasser|matelas
+en tv|tv-apparater|télé
+ett element|element|radiateur
+en diskmaskin|diskmaskiner|lave-vaisselle
+en tvättmaskin|tvättmaskiner|machine à laver
+en torktumlare|torktumlare|sèche-linge
+en frys|frysar|congélateur
+en mikrovågsugn|mikrovågsugnar|micro-ondes
+en dammsugare|dammsugare|aspirateur
+ett strykjärn|strykjärn|fer à repasser
+en kran|kranar|robinet
+ett handfat|handfat|lavabo
+en diskbänk|diskbänkar|évier
+ett badkar|badkar|baignoire
+en dusch|duschar|douche
+en toalett|toaletter|toilettes
+ett toalettpapper||papier toilette
+en tandborste|tandborstar|brosse à dents
+en tandkräm|tandkrämer|dentifrice
+ett schampo|schampon|shampooing
+en hårborste|hårborstar|brosse à cheveux
+en sophink|sophinkar|poubelle
+en soppåse|soppåsar|sac poubelle
+en kvast|kvastar|balai
+en hink|hinkar|seau
+en trasa|trasor|chiffon
+ett eluttag|eluttag|prise électrique
+en strömbrytare|strömbrytare|interrupteur
+en glödlampa|glödlampor|ampoule
+en ljusstake|ljusstakar|bougeoir
+en vas|vaser|vase
+en ram|ramar|cadre
+en krukväxt|krukväxter|plante en pot
+en möbel|möbler|meuble
+en hyra|hyror|loyer
+en hyresgäst|hyresgäster|locataire
+en hyresvärd|hyresvärdar|propriétaire (bailleur)
+en flytt|flyttar|déménagement
+en renovering|renoveringar|rénovation
+en skorsten|skorstenar|cheminée (conduit)
+en kakelugn|kakelugnar|poêle en faïence
+en altan|altaner|terrasse
+en gräsmatta|gräsmattor|pelouse
+en häck|häckar|haie
+ett lås|lås|serrure
+en tröskel|trösklar|seuil
+`);
+ADDW('xt', `
+måndag|lundi
+tisdag|mardi
+onsdag|mercredi
+torsdag|jeudi
+fredag|vendredi
+lördag|samedi
+söndag|dimanche
+en sekund|sekunder|seconde
+en minut|minuter|minute
+en timme|timmar|heure (durée)
+en kvart|kvartar|quart d'heure
+en halvtimme|halvtimmar|demi-heure
+en månad|månader|mois
+ett århundrade|århundraden|siècle
+ett decennium|decennier|décennie
+en förmiddag|förmiddagar|matinée
+midnatt|minuit
+ett dygn|dygn|24 heures
+en helgdag|helgdagar|jour férié
+en vardag|vardagar|jour de semaine
+en årstid|årstider|saison
+en vår|vårar|printemps
+en sommar|somrar|été
+en höst|höstar|automne
+en vinter|vintrar|hiver
+jul|Noël
+påsk|Pâques
+midsommar|la Saint-Jean (fête de l'été)
+nyår|Nouvel An
+ett datum|datum|date
+en kalender|kalendrar|calendrier
+ett ögonblick|ögonblick|instant
+en stund|stunder|moment
+en period|perioder|période
+en framtid||avenir
+det förflutna|le passé
+förr|autrefois
+sedan|depuis, ensuite
+redan|déjà
+ännu|encore
+fortfarande|toujours (encore)
+tidigt|tôt
+sent|tard
+i förrgår|avant-hier
+i övermorgon|après-demain
+i morse|ce matin (passé)
+i kväll|ce soir
+i natt|cette nuit
+i helgen|ce week-end
+nästa vecka|la semaine prochaine
+förra året|l'année dernière
+om en vecka|dans une semaine
+för två dagar sedan|il y a deux jours
+just nu|en ce moment
+genast|tout de suite
+plötsligt|soudain
+så småningom|peu à peu, finalement
+medan|pendant que
+innan|avant que
+när|quand
+hur länge|combien de temps
+vad är klockan?|quelle heure est-il ?
+halv tre|deux heures et demie|littéralement « demi trois »
+kvart över|et quart
+kvart i|moins le quart
+`);
+ADDW('xl', `
+ett pass|pass|passeport
+ett visum|visum|visa
+en tull|tullar|douane
+en incheckning|incheckningar|enregistrement
+ett bagage||bagages
+en avgång|avgångar|départ
+en ankomst|ankomster|arrivée
+en försening|förseningar|retard
+en flygbiljett|flygbiljetter|billet d'avion
+en turist|turister|touriste
+en guide|guider|guide
+en sevärdhet|sevärdheter|site à voir
+en utsikt|utsikter|vue, panorama
+ett vandrarhem|vandrarhem|auberge de jeunesse
+ett tält|tält|tente
+en camping|campingar|camping
+en reception|receptioner|réception
+en bokning|bokningar|réservation
+ett enkelrum|enkelrum|chambre simple
+ett dubbelrum|dubbelrum|chambre double
+en resebyrå|resebyråer|agence de voyages
+ett resmål|resmål|destination
+en kust|kuster|côte (littoral)
+en dal|dalar|vallée
+en kulle|kullar|colline
+ett fjäll|fjäll|montagne (scandinave)
+en vulkan|vulkaner|volcan
+en öken|öknar|désert
+en djungel|djungler|jungle
+en flod|floder|fleuve
+ett vattenfall|vattenfall|cascade
+en grotta|grottor|grotte
+en halvö|halvöar|presqu'île
+en världsdel|världsdelar|continent
+ett landskap|landskap|paysage, province
+en huvudstad|huvudstäder|capitale
+en förort|förorter|banlieue
+en landsbygd||campagne
+ett centrum|centrum|centre-ville
+ett slott|slott|château
+en borg|borgar|forteresse
+ett torn|torn|tour
+en ruin|ruiner|ruine
+en staty|statyer|statue
+ett monument|monument|monument
+en djurpark|djurparker|zoo
+en nöjespark|nöjesparker|parc d'attractions
+ett badhus|badhus|piscine
+en fyr|fyrar|phare
+en kiosk|kiosker|kiosque
+ett kafé|kaféer|café (lieu)
+en bar|barer|bar
+en ambassad|ambassader|ambassade
+en souvenir|souvenirer|souvenir (objet)
+en solstol|solstolar|transat
+en vägbeskrivning|vägbeskrivningar|itinéraire
+utomlands|à l'étranger
+hemma|à la maison
+borta|parti, absent
+norr|nord
+söder|sud
+öster|est
+väster|ouest
+en riktning|riktningar|direction
+ett postombud|postombud|point relais (poste)
+`);
+ADDW('xa', `
+lång|long, grand (taille)
+kort|court, petit (taille)
+hög|haut
+låg|bas
+bred|large
+smal|étroit, mince
+tjock|épais, gros
+tunn|fin, mince
+tung|lourd
+mjuk|doux, mou
+hård|dur
+våt|mouillé
+torr|sec
+full|plein
+tom|vide
+öppen|ouvert
+stängd|fermé
+ljus|clair
+mörk|sombre
+tyst|silencieux
+högljudd|bruyant
+lugn|calme
+nervös|nerveux
+arg|en colère
+rädd|qui a peur
+lycklig|heureux
+nöjd|satisfait
+besviken|déçu
+sjuk|malade
+frisk|en bonne santé
+säker|sûr
+farlig|dangereux
+viktig|important
+intressant|intéressant
+tråkig|ennuyeux
+konstig|bizarre
+vanlig|ordinaire, courant
+möjlig|possible
+omöjlig|impossible
+enkel|simple
+krånglig|compliqué
+rätt|juste, correct
+fel|faux, erroné
+sann|vrai
+snäll|gentil
+elak|méchant
+ärlig|honnête
+lat|paresseux
+flitig|travailleur
+modig|courageux
+blyg|timide
+klok|sage
+dum|bête
+smart|malin, intelligent
+duktig|doué, habile
+söt|mignon, sucré
+sur|acide, grincheux
+salt|salé
+bitter|amer
+god|bon (au goût)
+äcklig|dégoûtant
+färsk|frais (aliment)
+fräsch|frais, net
+`);
+ADDW('xy', `
+beige|beige
+turkos|turquoise
+guldfärgad|doré
+silverfärgad|argenté
+ljusblå|bleu clair
+mörkblå|bleu foncé
+ljusgrön|vert clair
+mörkgrön|vert foncé
+mörkröd|rouge foncé
+vinröd|bordeaux
+marinblå|bleu marine
+himmelsblå|bleu ciel
+olivgrön|vert olive
+mintgrön|vert menthe
+senapsgul|jaune moutarde
+korallröd|corail
+cerise|rose cerise
+gräddvit|blanc crème
+färgglad|coloré
+blek|pâle
+randig|rayé
+prickig|à pois
+rutig|à carreaux
+blommig|à fleurs
+enfärgad|uni
+mönstrad|à motifs
+blank|brillant
+matt|mat
+genomskinlig|transparent
+en färg|färger|couleur
+en nyans|nyanser|nuance
+ett mönster|mönster|motif
+en form|former|forme
+en cirkel|cirklar|cercle
+en kvadrat|kvadrater|carré
+en triangel|trianglar|triangle
+en rektangel|rektanglar|rectangle
+rund|rond
+fyrkantig|carré (adjectif)
+`);
+ADDW('xj', `
+ett väder||temps (météo)
+en väderprognos|väderprognoser|prévisions météo
+ett oväder|oväder|intempérie, tempête
+en storm|stormar|tempête
+en orkan|orkaner|ouragan
+ett åskväder|åskväder|orage
+en blixt|blixtar|éclair
+en regnbåge|regnbågar|arc-en-ciel
+ett hagel||grêle
+ett slask||neige fondue
+en frost||gel
+en kyla||froid
+en värme||chaleur
+en hetta||chaleur intense
+en värmebölja|värmeböljor|vague de chaleur
+en luftfuktighet||humidité de l'air
+en skur|skurar|averse
+ett duggregn||bruine
+en snöstorm|snöstormar|tempête de neige
+en snöflinga|snöflingor|flocon de neige
+en istapp|istappar|stalactite de glace
+en vindby|vindbyar|rafale
+en solnedgång|solnedgångar|coucher de soleil
+en soluppgång|soluppgångar|lever de soleil
+ett solsken||soleil (beau temps)
+en skugga|skuggor|ombre
+ett klimat|klimat|climat
+en översvämning|översvämningar|inondation
+en torka||sécheresse
+det åskar|il y a de l'orage
+det haglar|il grêle
+det fryser|il gèle
+det duggar|il bruine
+det är molnigt|c'est nuageux
+det är soligt|il fait soleil
+det är halt|ça glisse
+det klarnar upp|ça se dégage
+solig|ensoleillé
+molnig|nuageux
+regnig|pluvieux
+blåsig|venteux
+dimmig|brumeux
+kylig|frais, froid
+het|brûlant, très chaud
+mild|doux
+klar|clair, dégagé
+halt|glissant
+mulen|couvert (ciel)
+minusgrader|degrés en dessous de zéro|pluriel
+plusgrader|degrés au-dessus de zéro|pluriel
+`);
+ADDW('xs', `
+noll|zéro
+en, ett|un, une
+två|deux
+tre|trois
+fyra|quatre
+fem|cinq
+sex|six
+sju|sept
+åtta|huit
+nio|neuf
+tio|dix
+tjugoett|vingt et un
+en miljon|miljoner|million
+en miljard|miljarder|milliard
+första|premier
+andra|deuxième, autre
+tredje|troisième
+fjärde|quatrième
+femte|cinquième
+sjätte|sixième
+sjunde|septième
+åttonde|huitième
+nionde|neuvième
+tionde|dixième
+elfte|onzième
+tolfte|douzième
+tjugonde|vingtième
+sista|dernier
+halv|demi
+en tredjedel|tredjedelar|tiers
+en fjärdedel|fjärdedelar|quart
+en procent|procent|pour cent
+ett tal|tal|nombre
+en siffra|siffror|chiffre
+plus|plus (+)
+minus|moins (−)
+gånger|fois (×)
+delat med|divisé par
+lika med|égal à
+en summa|summor|somme
+ett dussin|dussin|douzaine
+båda|les deux
+några|quelques
+många|nombreux, beaucoup de
+alla|tous
+ingen|aucun
+hälften|la moitié
+dubbelt|double
+ungefär|environ
+exakt|exactement
+mer|plus (davantage)
+mindre|moins (de)
+mest|le plus
+minst|le moins
+`);
+ADDW('xp', `
+och|et
+eller|ou
+men|mais
+att|que, de (+ infinitif)
+eftersom|parce que
+därför|c'est pourquoi
+fast|bien que
+även|même, aussi
+också|aussi
+inte|ne… pas
+bara|seulement
+kanske|peut-être
+ju|bien sûr, tu sais
+väl|sans doute, j'espère
+nog|sûrement
+mycket|très, beaucoup
+lite|un peu
+ganska|assez
+så|si, tellement, alors
+alldeles|tout à fait
+helt|complètement
+nästan|presque
+precis|exactement, justement
+verkligen|vraiment
+faktiskt|en fait
+tyvärr|malheureusement
+gärna|volontiers
+ja|oui
+nej|non
+jo|si (réponse à une négation)
+tack|merci
+hej|salut, bonjour
+hej då|au revoir
+förlåt|pardon
+ursäkta|excusez-moi
+varsågod|je vous en prie, tenez
+välkommen|bienvenue
+grattis|félicitations
+skål|santé ! (trinquer)
+hur|comment
+vad|quoi, que
+vem|qui
+var|où (sans mouvement)
+vart|où (direction)
+varifrån|d'où
+varför|pourquoi
+vilken|quel, quelle
+hur många|combien (nombre)
+hit|ici (direction)
+dit|là-bas (direction)
+upp|vers le haut
+ner|vers le bas
+uppe|en haut
+nere|en bas
+in|dedans (direction)
+ut|dehors (direction)
+inne|à l'intérieur
+ute|dehors
+fram|en avant
+tillbaka|en arrière, de retour
+bort|au loin (direction)
+hem|à la maison (direction)
+överallt|partout
+ingenstans|nulle part
+någonstans|quelque part
+någon|quelqu'un
+något|quelque chose
+`);
+ADDW('nat', `
+ett djur|djur|animal
+en hund|hundar|chien
+en katt|katter|chat
+en häst|hästar|cheval
+en ko|kor|vache
+en gris|grisar|cochon
+ett får|får|mouton
+en get|getter|chèvre
+en höna|hönor|poule
+en tupp|tuppar|coq
+en anka|ankor|canard
+en gås|gäss|oie
+en kanin|kaniner|lapin
+en mus|möss|souris
+en råtta|råttor|rat
+en igelkott|igelkottar|hérisson
+en ren|renar|renne
+ett lodjur|lodjur|lynx
+en val|valar|baleine
+en delfin|delfiner|dauphin
+en haj|hajar|requin
+en mås|måsar|mouette
+en örn|örnar|aigle
+en kråka|kråkor|corneille
+en skata|skator|pie
+en sparv|sparvar|moineau
+en duva|duvor|pigeon, colombe
+en spindel|spindlar|araignée
+en mygga|myggor|moustique
+en geting|getingar|guêpe
+en humla|humlor|bourdon
+en snigel|sniglar|limace, escargot
+en mask|maskar|ver|aussi : masque
+en fästing|fästingar|tique
+ett lejon|lejon|lion
+en tiger|tigrar|tigre
+en elefant|elefanter|éléphant
+en apa|apor|singe
+en giraff|giraffer|girafe
+en krokodil|krokodiler|crocodile
+en sköldpadda|sköldpaddor|tortue
+en pingvin|pingviner|manchot
+en isbjörn|isbjörnar|ours polaire
+en gran|granar|épicéa, sapin
+en tall|tallar|pin
+en björk|björkar|bouleau
+en ek|ekar|chêne
+en lönn|lönnar|érable
+ett löv|löv|feuille (d'arbre)
+en gren|grenar|branche
+en rot|rötter|racine
+en buske|buskar|buisson
+en mossa|mossor|mousse
+ett bär|bär|baie
+en ros|rosor|rose
+en tulpan|tulpaner|tulipe
+en solros|solrosor|tournesol
+en maskros|maskrosor|pissenlit
+en vitsippa|vitsippor|anémone des bois
+ett frö|frön|graine
+en natur||nature
+en sand||sable
+`);
+ADDW('kro', `
+en sjukdom|sjukdomar|maladie
+en förkylning|förkylningar|rhume
+en feber|febrar|fièvre
+en influensa||grippe
+ett virus|virus|virus
+en infektion|infektioner|infection
+en allergi|allergier|allergie
+en smärta|smärtor|douleur
+en värk|värkar|douleur sourde
+ha ont|avoir mal
+ett halsont||mal de gorge
+en tandvärk||mal de dents
+en snuva||nez qui coule
+ett sår|sår|plaie
+ett blåmärke|blåmärken|bleu (hématome)
+ett benbrott|benbrott|fracture
+ett plåster|plåster|pansement
+ett bandage|bandage|bandage
+en tablett|tabletter|comprimé
+en spruta|sprutor|piqûre, seringue
+en vaccination|vaccinationer|vaccination
+en vårdcentral|vårdcentraler|centre de santé
+en akutmottagning|akutmottagningar|urgences
+en ambulans|ambulanser|ambulance
+en patient|patienter|patient
+en operation|operationer|opération
+en undersökning|undersökningar|examen (médical)
+ett blodtryck||tension artérielle
+en diagnos|diagnoser|diagnostic
+en behandling|behandlingar|traitement
+en hälsa||santé
+en motion||exercice physique
+en sömn||sommeil
+en stress||stress
+en trötthet||fatigue
+en yrsel||vertige
+ett illamående||nausée
+v kräkas|kräks|kräktes|kräkts|vomir
+v träna|tränar|tränade|tränat|s'entraîner
+v blöda|blöder|blödde|blött|saigner
+v svullna|svullnar|svullnade|svullnat|enfler
+v läka|läker|läkte|läkt|guérir (plaie)
+bli frisk|guérir
+gå till doktorn|aller chez le médecin
+sjukskriven|en arrêt maladie
+gravid|enceinte
+blind|aveugle
+döv|sourd
+en rullstol|rullstolar|fauteuil roulant
+en krycka|kryckor|béquille
+en hörapparat|hörapparater|appareil auditif
+en vitamin|vitaminer|vitamine
+ett gym|gym|salle de sport
+en mottagning|mottagningar|cabinet médical
+en kost||alimentation
+`);
+ADDW('job', `
+en barnmorska|barnmorskor|sage-femme
+en undersköterska|undersköterskor|aide-soignant
+en psykolog|psykologer|psychologue
+en apotekare|apotekare|pharmacien
+en fiskare|fiskare|pêcheur
+en slaktare|slaktare|boucher
+en kassör|kassörer|caissier
+ett butiksbiträde|butiksbiträden|vendeur (en magasin)
+en rörmokare|rörmokare|plombier
+en målare|målare|peintre
+en murare|murare|maçon
+en byggarbetare|byggarbetare|ouvrier du bâtiment
+en lastbilschaufför|lastbilschaufförer|chauffeur routier
+en taxichaufför|taxichaufförer|chauffeur de taxi
+en busschaufför|busschaufförer|chauffeur de bus
+en lokförare|lokförare|conducteur de train
+en flygvärdinna|flygvärdinnor|hôtesse de l'air
+en brevbärare|brevbärare|facteur
+en vaktmästare|vaktmästare|gardien, concierge
+en väktare|väktare|agent de sécurité
+en soldat|soldater|soldat
+en präst|präster|prêtre, pasteur
+en domare|domare|juge, arbitre
+en politiker|politiker|homme ou femme politique
+en ekonom|ekonomer|économiste
+en programmerare|programmerare|programmeur
+en utvecklare|utvecklare|développeur
+en formgivare|formgivare|designer graphique
+en översättare|översättare|traducteur
+en tolk|tolkar|interprète
+en författare|författare|écrivain
+en redaktör|redaktörer|rédacteur
+en förskollärare|förskollärare|éducateur (maternelle)
+en rektor|rektorer|directeur d'école
+en professor|professorer|professeur (université)
+en sekreterare|sekreterare|secrétaire
+en receptionist|receptionister|réceptionniste
+en konsult|konsulter|consultant
+en företagare|företagare|entrepreneur
+en anställd|anställda|employé
+en arbetsgivare|arbetsgivare|employeur
+en arbetslös|arbetslösa|chômeur
+en praktikant|praktikanter|stagiaire
+en frilansare|frilansare|freelance
+en grafiker|grafiker|graphiste
+en animatör|animatörer|animateur (film d'animation)
+en regissör|regissörer|réalisateur
+en dansare|dansare|danseur
+en sångare|sångare|chanteur
+en trädgårdsmästare|trädgårdsmästare|jardinier
+ett yrke|yrken|métier
+`);
+ADDW('sta', `
+ett kvarter|kvarter|pâté de maisons
+en stadsdel|stadsdelar|quartier
+ett område|områden|zone, quartier
+en rondell|rondeller|rond-point
+ett övergångsställe|övergångsställen|passage piéton
+en cykelbana|cykelbanor|piste cyclable
+en tunnel|tunnlar|tunnel
+en järnväg|järnvägar|chemin de fer
+ett spår|spår|voie (ferrée), trace
+en perrong|perronger|quai (gare)
+en vagn|vagnar|wagon
+en konduktör|konduktörer|contrôleur
+en tidtabell|tidtabeller|horaires
+ett busskort|busskort|carte de bus
+en taxi|taxibilar|taxi
+en lastbil|lastbilar|camion
+en motorcykel|motorcyklar|moto
+en moped|mopeder|mobylette
+en sparkcykel|sparkcyklar|trottinette
+en husbil|husbilar|camping-car
+ett fordon|fordon|véhicule
+ett däck|däck|pneu
+en ratt|rattar|volant
+en motor|motorer|moteur
+en bensin||essence
+en bensinstation|bensinstationer|station-service
+en laddstolpe|laddstolpar|borne de recharge
+ett körkort|körkort|permis de conduire
+en bilkö|bilköer|embouteillage
+en trafik||circulation
+en olycka|olyckor|accident
+en skylt|skyltar|panneau
+en parkeringsplats|parkeringsplatser|place de parking
+en passagerare|passagerare|passager
+en resenär|resenärer|voyageur
+en fotgängare|fotgängare|piéton
+en cyklist|cyklister|cycliste
+ett säkerhetsbälte|säkerhetsbälten|ceinture de sécurité
+en hjälm|hjälmar|casque
+en segelbåt|segelbåtar|voilier
+ett fartyg|fartyg|navire
+en kaj|kajer|quai (port)
+ett stadshus|stadshus|hôtel de ville
+en polisstation|polisstationer|commissariat
+en brandstation|brandstationer|caserne de pompiers
+ett köpcentrum|köpcentrum|centre commercial
+en skyskrapa|skyskrapor|gratte-ciel
+en byggnad|byggnader|bâtiment
+ett höghus|höghus|immeuble
+en fontän|fontäner|fontaine
+en bänk|bänkar|banc
+en lyktstolpe|lyktstolpar|lampadaire
+en papperskorg|papperskorgar|poubelle (de rue)
+v parkera|parkerar|parkerade|parkerat|se garer
+v svänga|svänger|svängde|svängt|tourner
+gå på|monter (dans un bus, un train)
+gå av|descendre (d'un bus, d'un train)
+till höger|à droite
+till vänster|à gauche
+rakt fram|tout droit
+en gångväg|gångvägar|chemin piéton
+en elsparkcykel|elsparkcyklar|trottinette électrique
+`);
+ADDW('kon', `
+en krona|kronor|couronne (monnaie)
+ett öre|öre|centime (öre)
+en euro|euro|euro
+en sedel|sedlar|billet de banque
+ett mynt|mynt|pièce de monnaie
+en växel||monnaie (rendue)
+kontanter|espèces, liquide|pluriel
+ett betalkort|betalkort|carte bancaire
+en bankomat|bankomater|distributeur de billets
+v swisha|swishar|swishade|swishat|payer par Swish
+en faktura|fakturor|facture
+ett lån|lån|prêt, emprunt
+en ränta|räntor|intérêt (taux)
+en budget|budgetar|budget
+en kostnad|kostnader|coût
+en inkomst|inkomster|revenu
+en utgift|utgifter|dépense
+en vinst|vinster|bénéfice, gain
+en förlust|förluster|perte
+en ekonomi|ekonomier|économie
+en aktie|aktier|action (bourse)
+en reklam||publicité
+en rea|reor|soldes
+ett köp|köp|achat
+en beställning|beställningar|commande
+en leverans|leveranser|livraison
+en retur|returer|retour (article)
+en garanti|garantier|garantie
+en provhytt|provhytter|cabine d'essayage
+en kundvagn|kundvagnar|chariot
+en korg|korgar|panier
+ett varuhus|varuhus|grand magasin
+en mataffär|mataffärer|supermarché, épicerie
+en bokhandel|bokhandlar|librairie
+en klädbutik|klädbutiker|magasin de vêtements
+en webbutik|webbutiker|boutique en ligne
+en loppis|loppisar|brocante, vide-grenier
+en öppettid|öppettider|horaire d'ouverture
+v beställa|beställer|beställde|beställt|commander
+v leverera|levererar|levererade|levererat|livrer
+v lämna tillbaka|lämnar tillbaka|lämnade tillbaka|lämnat tillbaka|rendre
+v jämföra|jämför|jämförde|jämfört|comparer
+v slösa|slösar|slösade|slösat|gaspiller
+v tjäna|tjänar|tjänade|tjänat|gagner (de l'argent)
+på rea|en soldes
+öppet|ouvert (magasin)
+stängt|fermé (magasin)
+en prislapp|prislappar|étiquette de prix
+en moms||TVA
+ett abonnemang|abonnemang|abonnement
+en rabattkod|rabattkoder|code promo
+`);
+ADDW('sko', `
+en förskola|förskolor|école maternelle
+en grundskola|grundskolor|école (primaire et collège)
+ett gymnasium|gymnasier|lycée
+ett universitet|universitet|université
+en högskola|högskolor|école supérieure
+en kurs|kurser|cours, formation
+ett ämne|ämnen|matière (scolaire), sujet
+en matematik||mathématiques
+en geografi||géographie
+en biologi||biologie
+en kemi||chimie
+en fysik||physique
+ett språk|språk|langue
+en engelska||anglais (langue)
+en svenska||suédois (langue)
+en franska||français (langue)
+ett betyg|betyg|note
+en examen|examina|diplôme
+ett schema|scheman|emploi du temps
+ett suddgummi|suddgummin|gomme
+en linjal|linjaler|règle
+ett block|block|bloc-notes
+en mapp|mappar|classeur, dossier
+en miniräknare|miniräknare|calculatrice
+en ordbok|ordböcker|dictionnaire
+en uppsats|uppsatser|dissertation
+ett föredrag|föredrag|exposé, conférence
+en presentation|presentationer|présentation
+en övning|övningar|exercice
+en klass|klasser|classe
+en klasskamrat|klasskamrater|camarade de classe
+ett arbete|arbeten|travail
+en tjänst|tjänster|poste, service
+en arbetsplats|arbetsplatser|lieu de travail
+en ansökan|ansökningar|candidature
+ett cv|cv|CV
+en intervju|intervjuer|entretien
+ett kontrakt|kontrakt|contrat
+en deadline|deadlines|date limite
+ett mejl|mejl|e-mail (familier)
+en rapport|rapporter|rapport
+ett dokument|dokument|document
+en fil|filer|fichier|aussi : file (route), lait fermenté
+en skrivare|skrivare|imprimante
+ett mötesrum|mötesrum|salle de réunion
+en ledighet|ledigheter|congé
+en övertid||heures supplémentaires
+en pension|pensioner|retraite
+v undervisa|undervisar|undervisade|undervisat|enseigner
+v räkna|räknar|räknade|räknat|compter, calculer
+v stava|stavar|stavade|stavat|épeler
+v söka|söker|sökte|sökt|chercher, postuler
+v anställa|anställer|anställde|anställt|embaucher
+v säga upp sig|säger upp sig|sade upp sig|sagt upp sig|démissionner
+v skriva ut|skriver ut|skrev ut|skrivit ut|imprimer
+`);
+ADDW('mat', `
+en gryta|grytor|cocotte, ragoût
+ett lock|lock|couvercle
+en slev|slevar|louche
+en stekspade|stekspadar|spatule
+en visp|vispar|fouet
+en skärbräda|skärbrädor|planche à découper
+ett rivjärn|rivjärn|râpe
+ett durkslag|durkslag|passoire
+en bunke|bunkar|saladier, jatte
+en kaffebryggare|kaffebryggare|cafetière
+en vattenkokare|vattenkokare|bouilloire
+en brödrost|brödrostar|grille-pain
+en mixer|mixrar|mixeur
+en kökshandduk|kökshanddukar|torchon
+en servett|servetter|serviette (de table)
+en duk|dukar|nappe
+en mugg|muggar|mug, tasse
+ett vinglas|vinglas|verre à vin
+en kanna|kannor|carafe, pichet
+en termos|termosar|thermos
+en matsked|matskedar|cuillère à soupe
+en tesked|teskedar|cuillère à café
+en ätpinne|ätpinnar|baguette (pour manger)
+en portion|portioner|portion
+en meny|menyer|menu, carte
+en nota|notor|addition (au restaurant)
+ett dricks||pourboire
+en skiva|skivor|tranche
+en nypa|nypor|pincée
+en deciliter|deciliter|décilitre
+en liter|liter|litre
+ett kilo|kilo|kilo
+ett gram|gram|gramme
+en krydda|kryddor|épice
+en kanel||cannelle
+en kardemumma||cardamome
+en ingefära||gingembre
+en dill||aneth
+en persilja||persil
+en basilika||basilic
+v koka|kokar|kokade|kokat|bouillir, faire cuire
+v steka|steker|stekte|stekt|faire revenir, poêler
+v grädda|gräddar|gräddade|gräddat|cuire au four (pâtisserie)
+v baka|bakar|bakade|bakat|faire de la pâtisserie
+v hacka|hackar|hackade|hackat|hacher
+v skala|skalar|skalade|skalat|éplucher
+v blanda|blandar|blandade|blandat|mélanger
+v röra|rör|rörde|rört|remuer
+v hälla|häller|hällde|hällt|verser
+v grilla|grillar|grillade|grillat|griller
+v duka|dukar|dukade|dukat|mettre la table
+smaklig måltid|bon appétit
+`);
+ADDW('kul', `
+en fotboll|fotbollar|football, ballon de foot
+en ishockey||hockey sur glace
+en handboll||handball
+en basket||basket-ball
+en tennis||tennis
+en golf||golf
+en skidåkning||ski (sport)
+en skridsko|skridskor|patin à glace
+en cykeltur|cykelturer|balade à vélo
+en vandring|vandringar|randonnée
+ett fiske||pêche (loisir)
+en jakt|jakter|chasse
+en simning||natation
+en yoga||yoga
+en träning|träningar|entraînement
+en tävling|tävlingar|compétition
+en spelare|spelare|joueur
+en publik|publiker|public
+en föreställning|föreställningar|spectacle
+en utställning|utställningar|exposition
+en roman|romaner|roman
+en dikt|dikter|poème
+en serie|serier|série, bande dessinée
+en tv-serie|tv-serier|série télé
+ett program|program|émission
+en podd|poddar|podcast
+ett album|album|album
+en trumma|trummor|tambour
+en fiol|fioler|violon
+en flöjt|flöjter|flûte
+en kör|körer|chorale
+en orkester|orkestrar|orchestre
+en opera|operor|opéra
+en balett|baletter|ballet
+en dans|danser|danse
+ett foto|foton|photo
+en kamera|kameror|appareil photo
+ett brädspel|brädspel|jeu de société
+ett kortspel|kortspel|jeu de cartes
+ett datorspel|datorspel|jeu vidéo
+ett pussel|pussel|puzzle
+ett schack||échecs
+ett korsord|korsord|mots croisés
+en stickning||tricot
+en sömnad||couture
+en matlagning||cuisine (activité)
+en picknick|picknickar|pique-nique
+en grillfest|grillfester|barbecue (fête)
+ett kalas|kalas|fête d'anniversaire
+en festival|festivaler|festival
+en fritid||temps libre
+en kultur|kulturer|culture
+en konst||art
+en skulptur|skulpturer|sculpture
+en scen|scener|scène
+v åka skidor|åker skidor|åkte skidor|åkt skidor|faire du ski
+v fiska|fiskar|fiskade|fiskat|pêcher
+v vandra|vandrar|vandrade|vandrat|faire de la randonnée
+v fotografera|fotograferar|fotograferade|fotograferat|photographier
+en midsommarfest|midsommarfester|fête de la Saint-Jean
+`);
+ADDW('abs', `
+en sanning|sanningar|vérité
+en lögn|lögner|mensonge
+en fantasi|fantasier|imagination
+en frihet|friheter|liberté
+ett ansvar||responsabilité
+en rättighet|rättigheter|droit
+en skyldighet|skyldigheter|devoir, obligation
+en rättvisa||justice
+en jämlikhet||égalité
+en demokrati|demokratier|démocratie
+ett samhälle|samhällen|société
+en tradition|traditioner|tradition
+en religion|religioner|religion
+en vetenskap|vetenskaper|science
+en teori|teorier|théorie
+ett faktum|fakta|fait
+ett bevis|bevis|preuve
+en anledning|anledningar|raison
+ett syfte|syften|but, objectif
+en avsikt|avsikter|intention
+ett beslut|beslut|décision
+en risk|risker|risque
+en chans|chanser|chance, occasion
+en framgång|framgångar|succès
+ett misslyckande|misslyckanden|échec
+en förändring|förändringar|changement
+en utveckling|utvecklingar|développement
+en kris|kriser|crise
+en konflikt|konflikter|conflit
+en fred||paix
+ett krig|krig|guerre
+en makt|makter|pouvoir
+en kraft|krafter|force
+en energi|energier|énergie
+ett värde|värden|valeur
+en kvalitet|kvaliteter|qualité
+en mening|meningar|sens, phrase
+en betydelse|betydelser|signification
+ett begrepp|begrepp|notion
+ett tecken|tecken|signe
+en symbol|symboler|symbole
+en ära||honneur
+en skam||honte
+en skuld|skulder|faute, dette
+en ånger||regret
+en glädje||joie
+en sorg|sorger|chagrin, deuil
+en rädsla|rädslor|peur
+en ilska||colère
+en oro||inquiétude
+ett hopp||espoir
+en lycka||bonheur
+en ensamhet||solitude
+ett förtroende|förtroenden|confiance
+ett tålamod||patience
+en nyfikenhet||curiosité
+en uppmärksamhet||attention
+en förmåga|förmågor|capacité
+en svårighet|svårigheter|difficulté
+en fördel|fördelar|avantage
+en nackdel|nackdelar|inconvénient
+ett argument|argument|argument
+`);
+ADDW('vb2', `
+v vara|är|var|varit|être
+v få|får|fick|fått|recevoir, avoir le droit de
+v låta|låter|lät|låtit|sonner, laisser
+v gråta|gråter|grät|gråtit|pleurer
+v le|ler|log|lett|sourire
+v hinna|hinner|hann|hunnit|avoir le temps de
+v be|ber|bad|bett|prier, demander
+v dö|dör|dog|dött|mourir
+v fara|far|for|farit|partir, voyager
+v njuta|njuter|njöt|njutit|profiter, savourer
+v sätta sig|sätter sig|satte sig|satt sig|s'asseoir
+v lägga sig|lägger sig|lade sig|lagt sig|se coucher
+v försvinna|försvinner|försvann|försvunnit|disparaître
+v sjunka|sjunker|sjönk|sjunkit|couler, baisser
+v binda|binder|band|bundit|lier, attacher
+v brinna|brinner|brann|brunnit|brûler
+v skjuta|skjuter|sköt|skjutit|tirer, pousser
+v bryta|bryter|bröt|brutit|casser, rompre
+v frysa|fryser|frös|frusit|avoir froid, geler
+v knyta|knyter|knöt|knutit|nouer
+v flyta|flyter|flöt|flutit|flotter
+v krypa|kryper|kröp|krupit|ramper
+v bita|biter|bet|bitit|mordre
+v glida|glider|gled|glidit|glisser
+v lida|lider|led|lidit|souffrir
+v rida|rider|red|ridit|monter à cheval
+v skrika|skriker|skrek|skrikit|crier
+v slita|sliter|slet|slitit|user, arracher
+v vika|viker|vek|vikit|plier
+v hugga|hugger|högg|huggit|couper (à la hache)
+v sticka|sticker|stack|stuckit|piquer, filer
+v spricka|spricker|sprack|spruckit|se fendre, éclater
+v slippa|slipper|slapp|sluppit|être dispensé de, échapper à
+v skära|skär|skar|skurit|couper
+v förlåta|förlåter|förlät|förlåtit|pardonner
+v förbjuda|förbjuder|förbjöd|förbjudit|interdire
+v erbjuda|erbjuder|erbjöd|erbjudit|offrir, proposer
+v översätta|översätter|översatte|översatt|traduire
+v bestå|består|bestod|bestått|consister, durer
+v uppstå|uppstår|uppstod|uppstått|apparaître, survenir
+v vänja sig|vänjer sig|vande sig|vant sig|s'habituer
+v svika|sviker|svek|svikit|trahir, décevoir
+v vrida|vrider|vred|vridit|tordre, tourner
+v sprida|sprider|spred|spridit|répandre
+v tiga|tiger|teg|tigit|se taire
+v stryka|stryker|strök|strukit|repasser, rayer
+v smyga|smyger|smög|smugit|se faufiler
+v nysa|nyser|nös|nysit|éternuer
+v suga|suger|sög|sugit|sucer, aspirer
+v ryka|ryker|rök|rykit|fumer (feu)
+v tjuta|tjuter|tjöt|tjutit|hurler
+v klyva|klyver|klöv|kluvit|fendre
+v ryta|ryter|röt|rutit|rugir
+v spinna|spinner|spann|spunnit|filer, ronronner
+v strida|strider|stred|stridit|combattre
+v gnida|gnider|gned|gnidit|frotter
+v pipa|piper|pep|pipit|piailler, biper
+v svida|svider|sved|svidit|piquer, brûler (douleur)
+v gjuta|gjuter|göt|gjutit|couler (du métal)
+`);
+
 /* Genre (en / ett) et pluriel des mots déjà écrits avant 0.5 (clé = le mot sans article). Pluriel vide = pas de pluriel courant (mot massif). */
 GN(`en bil|bilar
 en bok|böcker
@@ -2487,6 +3936,7 @@ function render() {
   const h = { home, library, theme, fiche, lire, session, end, stats, words, tiles }[view.name];
   $('main').innerHTML = h(view.arg);
   if (view.name === 'session' && sess) afterSessionRender();
+  const top = document.querySelector('.top'); if (top) document.documentElement.style.setProperty('--toph', top.offsetHeight + 'px');
 }
 const bar = (pct, color) => '<span class="bar"><i style="width:' + Math.round(pct * 100) + '%;' + (color ? 'background:' + color : '') + '"></i></span>';
 
@@ -2666,19 +4116,75 @@ function tileSet(w) {
   h += '<div class="actions"><button class="btn primary" data-act="tlearn" data-id="' + w.id + '">' + (nl ? 'Réviser mes ' + plural(nl, 'mot') + ' à apprendre' : 'Tout apprendre (' + n + ')') + '</button><button class="btn" data-act="tflip">Tout retourner</button><button class="btn" data-act="thide">' + (hideKnown ? 'Afficher les mots connus' : 'Masquer les mots connus') + '</button>' + (hidden ? '<button class="link" data-act="trestore">Remettre les ' + hidden + ' exclus</button>' : '') + '</div>';
   return h;
 }
+/* ---------------------------------------------------------------- Rechercher : dictionnaire suédois ⇄ français (tuiles + mots des fiches) */
+const frBase = s => String(s || '').replace(/^(le |la |les |l'|l’|un |une |des |du |de la |de l'|se |s')/i, '');   /* « une maison » se range à M */
+const frKey = s => frBase(String(s || '').replace(/^[^0-9A-Za-zÀ-ÿŒœ]+/, '')).replace(/^[^0-9A-Za-zÀ-ÿŒœ]+/, '');
+const dnorm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]+/g, ' ').trim();
+let DICT = null;
+function dict() {
+  if (DICT) return DICT;
+  const m = new Map();
+  const add = (v, tile) => {
+    const k = (v.g || '') + ' ' + v.sv;
+    if (m.has(k)) { const e = m.get(k); if (!e.tile && tile) e.tile = tile; return; }
+    m.set(k, { v, sv: svFull(v), fr: v.fr, ns: dnorm(v.sv), nf: dnorm(frBase(v.fr)), np: v.fr.replace(/\(.*?\)/g, '').split(/[,;]/).map(x => dnorm(frBase(x))).filter(Boolean), fk: frKey(v.fr), tile });
+  };
+  WSETS.forEach(w => w.vocab.forEach((v, k) => add(v, w.id + '-' + k)));
+  /* mots des fiches : pas les phrases ni les listes de formes (« äta, åt, ätit »), ni « att äta » si « äta » existe */
+  FICHES.forEach(f => (f.vocab || []).forEach(v => { if (/[.?!,…]/.test(v.sv) || v.sv.split(' ').length > 3) return; const b = /^att (.+)$/.exec(v.sv); if (b && [...m.keys()].some(k => k.endsWith(' ' + b[1]))) return; add(v, ''); }));
+  DICT = [...m.values()];
+  DICT.forEach((e, i) => { e.i = i; });
+  const cs = new Intl.Collator('sv'), cf = new Intl.Collator('fr', { sensitivity: 'base' });
+  DICT.bySv = DICT.slice().sort((a, b) => cs.compare(a.v.sv, b.v.sv));
+  const num = e => /^[0-9]/.test(e.fk), byf = (a, b) => cf.compare(a.fk, b.fk);   /* nombres à la fin */
+  DICT.byFr = DICT.filter(e => !num(e)).sort(byf).concat(DICT.filter(num).sort(byf));
+  return DICT;
+}
+const dLetter = (e, mode) => { let c = mode === 'fr' ? (e.fk[0] || '#').normalize('NFD')[0] : (e.v.sv[0] || '#'); if (/[œŒ]/.test(c)) c = 'O'; return /[0-9#]/.test(c) ? '#' : c.toUpperCase(); };
+function dRow(e, mode, open) {
+  const s = e.tile ? tileState(e.tile) : '', left = mode === 'fr' ? esc(e.fr) : gBadge(e.v.g) + esc(e.v.sv), right = mode === 'fr' ? gBadge(e.v.g) + esc(e.v.sv) : esc(e.fr);
+  let h = '<button class="drow' + (s ? ' s-' + s : '') + (open ? ' open' : '') + '" data-dk="' + e.i + '"><span class="dl' + (mode === 'fr' ? ' fr' : '') + '">' + left + '</span><span class="dr' + (mode === 'fr' ? '' : ' fr') + '">' + right + '</span></button>';
+  if (open) {
+    const v = e.v, info = [v.g && v.pl ? 'pluriel : <b>' + esc(v.pl) + '</b>' : '', v.forms ? 'formes : <b>' + esc(v.forms) + '</b>' : '', v.note ? esc(v.note) : ''].filter(Boolean).join('<br>');
+    h += '<div class="dopen"><div class="tb-row"><span class="tb-info">' + (info || esc(v.fr)) + '</span>' + playBtn(v.sv) + '</div>' +
+      (e.tile ? '<div class="tb-acts">' + [['learn', 'À apprendre'], ['known', 'Je connais'], ['out', 'Exclure']].map(([k, l]) => '<button class="tb-btn ' + k + (s === k ? ' on' : '') + '" data-dset="' + k + '" data-dk="' + e.i + '">' + l + '</button>').join('') + (s ? '<button class="tb-btn reset" data-dset="" data-dk="' + e.i + '" title="Réinitialiser">↺</button>' : '') + '</div>' : '') + '</div>';
+  }
+  return h;
+}
+function dList() {
+  const D = dict(), a = view.arg || {}, mode = a.mode || 'sv', q = dnorm(a.q);
+  if (q) {
+    const rank = e => { if (e.ns === q || e.np.includes(q)) return 0; const t = [e.ns, e.nf]; let r = 9; t.forEach(x => { if (x === q) r = Math.min(r, 0); else if (x.startsWith(q)) r = Math.min(r, 1); else if ((' ' + x).includes(' ' + q)) r = Math.min(r, 2); else if (x.includes(q)) r = Math.min(r, 3); }); return r; };
+    const hits = (mode === 'fr' ? D.byFr : D.bySv).map(e => [rank(e), e]).filter(x => x[0] < 9).sort((x, y) => x[0] - y[0]).slice(0, 200).map(x => x[1]);
+    return hits.length ? hits.map(e => dRow(e, mode, a.open === e.i)).join('') : '<p class="muted dnone">Aucun mot trouvé pour « ' + esc(a.q) + ' ».</p>';
+  }
+  let h = '', last = '';
+  (mode === 'fr' ? D.byFr : D.bySv).forEach(e => { const L = dLetter(e, mode); if (L !== last) { h += '<h3 class="dlet" id="dlet-' + L + '">' + L + '</h3>'; last = L; } h += dRow(e, mode, a.open === e.i); });
+  return h;
+}
+function dIndex() {
+  const a = view.arg || {}, mode = a.mode || 'sv'; if (dnorm(a.q)) return '';
+  const Ls = []; (mode === 'fr' ? dict().byFr : dict().bySv).forEach(e => { const L = dLetter(e, mode); if (Ls[Ls.length - 1] !== L) Ls.push(L); });
+  return Ls.map(L => '<button data-dlet="' + L + '">' + L + '</button>').join('');
+}
 function words() {
-  const q = (view.arg && view.arg.q) || '';
-  const list = [];
-  FICHES.forEach(f => { if (ficheStarted(f)) (f.vocab || []).concat(f.phrases || []).forEach(v => list.push(v)); });
-  return '<h1 class="pt">Mes mots</h1><p class="muted">' + plural(list.length, 'mot ou phrase') + ' dans les fiches commencées.</p>' +
-    '<input type="search" class="search" id="wsearch" placeholder="Chercher en suédois ou en français" value="' + esc(q) + '" autocomplete="off">' +
-    '<div id="wlist">' + wordsList(list, q) + '</div>';
+  const a = view.arg || {}, mode = a.mode || 'sv';
+  return '<div class="dict"><div class="dhead"><input type="search" class="search" id="dq" placeholder="Chercher en suédois ou en français" value="' + esc(a.q || '') + '" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">' +
+    '<div class="dseg"><button data-dmode="sv"' + (mode === 'sv' ? ' class="on"' : '') + '>Suédois</button><button data-dmode="fr"' + (mode === 'fr' ? ' class="on"' : '') + '>Français</button></div><p class="dcount">' + plural(dict().length, 'mot') + '</p></div>' +
+    '<div id="dlist">' + dList() + '</div><nav class="dindex" id="dindex" aria-label="Lettres">' + dIndex() + '</nav></div>';
 }
-function wordsList(list, q) {
-  q = (q || '').toLowerCase().trim();
-  const rows = list.filter(v => !q || (v.sv + ' ' + v.fr).toLowerCase().includes(q));
-  return rows.length ? vocabRows(rows) : '<p class="muted">' + (list.length ? 'Aucun résultat.' : 'Commence une fiche pour remplir ton carnet.') + '</p>';
+function dRefresh(keepScroll) {
+  const y = window.scrollY; $('dlist').innerHTML = dList(); $('dindex').innerHTML = dIndex(); if (keepScroll) window.scrollTo(0, y);
 }
+document.addEventListener('click', e => {
+  if (view.name !== 'words') return;
+  const b = e.target.closest('button'); if (!b || b.dataset.say != null) return;
+  const a = view.arg = view.arg || {};
+  if (b.dataset.dset != null) { const d = DICT[+b.dataset.dk], i = d.tile.lastIndexOf('-'); setTile(WBY[d.tile.slice(0, i)], +d.tile.slice(i + 1), b.dataset.dset); dRefresh(true); e.stopImmediatePropagation(); return; }
+  if (b.dataset.dk != null) { a.open = a.open === +b.dataset.dk ? null : +b.dataset.dk; dRefresh(true); e.stopImmediatePropagation(); return; }
+  if (b.dataset.dmode) { a.mode = b.dataset.dmode; a.open = null; render(); window.scrollTo(0, 0); e.stopImmediatePropagation(); return; }
+  if (b.dataset.dlet) { const h = document.getElementById('dlet-' + b.dataset.dlet); if (h) h.scrollIntoView({ block: 'start' }); e.stopImmediatePropagation(); }
+}, true);
 function stats() {
   const days = Object.keys(S.days).sort(), total = days.reduce((s, d) => s + S.days[d].n, 0), ok = days.reduce((s, d) => s + S.days[d].ok, 0);
   const boxes = [0, 0, 0, 0, 0, 0, 0, 0]; Object.keys(S.cards).forEach(id => { if (CARDS[id]) boxes[S.cards[id].b]++; });
@@ -2931,9 +4437,8 @@ document.addEventListener('change', e => {
   else if (id === 'opt-rate') { S.opts.rate = parseFloat(e.target.value) || 0.85; save(); speak('Hej! Hur mår du?'); }
 });
 document.addEventListener('input', e => {
-  if (e.target.id !== 'wsearch') return;
-  const list = []; FICHES.forEach(f => { if (ficheStarted(f)) (f.vocab || []).concat(f.phrases || []).forEach(v => list.push(v)); });
-  view.arg = { q: e.target.value }; $('wlist').innerHTML = wordsList(list, e.target.value);
+  if (e.target.id !== 'dq') return;
+  view.arg = Object.assign(view.arg || {}, { q: e.target.value, open: null }); clearTimeout(dRefresh.t); dRefresh.t = setTimeout(() => dRefresh(false), 120);
 });
 document.addEventListener('keydown', e => {
   if (view.name === 'fiche' && !e.altKey && !e.ctrlKey && !e.metaKey && !/INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) {
