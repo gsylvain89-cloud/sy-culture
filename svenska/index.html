@@ -390,17 +390,43 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .gramlink { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; margin: 18px 0 6px; padding: 12px 14px; border: 1px solid #e2dcf3; background: #f4f1fb; border-radius: 12px; font: inherit; color: inherit; }
 .gramlink span { font-size: 24px; } .gramlink b { flex: 1; display: grid; font-size: 15.5px; color: #4b3a9a; } .gramlink small { font-weight: 500; font-size: 13px; color: var(--muted); }
 .gramlink i { font-style: normal; font-size: 24px; color: #6E56CF; }
+
+/* 0.13 : exercices, verbes, textes, test */
+.gxbox { display: flex; align-items: center; gap: 12px; justify-content: space-between; background: #f4f1fb; border: 1px solid #e2dcf3; border-radius: 12px; padding: 12px 14px; margin: 18px 0 8px; }
+.gxbox > div { display: grid; gap: 2px; } .gxbox b { font-size: 15.5px; } .gxbox small { color: var(--muted); font-size: 13px; }
+.gxbox.v { background: #fdf1f1; border-color: #f3d5d5; margin: 4px 0 10px; }
+.gxbox.lt { background: #fbf2ea; border-color: #f0dcc8; }
+.vgx { position: relative; padding-right: 120px; } .vgx .btn { position: absolute; right: 0; top: 0; }
+.dadd { margin-top: 8px; } .dadded { margin: 6px 0 0; }
+.tintro { margin-top: -6px; }
+.txbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0 6px; }
+.txbody .tp { font-size: 18.5px; line-height: 1.7; }
+.txbody .ts { cursor: pointer; border-radius: 4px; transition: background .15s; }
+.txbody .ts:hover { background: #eef6f3; }
+.txbody .ts.on { background: #e2f1ec; }
+.txbody .tfr { display: none; font-size: 14.5px; line-height: 1.45; color: #2F7D6B; background: #f1f8f5; border-left: 3px solid #2F7D6B; border-radius: 6px; padding: 4px 9px; margin: 3px 0 7px; font-style: italic; }
+.txbody .tfr.on, .txbody.all .tfr { display: block; }
+.tbl.gloss td { padding: 5px 10px; }
+.txq { display: grid; gap: 12px; } .txqi p { margin: 0 0 6px; }
+.txc { display: grid; gap: 6px; } .choice.sm { padding: 8px 12px; font-size: 15px; text-align: left; }
+.txres { font-weight: 700; font-size: 17px; margin: 12px 0 0; }
+.ltbars { display: grid; gap: 6px; margin: 10px 0 4px; max-width: 420px; }
+.ltb { display: grid; grid-template-columns: 34px 1fr 44px; align-items: center; gap: 8px; font-weight: 600; }
+.ltskip { text-align: center; margin-top: 10px; }
+.lt-cta { margin: 14px 0 6px; }
+@media (max-width: 700px) { .gxbox { flex-wrap: wrap; } .gxbox .btn { width: 100%; } .vgx { padding-right: 0; } .vgx .btn { position: static; margin-top: 6px; justify-self: start; } }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.12.0 · build du 27/11 à 22:28">v0.12.0</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.13.0 · build du 27/11 à 23:12">v0.13.0</span></h1></div>
   <button type="button" class="syncb" id="syncb" data-act="gh-box" title="Synchronisation PC ↔ iPhone">☁️</button>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
     <button type="button" data-nav="tiles">Vocabulaire</button>
     <button type="button" data-nav="gram">Grammaire</button>
+    <button type="button" data-nav="texts">Textes</button>
     <button type="button" data-nav="words">Rechercher</button>
     <button type="button" data-nav="stats">Progrès</button>
   </nav>
@@ -18087,6 +18113,4521 @@ const MORE = {
 }
 };
 
+/* SY Svenska : exercices de grammaire (GEX), textes de lecture (TEXTS), test de niveau (LTEST). Contenu écrit à la main : vérifier tout ajout.
+   GEX[id fiche Grammaire] = [{t:"z", s, a, fr, d, x} | {t:"q", q, a, d, x}] : AJOUTER à la fin seulement (les ids de cartes suivent l'ordre). */
+const GEX = {
+"g-groupes": [
+{
+"t": "q",
+"q": "Prétérit de « arbeta » (groupe 1) ?",
+"a": "arbetade",
+"d": [
+"arbetde",
+"arbette",
+"arbetat"
+],
+"x": "Groupe 1 : -ade au prétérit, -at au supin."
+},
+{
+"t": "q",
+"q": "Prétérit de « köpa » (groupe 2b) ?",
+"a": "köpte",
+"d": [
+"köpade",
+"köpde",
+"köpt"
+],
+"x": "Radical en p (consonne sourde) : -te."
+},
+{
+"t": "q",
+"q": "Prétérit de « stänga » (groupe 2a) ?",
+"a": "stängde",
+"d": [
+"stängte",
+"stängade",
+"stängt"
+],
+"x": "Radical en g (sonore) : -de."
+},
+{
+"t": "q",
+"q": "Supin de « bo » (groupe 3) ?",
+"a": "bott",
+"d": [
+"bodd",
+"boat",
+"bodde"
+],
+"x": "Groupe 3 : -dde au prétérit, -tt au supin."
+},
+{
+"t": "q",
+"q": "Présent de « köra » (conduire) ?",
+"a": "kör",
+"d": [
+"körer",
+"köra",
+"körar"
+],
+"x": "Radical en -r : pas de -er au présent."
+},
+{
+"t": "z",
+"s": "Hon ___ svenska varje dag. (tala, présent)",
+"a": "talar",
+"fr": "Elle parle suédois tous les jours.",
+"d": [
+"talat",
+"tala",
+"talade"
+],
+"x": "Groupe 1 : présent en -ar, le même pour toutes les personnes."
+},
+{
+"t": "z",
+"s": "Jag har ___ hela dagen. (arbeta)",
+"a": "arbetat",
+"fr": "J'ai travaillé toute la journée.",
+"d": [
+"arbetade",
+"arbetar",
+"arbeta"
+],
+"x": "Après har : le supin."
+},
+{
+"t": "q",
+"q": "À quel groupe appartient « studera » ?",
+"a": "groupe 1",
+"d": [
+"groupe 2",
+"groupe 3",
+"groupe 4"
+],
+"x": "Tous les verbes en -era sont du groupe 1 : studerar, studerade, studerat."
+}
+],
+"g-present": [
+{
+"t": "z",
+"s": "Vi ___ i Malmö. (bo)",
+"a": "bor",
+"fr": "Nous habitons à Malmö.",
+"d": [
+"bo",
+"boar",
+"boer"
+],
+"x": "Verbe court : infinitif + r."
+},
+{
+"t": "z",
+"s": "Han ___ en bok. (läsa)",
+"a": "läser",
+"fr": "Il lit un livre.",
+"d": [
+"läsar",
+"läsa",
+"läst"
+],
+"x": "Groupe 2 : radical + er."
+},
+{
+"t": "z",
+"s": "Jag ___ inte. (veta)",
+"a": "vet",
+"fr": "Je ne sais pas.",
+"d": [
+"veter",
+"vetar",
+"veta"
+],
+"x": "veta a un présent irrégulier : vet."
+},
+{
+"t": "z",
+"s": "Du ___ simma bra. (kunna)",
+"a": "kan",
+"fr": "Tu sais bien nager.",
+"d": [
+"kanr",
+"kunnar",
+"kunna"
+],
+"x": "Modal : présent sans -r."
+},
+{
+"t": "z",
+"s": "Barnen ___ och sover. (ligga)",
+"a": "ligger",
+"fr": "Les enfants sont en train de dormir.",
+"d": [
+"ligga",
+"låg",
+"ligg"
+],
+"x": "Verbe de position + och + verbe = action en cours."
+},
+{
+"t": "q",
+"q": "« Je suis en train de cuisiner » se dit :",
+"a": "Jag håller på att laga mat.",
+"d": [
+"Jag är lagande mat.",
+"Jag är att laga mat.",
+"Jag lagar på mat."
+],
+"x": "hålla på att + infinitif."
+},
+{
+"t": "z",
+"s": "Jag ___ till Stockholm i morgon. (åka)",
+"a": "åker",
+"fr": "Je vais à Stockholm demain.",
+"d": [
+"åka",
+"åkte",
+"åkar"
+],
+"x": "Présent + moment futur = futur proche."
+},
+{
+"t": "z",
+"s": "Vad ___ du? (göra)",
+"a": "gör",
+"fr": "Que fais-tu ?",
+"d": [
+"göra",
+"görar",
+"gjorde"
+],
+"x": "göra : présent gör."
+}
+],
+"g-preteritum": [
+{
+"t": "z",
+"s": "I går ___ vi fisk. (äta)",
+"a": "åt",
+"fr": "Hier, nous avons mangé du poisson.",
+"d": [
+"har ätit",
+"äter",
+"ätit"
+],
+"x": "Moment passé précis : prétérit."
+},
+{
+"t": "z",
+"s": "När jag var liten ___ jag i Lyon. (bo)",
+"a": "bodde",
+"fr": "Quand j'étais petit, j'habitais à Lyon.",
+"d": [
+"har bott",
+"bor",
+"bott"
+],
+"x": "État passé : prétérit."
+},
+{
+"t": "z",
+"s": "Hon ___ att hon var trött. (säga)",
+"a": "sa",
+"fr": "Elle a dit qu'elle était fatiguée.",
+"d": [
+"sägde",
+"sagt",
+"säger"
+],
+"x": "säga → sa (écrit soigné : sade)."
+},
+{
+"t": "z",
+"s": "Vi ___ till Göteborg förra veckan. (åka)",
+"a": "åkte",
+"fr": "Nous sommes allés à Göteborg la semaine dernière.",
+"d": [
+"åkade",
+"har åkt",
+"åker"
+],
+"x": "åka : groupe 2b, åkte."
+},
+{
+"t": "z",
+"s": "Det ___ gott! (vara, prétérit d'attitude)",
+"a": "var",
+"fr": "C'est bon !",
+"d": [
+"är",
+"varit",
+"vara"
+],
+"x": "Réaction immédiate : prétérit d'attitude."
+},
+{
+"t": "z",
+"s": "Han ___ hem klockan sex. (komma)",
+"a": "kom",
+"fr": "Il est rentré à six heures.",
+"d": [
+"kommade",
+"kommit",
+"kommer"
+],
+"x": "komma : kom (verbe fort)."
+},
+{
+"t": "z",
+"s": "Vi ___ bada i sjön på somrarna. (habitude passée)",
+"a": "brukade",
+"fr": "Nous nous baignions dans le lac l'été.",
+"d": [
+"brukar",
+"har brukat",
+"bruka"
+],
+"x": "brukade + infinitif = habitude passée."
+},
+{
+"t": "q",
+"q": "« J'ai vu ce film hier » :",
+"a": "Jag såg den filmen i går.",
+"d": [
+"Jag har sett den filmen i går.",
+"Jag ser den filmen i går.",
+"Jag hade sett den filmen i går."
+],
+"x": "i går → prétérit."
+}
+],
+"g-perfekt": [
+{
+"t": "z",
+"s": "Har du ___ i Kiruna? (vara)",
+"a": "varit",
+"fr": "Es-tu déjà allé à Kiruna ?",
+"d": [
+"var",
+"vart",
+"är"
+],
+"x": "Expérience : har + supin."
+},
+{
+"t": "z",
+"s": "Vi har ___ här i tre år. (bo)",
+"a": "bott",
+"fr": "Nous habitons ici depuis trois ans.",
+"d": [
+"bodde",
+"bor",
+"bodd"
+],
+"x": "Durée qui continue : parfait."
+},
+{
+"t": "z",
+"s": "Jag har ___ nyckeln. (tappa)",
+"a": "tappat",
+"fr": "J'ai perdu la clé.",
+"d": [
+"tappade",
+"tappad",
+"tappar"
+],
+"x": "Résultat présent : har + supin."
+},
+{
+"t": "z",
+"s": "Hon har redan ___. (gå)",
+"a": "gått",
+"fr": "Elle est déjà partie.",
+"d": [
+"gick",
+"gådd",
+"går"
+],
+"x": "gå → gått."
+},
+{
+"t": "z",
+"s": "Jag har aldrig ___ norrsken. (se)",
+"a": "sett",
+"fr": "Je n'ai jamais vu d'aurore boréale.",
+"d": [
+"såg",
+"set",
+"seet"
+],
+"x": "se → sett."
+},
+{
+"t": "q",
+"q": "Quelle phrase est correcte ?",
+"a": "Jag åt klockan tolv.",
+"d": [
+"Jag har ätit klockan tolv.",
+"Jag är ätit klockan tolv.",
+"Jag har åt klockan tolv."
+],
+"x": "Heure précise → prétérit."
+},
+{
+"t": "q",
+"q": "« Elle est venue » :",
+"a": "Hon har kommit.",
+"d": [
+"Hon är kommit.",
+"Hon är kommen.",
+"Hon har kom."
+],
+"x": "Toujours har, jamais är."
+},
+{
+"t": "z",
+"s": "Har ni ___ middag än? (äta)",
+"a": "ätit",
+"fr": "Vous avez déjà dîné ?",
+"d": [
+"åt",
+"ätat",
+"äter"
+],
+"x": "ännu / än : parfait."
+}
+],
+"g-pluskvam": [
+{
+"t": "z",
+"s": "När vi kom hade filmen redan ___. (börja)",
+"a": "börjat",
+"fr": "Quand nous sommes arrivés, le film avait déjà commencé.",
+"d": [
+"började",
+"börjar",
+"börja"
+],
+"x": "hade + supin."
+},
+{
+"t": "z",
+"s": "Hon ___ aldrig sett snö förut.",
+"a": "hade",
+"fr": "Elle n'avait jamais vu de neige avant.",
+"d": [
+"har",
+"var",
+"hadde"
+],
+"x": "Antériorité dans le passé : hade."
+},
+{
+"t": "z",
+"s": "Om jag hade ___ det, hade jag kommit. (veta)",
+"a": "vetat",
+"fr": "Si je l'avais su, je serais venu.",
+"d": [
+"visste",
+"vet",
+"vetit"
+],
+"x": "veta → supin vetat."
+},
+{
+"t": "z",
+"s": "Efter att han hade ___ gick han ut. (äta)",
+"a": "ätit",
+"fr": "Après avoir mangé, il est sorti.",
+"d": [
+"åt",
+"äter",
+"ätat"
+],
+"x": "hade + supin."
+},
+{
+"t": "q",
+"q": "« Si tu avais demandé, je t'aurais aidé » :",
+"a": "Om du hade frågat, hade jag hjälpt dig.",
+"d": [
+"Om du frågade, har jag hjälpt dig.",
+"Om du har frågat, skulle jag hjälpa dig.",
+"Om du hade frågat, jag hade hjälpt dig."
+],
+"x": "Irréel passé ; inversion après la subordonnée."
+},
+{
+"t": "z",
+"s": "Jag visste inte att du ___ flyttat.",
+"a": "hade",
+"fr": "Je ne savais pas que tu avais déménagé.",
+"d": [
+"har",
+"skulle",
+"var"
+],
+"x": "Action antérieure à « visste »."
+},
+{
+"t": "z",
+"s": "Det ___ varit roligt!",
+"a": "hade",
+"fr": "Ça aurait été sympa !",
+"d": [
+"har",
+"skulle",
+"var"
+],
+"x": "Oral : hade + supin = conditionnel passé."
+},
+{
+"t": "q",
+"q": "Le plus-que-parfait se forme avec :",
+"a": "hade + supin",
+"d": [
+"har + supin",
+"var + participe",
+"skulle + infinitif"
+],
+"x": ""
+}
+],
+"g-futur": [
+{
+"t": "z",
+"s": "Jag ___ resa till Paris i sommar. (projet)",
+"a": "ska",
+"fr": "Je vais aller à Paris cet été.",
+"d": [
+"kommer",
+"ska att",
+"blir"
+],
+"x": "Projet décidé : ska."
+},
+{
+"t": "z",
+"s": "Det kommer ___ regna i morgon.",
+"a": "att",
+"fr": "Il va pleuvoir demain.",
+"d": [
+"till",
+"för",
+"och"
+],
+"x": "kommer att + infinitif."
+},
+{
+"t": "q",
+"q": "Pour une prévision météo, on dit plutôt :",
+"a": "Det kommer att snöa.",
+"d": [
+"Det ska snöa.",
+"Det tänker snöa.",
+"Det snöar att komma."
+],
+"x": "Prévision sans décision : kommer att."
+},
+{
+"t": "z",
+"s": "Jag ___ inte betala! (intention ferme)",
+"a": "tänker",
+"fr": "Je n'ai pas l'intention de payer !",
+"d": [
+"kommer",
+"blir",
+"ska att"
+],
+"x": "tänker + infinitif = avoir l'intention."
+},
+{
+"t": "z",
+"s": "Det ___ 250 kronor.",
+"a": "blir",
+"fr": "Ça fera 250 couronnes.",
+"d": [
+"ska",
+"kommer",
+"är att"
+],
+"x": "blir = ça va être, ça fera."
+},
+{
+"t": "z",
+"s": "Ska vi ___? (gå)",
+"a": "gå",
+"fr": "On y va ?",
+"d": [
+"att gå",
+"går",
+"gick"
+],
+"x": "Pas d'att après ska."
+},
+{
+"t": "z",
+"s": "Han ___ vara mycket rik. (rumeur)",
+"a": "ska",
+"fr": "Il paraît qu'il est très riche.",
+"d": [
+"kommer att",
+"blir",
+"tänker"
+],
+"x": "ska = il paraît que."
+},
+{
+"t": "z",
+"s": "Jag ska ha ___ klockan fem. (sluta)",
+"a": "slutat",
+"fr": "J'aurai fini à cinq heures.",
+"d": [
+"slutade",
+"sluta",
+"slutar"
+],
+"x": "Futur antérieur : ska ha + supin."
+}
+],
+"g-konditional": [
+{
+"t": "z",
+"s": "Jag ___ vilja ha en kaffe.",
+"a": "skulle",
+"fr": "Je voudrais un café.",
+"d": [
+"ska",
+"kommer",
+"hade"
+],
+"x": "Politesse : skulle vilja."
+},
+{
+"t": "z",
+"s": "Om jag ___ mer tid, skulle jag resa mer. (ha)",
+"a": "hade",
+"fr": "Si j'avais plus de temps, je voyagerais plus.",
+"d": [
+"har",
+"skulle ha",
+"haft"
+],
+"x": "om + prétérit."
+},
+{
+"t": "z",
+"s": "Om jag ___ du, skulle jag tacka ja.",
+"a": "vore",
+"fr": "Si j'étais toi, j'accepterais.",
+"d": [
+"är",
+"varit",
+"blir"
+],
+"x": "vore : forme d'irréel de vara."
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "Om jag vann, skulle jag köpa ett hus.",
+"d": [
+"Om jag vann, jag skulle köpa ett hus.",
+"Om jag skulle vinna, jag köper ett hus.",
+"Om vann jag, skulle jag köpa ett hus."
+],
+"x": "Après la subordonnée en tête : verbe puis sujet."
+},
+{
+"t": "z",
+"s": "Han sa att han ___ komma.",
+"a": "skulle",
+"fr": "Il a dit qu'il viendrait.",
+"d": [
+"ska",
+"kommer",
+"hade"
+],
+"x": "Futur dans le passé : skulle."
+},
+{
+"t": "z",
+"s": "___ du kunna hjälpa mig?",
+"a": "Skulle",
+"fr": "Pourrais-tu m'aider ?",
+"d": [
+"Ska",
+"Kommer",
+"Hade"
+],
+"x": "Demande polie."
+},
+{
+"t": "z",
+"s": "Jag önskar att jag ___ rik. (vara)",
+"a": "var",
+"fr": "J'aimerais être riche.",
+"d": [
+"är",
+"skulle",
+"varit"
+],
+"x": "Souhait irréel : prétérit."
+},
+{
+"t": "z",
+"s": "Kan jag ___ en kaffe? (demande polie)",
+"a": "få",
+"fr": "Je peux avoir un café ?",
+"d": [
+"ha",
+"ta",
+"vilja"
+],
+"x": "Kan jag få…? = la demande polie la plus courante."
+}
+],
+"g-imperativ": [
+{
+"t": "q",
+"q": "Impératif de « läsa » :",
+"a": "Läs!",
+"d": [
+"Läsa!",
+"Läser!",
+"Läst!"
+],
+"x": "Groupes 2 et 4 : infinitif sans -a."
+},
+{
+"t": "q",
+"q": "Impératif de « vänta » :",
+"a": "Vänta!",
+"d": [
+"Vänt!",
+"Väntar!",
+"Väntade!"
+],
+"x": "Groupe 1 : identique à l'infinitif."
+},
+{
+"t": "q",
+"q": "Impératif de « komma » :",
+"a": "Kom!",
+"d": [
+"Komm!",
+"Komma!",
+"Kommer!"
+],
+"x": "La consonne double se simplifie en fin de mot."
+},
+{
+"t": "z",
+"s": "Glöm ___ nycklarna!",
+"a": "inte",
+"fr": "N'oublie pas les clés !",
+"d": [
+"ingen",
+"aldrig inte",
+"ej inte"
+],
+"x": "Négation après le verbe."
+},
+{
+"t": "z",
+"s": "Sätt ___! (à une personne)",
+"a": "dig",
+"fr": "Assieds-toi !",
+"d": [
+"sig",
+"mig",
+"er"
+],
+"x": "Réfléchi à la 2e personne : dig."
+},
+{
+"t": "z",
+"s": "Skynda ___! (à plusieurs personnes)",
+"a": "er",
+"fr": "Dépêchez-vous !",
+"d": [
+"dig",
+"sig",
+"oss"
+],
+"x": "Vous (pluriel) : er."
+},
+{
+"t": "z",
+"s": "Var ___ och vänta här.",
+"a": "snäll",
+"fr": "Attends ici, s'il te plaît.",
+"d": [
+"snällt",
+"glad",
+"god"
+],
+"x": "Var snäll och… = sois gentil de…"
+},
+{
+"t": "q",
+"q": "Impératif de « vara » :",
+"a": "Var!",
+"d": [
+"Vara!",
+"Är!",
+"Vare!"
+],
+"x": ""
+}
+],
+"g-infinitiv": [
+{
+"t": "q",
+"q": "« Je sais nager » :",
+"a": "Jag kan simma.",
+"d": [
+"Jag kan att simma.",
+"Jag kan för att simma.",
+"Jag kan simmar."
+],
+"x": "Après un modal, pas d'att."
+},
+{
+"t": "z",
+"s": "Jag älskar ___ resa.",
+"a": "att",
+"fr": "J'adore voyager.",
+"d": [
+"—",
+"för",
+"till"
+],
+"x": "Verbe ordinaire + att + infinitif."
+},
+{
+"t": "z",
+"s": "Det är svårt ___ förstå.",
+"a": "att",
+"fr": "C'est difficile à comprendre.",
+"d": [
+"för",
+"—",
+"till"
+],
+"x": "Adjectif + att."
+},
+{
+"t": "z",
+"s": "Jag är trött på ___ vänta.",
+"a": "att",
+"fr": "J'en ai assez d'attendre.",
+"d": [
+"—",
+"för",
+"och"
+],
+"x": "Préposition + att + infinitif."
+},
+{
+"t": "z",
+"s": "Han gick utan ___ säga hej.",
+"a": "att",
+"fr": "Il est parti sans dire bonjour.",
+"d": [
+"—",
+"för",
+"till"
+],
+"x": "utan att = sans."
+},
+{
+"t": "z",
+"s": "Jag ringer för ___ fråga en sak.",
+"a": "att",
+"fr": "J'appelle pour demander quelque chose.",
+"d": [
+"—",
+"till",
+"och"
+],
+"x": "för att = pour (but)."
+},
+{
+"t": "q",
+"q": "« Nous mangeons d'habitude à six heures » :",
+"a": "Vi brukar äta klockan sex.",
+"d": [
+"Vi brukar att äta klockan sex.",
+"Vi brukar äter klockan sex.",
+"Vi brukar för att äta klockan sex."
+],
+"x": "bruka : sans att."
+},
+{
+"t": "q",
+"q": "Quelle phrase est correcte ?",
+"a": "Hon vill sova.",
+"d": [
+"Hon vill att sova.",
+"Hon vill sover.",
+"Hon vill för att sova."
+],
+"x": "Modal + infinitif sans att."
+}
+],
+"g-particip": [
+{
+"t": "z",
+"s": "Boken är ___ på svenska. (skriva)",
+"a": "skriven",
+"fr": "Le livre est écrit en suédois.",
+"d": [
+"skrivit",
+"skrivet",
+"skrivna"
+],
+"x": "Participe accordé (en-ord) : skriven."
+},
+{
+"t": "z",
+"s": "Brevet är ___ på svenska. (skriva)",
+"a": "skrivet",
+"fr": "La lettre est écrite en suédois.",
+"d": [
+"skriven",
+"skrivit",
+"skrivna"
+],
+"x": "ett-ord : skrivet."
+},
+{
+"t": "z",
+"s": "Jag har ___ ett brev. (skriva)",
+"a": "skrivit",
+"fr": "J'ai écrit une lettre.",
+"d": [
+"skriven",
+"skrivet",
+"skrev"
+],
+"x": "Après har : supin."
+},
+{
+"t": "z",
+"s": "Dörren är ___. (stänga)",
+"a": "stängd",
+"fr": "La porte est fermée.",
+"d": [
+"stängt",
+"stängda",
+"stängde"
+],
+"x": "en-ord : stängd."
+},
+{
+"t": "z",
+"s": "Fönstren är ___. (stänga)",
+"a": "stängda",
+"fr": "Les fenêtres sont fermées.",
+"d": [
+"stängd",
+"stängt",
+"stängde"
+],
+"x": "Pluriel : -a."
+},
+{
+"t": "z",
+"s": "Det var en ___ film. (passionnant)",
+"a": "spännande",
+"fr": "C'était un film passionnant.",
+"d": [
+"spännad",
+"spänd",
+"spännat"
+],
+"x": "Participe présent -ande, invariable."
+},
+{
+"t": "z",
+"s": "Hunden kom ___. (springa)",
+"a": "springande",
+"fr": "Le chien est arrivé en courant.",
+"d": [
+"sprungen",
+"sprang",
+"springer"
+],
+"x": "komma + participe présent."
+},
+{
+"t": "z",
+"s": "Vi är ___ på fest. (bjuda)",
+"a": "bjudna",
+"fr": "Nous sommes invités à une fête.",
+"d": [
+"bjudit",
+"bjuden",
+"bjudet"
+],
+"x": "Pluriel du participe fort : -na."
+}
+],
+"g-passiv": [
+{
+"t": "z",
+"s": "Svenska ___ i Finland också. (tala, passif)",
+"a": "talas",
+"fr": "Le suédois est parlé aussi en Finlande.",
+"d": [
+"talar",
+"talades",
+"talats"
+],
+"x": "Présent passif : -s."
+},
+{
+"t": "z",
+"s": "Bilen ___ i går. (reparera, passif)",
+"a": "reparerades",
+"fr": "La voiture a été réparée hier.",
+"d": [
+"reparerats",
+"repareras",
+"reparerade"
+],
+"x": "Prétérit passif : -des + s."
+},
+{
+"t": "z",
+"s": "Huset har ___ nyligen. (måla, passif)",
+"a": "målats",
+"fr": "La maison a été repeinte récemment.",
+"d": [
+"målades",
+"målas",
+"målat"
+],
+"x": "Parfait passif : har + supin + s."
+},
+{
+"t": "z",
+"s": "Ansökan måste ___ före fredag. (skicka, passif)",
+"a": "skickas",
+"fr": "La candidature doit être envoyée avant vendredi.",
+"d": [
+"skickad",
+"skickats",
+"skickar"
+],
+"x": "Modal + infinitif passif."
+},
+{
+"t": "z",
+"s": "Boken skrevs ___ Astrid Lindgren.",
+"a": "av",
+"fr": "Le livre a été écrit par Astrid Lindgren.",
+"d": [
+"från",
+"med",
+"på"
+],
+"x": "L'agent : av."
+},
+{
+"t": "z",
+"s": "Jag ___ att du mår bra. (espérer)",
+"a": "hoppas",
+"fr": "J'espère que tu vas bien.",
+"d": [
+"hoppar",
+"hoppass",
+"hopas"
+],
+"x": "Déponent : hoppas, sens actif."
+},
+{
+"t": "z",
+"s": "Vi ___ i morgon! (se, réciproque)",
+"a": "ses",
+"fr": "On se voit demain !",
+"d": [
+"ser",
+"sess",
+"sågs"
+],
+"x": "Vi ses = on se voit."
+},
+{
+"t": "q",
+"q": "Laquelle décrit un état ?",
+"a": "Affären är stängd.",
+"d": [
+"Affären stängs klockan sex.",
+"Affären stängdes i går.",
+"Affären har stängts."
+],
+"x": "vara + participe = état."
+}
+],
+"g-reflexiv": [
+{
+"t": "z",
+"s": "Jag sätter ___.",
+"a": "mig",
+"fr": "Je m'assieds.",
+"d": [
+"sig",
+"dig",
+"mej sig"
+],
+"x": "1re personne : mig."
+},
+{
+"t": "z",
+"s": "Hon lär ___ svenska.",
+"a": "sig",
+"fr": "Elle apprend le suédois.",
+"d": [
+"henne",
+"dig",
+"hon"
+],
+"x": "3e personne : sig."
+},
+{
+"t": "z",
+"s": "Vi gifte ___ i fjol.",
+"a": "oss",
+"fr": "Nous nous sommes mariés l'an dernier.",
+"d": [
+"sig",
+"er",
+"vi"
+],
+"x": "1re personne du pluriel : oss."
+},
+{
+"t": "z",
+"s": "De bestämde ___ för att stanna.",
+"a": "sig",
+"fr": "Ils ont décidé de rester.",
+"d": [
+"dem",
+"oss",
+"er"
+],
+"x": "3e personne du pluriel : sig."
+},
+{
+"t": "z",
+"s": "Känner du ___ bättre?",
+"a": "dig",
+"fr": "Tu te sens mieux ?",
+"d": [
+"sig",
+"du",
+"mig"
+],
+"x": ""
+},
+{
+"t": "q",
+"q": "« Se réveiller » :",
+"a": "vakna",
+"d": [
+"vakna sig",
+"väcka sig",
+"vakna mig"
+],
+"x": "vakna n'est pas réfléchi."
+},
+{
+"t": "q",
+"q": "« Apprendre (une langue) » :",
+"a": "lära sig",
+"d": [
+"lära",
+"läsa sig",
+"lära om"
+],
+"x": "lära sig : réfléchi en suédois."
+},
+{
+"t": "z",
+"s": "I kväll lägger jag ___ tidigt.",
+"a": "mig",
+"fr": "Ce soir je me couche tôt.",
+"d": [
+"sig",
+"jag",
+"dig"
+],
+"x": "Inversion : le pronom suit le sujet."
+}
+],
+"g-partikel": [
+{
+"t": "z",
+"s": "Jag tycker ___ kaffe.",
+"a": "om",
+"fr": "J'aime le café.",
+"d": [
+"på",
+"av",
+"till"
+],
+"x": "tycka om = aimer."
+},
+{
+"t": "z",
+"s": "Kommer du ___ mig?",
+"a": "ihåg",
+"fr": "Tu te souviens de moi ?",
+"d": [
+"om",
+"igen",
+"på"
+],
+"x": "komma ihåg = se souvenir."
+},
+{
+"t": "z",
+"s": "Jag kände inte ___ dig!",
+"a": "igen",
+"fr": "Je ne t'ai pas reconnu !",
+"d": [
+"om",
+"ihåg",
+"på"
+],
+"x": "känna igen = reconnaître."
+},
+{
+"t": "z",
+"s": "Vi hälsar ___ mormor i helgen.",
+"a": "på",
+"fr": "Nous rendons visite à grand-mère ce week-end.",
+"d": [
+"om",
+"till",
+"hos"
+],
+"x": "hälsa på = rendre visite."
+},
+{
+"t": "z",
+"s": "Du ser trött ___.",
+"a": "ut",
+"fr": "Tu as l'air fatigué.",
+"d": [
+"på",
+"av",
+"upp"
+],
+"x": "se ut = avoir l'air."
+},
+{
+"t": "z",
+"s": "Stäng ___ datorn!",
+"a": "av",
+"fr": "Éteins l'ordinateur !",
+"d": [
+"på",
+"ut",
+"upp"
+],
+"x": "stänga av = éteindre."
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "Jag tycker inte om fisk.",
+"d": [
+"Jag tycker om inte fisk.",
+"Jag inte tycker om fisk.",
+"Jag tycker om fisk inte."
+],
+"x": "inte entre le verbe et la particule."
+},
+{
+"t": "z",
+"s": "Ge inte ___!",
+"a": "upp",
+"fr": "N'abandonne pas !",
+"d": [
+"av",
+"ut",
+"om"
+],
+"x": "ge upp = abandonner."
+}
+],
+"g-substantiv": [
+{
+"t": "q",
+"q": "Pluriel de « en flicka » :",
+"a": "flickor",
+"d": [
+"flickar",
+"flickaer",
+"flicker"
+],
+"x": "-a → -or."
+},
+{
+"t": "q",
+"q": "Pluriel de « en bil » :",
+"a": "bilar",
+"d": [
+"biler",
+"bilor",
+"bil"
+],
+"x": "Monosyllabe en : -ar."
+},
+{
+"t": "q",
+"q": "Pluriel de « ett hus » :",
+"a": "hus",
+"d": [
+"husar",
+"huser",
+"husen"
+],
+"x": "ett + consonne : inchangé."
+},
+{
+"t": "q",
+"q": "Pluriel de « ett äpple » :",
+"a": "äpplen",
+"d": [
+"äpplar",
+"äppler",
+"äpple"
+],
+"x": "ett + voyelle : -n."
+},
+{
+"t": "q",
+"q": "Pluriel de « en bok » :",
+"a": "böcker",
+"d": [
+"bokar",
+"boker",
+"böker"
+],
+"x": "Pluriel irrégulier."
+},
+{
+"t": "q",
+"q": "Pluriel de « en lärare » :",
+"a": "lärare",
+"d": [
+"lärarar",
+"lärarer",
+"lärarna"
+],
+"x": "-are : inchangé."
+},
+{
+"t": "q",
+"q": "Genre de « museum » :",
+"a": "ett",
+"d": [
+"en"
+],
+"x": "-um → ett."
+},
+{
+"t": "q",
+"q": "Genre de « tidning » :",
+"a": "en",
+"d": [
+"ett"
+],
+"x": "-ing → en."
+}
+],
+"g-bestamd": [
+{
+"t": "q",
+"q": "« la voiture » :",
+"a": "bilen",
+"d": [
+"bilet",
+"den bil",
+"bil"
+],
+"x": "en-ord : -en."
+},
+{
+"t": "q",
+"q": "« la maison » :",
+"a": "huset",
+"d": [
+"husen",
+"husn",
+"det hus"
+],
+"x": "ett-ord : -et."
+},
+{
+"t": "q",
+"q": "« les voitures » :",
+"a": "bilarna",
+"d": [
+"bilarne",
+"bilen",
+"bilarn"
+],
+"x": "Pluriel défini : -na."
+},
+{
+"t": "q",
+"q": "« les maisons » :",
+"a": "husen",
+"d": [
+"husarna",
+"huset",
+"husena"
+],
+"x": "ett-ord inchangé : -en."
+},
+{
+"t": "z",
+"s": "Jag gillar det ___ huset. (röd)",
+"a": "röda",
+"fr": "J'aime la maison rouge.",
+"d": [
+"rött",
+"röd",
+"rödt"
+],
+"x": "Défini : adjectif en -a."
+},
+{
+"t": "z",
+"s": "___ nya bilen är snabb.",
+"a": "Den",
+"fr": "La nouvelle voiture est rapide.",
+"d": [
+"Det",
+"De",
+"En"
+],
+"x": "Double détermination avec un en-ord : den."
+},
+{
+"t": "q",
+"q": "« ma voiture » :",
+"a": "min bil",
+"d": [
+"min bilen",
+"mitt bil",
+"bilen min min"
+],
+"x": "Pas de forme définie après un possessif."
+},
+{
+"t": "z",
+"s": "___ vecka börjar kursen. (prochaine)",
+"a": "Nästa",
+"fr": "La semaine prochaine, le cours commence.",
+"d": [
+"Nästan",
+"Förra",
+"Den nästa"
+],
+"x": "nästa + nom indéfini."
+}
+],
+"g-genitiv": [
+{
+"t": "q",
+"q": "« la voiture d'Anna » :",
+"a": "Annas bil",
+"d": [
+"Anna's bil",
+"Annas bilen",
+"bilen av Anna"
+],
+"x": "-s sans apostrophe, nom indéfini."
+},
+{
+"t": "q",
+"q": "« la mère du garçon » :",
+"a": "pojkens mamma",
+"d": [
+"pojke mamma",
+"pojkens mamman",
+"mamma av pojken"
+],
+"x": ""
+},
+{
+"t": "q",
+"q": "« la capitale de la Suède » :",
+"a": "Sveriges huvudstad",
+"d": [
+"Sverige huvudstad",
+"Sveriges huvudstaden",
+"huvudstad av Sverige"
+],
+"x": ""
+},
+{
+"t": "z",
+"s": "Annas ___ cykel är röd. (ny)",
+"a": "nya",
+"fr": "Le nouveau vélo d'Anna est rouge.",
+"d": [
+"ny",
+"nytt",
+"nyan"
+],
+"x": "Après un génitif : adjectif en -a."
+},
+{
+"t": "z",
+"s": "Jag vill ha en kopp ___.",
+"a": "te",
+"fr": "Je voudrais une tasse de thé.",
+"d": [
+"av te",
+"med te",
+"tes"
+],
+"x": "Quantité : sans préposition."
+},
+{
+"t": "z",
+"s": "Taket ___ huset läcker.",
+"a": "på",
+"fr": "Le toit de la maison fuit.",
+"d": [
+"av",
+"till",
+"i"
+],
+"x": "Pour les choses : préposition (på)."
+},
+{
+"t": "z",
+"s": "Ägaren ___ bilen är här.",
+"a": "till",
+"fr": "Le propriétaire de la voiture est là.",
+"d": [
+"på",
+"av",
+"från"
+],
+"x": "ägare till."
+},
+{
+"t": "q",
+"q": "« le chien de mon frère » :",
+"a": "min brors hund",
+"d": [
+"min bror hund",
+"min brors hunden",
+"hunden av min bror"
+],
+"x": ""
+}
+],
+"g-adjektiv": [
+{
+"t": "z",
+"s": "ett ___ hus (stor)",
+"a": "stort",
+"fr": "une grande maison",
+"d": [
+"stor",
+"stora",
+"storet"
+],
+"x": "ett-ord : +t."
+},
+{
+"t": "z",
+"s": "___ bilar (ny)",
+"a": "nya",
+"fr": "des voitures neuves",
+"d": [
+"ny",
+"nytt",
+"nyar"
+],
+"x": "Pluriel : +a."
+},
+{
+"t": "z",
+"s": "ett ___ hus (röd)",
+"a": "rött",
+"fr": "une maison rouge",
+"d": [
+"rödt",
+"röd",
+"röda"
+],
+"x": "-d + t → tt."
+},
+{
+"t": "z",
+"s": "___ barn sover mycket. (liten, pluriel)",
+"a": "Små",
+"fr": "Les petits enfants dorment beaucoup.",
+"d": [
+"Lilla",
+"Litet",
+"Litna"
+],
+"x": "liten : pluriel små."
+},
+{
+"t": "z",
+"s": "Hon är ___ än jag. (gammal)",
+"a": "äldre",
+"fr": "Elle est plus âgée que moi.",
+"d": [
+"gammalare",
+"mer gammal",
+"äldst"
+],
+"x": "Comparatif irrégulier."
+},
+{
+"t": "z",
+"s": "Det är den ___ boken. (bra, superlatif)",
+"a": "bästa",
+"fr": "C'est le meilleur livre.",
+"d": [
+"bäst",
+"bättre",
+"braste"
+],
+"x": "Superlatif défini : -a."
+},
+{
+"t": "z",
+"s": "Han är lika lång ___ du.",
+"a": "som",
+"fr": "Il est aussi grand que toi.",
+"d": [
+"än",
+"så",
+"med"
+],
+"x": "lika … som."
+},
+{
+"t": "z",
+"s": "Det är mycket ___ nu. (bra)",
+"a": "bättre",
+"fr": "C'est beaucoup mieux maintenant.",
+"d": [
+"mer bättre",
+"bra",
+"bäst"
+],
+"x": "mycket + comparatif."
+}
+],
+"g-adverb": [
+{
+"t": "z",
+"s": "Jag går ___ nu.",
+"a": "hem",
+"fr": "Je rentre à la maison maintenant.",
+"d": [
+"hemma",
+"hemåt",
+"till hem"
+],
+"x": "Mouvement : hem."
+},
+{
+"t": "z",
+"s": "Jag är ___ i kväll.",
+"a": "hemma",
+"fr": "Je suis à la maison ce soir.",
+"d": [
+"hem",
+"till hemma",
+"hemmet"
+],
+"x": "Position : hemma."
+},
+{
+"t": "z",
+"s": "___ ska du?",
+"a": "Vart",
+"fr": "Où vas-tu ?",
+"d": [
+"Var",
+"Vad",
+"Varifrån"
+],
+"x": "Direction : vart."
+},
+{
+"t": "z",
+"s": "Barnen leker ___.",
+"a": "ute",
+"fr": "Les enfants jouent dehors.",
+"d": [
+"ut",
+"utan",
+"utomhus på"
+],
+"x": "Position : ute."
+},
+{
+"t": "z",
+"s": "Kom ___!",
+"a": "hit",
+"fr": "Viens ici !",
+"d": [
+"här",
+"dit",
+"där"
+],
+"x": "Mouvement vers ici : hit."
+},
+{
+"t": "z",
+"s": "Hon kör för ___. (snabb)",
+"a": "snabbt",
+"fr": "Elle conduit trop vite.",
+"d": [
+"snabb",
+"snabba",
+"snabbare"
+],
+"x": "Adverbe : forme en -t."
+},
+{
+"t": "z",
+"s": "Det är ___ söndag! (évidence)",
+"a": "ju",
+"fr": "C'est dimanche, voyons !",
+"d": [
+"väl",
+"nog",
+"visst"
+],
+"x": "ju = comme tu sais."
+},
+{
+"t": "z",
+"s": "Du kommer ___? (n'est-ce pas)",
+"a": "väl",
+"fr": "Tu viens, hein ?",
+"d": [
+"ju",
+"nog",
+"ändå"
+],
+"x": "väl = je suppose, non ?"
+}
+],
+"g-pronomen": [
+{
+"t": "z",
+"s": "Erik tar ___ bil. (sa propre voiture)",
+"a": "sin",
+"fr": "Erik prend sa voiture.",
+"d": [
+"hans",
+"sitt",
+"hennes"
+],
+"x": "Possesseur = sujet : sin."
+},
+{
+"t": "z",
+"s": "Erik tar ___ bil. (celle de Johan)",
+"a": "hans",
+"fr": "Erik prend la voiture de Johan.",
+"d": [
+"sin",
+"sitt",
+"deras"
+],
+"x": "Autre possesseur : hans."
+},
+{
+"t": "z",
+"s": "De säljer ___ hus.",
+"a": "sitt",
+"fr": "Ils vendent leur maison.",
+"d": [
+"sin",
+"deras sitt",
+"sina"
+],
+"x": "sitt + ett-ord."
+},
+{
+"t": "z",
+"s": "___ bror bor i Lund.",
+"a": "Hennes",
+"fr": "Son frère habite à Lund.",
+"d": [
+"Sin",
+"Sina",
+"Hon"
+],
+"x": "Jamais sin dans le sujet."
+},
+{
+"t": "z",
+"s": "Jag ser ___. (lui)",
+"a": "honom",
+"fr": "Je le vois.",
+"d": [
+"han",
+"hans",
+"sig"
+],
+"x": "Complément : honom."
+},
+{
+"t": "z",
+"s": "Kom med ___!",
+"a": "oss",
+"fr": "Viens avec nous !",
+"d": [
+"vi",
+"våra",
+"vår"
+],
+"x": ""
+},
+{
+"t": "z",
+"s": "Är det här ___ hus? (ton)",
+"a": "ditt",
+"fr": "C'est ta maison ?",
+"d": [
+"din",
+"dina",
+"dig"
+],
+"x": "ett-ord : ditt."
+},
+{
+"t": "z",
+"s": "Var är boken? – Jag har ___.",
+"a": "den",
+"fr": "Où est le livre ? – Je l'ai.",
+"d": [
+"det",
+"honom",
+"henne"
+],
+"x": "en-ord : den."
+}
+],
+"g-ordfoljd": [
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "I dag jobbar jag hemifrån.",
+"d": [
+"I dag jag jobbar hemifrån.",
+"I dag jobbar hemifrån jag.",
+"Jobbar i dag jag hemifrån."
+],
+"x": "V2 : verbe en 2e position, inversion."
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "Nu förstår jag!",
+"d": [
+"Nu jag förstår!",
+"Förstår nu jag!",
+"Nu förstår!"
+],
+"x": ""
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "När jag kom hem, var det mörkt.",
+"d": [
+"När jag kom hem, det var mörkt.",
+"När kom jag hem, var det mörkt.",
+"När jag hem kom, det var mörkt."
+],
+"x": "Subordonnée en tête, puis verbe."
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "Jag vet att han inte kommer.",
+"d": [
+"Jag vet att han kommer inte.",
+"Jag vet att inte han kommer.",
+"Jag vet inte att han kommer inte."
+],
+"x": "Subordonnée : inte avant le verbe."
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "Kaffe dricker jag aldrig.",
+"d": [
+"Kaffe jag dricker aldrig.",
+"Kaffe dricker aldrig jag.",
+"Kaffe jag aldrig dricker."
+],
+"x": ""
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "Varför har du inte ringt?",
+"d": [
+"Varför du har inte ringt?",
+"Varför har inte du ringt?",
+"Varför du inte har ringt?"
+],
+"x": "Question : mot interrogatif + verbe + sujet + inte."
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "På fredagar spelar han fotboll.",
+"d": [
+"På fredagar han spelar fotboll.",
+"På fredagar spelar fotboll han.",
+"Han på fredagar spelar fotboll."
+],
+"x": ""
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "Om du vill, kan vi gå.",
+"d": [
+"Om du vill, vi kan gå.",
+"Om vill du, kan vi gå.",
+"Om du vill, kan gå vi."
+],
+"x": ""
+}
+],
+"g-fragor": [
+{
+"t": "z",
+"s": "___ bor du?",
+"a": "Var",
+"fr": "Où habites-tu ?",
+"d": [
+"Vart",
+"Vad",
+"Vem"
+],
+"x": "Position : var."
+},
+{
+"t": "z",
+"s": "___ kostar det?",
+"a": "Hur mycket",
+"fr": "Combien ça coûte ?",
+"d": [
+"Hur många",
+"Vad mycket",
+"Hur länge"
+],
+"x": ""
+},
+{
+"t": "z",
+"s": "___ barn har du?",
+"a": "Hur många",
+"fr": "Combien d'enfants as-tu ?",
+"d": [
+"Hur mycket",
+"Vilka",
+"Hur länge"
+],
+"x": "Dénombrable : hur många."
+},
+{
+"t": "z",
+"s": "___ buss tar du?",
+"a": "Vilken",
+"fr": "Quel bus prends-tu ?",
+"d": [
+"Vilket",
+"Vilka",
+"Vad"
+],
+"x": "vilken + en-ord."
+},
+{
+"t": "q",
+"q": "– Kommer du inte? – Si !",
+"a": "Jo!",
+"d": [
+"Ja!",
+"Si!",
+"Nej!"
+],
+"x": "Réponse positive à une question négative : jo."
+},
+{
+"t": "z",
+"s": "Jag undrar var hon ___.",
+"a": "bor",
+"fr": "Je me demande où elle habite.",
+"d": [
+"bor hon",
+"hon bor",
+"boende"
+],
+"x": "Question indirecte : pas d'inversion (…var hon bor)."
+},
+{
+"t": "z",
+"s": "Jag vet inte vem ___ ringde.",
+"a": "som",
+"fr": "Je ne sais pas qui a appelé.",
+"d": [
+"att",
+"vad",
+"—"
+],
+"x": "Mot interrogatif sujet : + som."
+},
+{
+"t": "z",
+"s": "Vet du ___ affären är öppen?",
+"a": "om",
+"fr": "Sais-tu si le magasin est ouvert ?",
+"d": [
+"att",
+"när",
+"som"
+],
+"x": "Question indirecte fermée : om."
+}
+],
+"g-bisats": [
+{
+"t": "z",
+"s": "Jag tror ___ det regnar.",
+"a": "att",
+"fr": "Je crois qu'il pleut.",
+"d": [
+"som",
+"om",
+"när"
+],
+"x": ""
+},
+{
+"t": "z",
+"s": "___ det regnar, stannar vi hemma.",
+"a": "Om",
+"fr": "S'il pleut, nous restons à la maison.",
+"d": [
+"När",
+"Att",
+"Då"
+],
+"x": "Condition : om."
+},
+{
+"t": "z",
+"s": "___ jag var liten bodde jag i Lyon.",
+"a": "När",
+"fr": "Quand j'étais petit, j'habitais à Lyon.",
+"d": [
+"Om",
+"Då att",
+"Som"
+],
+"x": ""
+},
+{
+"t": "z",
+"s": "Han läser ___ hon lagar mat.",
+"a": "medan",
+"fr": "Il lit pendant qu'elle cuisine.",
+"d": [
+"när att",
+"under",
+"tills"
+],
+"x": "medan = pendant que."
+},
+{
+"t": "z",
+"s": "Vänta ___ jag kommer.",
+"a": "tills",
+"fr": "Attends que j'arrive.",
+"d": [
+"medan",
+"innan att",
+"om"
+],
+"x": "tills = jusqu'à ce que."
+},
+{
+"t": "z",
+"s": "Mannen ___ bor här är läkare.",
+"a": "som",
+"fr": "L'homme qui habite ici est médecin.",
+"d": [
+"vem",
+"vilken",
+"att"
+],
+"x": "Relatif : som."
+},
+{
+"t": "q",
+"q": "Ordre correct :",
+"a": "…eftersom hon aldrig äter kött.",
+"d": [
+"…eftersom hon äter aldrig kött.",
+"…eftersom äter hon aldrig kött.",
+"…eftersom aldrig hon äter kött."
+],
+"x": "Adverbe avant le verbe en subordonnée."
+},
+{
+"t": "z",
+"s": "Det är filmen som alla pratar ___.",
+"a": "om",
+"fr": "C'est le film dont tout le monde parle.",
+"d": [
+"på",
+"av",
+"med"
+],
+"x": "La préposition va à la fin."
+}
+],
+"g-negation": [
+{
+"t": "z",
+"s": "Hon har ___ ätit.",
+"a": "inte",
+"fr": "Elle n'a pas mangé.",
+"d": [
+"ingen",
+"ej inte",
+"inget"
+],
+"x": "Entre har et le supin."
+},
+{
+"t": "z",
+"s": "Jag förstår ___. (rien)",
+"a": "ingenting",
+"fr": "Je ne comprends rien.",
+"d": [
+"inte ingenting",
+"inget inte",
+"aldrig"
+],
+"x": "Pas de double négation."
+},
+{
+"t": "z",
+"s": "___ vet. (personne)",
+"a": "Ingen",
+"fr": "Personne ne sait.",
+"d": [
+"Inte",
+"Inget",
+"Ingenting"
+],
+"x": ""
+},
+{
+"t": "z",
+"s": "– Jag vet inte. – Jag vet inte ___.",
+"a": "heller",
+"fr": "– Je ne sais pas. – Moi non plus.",
+"d": [
+"också",
+"än",
+"längre"
+],
+"x": "inte heller = non plus."
+},
+{
+"t": "z",
+"s": "Hon bor inte här ___.",
+"a": "längre",
+"fr": "Elle n'habite plus ici.",
+"d": [
+"än",
+"heller",
+"mer"
+],
+"x": "inte längre = ne… plus."
+},
+{
+"t": "z",
+"s": "Jag har inte ätit ___.",
+"a": "än",
+"fr": "Je n'ai pas encore mangé.",
+"d": [
+"längre",
+"heller",
+"mer"
+],
+"x": "inte än = pas encore."
+},
+{
+"t": "z",
+"s": "Jag har inte sett ___.",
+"a": "någon",
+"fr": "Je n'ai vu personne.",
+"d": [
+"ingen",
+"inga",
+"inget"
+],
+"x": "Temps composé : inte någon."
+},
+{
+"t": "z",
+"s": "Han dricker varken kaffe ___ te.",
+"a": "eller",
+"fr": "Il ne boit ni café ni thé.",
+"d": [
+"och",
+"inte",
+"heller"
+],
+"x": "varken … eller."
+}
+],
+"g-det": [
+{
+"t": "z",
+"s": "___ regnar.",
+"a": "Det",
+"fr": "Il pleut.",
+"d": [
+"Den",
+"Han",
+"—"
+],
+"x": "Sujet obligatoire."
+},
+{
+"t": "z",
+"s": "Det ___ en bra restaurang här.",
+"a": "finns",
+"fr": "Il y a un bon restaurant ici.",
+"d": [
+"har",
+"är",
+"ges"
+],
+"x": "det finns = il y a."
+},
+{
+"t": "z",
+"s": "___ det mjölk?",
+"a": "Finns",
+"fr": "Il y a du lait ?",
+"d": [
+"Har",
+"Är",
+"Ger"
+],
+"x": ""
+},
+{
+"t": "z",
+"s": "Det är jag ___ har gjort det.",
+"a": "som",
+"fr": "C'est moi qui l'ai fait.",
+"d": [
+"att",
+"vem",
+"det"
+],
+"x": "det är … som."
+},
+{
+"t": "z",
+"s": "– Röker du? – Nej, det ___ jag inte.",
+"a": "gör",
+"fr": "– Tu fumes ? – Non.",
+"d": [
+"är",
+"har",
+"röker"
+],
+"x": "göra reprend le verbe."
+},
+{
+"t": "z",
+"s": "Var är bilen? – ___ står där.",
+"a": "Den",
+"fr": "Où est la voiture ? – Elle est là.",
+"d": [
+"Det",
+"Han",
+"Hon"
+],
+"x": "en-ord : den."
+},
+{
+"t": "z",
+"s": "Det ___ en vas på bordet.",
+"a": "står",
+"fr": "Il y a un vase sur la table.",
+"d": [
+"finns på",
+"har",
+"sitter"
+],
+"x": "Verbe de position pour un objet debout."
+},
+{
+"t": "z",
+"s": "Det är mina barn. – ___ är söta!",
+"a": "De",
+"fr": "Ce sont mes enfants. – Ils sont mignons !",
+"d": [
+"Det",
+"Dem",
+"Den"
+],
+"x": "Pluriel : de."
+}
+],
+"g-prep": [
+{
+"t": "z",
+"s": "Jag bor ___ Stockholm.",
+"a": "i",
+"fr": "J'habite à Stockholm.",
+"d": [
+"på",
+"till",
+"vid"
+],
+"x": "Ville : i."
+},
+{
+"t": "z",
+"s": "Vi semestrar ___ Gotland.",
+"a": "på",
+"fr": "Nous passons nos vacances sur Gotland.",
+"d": [
+"i",
+"till",
+"vid"
+],
+"x": "Île : på."
+},
+{
+"t": "z",
+"s": "Hon jobbar ___ ett sjukhus.",
+"a": "på",
+"fr": "Elle travaille dans un hôpital.",
+"d": [
+"i",
+"hos",
+"vid"
+],
+"x": "Institution : på."
+},
+{
+"t": "z",
+"s": "Vi går ___ bio i kväll.",
+"a": "på",
+"fr": "Nous allons au cinéma ce soir.",
+"d": [
+"i",
+"till",
+"vid"
+],
+"x": "gå på bio."
+},
+{
+"t": "z",
+"s": "Jag åker ___ Göteborg i morgon.",
+"a": "till",
+"fr": "Je vais à Göteborg demain.",
+"d": [
+"i",
+"på",
+"mot"
+],
+"x": "Destination : till."
+},
+{
+"t": "z",
+"s": "Jag bor ___ min syster.",
+"a": "hos",
+"fr": "J'habite chez ma sœur.",
+"d": [
+"med",
+"vid",
+"till"
+],
+"x": "Chez quelqu'un : hos."
+},
+{
+"t": "z",
+"s": "Katten sover ___ sängen.",
+"a": "under",
+"fr": "Le chat dort sous le lit.",
+"d": [
+"över",
+"på",
+"i"
+],
+"x": ""
+},
+{
+"t": "z",
+"s": "Vi ses ___ stationen.",
+"a": "utanför",
+"fr": "On se retrouve devant la gare.",
+"d": [
+"utan",
+"ute",
+"utför"
+],
+"x": "utanför = devant, à l'extérieur de."
+}
+],
+"g-tidsprep": [
+{
+"t": "z",
+"s": "Vi ses ___ en timme.",
+"a": "om",
+"fr": "On se voit dans une heure.",
+"d": [
+"i",
+"på",
+"efter"
+],
+"x": "Futur : om."
+},
+{
+"t": "z",
+"s": "Jag flyttade hit ___ fem år sedan.",
+"a": "för",
+"fr": "J'ai emménagé ici il y a cinq ans.",
+"d": [
+"i",
+"på",
+"om"
+],
+"x": "för … sedan = il y a."
+},
+{
+"t": "z",
+"s": "Hon läste boken ___ en dag.",
+"a": "på",
+"fr": "Elle a lu le livre en un jour.",
+"d": [
+"i",
+"om",
+"under"
+],
+"x": "Durée pour accomplir : på."
+},
+{
+"t": "z",
+"s": "Jag bodde där ___ tre år.",
+"a": "i",
+"fr": "J'y ai habité pendant trois ans.",
+"d": [
+"på",
+"om",
+"för"
+],
+"x": "Pendant : i."
+},
+{
+"t": "z",
+"s": "Vad gjorde du ___ lördags?",
+"a": "i",
+"fr": "Qu'as-tu fait samedi dernier ?",
+"d": [
+"på",
+"om",
+"för"
+],
+"x": "i + jour + s = passé."
+},
+{
+"t": "z",
+"s": "Vi ses ___ fredag!",
+"a": "på",
+"fr": "On se voit vendredi !",
+"d": [
+"i",
+"om",
+"för"
+],
+"x": "på + jour = à venir."
+},
+{
+"t": "z",
+"s": "Jag tränar ___ tisdagar.",
+"a": "på",
+"fr": "Je m'entraîne le mardi.",
+"d": [
+"i",
+"om",
+"under"
+],
+"x": "Habitude : på + pluriel."
+},
+{
+"t": "z",
+"s": "Huset byggdes ___ 1800-talet.",
+"a": "på",
+"fr": "La maison a été construite au XIXe siècle.",
+"d": [
+"i",
+"under",
+"om"
+],
+"x": "Siècle : på."
+}
+],
+"g-tal": [
+{
+"t": "q",
+"q": "« halv fyra » = ",
+"a": "3 h 30",
+"d": [
+"4 h 30",
+"4 h 15",
+"3 h 45"
+],
+"x": "halv + heure suivante."
+},
+{
+"t": "q",
+"q": "« kvart i sju » = ",
+"a": "6 h 45",
+"d": [
+"7 h 15",
+"7 h 45",
+"6 h 15"
+],
+"x": "i = moins."
+},
+{
+"t": "q",
+"q": "« fem över halv tre » = ",
+"a": "2 h 35",
+"d": [
+"3 h 35",
+"3 h 05",
+"2 h 25"
+],
+"x": "5 minutes après la demie (2 h 30)."
+},
+{
+"t": "q",
+"q": "Comment dit-on 21 ?",
+"a": "tjugoett",
+"d": [
+"ett och tjugo",
+"tjugo och ett",
+"tvåett"
+],
+"x": ""
+},
+{
+"t": "q",
+"q": "Comment dit-on 40 ?",
+"a": "fyrtio",
+"d": [
+"fyratio",
+"fyrtiotal",
+"fjorton"
+],
+"x": ""
+},
+{
+"t": "q",
+"q": "« le 3 mai » :",
+"a": "den tredje maj",
+"d": [
+"den tre maj",
+"tredje Maj",
+"på tre maj"
+],
+"x": "den + ordinal, mois en minuscule."
+},
+{
+"t": "q",
+"q": "« le premier » :",
+"a": "första",
+"d": [
+"förste",
+"ettonde",
+"en"
+],
+"x": ""
+},
+{
+"t": "q",
+"q": "2,5 se lit :",
+"a": "två komma fem",
+"d": [
+"två punkt fem",
+"två och fem",
+"två halv"
+],
+"x": "Virgule décimale."
+}
+]
+};
+const TEXTS = [
+{
+"id": "t1",
+"lvl": "A2",
+"icon": "🏠",
+"title": "Min nya lägenhet",
+"sub": "Emma raconte son déménagement",
+"paras": [
+[
+[
+"Jag heter Emma och jag är tjugoåtta år gammal.",
+"Je m'appelle Emma et j'ai vingt-huit ans."
+],
+[
+"Förra månaden flyttade jag till en ny lägenhet i Uppsala.",
+"Le mois dernier, j'ai emménagé dans un nouvel appartement à Uppsala."
+],
+[
+"Lägenheten är en tvåa på femtio kvadratmeter.",
+"L'appartement est un deux-pièces de cinquante mètres carrés."
+]
+],
+[
+[
+"Den ligger på tredje våningen och har en liten balkong.",
+"Il est au troisième étage et a un petit balcon."
+],
+[
+"Från balkongen ser jag en park med höga träd.",
+"Depuis le balcon, je vois un parc avec de grands arbres."
+],
+[
+"Köket är litet, men det är ljust och modernt.",
+"La cuisine est petite, mais elle est lumineuse et moderne."
+]
+],
+[
+[
+"Det bästa med lägenheten är läget.",
+"Le mieux, dans cet appartement, c'est l'emplacement."
+],
+[
+"Det tar bara tio minuter att cykla till jobbet.",
+"Il ne faut que dix minutes à vélo pour aller au travail."
+],
+[
+"Det sämsta är att tvättstugan ligger i källaren och alltid är bokad på söndagar.",
+"Le pire, c'est que la buanderie est au sous-sol et toujours réservée le dimanche."
+],
+[
+"Men jag trivs jättebra här!",
+"Mais je me plais énormément ici !"
+]
+]
+],
+"gloss": [
+[
+"en tvåa",
+"un deux-pièces"
+],
+[
+"en våning",
+"un étage"
+],
+[
+"ljus",
+"lumineux"
+],
+[
+"läget",
+"l'emplacement"
+],
+[
+"tvättstugan",
+"la buanderie commune"
+],
+[
+"källaren",
+"le sous-sol, la cave"
+],
+[
+"trivas",
+"se plaire"
+]
+],
+"qs": [
+{
+"q": "Où Emma habite-t-elle ?",
+"a": "À Uppsala",
+"d": [
+"À Stockholm",
+"À Malmö",
+"À Lund"
+]
+},
+{
+"q": "Comment va-t-elle au travail ?",
+"a": "À vélo",
+"d": [
+"En bus",
+"À pied",
+"En voiture"
+]
+},
+{
+"q": "Quel est le point négatif ?",
+"a": "La buanderie est souvent réservée",
+"d": [
+"La cuisine est sombre",
+"Il n'y a pas de balcon",
+"Le travail est loin"
+]
+}
+]
+},
+{
+"id": "t2",
+"lvl": "A2",
+"icon": "🛒",
+"title": "På mataffären",
+"sub": "Un dialogue au supermarché",
+"paras": [
+[
+[
+"– Hej! Ursäkta, var hittar jag mjölken?",
+"– Bonjour ! Excusez-moi, où trouve-t-on le lait ?"
+],
+[
+"– Mjölken står längst bak, bredvid osten.",
+"– Le lait est tout au fond, à côté du fromage."
+],
+[
+"– Tack! Och har ni färskt bröd i dag?",
+"– Merci ! Et vous avez du pain frais aujourd'hui ?"
+],
+[
+"– Ja, brödet kom i morse. Det ligger vid kassan.",
+"– Oui, le pain est arrivé ce matin. Il est près de la caisse."
+]
+],
+[
+[
+"Vid kassan:",
+"À la caisse :"
+],
+[
+"– Det blir hundrafyrtio kronor. Vill du ha en påse?",
+"– Ça fera cent quarante couronnes. Vous voulez un sac ?"
+],
+[
+"– Nej tack, jag har en egen. Kan jag betala med kort?",
+"– Non merci, j'en ai un. Je peux payer par carte ?"
+],
+[
+"– Självklart. Vill du ha kvittot?",
+"– Bien sûr. Vous voulez le ticket ?"
+],
+[
+"– Nej, det behövs inte. Ha en bra dag!",
+"– Non, ce n'est pas nécessaire. Bonne journée !"
+]
+]
+],
+"gloss": [
+[
+"längst bak",
+"tout au fond"
+],
+[
+"bredvid",
+"à côté de"
+],
+[
+"färsk",
+"frais"
+],
+[
+"i morse",
+"ce matin"
+],
+[
+"kassan",
+"la caisse"
+],
+[
+"en påse",
+"un sac"
+],
+[
+"kvittot",
+"le ticket de caisse"
+],
+[
+"självklart",
+"bien sûr"
+]
+],
+"qs": [
+{
+"q": "Où est le lait ?",
+"a": "Au fond, à côté du fromage",
+"d": [
+"Près de la caisse",
+"À l'entrée",
+"À côté du pain"
+]
+},
+{
+"q": "Combien coûtent les courses ?",
+"a": "140 couronnes",
+"d": [
+"114 couronnes",
+"40 couronnes",
+"104 couronnes"
+]
+},
+{
+"q": "Pourquoi le client refuse-t-il un sac ?",
+"a": "Il a le sien",
+"d": [
+"C'est trop cher",
+"Il n'a rien acheté",
+"Il n'y en a plus"
+]
+}
+]
+},
+{
+"id": "t3",
+"lvl": "A2",
+"icon": "☕",
+"title": "En vanlig dag på jobbet",
+"sub": "La journée de Johan",
+"paras": [
+[
+[
+"Johan jobbar som sjuksköterska på ett sjukhus i Göteborg.",
+"Johan travaille comme infirmier dans un hôpital à Göteborg."
+],
+[
+"Han börjar klockan sju på morgonen, så han går upp tidigt.",
+"Il commence à sept heures du matin, alors il se lève tôt."
+],
+[
+"Först dricker han kaffe och läser nyheterna på telefonen.",
+"D'abord, il boit un café et lit les nouvelles sur son téléphone."
+]
+],
+[
+[
+"På jobbet träffar han många patienter.",
+"Au travail, il voit beaucoup de patients."
+],
+[
+"Klockan tio har alla i personalen fika tillsammans.",
+"À dix heures, tout le personnel prend le café ensemble."
+],
+[
+"Det är en viktig stund, för då kan man prata och skratta lite.",
+"C'est un moment important, car on peut alors discuter et rire un peu."
+]
+],
+[
+[
+"Efter jobbet hämtar Johan sin dotter på förskolan.",
+"Après le travail, Johan va chercher sa fille à la crèche."
+],
+[
+"På kvällen lagar de mat tillsammans och läser en saga.",
+"Le soir, ils cuisinent ensemble et lisent une histoire."
+],
+[
+"Klockan tio somnar Johan i soffan, som vanligt.",
+"À dix heures, Johan s'endort sur le canapé, comme d'habitude."
+]
+]
+],
+"gloss": [
+[
+"en sjuksköterska",
+"un infirmier, une infirmière"
+],
+[
+"gå upp",
+"se lever"
+],
+[
+"nyheterna",
+"les informations"
+],
+[
+"personalen",
+"le personnel"
+],
+[
+"hämta",
+"aller chercher"
+],
+[
+"förskolan",
+"la crèche, la maternelle"
+],
+[
+"en saga",
+"un conte, une histoire"
+],
+[
+"somna",
+"s'endormir"
+]
+],
+"qs": [
+{
+"q": "Quel est le métier de Johan ?",
+"a": "Infirmier",
+"d": [
+"Médecin",
+"Professeur",
+"Cuisinier"
+]
+},
+{
+"q": "Que se passe-t-il à dix heures du matin ?",
+"a": "Le fika avec ses collègues",
+"d": [
+"Une réunion",
+"Il rentre chez lui",
+"Il commence à travailler"
+]
+},
+{
+"q": "Où Johan s'endort-il ?",
+"a": "Sur le canapé",
+"d": [
+"Dans son lit",
+"Au travail",
+"Dans le bus"
+]
+}
+]
+},
+{
+"id": "t4",
+"lvl": "A2",
+"icon": "🌲",
+"title": "En helg i stugan",
+"sub": "Un week-end à la campagne",
+"paras": [
+[
+[
+"I fredags åkte vi till min mosters stuga i Dalarna.",
+"Vendredi dernier, nous sommes allés au chalet de ma tante, en Dalécarlie."
+],
+[
+"Stugan är röd med vita knutar, precis som på bilderna.",
+"Le chalet est rouge avec des angles blancs, exactement comme sur les photos."
+],
+[
+"Den ligger vid en sjö, långt från närmaste by.",
+"Il est au bord d'un lac, loin du village le plus proche."
+]
+],
+[
+[
+"Det finns ingen el i stugan, så vi lagade mat på en vedspis.",
+"Il n'y a pas d'électricité dans le chalet, alors nous avons cuisiné sur un poêle à bois."
+],
+[
+"På lördagen plockade vi blåbär i skogen.",
+"Le samedi, nous avons cueilli des myrtilles dans la forêt."
+],
+[
+"Sedan badade vi i sjön, fast vattnet var ganska kallt.",
+"Ensuite, nous nous sommes baignés dans le lac, même si l'eau était assez froide."
+]
+],
+[
+[
+"På kvällen satt vi ute och tittade på solnedgången.",
+"Le soir, nous étions assis dehors à regarder le coucher du soleil."
+],
+[
+"Klockan var elva, men det var fortfarande ljust.",
+"Il était onze heures, mais il faisait encore jour."
+],
+[
+"Det var en perfekt helg utan mobil och dator.",
+"C'était un week-end parfait, sans portable ni ordinateur."
+]
+]
+],
+"gloss": [
+[
+"en stuga",
+"un chalet, une maison de campagne"
+],
+[
+"knutar",
+"les angles (d'une maison en bois)"
+],
+[
+"en by",
+"un village"
+],
+[
+"el",
+"électricité"
+],
+[
+"en vedspis",
+"un poêle à bois"
+],
+[
+"plocka",
+"cueillir"
+],
+[
+"fast",
+"même si"
+],
+[
+"solnedgången",
+"le coucher du soleil"
+],
+[
+"fortfarande",
+"encore, toujours"
+]
+],
+"qs": [
+{
+"q": "À qui appartient le chalet ?",
+"a": "À la tante du narrateur",
+"d": [
+"À ses parents",
+"À un ami",
+"Au narrateur"
+]
+},
+{
+"q": "Pourquoi cuisinent-ils sur un poêle à bois ?",
+"a": "Il n'y a pas d'électricité",
+"d": [
+"C'est plus rapide",
+"Le four est cassé",
+"C'est une tradition de Noël"
+]
+},
+{
+"q": "Qu'est-ce qui surprend à onze heures du soir ?",
+"a": "Il fait encore jour",
+"d": [
+"L'eau est chaude",
+"Il neige",
+"Ils ont encore faim"
+]
+}
+]
+},
+{
+"id": "t5",
+"lvl": "B1",
+"icon": "🎄",
+"title": "Jul i Sverige",
+"sub": "Comment on fête Noël en Suède",
+"paras": [
+[
+[
+"Den viktigaste dagen under julen är inte den tjugofemte december, utan julafton, den tjugofjärde.",
+"Le jour le plus important de Noël n'est pas le 25 décembre, mais la veille, le 24."
+],
+[
+"Många familjer börjar dagen med risgrynsgröt.",
+"Beaucoup de familles commencent la journée par du riz au lait."
+],
+[
+"Den som hittar mandeln i gröten sägs gifta sig under året.",
+"On dit que celui qui trouve l'amande dans le riz au lait se mariera dans l'année."
+]
+],
+[
+[
+"Klockan tre på eftermiddagen samlas nästan halva landet framför tv:n.",
+"À trois heures de l'après-midi, presque la moitié du pays se réunit devant la télé."
+],
+[
+"Då visas ”Kalle Anka och hans vänner önskar god jul”, en tradition sedan 1960-talet.",
+"On diffuse alors un programme de dessins animés de Disney, une tradition depuis les années 1960."
+],
+[
+"Det kan verka konstigt för utlänningar, men för svenskarna är det en självklarhet.",
+"Cela peut sembler étrange aux étrangers, mais pour les Suédois, c'est une évidence."
+]
+],
+[
+[
+"Sedan äter man julbord: skinka, köttbullar, sill, prinskorv och Janssons frestelse.",
+"Ensuite, on mange le buffet de Noël : jambon, boulettes, hareng, petites saucisses et gratin de pommes de terre aux anchois."
+],
+[
+"På kvällen kommer tomten med julklapparna.",
+"Le soir, le père Noël arrive avec les cadeaux."
+],
+[
+"Han brukar fråga: ”Finns det några snälla barn här?”",
+"Il demande d'habitude : « Y a-t-il des enfants sages ici ? »"
+]
+]
+],
+"gloss": [
+[
+"julafton",
+"le 24 décembre"
+],
+[
+"risgrynsgröt",
+"riz au lait"
+],
+[
+"mandeln",
+"l'amande"
+],
+[
+"samlas",
+"se réunir"
+],
+[
+"en självklarhet",
+"une évidence"
+],
+[
+"julbord",
+"buffet de Noël"
+],
+[
+"tomten",
+"le père Noël, le lutin"
+],
+[
+"julklappar",
+"cadeaux de Noël"
+]
+],
+"qs": [
+{
+"q": "Quel est le jour principal de Noël en Suède ?",
+"a": "Le 24 décembre",
+"d": [
+"Le 25 décembre",
+"Le 13 décembre",
+"Le 31 décembre"
+]
+},
+{
+"q": "Que signifie trouver l'amande ?",
+"a": "On se mariera dans l'année",
+"d": [
+"On aura de la chance au travail",
+"On recevra plus de cadeaux",
+"On fera la vaisselle"
+]
+},
+{
+"q": "Que font beaucoup de Suédois à 15 h ?",
+"a": "Ils regardent des dessins animés à la télé",
+"d": [
+"Ils vont à l'église",
+"Ils ouvrent les cadeaux",
+"Ils font du ski"
+]
+}
+]
+},
+{
+"id": "t6",
+"lvl": "B1",
+"icon": "🩺",
+"title": "Hos läkaren",
+"sub": "Un rendez-vous chez le médecin",
+"paras": [
+[
+[
+"Sara hade haft ont i halsen i nästan en vecka.",
+"Sara avait mal à la gorge depuis presque une semaine."
+],
+[
+"Till slut ringde hon vårdcentralen och fick en tid samma eftermiddag.",
+"Finalement, elle a appelé le centre de santé et a obtenu un rendez-vous l'après-midi même."
+]
+],
+[
+[
+"– Hur länge har du haft de här besvären? frågade läkaren.",
+"– Depuis combien de temps as-tu ces symptômes ? a demandé le médecin."
+],
+[
+"– Sedan i måndags. Jag har också lite feber på kvällarna.",
+"– Depuis lundi. J'ai aussi un peu de fièvre le soir."
+],
+[
+"Läkaren tittade i hennes hals och tog ett snabbtest.",
+"Le médecin a regardé sa gorge et a fait un test rapide."
+],
+[
+"– Det är en halsfluss. Du behöver penicillin.",
+"– C'est une angine. Tu as besoin de pénicilline."
+]
+],
+[
+[
+"Läkaren skickade receptet direkt till apoteket.",
+"Le médecin a envoyé l'ordonnance directement à la pharmacie."
+],
+[
+"Sara behövde bara visa sin legitimation för att hämta medicinen.",
+"Sara n'a eu qu'à montrer sa pièce d'identité pour récupérer le médicament."
+],
+[
+"– Krya på dig! sa farmaceuten.",
+"– Rétablis-toi vite ! a dit la pharmacienne."
+]
+]
+],
+"gloss": [
+[
+"ont i halsen",
+"mal à la gorge"
+],
+[
+"en tid",
+"un rendez-vous"
+],
+[
+"besvär",
+"troubles, symptômes"
+],
+[
+"en halsfluss",
+"une angine"
+],
+[
+"receptet",
+"l'ordonnance"
+],
+[
+"legitimation",
+"pièce d'identité"
+],
+[
+"krya på dig",
+"rétablis-toi"
+]
+],
+"qs": [
+{
+"q": "Depuis quand Sara est-elle malade ?",
+"a": "Depuis lundi, presque une semaine",
+"d": [
+"Depuis hier",
+"Depuis un mois",
+"Depuis ce matin"
+]
+},
+{
+"q": "Qu'a-t-elle ?",
+"a": "Une angine",
+"d": [
+"Une grippe",
+"Une allergie",
+"Une otite"
+]
+},
+{
+"q": "Comment récupère-t-elle le médicament ?",
+"a": "En montrant sa pièce d'identité à la pharmacie",
+"d": [
+"Avec une ordonnance papier",
+"Par la poste",
+"Le médecin le lui donne"
+]
+}
+]
+},
+{
+"id": "t7",
+"lvl": "B1",
+"icon": "💼",
+"title": "Ett nytt jobb",
+"sub": "Un premier jour de travail",
+"paras": [
+[
+[
+"Första dagen på det nya jobbet var Ali ganska nervös.",
+"Le premier jour dans son nouveau travail, Ali était assez nerveux."
+],
+[
+"Han hade aldrig jobbat på ett svenskt företag förut.",
+"Il n'avait jamais travaillé dans une entreprise suédoise auparavant."
+],
+[
+"Hans chef, Karin, mötte honom i receptionen och visade honom runt.",
+"Sa cheffe, Karin, l'a accueilli à la réception et lui a fait visiter les lieux."
+]
+],
+[
+[
+"Det som förvånade honom mest var hur informellt allt var.",
+"Ce qui l'a le plus surpris, c'est à quel point tout était informel."
+],
+[
+"Alla sa du till varandra, även till vd:n.",
+"Tout le monde se tutoyait, même avec le PDG."
+],
+[
+"På mötet fick alla säga vad de tyckte, och beslutet togs först när alla var överens.",
+"En réunion, chacun pouvait donner son avis, et la décision n'a été prise que lorsque tout le monde était d'accord."
+]
+],
+[
+[
+"Klockan fyra började kollegorna gå hem.",
+"À quatre heures, les collègues ont commencé à rentrer chez eux."
+],
+[
+"– Ska du inte gå hem? frågade Karin.",
+"– Tu ne rentres pas ? a demandé Karin."
+],
+[
+"– Jo, men jag trodde att man måste stanna sent första dagen.",
+"– Si, mais je croyais qu'il fallait rester tard le premier jour."
+],
+[
+"– Här jobbar vi smart, inte länge, skrattade hon.",
+"– Ici, on travaille intelligemment, pas longtemps, a-t-elle dit en riant."
+]
+]
+],
+"gloss": [
+[
+"nervös",
+"nerveux"
+],
+[
+"förut",
+"auparavant"
+],
+[
+"visa runt",
+"faire visiter"
+],
+[
+"förvåna",
+"surprendre"
+],
+[
+"vd",
+"PDG, directeur général"
+],
+[
+"överens",
+"d'accord"
+],
+[
+"ett beslut",
+"une décision"
+]
+],
+"qs": [
+{
+"q": "Qu'est-ce qui surprend Ali ?",
+"a": "L'ambiance informelle",
+"d": [
+"Les longues journées",
+"La hiérarchie stricte",
+"Le vouvoiement"
+]
+},
+{
+"q": "Quand la décision est-elle prise en réunion ?",
+"a": "Quand tout le monde est d'accord",
+"d": [
+"Quand le chef décide",
+"Après un vote secret",
+"Le lendemain"
+]
+},
+{
+"q": "Pourquoi Ali répond-il « Jo » ?",
+"a": "La question de Karin était négative",
+"d": [
+"Il ne comprend pas",
+"Il dit non",
+"C'est une salutation"
+]
+}
+]
+},
+{
+"id": "t8",
+"lvl": "B1",
+"icon": "🦌",
+"title": "Allemansrätten",
+"sub": "Une randonnée et une question de droit",
+"paras": [
+[
+[
+"Lukas från Tyskland vandrade längs Höga kusten i augusti.",
+"Lukas, venu d'Allemagne, faisait de la randonnée le long de la Haute Côte en août."
+],
+[
+"En kväll ville han slå upp sitt tält på en äng nära en gård.",
+"Un soir, il voulait planter sa tente dans un pré près d'une ferme."
+],
+[
+"Han var osäker på om det var tillåtet, så han knackade på och frågade.",
+"Il n'était pas sûr que ce soit permis, alors il a frappé à la porte et a demandé."
+]
+],
+[
+[
+"Bonden förklarade vänligt att allemansrätten ger alla rätt att tälta en natt i naturen.",
+"Le fermier a expliqué gentiment que le droit d'accès à la nature permet à chacun de camper une nuit dans la nature."
+],
+[
+"– Men du får inte stå så nära huset. Gå bort till skogsbrynet, där stör du ingen.",
+"– Mais tu ne peux pas t'installer si près de la maison. Va jusqu'à l'orée du bois, là tu ne déranges personne."
+],
+[
+"Han lade till att det var eldningsförbud i hela länet på grund av torkan.",
+"Il a ajouté qu'il était interdit de faire du feu dans tout le département à cause de la sécheresse."
+]
+],
+[
+[
+"Lukas tackade och gick till skogsbrynet.",
+"Lukas a remercié et est allé à l'orée du bois."
+],
+[
+"Nästa morgon kom bonden med nybakat bröd och en termos kaffe.",
+"Le lendemain matin, le fermier est venu avec du pain tout juste sorti du four et un thermos de café."
+],
+[
+"”Svenskarna är visst inte så kalla som man säger”, tänkte Lukas.",
+"« Les Suédois ne sont décidément pas aussi froids qu'on le dit », a pensé Lukas."
+]
+]
+],
+"gloss": [
+[
+"vandra",
+"randonner"
+],
+[
+"slå upp ett tält",
+"monter une tente"
+],
+[
+"en äng",
+"un pré"
+],
+[
+"en gård",
+"une ferme"
+],
+[
+"tillåten",
+"permis"
+],
+[
+"skogsbrynet",
+"l'orée du bois"
+],
+[
+"eldningsförbud",
+"interdiction de faire du feu"
+],
+[
+"torkan",
+"la sécheresse"
+]
+],
+"qs": [
+{
+"q": "Pourquoi Lukas frappe-t-il à la porte ?",
+"a": "Il ne sait pas s'il peut camper là",
+"d": [
+"Il a faim",
+"Il est perdu",
+"Il veut acheter du pain"
+]
+},
+{
+"q": "Pourquoi doit-il déplacer sa tente ?",
+"a": "Elle est trop près de la maison",
+"d": [
+"Le terrain est cultivé",
+"C'est interdit en août",
+"Il pleut"
+]
+},
+{
+"q": "Pourquoi ne peut-il pas faire de feu ?",
+"a": "Il y a une interdiction à cause de la sécheresse",
+"d": [
+"Le fermier n'aime pas ça",
+"Il n'a pas d'allumettes",
+"Il fait trop chaud"
+]
+}
+]
+},
+{
+"id": "t9",
+"lvl": "B1",
+"icon": "🚆",
+"title": "Tåget är försenat",
+"sub": "Un voyage qui se complique",
+"paras": [
+[
+[
+"Klockan var halv åtta när Linnea kom till Centralstationen i Stockholm.",
+"Il était sept heures et demie quand Linnea est arrivée à la gare centrale de Stockholm."
+],
+[
+"Hennes tåg till Malmö skulle gå tio i åtta.",
+"Son train pour Malmö devait partir à huit heures moins dix."
+],
+[
+"Men på tavlan stod det: ”Försenat, ny tid 9.15”.",
+"Mais sur le tableau, il était écrit : « Retardé, nouvel horaire 9 h 15 »."
+]
+],
+[
+[
+"En röst i högtalaren förklarade att det var ett signalfel söder om Södertälje.",
+"Une voix dans le haut-parleur a expliqué qu'il y avait une panne de signalisation au sud de Södertälje."
+],
+[
+"Linnea suckade och köpte en kaffe.",
+"Linnea a soupiré et a acheté un café."
+],
+[
+"Hon skickade ett sms till sin kund och flyttade mötet till eftermiddagen.",
+"Elle a envoyé un SMS à son client et a déplacé la réunion à l'après-midi."
+]
+],
+[
+[
+"När tåget till slut kom fram var det över en timme sent.",
+"Quand le train est finalement arrivé, il avait plus d'une heure de retard."
+],
+[
+"Linnea fyllde i en blankett på nätet och fick tillbaka halva biljettpriset.",
+"Linnea a rempli un formulaire en ligne et a été remboursée de la moitié du billet."
+],
+[
+"– Det är i alla fall något, tänkte hon.",
+"– C'est toujours ça, a-t-elle pensé."
+]
+]
+],
+"gloss": [
+[
+"försenat",
+"retardé"
+],
+[
+"tavlan",
+"le tableau d'affichage"
+],
+[
+"högtalaren",
+"le haut-parleur"
+],
+[
+"ett signalfel",
+"une panne de signalisation"
+],
+[
+"sucka",
+"soupirer"
+],
+[
+"en kund",
+"un client"
+],
+[
+"fylla i",
+"remplir"
+],
+[
+"i alla fall",
+"en tout cas, quand même"
+]
+],
+"qs": [
+{
+"q": "À quelle heure le train devait-il partir ?",
+"a": "7 h 50",
+"d": [
+"8 h 10",
+"7 h 30",
+"9 h 15"
+]
+},
+{
+"q": "Pourquoi le train est-il en retard ?",
+"a": "Une panne de signalisation",
+"d": [
+"Une grève",
+"La neige",
+"Un accident"
+]
+},
+{
+"q": "Que fait Linnea à la fin ?",
+"a": "Elle demande un remboursement en ligne",
+"d": [
+"Elle prend un taxi",
+"Elle annule son voyage",
+"Elle se plaint au guichet"
+]
+}
+]
+},
+{
+"id": "t10",
+"lvl": "B1",
+"icon": "🍂",
+"title": "Fredagsmys",
+"sub": "Un rituel du vendredi soir",
+"paras": [
+[
+[
+"På fredagskvällar har många svenska familjer fredagsmys.",
+"Le vendredi soir, beaucoup de familles suédoises font leur « fredagsmys »."
+],
+[
+"Det betyder att man stannar hemma, äter något enkelt och myser i soffan.",
+"Cela veut dire qu'on reste à la maison, qu'on mange quelque chose de simple et qu'on se détend sur le canapé."
+],
+[
+"Det vanligaste är tacos, chips och en film eller ett tv-program.",
+"Le plus courant, ce sont les tacos, les chips et un film ou une émission de télé."
+]
+],
+[
+[
+"Ordet blev populärt på 1990-talet tack vare en reklamfilm för chips.",
+"Le mot est devenu populaire dans les années 1990 grâce à une publicité pour des chips."
+],
+[
+"I dag använder alla det, och man kan till och med säga ”Vi ska fredagsmysa”.",
+"Aujourd'hui, tout le monde l'utilise, et on peut même dire « On va faire notre fredagsmys »."
+],
+[
+"Tacos har blivit så vanligt att vissa kallar det Sveriges nationalrätt, med glimten i ögat.",
+"Les tacos sont devenus si courants que certains les appellent le plat national suédois, avec un clin d'œil."
+]
+],
+[
+[
+"För många är fredagsmys en gräns mellan arbetsveckan och helgen.",
+"Pour beaucoup, le fredagsmys marque la limite entre la semaine de travail et le week-end."
+],
+[
+"Man behöver inte prestera något, bara vara tillsammans.",
+"On n'a rien à accomplir, juste à être ensemble."
+]
+]
+],
+"gloss": [
+[
+"mysa",
+"se détendre douillettement"
+],
+[
+"vanlig",
+"courant, habituel"
+],
+[
+"en reklamfilm",
+"une publicité"
+],
+[
+"till och med",
+"même"
+],
+[
+"med glimten i ögat",
+"avec un clin d'œil, pour rire"
+],
+[
+"en gräns",
+"une limite, une frontière"
+],
+[
+"prestera",
+"accomplir, performer"
+]
+],
+"qs": [
+{
+"q": "Que mange-t-on souvent au fredagsmys ?",
+"a": "Des tacos",
+"d": [
+"Du hareng",
+"Des boulettes",
+"Une pizza surgelée"
+]
+},
+{
+"q": "D'où vient la popularité du mot ?",
+"a": "D'une publicité pour des chips",
+"d": [
+"D'un livre",
+"D'une émission de télé",
+"D'une chanson"
+]
+},
+{
+"q": "Quel est l'esprit du fredagsmys ?",
+"a": "Être ensemble sans pression",
+"d": [
+"Faire la fête jusqu'au matin",
+"Recevoir des invités",
+"Préparer un grand repas"
+]
+}
+]
+},
+{
+"id": "t11",
+"lvl": "B2",
+"icon": "🏛️",
+"title": "Valdagen",
+"sub": "Les élections vues par une primo-votante",
+"paras": [
+[
+[
+"Det var första gången som Amira fick rösta i riksdagsvalet.",
+"C'était la première fois qu'Amira pouvait voter aux élections législatives."
+],
+[
+"Röstkortet hade kommit med posten några veckor innan, och hon hade läst partiernas program noggrant.",
+"Sa carte d'électeur était arrivée par la poste quelques semaines avant, et elle avait lu attentivement les programmes des partis."
+],
+[
+"Ändå var hon inte helt bestämd när hon kom till vallokalen.",
+"Pourtant, elle n'était pas tout à fait décidée en arrivant au bureau de vote."
+]
+],
+[
+[
+"Hon tog valsedlarna bakom en skärm, så att ingen kunde se vilken hon valde.",
+"Elle a pris les bulletins derrière un paravent, pour que personne ne voie lequel elle choisissait."
+],
+[
+"Det fanns tre färger: gula för riksdagen, blå för regionen och vita för kommunen.",
+"Il y avait trois couleurs : jaune pour le Parlement, bleu pour la région et blanc pour la commune."
+],
+[
+"Hon kunde alltså rösta på olika partier på de olika nivåerna, vilket hon tyckte var bra.",
+"Elle pouvait donc voter pour des partis différents aux différents niveaux, ce qu'elle trouvait bien."
+]
+],
+[
+[
+"På kvällen följde hon valvakan på tv med sina föräldrar.",
+"Le soir, elle a suivi la soirée électorale à la télé avec ses parents."
+],
+[
+"Valdeltagandet var över åttio procent, vilket är högt jämfört med många andra länder.",
+"La participation était de plus de quatre-vingts pour cent, ce qui est élevé comparé à beaucoup d'autres pays."
+],
+[
+"– Nu har jag också varit med och bestämt, sa hon stolt.",
+"– Maintenant, moi aussi j'ai participé à la décision, a-t-elle dit fièrement."
+]
+]
+],
+"gloss": [
+[
+"rösta",
+"voter"
+],
+[
+"röstkortet",
+"la carte d'électeur"
+],
+[
+"noggrant",
+"attentivement"
+],
+[
+"vallokalen",
+"le bureau de vote"
+],
+[
+"en valsedel",
+"un bulletin de vote"
+],
+[
+"en nivå",
+"un niveau"
+],
+[
+"valvakan",
+"la soirée électorale"
+],
+[
+"valdeltagandet",
+"la participation électorale"
+]
+],
+"qs": [
+{
+"q": "Combien de couleurs de bulletins y a-t-il ?",
+"a": "Trois",
+"d": [
+"Deux",
+"Quatre",
+"Une"
+]
+},
+{
+"q": "Quelle est la couleur pour le Parlement ?",
+"a": "Jaune",
+"d": [
+"Bleu",
+"Blanc",
+"Rouge"
+]
+},
+{
+"q": "Comment était la participation ?",
+"a": "Plus de 80 %, élevée",
+"d": [
+"Moins de 50 %",
+"Environ 60 %",
+"Exactement 100 %"
+]
+}
+]
+},
+{
+"id": "t12",
+"lvl": "B2",
+"icon": "♻️",
+"title": "Sopsortering i praktiken",
+"sub": "Le tri des déchets, un sujet sensible",
+"paras": [
+[
+[
+"När familjen Moreau flyttade från Lyon till Umeå fick de en lång lista med regler för sopsortering.",
+"Quand la famille Moreau a déménagé de Lyon à Umeå, elle a reçu une longue liste de règles de tri."
+],
+[
+"Matavfallet skulle i en brun papperspåse, plasten i en egen behållare och glaset sorteras i färgat och ofärgat.",
+"Les déchets alimentaires devaient aller dans un sac en papier brun, le plastique dans un bac à part et le verre être trié en coloré et incolore."
+]
+],
+[
+[
+"Den första månaden gjorde de flera misstag.",
+"Le premier mois, ils ont fait plusieurs erreurs."
+],
+[
+"En dag hittade de en lapp i trapphuset: ”Till den som slängde pizzakartonger i pappersinsamlingen: de är feta och kan inte återvinnas!”",
+"Un jour, ils ont trouvé un mot dans la cage d'escalier : « À la personne qui a jeté des cartons de pizza dans la collecte de papier : ils sont gras et ne peuvent pas être recyclés ! »"
+],
+[
+"Lappen var inte undertecknad, vilket är typiskt för hur svenskar ibland hanterar konflikter med grannar.",
+"Le mot n'était pas signé, ce qui est typique de la façon dont les Suédois gèrent parfois les conflits de voisinage."
+]
+],
+[
+[
+"Efter ett tag blev sorteringen en vana.",
+"Au bout d'un moment, le tri est devenu une habitude."
+],
+[
+"Barnen tyckte till och med att det var roligt att panta burkar och få pengar för dem.",
+"Les enfants trouvaient même amusant de rapporter les canettes consignées et d'être payés pour ça."
+],
+[
+"Nu är det de som rättar sina föräldrar när de gör fel.",
+"Maintenant, ce sont eux qui corrigent leurs parents quand ils se trompent."
+]
+]
+],
+"gloss": [
+[
+"sopsortering",
+"le tri des déchets"
+],
+[
+"matavfall",
+"déchets alimentaires"
+],
+[
+"en behållare",
+"un bac, un conteneur"
+],
+[
+"en lapp",
+"un petit mot, un billet"
+],
+[
+"trapphuset",
+"la cage d'escalier"
+],
+[
+"undertecknad",
+"signé"
+],
+[
+"en vana",
+"une habitude"
+],
+[
+"panta",
+"rapporter les emballages consignés"
+],
+[
+"rätta",
+"corriger"
+]
+],
+"qs": [
+{
+"q": "Où vont les déchets alimentaires ?",
+"a": "Dans un sac en papier brun",
+"d": [
+"Dans le bac à plastique",
+"Avec le verre",
+"Dans la poubelle générale"
+]
+},
+{
+"q": "Que reproche le mot anonyme ?",
+"a": "Des cartons de pizza gras mis au papier",
+"d": [
+"Du bruit la nuit",
+"Du verre mal trié",
+"Des sacs devant la porte"
+]
+},
+{
+"q": "Qui corrige les erreurs maintenant ?",
+"a": "Les enfants",
+"d": [
+"Les voisins",
+"Le propriétaire",
+"La commune"
+]
+}
+]
+},
+{
+"id": "t13",
+"lvl": "B2",
+"icon": "📚",
+"title": "Astrid Lindgren",
+"sub": "Une autrice qui a changé la Suède",
+"paras": [
+[
+[
+"Astrid Lindgren föddes 1907 på en gård utanför Vimmerby i Småland.",
+"Astrid Lindgren est née en 1907 dans une ferme près de Vimmerby, dans le Småland."
+],
+[
+"Hon har beskrivit sin barndom som lycklig och fri, med mycket lek i naturen.",
+"Elle a décrit son enfance comme heureuse et libre, avec beaucoup de jeux dans la nature."
+],
+[
+"Den känslan finns i många av hennes böcker.",
+"Ce sentiment se retrouve dans beaucoup de ses livres."
+]
+],
+[
+[
+"Hennes mest kända figur, Pippi Långstrump, föddes som en historia hon berättade för sin sjuka dotter.",
+"Son personnage le plus connu, Fifi Brindacier, est né d'une histoire qu'elle racontait à sa fille malade."
+],
+[
+"När boken kom ut 1945 tyckte vissa kritiker att Pippi var en dålig förebild, eftersom hon inte lydde vuxna.",
+"Quand le livre est sorti en 1945, certains critiques trouvaient que Fifi était un mauvais exemple, parce qu'elle n'obéissait pas aux adultes."
+],
+[
+"Barnen däremot älskade henne.",
+"Les enfants, en revanche, l'adoraient."
+]
+],
+[
+[
+"Astrid Lindgren engagerade sig också i samhällsfrågor.",
+"Astrid Lindgren s'est aussi engagée dans des questions de société."
+],
+[
+"Hon skrev om djurens rättigheter och kritiserade ett skattesystem som hon tyckte var orimligt.",
+"Elle a écrit sur les droits des animaux et critiqué un système fiscal qu'elle jugeait déraisonnable."
+],
+[
+"Hennes röst var så stark att debatten påverkade politiken.",
+"Sa voix était si forte que le débat a influencé la politique."
+],
+[
+"Hon dog 2002, men hennes böcker har översatts till över hundra språk.",
+"Elle est morte en 2002, mais ses livres ont été traduits dans plus de cent langues."
+]
+]
+],
+"gloss": [
+[
+"en barndom",
+"une enfance"
+],
+[
+"en figur",
+"un personnage"
+],
+[
+"en förebild",
+"un modèle, un exemple"
+],
+[
+"lyda",
+"obéir"
+],
+[
+"däremot",
+"en revanche"
+],
+[
+"engagera sig",
+"s'engager"
+],
+[
+"orimlig",
+"déraisonnable"
+],
+[
+"påverka",
+"influencer"
+],
+[
+"översätta",
+"traduire"
+]
+],
+"qs": [
+{
+"q": "Comment est née Fifi Brindacier ?",
+"a": "D'une histoire racontée à sa fille malade",
+"d": [
+"D'un concours littéraire",
+"D'un souvenir d'école",
+"D'une commande d'éditeur"
+]
+},
+{
+"q": "Que reprochaient certains critiques ?",
+"a": "Fifi n'obéissait pas aux adultes",
+"d": [
+"Le livre était trop long",
+"Les dessins étaient laids",
+"L'histoire était triste"
+]
+},
+{
+"q": "Dans combien de langues ses livres sont-ils traduits ?",
+"a": "Plus de cent",
+"d": [
+"Une vingtaine",
+"Cinquante",
+"Dix"
+]
+}
+]
+},
+{
+"id": "t14",
+"lvl": "B2",
+"icon": "🏙️",
+"title": "Bostadsjakten",
+"sub": "Chercher un logement à Stockholm",
+"paras": [
+[
+[
+"Den som vill bo i Stockholm måste ofta ha både tålamod och tur.",
+"Qui veut habiter à Stockholm doit souvent avoir à la fois de la patience et de la chance."
+],
+[
+"Kön till en hyresrätt i innerstaden kan vara över tio år lång.",
+"La file d'attente pour un logement locatif dans le centre peut dépasser dix ans."
+],
+[
+"Därför ställer vissa föräldrar sina barn i bostadskön redan när de fyller arton.",
+"C'est pourquoi certains parents inscrivent leurs enfants sur la liste d'attente dès leurs dix-huit ans."
+]
+],
+[
+[
+"Alternativet är att köpa en bostadsrätt, men priserna är höga och bankerna kräver en stor kontantinsats.",
+"L'alternative est d'acheter un appartement en copropriété, mais les prix sont élevés et les banques exigent un apport personnel important."
+],
+[
+"Många unga hyr därför i andra hand, vilket kan vara både dyrt och osäkert.",
+"Beaucoup de jeunes sous-louent donc, ce qui peut être à la fois cher et précaire."
+],
+[
+"Ett andrahandskontrakt gäller ofta bara ett år i taget.",
+"Un contrat de sous-location n'est souvent valable qu'un an à la fois."
+]
+],
+[
+[
+"Bostadsbristen är en av de mest debatterade frågorna i svensk politik.",
+"La pénurie de logements est l'une des questions les plus débattues de la politique suédoise."
+],
+[
+"Vissa vill bygga mer, andra vill reformera hyressättningen.",
+"Certains veulent construire davantage, d'autres veulent réformer la fixation des loyers."
+],
+[
+"Alla är dock överens om att situationen inte kan fortsätta så här.",
+"Tout le monde s'accorde cependant à dire que la situation ne peut pas continuer ainsi."
+]
+]
+],
+"gloss": [
+[
+"tålamod",
+"patience"
+],
+[
+"kön",
+"la file d'attente"
+],
+[
+"innerstaden",
+"le centre-ville"
+],
+[
+"en kontantinsats",
+"un apport personnel"
+],
+[
+"hyra i andra hand",
+"sous-louer"
+],
+[
+"osäker",
+"incertain, précaire"
+],
+[
+"bostadsbristen",
+"la pénurie de logements"
+],
+[
+"dock",
+"cependant"
+]
+],
+"qs": [
+{
+"q": "Combien de temps peut durer l'attente pour un logement locatif central ?",
+"a": "Plus de dix ans",
+"d": [
+"Six mois",
+"Deux ans",
+"Un mois"
+]
+},
+{
+"q": "Qu'exigent les banques pour acheter ?",
+"a": "Un apport personnel important",
+"d": [
+"Un contrat de travail en Suède depuis dix ans",
+"Un garant suédois",
+"Rien de particulier"
+]
+},
+{
+"q": "Sur quoi tout le monde est-il d'accord ?",
+"a": "La situation ne peut pas durer",
+"d": [
+"Il faut construire plus",
+"Il faut supprimer les files",
+"Les loyers sont trop bas"
+]
+}
+]
+},
+{
+"id": "t15",
+"lvl": "B2",
+"icon": "🌌",
+"title": "Mörkret och ljuset",
+"sub": "Vivre avec les saisons extrêmes",
+"paras": [
+[
+[
+"I Kiruna, långt norr om polcirkeln, går solen inte upp alls på några veckor i december.",
+"À Kiruna, loin au nord du cercle polaire, le soleil ne se lève pas du tout pendant quelques semaines en décembre."
+],
+[
+"Perioden kallas polarnatt, men det är sällan helt svart.",
+"Cette période s'appelle la nuit polaire, mais il fait rarement complètement noir."
+],
+[
+"Snön reflekterar ljuset från månen och stjärnorna, och ibland dansar norrskenet över himlen.",
+"La neige reflète la lumière de la lune et des étoiles, et parfois l'aurore boréale danse dans le ciel."
+]
+],
+[
+[
+"Många svenskar i norr säger att mörkret inte är det svåra, utan längtan efter ljus i februari.",
+"Beaucoup de Suédois du Nord disent que ce n'est pas l'obscurité qui est difficile, mais l'envie de lumière en février."
+],
+[
+"För att må bra tar de D-vitamin, går ut mitt på dagen och tänder levande ljus hemma.",
+"Pour se sentir bien, ils prennent de la vitamine D, sortent en milieu de journée et allument des bougies à la maison."
+]
+],
+[
+[
+"På sommaren är det tvärtom: under midnattssolen går solen inte ner.",
+"En été, c'est l'inverse : pendant le soleil de minuit, le soleil ne se couche pas."
+],
+[
+"Människor spelar golf klockan ett på natten och har svårt att sova.",
+"Les gens jouent au golf à une heure du matin et ont du mal à dormir."
+],
+[
+"Det är kanske därför som svenskarna firar ljuset så mycket, från Lucia till midsommar.",
+"C'est peut-être pour cela que les Suédois célèbrent tant la lumière, de la Sainte-Lucie à la Saint-Jean."
+]
+]
+],
+"gloss": [
+[
+"polcirkeln",
+"le cercle polaire"
+],
+[
+"polarnatt",
+"nuit polaire"
+],
+[
+"norrskenet",
+"l'aurore boréale"
+],
+[
+"längtan",
+"le désir, la nostalgie"
+],
+[
+"levande ljus",
+"des bougies"
+],
+[
+"tvärtom",
+"au contraire, l'inverse"
+],
+[
+"midnattssolen",
+"le soleil de minuit"
+],
+[
+"fira",
+"fêter, célébrer"
+]
+],
+"qs": [
+{
+"q": "Que se passe-t-il à Kiruna en décembre ?",
+"a": "Le soleil ne se lève pas pendant quelques semaines",
+"d": [
+"Il fait jour 24 h sur 24",
+"Il pleut tout le temps",
+"Il fait 0 °C"
+]
+},
+{
+"q": "Qu'est-ce qui est le plus dur, selon les gens du Nord ?",
+"a": "L'envie de lumière en février",
+"d": [
+"L'obscurité de décembre",
+"Le froid de janvier",
+"Les moustiques en été"
+]
+},
+{
+"q": "Que fait-on parfois à 1 h du matin en été ?",
+"a": "Du golf",
+"d": [
+"Du ski",
+"Les courses",
+"La sieste"
+]
+}
+]
+}
+];
+const LTEST = [
+{
+"lvl": "A1",
+"q": "« Comment t'appelles-tu ? »",
+"a": "Vad heter du?",
+"d": [
+"Hur mår du?",
+"Var bor du?",
+"Vem är du?"
+],
+"g": "g-fragor"
+},
+{
+"lvl": "A1",
+"q": "Pluriel de « en bil » :",
+"a": "bilar",
+"d": [
+"biler",
+"bilor",
+"bils"
+],
+"g": "g-substantiv"
+},
+{
+"lvl": "A1",
+"q": "Jag ___ inte kaffe.",
+"a": "dricker",
+"d": [
+"drickar",
+"drick",
+"dricka"
+],
+"g": "g-present"
+},
+{
+"lvl": "A1",
+"q": "« la maison » :",
+"a": "huset",
+"d": [
+"husen",
+"det hus",
+"husan"
+],
+"g": "g-bestamd"
+},
+{
+"lvl": "A2",
+"q": "I går ___ vi på bio.",
+"a": "gick",
+"d": [
+"går",
+"har gått",
+"gått"
+],
+"g": "g-preteritum"
+},
+{
+"lvl": "A2",
+"q": "I dag ___ hemma.",
+"a": "stannar jag",
+"d": [
+"jag stannar",
+"stannar",
+"jag stanna"
+],
+"g": "g-ordfoljd"
+},
+{
+"lvl": "A2",
+"q": "Hon har ett ___ hus.",
+"a": "stort",
+"d": [
+"stor",
+"stora",
+"större"
+],
+"g": "g-adjektiv"
+},
+{
+"lvl": "A2",
+"q": "Jag vill ___ svenska.",
+"a": "lära mig",
+"d": [
+"lära",
+"att lära mig",
+"lär mig"
+],
+"g": "g-reflexiv"
+},
+{
+"lvl": "B1",
+"q": "Jag vet att han ___.",
+"a": "inte kommer",
+"d": [
+"kommer inte",
+"inte kommit",
+"kom inte"
+],
+"g": "g-bisats"
+},
+{
+"lvl": "B1",
+"q": "Erik tog ___ jacka och gick. (sa propre veste)",
+"a": "sin",
+"d": [
+"hans",
+"sitt",
+"hennes"
+],
+"g": "g-pronomen"
+},
+{
+"lvl": "B1",
+"q": "Vi har bott här ___ fem år.",
+"a": "i",
+"d": [
+"sedan",
+"för",
+"på"
+],
+"g": "g-tidsprep"
+},
+{
+"lvl": "B1",
+"q": "Om jag ___ rik, skulle jag resa jorden runt.",
+"a": "var",
+"d": [
+"är",
+"skulle vara",
+"varit"
+],
+"g": "g-konditional"
+},
+{
+"lvl": "B2",
+"q": "Huset ___ på 1800-talet.",
+"a": "byggdes",
+"d": [
+"byggde",
+"byggts",
+"byggas"
+],
+"g": "g-passiv"
+},
+{
+"lvl": "B2",
+"q": "Jag undrar vem ___ har tagit min cykel.",
+"a": "som",
+"d": [
+"att",
+"vad",
+"vilken"
+],
+"g": "g-fragor"
+},
+{
+"lvl": "B2",
+"q": "« Je n'ai vu personne » :",
+"a": "Jag har inte sett någon.",
+"d": [
+"Jag har sett ingen.",
+"Jag har inte sett ingen.",
+"Jag såg inte ingen."
+],
+"g": "g-negation"
+},
+{
+"lvl": "B2",
+"q": "Kvinnan, ___ bil stod utanför, var polis.",
+"a": "vars",
+"d": [
+"som",
+"vilken",
+"hennes"
+],
+"g": "g-bisats"
+},
+{
+"lvl": "C1",
+"q": "« Det är ju fredag » : que suggère « ju » ?",
+"a": "Une évidence partagée",
+"d": [
+"Un doute",
+"Une question",
+"Une surprise"
+],
+"g": "g-adverb"
+},
+{
+"lvl": "C1",
+"q": "Quel verbe est le plus soutenu pour « obtenir » ?",
+"a": "erhålla",
+"d": [
+"få",
+"fixa",
+"skaffa"
+],
+"g": ""
+},
+{
+"lvl": "C1",
+"q": "« Han har glidit in på en räkmacka » signifie :",
+"a": "Il a tout obtenu sans effort",
+"d": [
+"Il a glissé sur la glace",
+"Il a raté son coup",
+"Il est très gourmand"
+],
+"g": ""
+},
+{
+"lvl": "C1",
+"q": "Resultaten ___ på ett samband. (suggèrent)",
+"a": "tyder",
+"d": [
+"visar på att",
+"tycker",
+"tror"
+],
+"g": ""
+}
+];
+
 /* Genre (en / ett) et pluriel des mots déjà écrits avant 0.5 (clé = le mot sans article). Pluriel vide = pas de pluriel courant (mot massif). */
 GN(`en bil|bilar
 en bok|böcker
@@ -18596,9 +23137,9 @@ const playBtn = (text, label) => SP.ok ? '<button type="button" class="play" dat
 let view = { name: 'home' }, sess = null;
 function go(name, arg) { view = { name, arg }; render(); window.scrollTo(0, 0); const m = $('main'); if (m) m.scrollTop = 0; }
 function render() {
-  const navOf = { fiche: 'library', theme: 'library', lire: 'library' };
+  const navOf = { fiche: 'library', theme: 'library', lire: 'library', ltest: 'stats' };
   document.querySelectorAll('.nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.nav === (navOf[view.name] || view.name))));
-  const h = { home, library, theme, fiche, lire, session, end, stats, words, tiles, gram }[view.name];
+  const h = { home, library, theme, fiche, lire, session, end, stats, words, tiles, gram, texts, ltest }[view.name];
   $('main').innerHTML = h(view.arg);
   if (view.name === 'session' && sess) afterSessionRender();
   const top = document.querySelector('.top'); if (top) document.documentElement.style.setProperty('--toph', top.offsetHeight + 'px');
@@ -18608,6 +23149,7 @@ const bar = (pct, color) => '<span class="bar"><i style="width:' + Math.round(pc
 function levelChooser() {
   return '<section class="hero"><div><p class="eyebrow">Bienvenue</p><h1>Quel est ton niveau ?</h1><p class="lead">L\'app te fait apprendre des <b>mots</b> (toujours avec leur genre, <span class="gb g-en">en</span> ou <span class="gb g-ett">ett</span>, leur pluriel et leurs formes) et des <b>fiches complètes</b> de A1 à C1. Les exercices servent à fixer le tout.</p>' +
     '<div class="actions"><button class="btn big" data-act="level" data-l="debut">Je débute</button><button class="btn primary big" data-act="level" data-l="bases">J\'ai de bonnes bases (A1 connu)</button><button class="btn big" data-act="level" data-l="avance">Je suis à l\'aise (je commence à B2)</button></div>' +
+    '<p class="lt-cta"><button class="btn" data-act="lt-start">🎯 Je ne sais pas : faire le test de niveau (5 min)</button></p>' +
     '<p class="muted small">Les fiches des niveaux « connus » sont marquées comme acquises et reviennent en révision éclair dans 10 à 30 jours. Tu peux aussi marquer n\'importe quelle fiche comme connue, ou la refaire, depuis l\'onglet Fiches.</p></div></section>';
 }
 function home() {
@@ -18615,12 +23157,13 @@ function home() {
   const due = dueCards(), nf = nextNewFiche(), doneToday = !!S.days[dayIso(today())];
   const nRev = Math.min(due.length, S.opts.maxReviews);
   const lessons = plannedLessons(nRev, false);
-  const total = nRev + lessons.reduce((a, f) => a + f.cards.length, 0);
+  const nMix = dailyMix().length;
+  const total = nRev + nMix + lessons.reduce((a, f) => a + f.cards.length, 0);
   const mins = Math.max(3, Math.round(total * 0.35 + lessons.length * 2));
   let plan = '<ul class="plan">';
   if (nRev) plan += '<li><span class="pi rev">↻</span><span>' + plural(nRev, 'exercice') + ' à réviser</span></li>';
   lessons.forEach(f => { plan += '<li><span class="pi new" style="background:' + f.theme.color + '">' + f.theme.icon + '</span><span>Nouvelle fiche : <b>' + esc(f.title) + '</b> <span class="muted">(' + esc(f.theme.name) + ', ' + plural(f.cards.length, 'exercice') + ')</span></span></li>'; });
-  plan += '</ul>';
+  plan += mixPlan() + dailyWordsLine() + '</ul>';
   let hero;
   if (total) hero = '<section class="hero"><div><p class="eyebrow">Ma séance du jour</p><h1>' + (doneToday ? 'On continue ?' : 'God morgon ! Prêt pour aujourd\'hui ?') + '</h1>' + plan +
     '<div class="hero-btns"><button class="btn primary big" data-act="start">Commencer · ≈ ' + mins + ' min</button>' + readBtn() + '</div></div>' + heroSide() + '</section>';
@@ -18893,14 +23436,14 @@ let DICT = null;
 function dict() {
   if (DICT) return DICT;
   const m = new Map();
-  const add = (v, tile) => {
+  const add = (v, tile, ref) => {
     const k = (v.g || '') + ' ' + v.sv;
-    if (m.has(k)) { const e = m.get(k); if (!e.tile && tile) e.tile = tile; return; }
-    m.set(k, { v, sv: svFull(v), fr: v.fr, ns: dnorm(v.sv), nf: dnorm(frBase(v.fr)), np: v.fr.replace(/\(.*?\)/g, '').split(/[,;]/).map(x => dnorm(frBase(x))).filter(Boolean), fk: frKey(v.fr), tile });
+    if (m.has(k)) { const e = m.get(k); if (!e.tile && tile) e.tile = tile; if (!e.ref && ref) e.ref = ref; return; }
+    m.set(k, { v, sv: svFull(v), fr: v.fr, ns: dnorm(v.sv), nf: dnorm(frBase(v.fr)), np: v.fr.replace(/\(.*?\)/g, '').split(/[,;]/).map(x => dnorm(frBase(x))).filter(Boolean), fk: frKey(v.fr), tile, ref });
   };
   WSETS.forEach(w => w.vocab.forEach((v, k) => add(v, w.id + '-' + k)));
   /* mots des fiches : pas les phrases ni les listes de formes (« äta, åt, ätit »), ni « att äta » si « äta » existe */
-  FICHES.forEach(f => (f.vocab || []).forEach(v => { if (/[.?!,…]/.test(v.sv) || v.sv.split(' ').length > 3) return; const b = /^att (.+)$/.exec(v.sv); if (b && [...m.keys()].some(k => k.endsWith(' ' + b[1]))) return; add(v, ''); }));
+  FICHES.forEach(f => (f.vocab || []).forEach((v, k) => { if (/[.?!,…]/.test(v.sv) || v.sv.split(' ').length > 3) return; const b = /^att (.+)$/.exec(v.sv); if (b && [...m.keys()].some(x => x.endsWith(' ' + b[1]))) return; add(v, '', [f.id, k]); }));
   DICT = [...m.values()];
   DICT.forEach((e, i) => { e.i = i; });
   const cs = new Intl.Collator('sv'), cf = new Intl.Collator('fr', { sensitivity: 'base' });
@@ -18919,7 +23462,8 @@ function dRow(e, mode, open) {
   if (open) {
     const v = e.v, info = [v.g && v.pl ? 'pluriel : <b>' + esc(v.pl) + '</b>' : '', v.forms ? 'formes : <b>' + esc(v.forms) + '</b>' : '', v.note ? esc(v.note) : ''].filter(Boolean).join('<br>');
     h += '<div class="dopen"><div class="tb-row"><span class="tb-info">' + (info || esc(v.fr)) + '</span>' + playBtn(v.sv) + '</div>' +
-      (e.tile ? lvPicker(L, s, x => 'data-dlv="' + x + '" data-dk="' + e.i + '"') + (s ? '<button class="link tb-reset" data-dset="" data-dk="' + e.i + '">↺ Remettre en attente</button>' : '') : '') + '</div>';
+      (e.tile ? lvPicker(L, s, x => 'data-dlv="' + x + '" data-dk="' + e.i + '"') + (s ? '<button class="link tb-reset" data-dset="" data-dk="' + e.i + '">↺ Remettre en attente</button>' : '<button class="btn sm primary dadd" data-dset="learn" data-dk="' + e.i + '">＋ Apprendre ce mot</button>') :
+        e.ref ? (['s', 'f'].some(x => S.cards[e.ref[0] + '-' + x + e.ref[1]]) ? '<p class="muted small dadded">✓ En apprentissage (mot de la fiche « ' + esc(FBY[e.ref[0]].title) + ' »)</p>' : '<button class="btn sm primary dadd" data-dadd="' + e.i + '">＋ Apprendre ce mot</button>') : '') + '</div>';
   }
   return h;
 }
@@ -18978,6 +23522,7 @@ function stats() {
     '<label class="chk"><input type="checkbox" id="opt-auto"' + (S.opts.autoSpeak ? ' checked' : '') + '> Lire le suédois automatiquement pendant les séances</label>' +
     '<label class="chk"><input type="checkbox" id="opt-choice"' + (S.opts.alwaysChoice ? ' checked' : '') + '> Toujours répondre avec des choix (pas de rappel libre)</label>' +
     (voiceNote ? '<p class="muted small">' + esc(voiceNote) + '</p>' : '') + '<p><button class="btn sm" data-say="Hej! Jag heter Anna. Trevligt att träffas.">▶ Tester la voix</button></p></div>' +
+    '<h2 class="sec">Niveau</h2>' + ltestCard() +
     '<h2 class="sec" id="sync-sec">Synchronisation</h2>' + (typeof ghPanel === 'function' ? ghPanel() : '') +
     '<p><button class="link" data-act="reset">Effacer toute la progression</button></p>';
 }
@@ -19018,7 +23563,7 @@ function startSession(kind, ficheId) {
   const add = (id, practice) => { if (!seen.has(id)) { seen.add(id); q.push({ id, practice: !!practice, tries: 0 }); } };
   let lessons = [];
   if (kind === 'daily' || kind === 'extra') {
-    if (kind === 'daily') dueCards().slice(0, S.opts.maxReviews).forEach(id => add(id));
+    if (kind === 'daily') { dueCards().slice(0, S.opts.maxReviews).forEach(id => add(id)); dailyMix().forEach(id => add(id)); }
     lessons = plannedLessons(q.length, kind === 'extra');
   } else if (kind === 'ids') {
     ficheId.forEach(id => add(id));
@@ -19118,7 +23663,7 @@ function answer(ok, given, note) {
 }
 function checkTyped() {
   const ti = $('typed'), c = CARDS[current().id]; if (!ti || !ti.value.trim()) return;
-  const given = ti.value, exact = norm(given) === norm(c.a), loose = fold(given) === fold(c.a);
+  const given = ti.value, A = [c.a].concat(c.alt || []), exact = A.some(a => norm(given) === norm(a)), loose = A.some(a => fold(given) === fold(a));
   const bare = c.a.replace(/^(en|ett) /, '');
   if (!exact && !loose && bare !== c.a && fold(given) === fold(bare)) { answer(false, given, 'Le mot est bon, mais il manque l\'article : ' + c.a + '. En suédois, le genre (en / ett) s\'apprend avec le mot.'); return; }
   answer(exact || loose, given, exact ? '' : loose ? 'attention à l\'orthographe : ' + c.a : '');
@@ -19273,7 +23818,7 @@ function gramVList(arg) {
   GRAM.verbs.forEach(G => {
     const L = GV.filter(v => v.g === G.g && (!q || v.k.includes(q)));
     if (!L.length) return;
-    h += '<h3 class="vg">' + esc(G.g) + '<small>' + esc(G.rule) + '</small></h3><div class="tlist vlist">' + L.map(v => '<div class="vb">' +
+    h += '<h3 class="vg vgx">' + esc(G.g) + '<small>' + esc(G.rule) + '</small><button class="btn sm" data-vxg="' + GRAM.verbs.indexOf(G) + '">🧠 S\'entraîner</button></h3><div class="tlist vlist">' + L.map(v => '<div class="vb">' +
       '<div class="vb-top"><b>' + esc(v.inf) + '</b><span class="vb-fr">' + esc(v.fr) + '</span>' + playBtn(v.inf + ', ' + v.pres + ', ' + v.pret.replace(/ \(.*\)/, '') + ', ' + v.sup, v.inf) + '</div>' +
       (arg.hide && !rev[v.i] ? '<button class="vb-show" data-vrev="' + v.i + '">Afficher les formes</button>' : '<div class="vb-forms"><span>' + esc(v.pres) + '</span><span>' + esc(v.pret) + '</span><span>' + esc(v.sup) + '</span><span class="vb-imp">' + esc(v.imp) + '</span></div>') + '</div>').join('') + '</div>';
   });
@@ -19283,7 +23828,7 @@ function gramVerbs(arg) {
   return '<button class="back" data-gsec="">← Grammaire</button><h1 class="pt">Verbes irréguliers <small class="muted">' + GV.length + '</small></h1>' +
     '<div class="vhead"><input type="search" class="search" id="gq" placeholder="Chercher un verbe (suédois ou français)" value="' + esc(arg.q || '') + '" autocomplete="off" autocapitalize="off" spellcheck="false">' +
     '<div class="vtools"><span class="vcols">présent · prétérit · supin · impératif</span><button class="btn sm' + (arg.hide ? ' primary' : '') + '" data-act="vhide">' + (arg.hide ? '👀 Tout afficher' : '🙈 S\'entraîner') + '</button></div></div>' +
-    '<div id="vlist">' + gramVList(arg) + '</div>';
+    verbBlock() + '<div id="vlist">' + gramVList(arg) + '</div>';
 }
 function gramFiche(id) {
   const i = GF.findIndex(f => f.id === id), f = GF[i], prev = GF[i - 1], next = GF[i + 1];
@@ -19303,6 +23848,7 @@ function gramFiche(id) {
   if (f.ex && f.ex.length) h += '<h3 class="vh">Exemples</h3>' + vocabRows(f.ex.map(([sv, fr]) => ({ sv, fr })));
   if (f.pit && f.pit.length) h += '<div class="pits" id="gs-pit"><h3>⚠️ Pièges</h3><ul class="ess">' + f.pit.map(k => '<li>' + md(k) + '</li>').join('') + '</ul></div>';
   if (f.keys && f.keys.length) h += '<div class="keys"><h3>L\'essentiel</h3><ul class="ess">' + f.keys.map(k => '<li>' + md(k) + '</li>').join('') + '</ul></div>';
+  h += gxBlock(f);
   h += '<div class="rd-nav"><button class="btn" data-gf="' + (prev ? prev.id : '') + '"' + (prev ? '' : ' disabled') + '>←<span> Précédente</span></button>' +
     (next ? '<button class="btn primary" data-gf="' + next.id + '">Suivante →<small>' + esc(next.title) + '</small></button>' : '<button class="btn primary" data-gsec="fiches">✓ Toutes lues</button>') + '</div></article>';
   return h;
@@ -19319,6 +23865,191 @@ document.addEventListener('click', e => {
 document.addEventListener('input', e => {
   if (e.target.id !== 'gq') return;
   view.arg.q = e.target.value; clearTimeout(gramVList.t); gramVList.t = setTimeout(() => { $('vlist').innerHTML = gramVList(view.arg); }, 120);
+});
+
+/* ================================================================ 0.13 : exercices de grammaire, verbes irréguliers, séance mixte, textes, test de niveau */
+/* --- jeux de cartes hors parcours des fiches (même révision espacée) */
+const GTHEME = { id: 'gram', name: 'Grammaire', icon: '📘', color: '#6E56CF' };
+const VTHEME = { id: 'gverb', name: 'Verbes irréguliers', icon: '📋', color: '#E5484D' };
+const GSETS = GF.filter(g => GEX[g.id]).map(g => {
+  const L = GEX[g.id], f = { id: 'gx-' + g.id.slice(2), title: g.title, theme: GTHEME, isSet: true, gid: g.id,
+    extra: L.filter(e => e.t === 'q').map(e => Q(e.q, e.a, e.d, e.x)), cloze: L.filter(e => e.t === 'z').map(e => Z(e.s, e.a, e.fr, e.d, e.x)) };
+  genCards(f); return f;
+});
+const GXBY = {}; GSETS.forEach(f => { GXBY[f.gid] = f; });
+/* verbes : 2 cartes par verbe (prétérit, supin), ids stables par infinitif */
+const vslug = s => s.replace(/ \(.*\)/, '').replace(/[^a-zåäö]/gi, '');
+const vmain = s => s.replace(/ \(.*\)/, ''), valt = s => { const m = /\((.*)\)/.exec(s); return m ? [m[1]] : []; };
+function vDistract(v, which) {
+  const stem = v.inf.replace(/ \(.*\)/, '').replace(/a$/, ''), right = vmain(which === 'p' ? v.pret : v.sup);
+  const c = which === 'p' ? [stem + 'ade', stem + 'de', stem + 'te', vmain(v.sup), v.pres] : [stem + 'at', stem + 't', vmain(v.pret), stem + 'it', stem + 'tt', stem + 'en'];
+  return shuffle(c.filter((x, i, a) => x !== right && x !== v.inf && a.indexOf(x) === i)).slice(0, 3);
+}
+const VSEEN = new Set();
+const VSETS = GRAM.verbs.map((G, gi) => {
+  const f = { id: 'gv' + gi, title: G.g, theme: VTHEME, isSet: true, cards: [] };
+  G.list.forEach(r => {
+    const v = { inf: r[0], pres: r[1], pret: r[2], sup: r[3], fr: r[4] }, k = vslug(v.inf);
+    if (VSEEN.has(k) || v.pret === '–') return; VSEEN.add(k);
+    const x = v.inf + ' – ' + v.pres + ' – ' + v.pret + ' – ' + v.sup;
+    [['p', 'Prétérit', v.pret], ['s', 'Supin', v.sup]].forEach(([w, lab, val]) => {
+      const c = { id: 'gv-' + k + '-' + w, kind: 'custom', q: lab + ' de « ' + vmain(v.inf) + ' » (' + v.fr + ') ?', qsub: w === 'p' ? 'passé : hier, je…' : 'après har : jag har…',
+        a: vmain(val), alt: valt(val), d: vDistract(v, w), asv: vmain(val), type: true, x, fiche: f };
+      CARDS[c.id] = c; f.cards.push(c);
+    });
+  });
+  return f;
+});
+const VCARDS = VSETS.reduce((a, f) => a.concat(f.cards), []);
+/* carte pour l'écran de séance : un jeu (grammaire ou verbes) */
+function setSession(cards, maxNew, title) {
+  const t = today(), due = cards.filter(c => st(c.id) && st(c.id).due <= t), fresh = cards.filter(c => !st(c.id)).slice(0, maxNew);
+  let ids = due.concat(fresh).map(c => c.id);
+  let practice = false;
+  if (!ids.length) { ids = shuffle(cards.map(c => c.id)).slice(0, Math.max(8, maxNew)); practice = true; }
+  const q = ids.map(id => ({ id, practice: practice || (!!st(id) && st(id).due > t), tries: 0 }));
+  sess = { kind: 'set', title, q, i: 0, lessons: [], li: 0, read: [], answered: false, results: [] };
+  go('session');
+}
+const setInfo = cards => { const t = today(); return { n: cards.length, seen: cards.filter(c => st(c.id)).length, due: cards.filter(c => st(c.id) && st(c.id).due <= t).length, anc: cards.filter(c => st(c.id) && st(c.id).b >= MASTER).length }; };
+function gxBlock(g) {
+  const f = GXBY[g.id]; if (!f) return '';
+  const i = setInfo(f.cards);
+  return '<div class="gxbox"><div><b>🧠 S\'entraîner sur cette fiche</b><small>' + plural(i.n, 'exercice') + ' · ' + (i.seen ? i.anc + ' ancrés' + (i.due ? ' · ' + i.due + ' à revoir' : '') : 'jamais faits') + '</small></div>' +
+    '<button class="btn primary" data-gx="' + g.id + '">' + (i.seen ? (i.due ? 'Réviser' : 'Refaire') : 'Commencer') + '</button></div>';
+}
+function verbBlock() {
+  const i = setInfo(VCARDS), nv = VCARDS.length / 2;
+  return '<div class="gxbox v"><div><b>🧠 S\'entraîner : taper les formes</b><small>' + nv + ' verbes · ' + Math.round(i.seen / 2) + ' commencés · ' + Math.round(i.anc / 2) + ' ancrés' + (i.due ? ' · <b>' + i.due + ' à revoir</b>' : '') + '</small></div>' +
+    '<button class="btn primary" data-vx="all">' + (i.due ? 'Réviser' : 'Continuer') + '</button></div>';
+}
+
+/* --- séance du jour : on ajoute un peu de grammaire et 2 verbes, au plus une fois par jour */
+function dailyMix() {
+  if (S.opts.noMix) return [];
+  if (!S.mix || S.mix.day !== today()) {
+    const ids = [];
+    const g = GSETS.slice().sort((a, b) => (gRead(GF.find(x => x.id === b.gid)) ? 1 : 0) - (gRead(GF.find(x => x.id === a.gid)) ? 1 : 0)).find(f => f.cards.some(c => !st(c.id)));
+    if (g) g.cards.filter(c => !st(c.id)).slice(0, 3).forEach(c => ids.push(c.id));
+    VCARDS.filter(c => !st(c.id)).slice(0, 4).forEach(c => ids.push(c.id));
+    S.mix = { day: today(), ids }; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ }
+  }
+  return S.mix.ids.filter(id => CARDS[id] && !st(id));
+}
+function mixPlan() {
+  const ids = dailyMix(); if (!ids.length) return '';
+  const ng = ids.filter(id => /^gx-/.test(id)), nv = ids.filter(id => /^gv-/.test(id));
+  let h = '';
+  if (ng.length) h += '<li><span class="pi new" style="background:#6E56CF">📘</span><span>Grammaire : <b>' + plural(ng.length, 'exercice') + '</b> <span class="muted">(' + esc(CARDS[ng[0]].fiche.title) + ')</span></span></li>';
+  if (nv.length) h += '<li><span class="pi new" style="background:#E5484D">📋</span><span>Verbes irréguliers : <b>' + plural(Math.ceil(nv.length / 2), 'verbe') + '</b> à apprendre</span></li>';
+  return h;
+}
+function dailyWordsLine() {
+  const d = dailySet(), left = d.refs.filter(([w, k]) => !tileState(w.id + '-' + k)).length;
+  return left ? '<li><span class="pi new" style="background:#1F5F99">🎲</span><span>Mots du jour : <b>' + left + ' à trier</b> <button class="link" data-tset="daily">ouvrir →</button></span></li>' : '';
+}
+
+/* --- textes de lecture */
+const TBYID = {}; TEXTS.forEach(x => { TBYID[x.id] = x; });
+const tRead = x => !!((S.tlu || {})[x.id]);
+function texts(arg) {
+  arg = arg || {};
+  if (arg.id) return textView(TBYID[arg.id], arg);
+  let h = '<h1 class="pt">Textes à lire <small class="muted">' + TEXTS.filter(tRead).length + ' / ' + TEXTS.length + ' lus</small></h1><p class="muted tintro">Des textes courts pour lire en contexte. Touche une phrase pour voir sa traduction.</p>';
+  ['A2', 'B1', 'B2'].forEach(L => {
+    const X = TEXTS.filter(x => x.lvl === L); if (!X.length) return;
+    h += '<h3 class="vg">Niveau ' + L + '</h3><div class="tlist">' + X.map(x => '<button class="trow" data-tx="' + x.id + '"><span class="tr-ico" style="background:#2F7D6B">' + x.icon + '</span><b>' + esc(x.title) + '<small>' + esc(x.sub) + '</small></b><small>' + (tRead(x) ? '<span class="tr-k">✓ lu</span>' : '') + '</small></button>').join('') + '</div>';
+  });
+  return h;
+}
+function textView(x, arg) {
+  const all = !!S.opts.txAll, i = TEXTS.indexOf(x), next = TEXTS[i + 1];
+  let n = 0, h = '<button class="back" data-tx="">← Textes</button><article class="lesson txt" style="--t:#2F7D6B"><p class="eyebrow">' + x.icon + ' Lecture · <span class="lvl">' + x.lvl + '</span></p><h1>' + esc(x.title) + '</h1><p class="rd-meta">' + esc(x.sub) + '</p>' +
+    '<div class="txbar"><span class="muted small">Touche une phrase pour la traduire</span><button class="btn sm' + (all ? ' primary' : '') + '" data-act="txall">' + (all ? 'Masquer les traductions' : 'Tout traduire') + '</button></div><div class="txbody' + (all ? ' all' : '') + '">';
+  x.paras.forEach(P => { h += '<p class="tp">' + P.map(([sv, fr]) => { n++; return '<span class="ts" data-ts="' + n + '">' + esc(sv) + '</span> <span class="tfr" data-tf="' + n + '">' + esc(fr) + '</span> '; }).join('') + '</p>'; });
+  h += '</div><h3 class="vh">Mots du texte</h3><table class="tbl gloss"><tbody>' + x.gloss.map(([a, b]) => '<tr><td><b>' + esc(a) + '</b></td><td>' + esc(b) + '</td></tr>').join('') + '</tbody></table>';
+  h += '<h3 class="vh">As-tu compris ?</h3><div class="txq">' + x.qs.map((q, k) => {
+    const ch = arg.ch && arg.ch[k] ? arg.ch[k] : shuffle([q.a].concat(q.d)); arg.ch = arg.ch || {}; arg.ch[k] = ch;
+    const ans = (arg.ans || {})[k];
+    return '<div class="txqi"><p><b>' + (k + 1) + '.</b> ' + esc(q.q) + '</p><div class="txc">' + ch.map(c => '<button class="choice sm' + (ans != null ? (c === q.a ? ' ok' : c === ans ? ' bad' : '') : '') + '" data-txa="' + k + '" data-v="' + esc(c) + '"' + (ans != null ? ' disabled' : '') + '>' + esc(c) + '</button>').join('') + '</div></div>';
+  }).join('') + '</div>';
+  const done = Object.keys(arg.ans || {}).length === x.qs.length, ok = x.qs.filter((q, k) => (arg.ans || {})[k] === q.a).length;
+  if (done) h += '<p class="txres">' + (ok === x.qs.length ? '🎉 ' : '') + ok + ' / ' + x.qs.length + ' bonnes réponses</p>';
+  h += '<div class="rd-nav"><button class="btn" data-tx="">← Textes</button>' + (next ? '<button class="btn primary" data-tx="' + next.id + '" data-txdone="' + x.id + '">Texte suivant →<small>' + esc(next.title) + '</small></button>' : '<button class="btn primary" data-tx="" data-txdone="' + x.id + '">✓ Terminé</button>') + '</div></article>';
+  return h;
+}
+function txMarkRead(id) { S.tlu = S.tlu || {}; if (!S.tlu[id]) { S.tlu[id] = today(); save(); } }
+
+/* --- test de niveau */
+const LVLN = ['A1', 'A2', 'B1', 'B2', 'C1'];
+function ltest(arg) {
+  arg = arg || {};
+  if (!arg.order) { arg.order = LTEST.map((q, i) => i); arg.ch = LTEST.map(q => shuffle([q.a].concat(q.d))); arg.ans = []; arg.i = 0; view.arg = arg; }
+  if (arg.i >= LTEST.length) return ltestResult(arg);
+  const k = arg.i, q = LTEST[k];
+  const isGap = /___/.test(q.q);
+  return '<div class="sess" style="--t:#B4521E"><div class="sess-top"><button class="link" data-nav="stats">✕ Arrêter</button>' + bar(k / LTEST.length, '#B4521E') + '<span class="muted">' + (k + 1) + ' / ' + LTEST.length + '</span></div>' +
+    '<div class="qcard"><p class="eyebrow">🎯 Test de niveau</p><h2 class="q">' + (isGap ? esc(q.q).replace('___', '<span class="blank">___</span>') : esc(q.q)) + '</h2>' +
+    '<div class="choices">' + arg.ch[k].map((c, j) => '<button class="choice" data-lt="' + esc(c) + '"><kbd>' + (j + 1) + '</kbd><span>' + esc(c) + '</span></button>').join('') + '</div>' +
+    '<p class="muted small ltskip"><button class="link" data-lt="?">Je ne sais pas</button></p></div></div>';
+}
+function ltestLevel(ans) {
+  const sc = LVLN.map(L => LTEST.filter((q, i) => q.lvl === L && ans[i] === q.a).length);
+  let lv = -1; for (let i = 0; i < LVLN.length; i++) { if (sc[i] >= 3) lv = i; else break; }
+  return { sc, lv };
+}
+function ltestResult(arg) {
+  const { sc, lv } = ltestLevel(arg.ans), name = lv < 0 ? 'Débutant (A1 en cours)' : LVLN[lv] + (lv < 4 ? ' (en route vers ' + LVLN[lv + 1] + ')' : '');
+  if (!arg.saved) { S.opts.test = { day: today(), lv }; save(); arg.saved = true; }
+  const nextL = LVLN[Math.min(lv + 1, 4)];
+  const todo = ORDER.filter(f => f.theme.lvl === nextL && !ficheStarted(f) && !isRead(f)).slice(0, 4);
+  const gram = [...new Set(LTEST.map((q, i) => q.g && arg.ans[i] !== q.a ? q.g : '').filter(Boolean))].map(id => GF.find(x => x.id === id)).filter(Boolean).slice(0, 5);
+  let h = '<section class="hero end"><div><p class="eyebrow">🎯 Résultat du test</p><h1>Niveau estimé : ' + name + '</h1><div class="ltbars">' +
+    LVLN.map((L, i) => '<div class="ltb"><span>' + L + '</span>' + bar(sc[i] / 4, sc[i] >= 3 ? '#2F7D6B' : '#B4521E') + '<span class="muted">' + sc[i] + ' / 4</span></div>').join('') + '</div>' +
+    '<p class="lead">Un niveau compte comme acquis avec au moins 3 bonnes réponses sur 4 (et les niveaux en dessous aussi).</p>';
+  if (gram.length) h += '<h3>Grammaire à revoir</h3><div class="tlist">' + gram.map(g => '<button class="trow gfrow" data-gf="' + g.id + '"><span class="tr-ico" style="background:#6E56CF">' + g.icon + '</span><b>' + esc(g.title) + '<small>' + esc(g.sub) + '</small></b><small></small></button>').join('') + '</div>';
+  if (todo.length) h += '<h3>Fiches conseillées (' + nextL + ')</h3><div class="tlist">' + todo.map(f => '<button class="trow" data-fiche="' + f.id + '"><span class="tr-ico" style="background:' + f.theme.color + '">' + f.theme.icon + '</span><b>' + esc(f.title) + '<small>' + esc(f.theme.name) + '</small></b><small></small></button>').join('') + '</div>';
+  h += '<div class="actions">' + (lv >= 0 ? '<button class="btn primary" data-act="lt-known" data-l="' + lv + '">Marquer les fiches jusqu\'à ' + LVLN[lv] + ' comme connues</button>' : '') + '<button class="btn" data-nav="home">Retour à l\'accueil</button><button class="btn" data-act="lt-again">Refaire le test</button></div>' +
+    (lv >= 0 ? '<p class="muted small">« Marquer comme connues » place les exercices de ces fiches en révision éclair dans 10 à 30 jours, pour vérifier.</p>' : '') + '</div></section>';
+  return h;
+}
+function ltestCard() {
+  const t = S.opts.test;
+  return '<div class="gxbox lt"><div><b>🎯 Test de niveau</b><small>' + (t ? 'Dernier résultat : ' + (t.lv < 0 ? 'débutant' : LVLN[t.lv]) + ' · ' + dayIso(t.day) : '20 questions, 5 minutes : de A1 à C1') + '</small></div><button class="btn primary" data-act="lt-start">' + (t ? 'Refaire' : 'Faire le test') + '</button></div>';
+}
+
+/* --- évènements */
+document.addEventListener('click', e => {
+  const sp = e.target.closest('[data-ts]');
+  if (sp) { const fr = document.querySelector('[data-tf="' + sp.dataset.ts + '"]'); if (fr) { fr.classList.toggle('on'); sp.classList.toggle('on'); } e.stopImmediatePropagation(); return; }
+  const b = e.target.closest('button'); if (!b) return;
+  const stop = () => e.stopImmediatePropagation();
+  if (b.dataset.gx) { const f = GXBY[b.dataset.gx]; setSession(f.cards, f.cards.length, f.title); stop(); return; }
+  if (b.dataset.vx) { setSession(VCARDS, 8, 'Verbes irréguliers'); stop(); return; }
+  if (b.dataset.vxg != null) { const f = VSETS[+b.dataset.vxg]; setSession(f.cards, 8, f.title); stop(); return; }
+  if (b.dataset.tx != null) { if (b.dataset.txdone) txMarkRead(b.dataset.txdone); go('texts', b.dataset.tx ? { id: b.dataset.tx } : {}); window.scrollTo(0, 0); stop(); return; }
+  if (b.dataset.act === 'txall') { S.opts.txAll = !S.opts.txAll; save(); const y = window.scrollY; render(); window.scrollTo(0, y); stop(); return; }
+  if (b.dataset.txa != null) {
+    const a = view.arg; a.ans = a.ans || {}; if (a.ans[b.dataset.txa] != null) return; a.ans[b.dataset.txa] = b.dataset.v;
+    if (Object.keys(a.ans).length === TBYID[a.id].qs.length) txMarkRead(a.id);
+    const y = window.scrollY; render(); window.scrollTo(0, y); stop(); return;
+  }
+  if (b.dataset.act === 'lt-start' || b.dataset.act === 'lt-again') { go('ltest', {}); stop(); return; }
+  if (b.dataset.lt != null && view.name === 'ltest') { const a = view.arg; a.ans[a.i] = b.dataset.lt; a.i++; render(); window.scrollTo(0, 0); stop(); return; }
+  if (b.dataset.act === 'lt-known') {
+    const lv = +b.dataset.l; THEMES.filter(t => LVLN.indexOf(t.lvl) <= lv).forEach(t => t.fiches.forEach(markKnown));
+    S.opts.level = S.opts.level || 'test'; save(); toast('Fiches jusqu\'à ' + LVLN[lv] + ' marquées comme connues'); go('home'); stop(); return;
+  }
+  if (b.dataset.dadd != null) {
+    const d = DICT[+b.dataset.dadd], t = today();
+    ['s', 'f'].forEach(x => { const id = d.ref[0] + '-' + x + d.ref[1]; if (CARDS[id] && !S.cards[id]) S.cards[id] = { b: 0, due: t, n: 0, ok: 0, last: t }; });
+    save(); toast('Ajouté : il revient dans ta séance du jour'); dRefresh(true); stop(); return;
+  }
+}, true);
+/* sur un clavier : 1-4 pour répondre au test de niveau */
+document.addEventListener('keydown', e => {
+  if (view.name !== 'ltest' || !/^[1-4]$/.test(e.key)) return;
+  const c = document.querySelectorAll('.choice[data-lt]')[+e.key - 1]; if (c) { c.click(); e.preventDefault(); }
 });
 
 /* Synchro GitHub (PC + iPhone) : même principe que SY Culture. La progression est rangée dans le gist secret
@@ -19339,7 +24070,8 @@ function mergeS(a, b) {
   Object.keys(b.days || {}).forEach(d => { const x = m.days[d], y = b.days[d]; if (!x || y.n > x.n) m.days[d] = y; });
   Object.keys(b.fiches || {}).forEach(f => { if (!m.fiches[f]) m.fiches[f] = b.fiches[f]; });
   if (a.lu || b.lu) { m.lu = Object.assign({}, b.lu, a.lu); Object.entries(b.lu || {}).forEach(([id, d]) => { if (m.lu[id] > d) m.lu[id] = d; }); }   /* fiches lues : réunion (1re lecture) */
-  if (a.glu || b.glu) m.glu = Object.assign({}, b.glu, a.glu);   /* fiches de grammaire lues : réunion */
+  if (a.glu || b.glu) m.glu = Object.assign({}, b.glu, a.glu);
+  if (a.tlu || b.tlu) m.tlu = Object.assign({}, b.tlu, a.tlu);   /* textes lus : réunion */   /* fiches de grammaire lues : réunion */
   const bt = b.tmod || {};
   Object.keys(bt).forEach(k => { if (!(m.tmod[k] >= bt[k])) { m.tmod[k] = bt[k]; if (b.tiles && b.tiles[k]) m.tiles[k] = b.tiles[k]; else delete m.tiles[k]; } });
   Object.keys(m.tmod).forEach(k => { if (!m.tiles[k] || m.tiles[k] === 'out') { const i = k.lastIndexOf('-'); ['s', 'f', 'g', 'p', 't'].forEach(x => { delete m.cards[k.slice(0, i) + '-' + x + k.slice(i + 1)]; }); } });
