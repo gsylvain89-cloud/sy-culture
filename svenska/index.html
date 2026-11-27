@@ -204,11 +204,29 @@ html{overflow-x:hidden}body{overflow-x:clip}
 
 /* numéro de version (lu dans __init__.py au build) */
 .ver { display: inline-block; margin-left: 7px; padding: 1px 6px; border-radius: 6px; background: rgba(255,255,255,.18); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: .02em; vertical-align: middle; white-space: nowrap; }
+
+/* tuiles : lecture du mot (coupée par défaut) et barre du mot sélectionné, compacte */
+.tilehead { position: relative; }
+.tspeak { position: absolute; top: 10px; right: 12px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(255,255,255,.45); background: rgba(255,255,255,.18); font-size: 18px; line-height: 1; padding: 0; }
+.tspeak[aria-pressed="true"] { background: #fff; }
+.tilebar { padding: 8px 10px; margin: 8px 0; display: grid; gap: 6px; }
+.tb-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tb-w { font-weight: 700; font-size: 17px; white-space: nowrap; }
+.tb-fr { flex: 1; min-width: 0; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tilebar .play { width: 28px; height: 28px; font-size: 11px; }
+.tb-info { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.tb-acts { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 6px; }
+.tb-acts:not(:has(.reset)) { grid-template-columns: 1fr 1fr 1fr; }
+.tb-btn { border: 1px solid var(--line); background: #fff; border-radius: 9px; padding: 6px 4px; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.tb-btn.learn.on { background: #F5B800; border-color: #F5B800; color: #3d2f00; }
+.tb-btn.known.on { background: #46A758; border-color: #46A758; color: #fff; }
+.tb-btn.out.on { background: #e9e6da; }
+.tb-btn.reset { padding: 6px 10px; color: var(--muted); }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.6.1 · build du 27/11 à 15:21">v0.6.1</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.6.2 · build du 27/11 à 15:26">v0.6.2</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -2627,7 +2645,7 @@ function tiles(arg) {
 function tileSet(w) {
   const sel = view.arg.sel, flip = view.arg.flip || {}, hideKnown = !!view.arg.hide;
   const n = w.vocab.length, nl = w.vocab.filter((v, k) => tileState(w.id + '-' + k) === 'learn').length;
-  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button><div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div><div class="tilegrid">';
+  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div><div class="tilegrid">';
   w.vocab.forEach((v, k) => {
     const s = tileState(w.id + '-' + k);
     if (s === 'out' || (hideKnown && s === 'known')) return;
@@ -2637,8 +2655,12 @@ function tileSet(w) {
   h += '</div>';
   if (sel != null) {
     const v = w.vocab[sel], s = tileState(w.id + '-' + sel);
-    h += '<div class="tilebar"><b>' + gBadge(v.g) + esc(v.sv) + '</b> · ' + esc(v.fr) + ' ' + playBtn(v.sv) + (v.g && v.pl ? '<p class="muted small">pluriel : <b>' + esc(v.pl) + '</b></p>' : '') + (v.forms ? '<p class="muted small">' + esc(v.forms) + '</p>' : '') + (v.note ? '<p class="muted small">' + esc(v.note) + '</p>' : '') + '<div class="actions">' +
-      '<button class="btn' + (s === 'learn' ? ' primary' : '') + '" data-act="tset" data-s="learn">À apprendre</button><button class="btn' + (s === 'known' ? ' primary' : '') + '" data-act="tset" data-s="known">Je connais</button><button class="btn" data-act="tset" data-s="out">Exclure</button>' + (s ? '<button class="link" data-act="tset" data-s="">Réinitialiser</button>' : '') + '</div></div>';
+    const info = [v.g && v.pl ? 'pl. <b>' + esc(v.pl) + '</b>' : '', v.forms ? esc(v.forms) : '', v.note ? esc(v.note) : ''].filter(Boolean).join(' · ');
+    const tb = (st8, label, cls) => '<button class="tb-btn ' + cls + (s === st8 ? ' on' : '') + '" data-act="tset" data-s="' + st8 + '">' + label + '</button>';
+    h += '<div class="tilebar"><div class="tb-row"><span class="tb-w">' + gBadge(v.g) + esc(v.sv) + '</span><span class="tb-fr">' + esc(v.fr) + '</span>' + playBtn(v.sv) + '</div>' +
+      (info ? '<div class="tb-info">' + info + '</div>' : '') +
+      '<div class="tb-acts">' + tb('learn', 'À apprendre', 'learn') + tb('known', 'Je connais', 'known') + tb('out', 'Exclure', 'out') +
+      (s ? '<button class="tb-btn reset" data-act="tset" data-s="" title="Réinitialiser" aria-label="Réinitialiser">↺</button>' : '') + '</div></div>';
   }
   const hidden = w.vocab.filter((v, k) => tileState(w.id + '-' + k) === 'out').length;
   h += '<div class="actions"><button class="btn primary" data-act="tlearn" data-id="' + w.id + '">' + (nl ? 'Réviser mes ' + plural(nl, 'mot') + ' à apprendre' : 'Tout apprendre (' + n + ')') + '</button><button class="btn" data-act="tflip">Tout retourner</button><button class="btn" data-act="thide">' + (hideKnown ? 'Afficher les mots connus' : 'Masquer les mots connus') + '</button>' + (hidden ? '<button class="link" data-act="trestore">Remettre les ' + hidden + ' exclus</button>' : '') + '</div>';
@@ -2858,7 +2880,7 @@ document.addEventListener('click', e => {
   if (b.dataset.nav) { const to = b.dataset.nav; if (view.name === 'session' && sess && sess.results.length && !confirm('Arrêter la séance ? Les réponses déjà données sont gardées.')) return; go(to); return; }
   if (b.dataset.theme) { go('theme', b.dataset.theme); return; }
   if (b.dataset.tset) { go('tiles', { set: b.dataset.tset }); return; }
-  if (b.dataset.tile != null) { const k = +b.dataset.tile, w = WBY[view.arg.set]; view.arg.flip = view.arg.flip || {}; view.arg.flip[k] = !view.arg.flip[k]; view.arg.sel = k; speak(w.vocab[k].sv); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+  if (b.dataset.tile != null) { const k = +b.dataset.tile, w = WBY[view.arg.set]; view.arg.flip = view.arg.flip || {}; view.arg.flip[k] = !view.arg.flip[k]; view.arg.sel = k; if (S.opts.tileSpeak) speak(w.vocab[k].sv); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
   if (b.dataset.fiche) { go('fiche', b.dataset.fiche); return; }
   if (b.dataset.rdt) { S.opts.rdT = b.dataset.rdt; save(); go('lire'); return; }
   if (b.dataset.chip != null) {
@@ -2873,6 +2895,7 @@ document.addEventListener('click', e => {
   else if (a === 'extra') startSession('extra');
   else if (a === 'learn') startSession('fiche', b.dataset.id);
   else if (a === 'tset') { const w = WBY[view.arg.set]; setTile(w, view.arg.sel, b.dataset.s); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  else if (a === 'tspeak') { S.opts.tileSpeak = !S.opts.tileSpeak; save(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   else if (a === 'tflip') { const w = WBY[view.arg.set], f = view.arg.flip || {}, all = w.vocab.every((v, k) => f[k]); view.arg.flip = {}; if (!all) w.vocab.forEach((v, k) => { view.arg.flip[k] = true; }); render(); }
   else if (a === 'thide') { view.arg.hide = !view.arg.hide; render(); }
   else if (a === 'trestore') { const w = WBY[view.arg.set]; w.vocab.forEach((v, k) => { if (tileState(w.id + '-' + k) === 'out') setTile(w, k, ''); }); render(); }
