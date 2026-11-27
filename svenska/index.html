@@ -272,11 +272,28 @@ html{overflow-x:hidden}body{overflow-x:clip}
 }
 .tile.long { font-size: .92rem; } .tile.long span { -webkit-line-clamp: 3; line-height: 1.1; }
 @media (max-width: 700px) { .tile.long, .tile.flip.long { font-size: 12px; } }
+
+/* tuiles : couleurs lisibles. Genre = couleur de l'article (en bleu, ett orange) ; état = fond de la tuile (jaune à apprendre ★, vert connu ✓) ; côté français = fond bleu-gris, italique */
+.tile, .tile.g-en, .tile.g-ett, .tile.s-learn, .tile.s-known, .tile.s-done { position: relative; background: #fff; border: 1px solid #d9d6c8; box-shadow: 0 2px 4px rgba(0,0,0,.08); color: #222; }
+.tile .art { font-style: normal; font-weight: 700; font-size: .78em; }
+.art.a-en { color: var(--en); } .art.a-ett { color: var(--ett); }
+.tile.s-learn { background: #fff4cc; border-color: #f0cf5a; }
+.tile.s-known, .tile.s-done { background: #e6f4e6; border-color: #9fd09f; color: #3f6b3f; }
+.tile.flip, .tile.flip.s-learn, .tile.flip.s-known { background: #eef2f7; border: 1px dashed #9fb0c4; color: #33465c; font-style: italic; }
+.tile.sel { outline: 3px solid #1F5F99; outline-offset: 1px; }
+.tmark { position: absolute; top: 3px; right: 6px; font-size: 11px; line-height: 1; font-style: normal; color: #b38600; }
+.tile.s-known .tmark, .tile.s-done .tmark { color: #2f8a3a; }
+.tlegend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: -8px 2px 10px; font-size: 12px; color: var(--muted); }
+.tlegend .art { font-style: normal; font-weight: 700; }
+.tlegend .lg { display: inline-grid; place-items: center; min-width: 18px; height: 16px; padding: 0 3px; border-radius: 4px; font-size: 10px; margin-right: 3px; }
+.lg.l-learn { background: #fff4cc; color: #b38600; border: 1px solid #f0cf5a; }
+.lg.l-known { background: #e6f4e6; color: #2f8a3a; border: 1px solid #9fd09f; }
+.lg.l-fr { background: #eef2f7; color: #33465c; border: 1px dashed #9fb0c4; font-style: italic; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.2 · build du 27/11 à 17:09">v0.7.2</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.3 · build du 27/11 à 17:14">v0.7.3</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -4151,12 +4168,14 @@ function tiles(arg) {
 function tileSet(w) {
   const sel = view.arg.sel, flip = view.arg.flip || {}, hideKnown = !!view.arg.hide;
   const n = w.vocab.length, nl = w.vocab.filter((v, k) => tst(w, k) === 'learn').length;
-  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div><div class="tilegrid">';
+  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div>' + '<p class="tlegend"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre du mot</span><span><b class="lg l-learn">★</b> à apprendre</span><span><b class="lg l-known">✓</b> connu</span><span><b class="lg l-fr">FR</b> côté français</span></p>' + '<div class="tilegrid">';
   w.vocab.forEach((v, k) => {
     const s = tst(w, k);
     if (s === 'out' || (hideKnown && s === 'known')) return;
     const c = tcard(w, k), done = s === 'learn' && c && c.b >= MASTER;
-    h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + ((flip[k] ? v.fr : svFull(v)).length > 15 ? ' long' : '') + '" data-tile="' + k + '"><span>' + esc(flip[k] ? v.fr : svFull(v)) + '</span></button>';
+    h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + ((flip[k] ? v.fr : svFull(v)).length > 15 ? ' long' : '') + '" data-tile="' + k + '">' +
+      (s === 'learn' || s === 'known' ? '<b class="tmark">' + (s === 'known' || done ? '✓' : '★') + '</b>' : '') +
+      '<span>' + (flip[k] ? esc(v.fr) : (v.g ? '<i class="art a-' + v.g + '">' + v.g + '</i> ' : '') + esc(v.sv)) + '</span></button>';
   });
   h += '</div>';
   if (sel != null) {
