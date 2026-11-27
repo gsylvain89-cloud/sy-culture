@@ -316,11 +316,27 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .tilehead .tbig { font-size: 1.5rem; order: 1; flex: none; }
 .tilehead h1 { margin: 0; font-size: 1.15rem; order: 2; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tilehead .tspeak { position: static; order: 3; width: 34px; height: 34px; font-size: 16px; flex: none; }
+
+/* niveaux façon Nemo : rouge (à apprendre, difficile) → bleu foncé (connu, facile), en trait à gauche de la tuile */
+.tile.s-learn, .tile.s-known, .tile.s-done { background: #fff; border-color: #d9d6c8; color: #222; }
+.tile.has-lv { box-shadow: inset 7px 0 0 var(--lv), 0 2px 4px rgba(0,0,0,.08); }
+.tile.flip.has-lv { box-shadow: inset 7px 0 0 var(--lv); }
+.drow.s-learn, .drow.s-known { background: #fff; } .drow.s-known .dl { color: var(--blue); }
+.drow.has-lv { box-shadow: inset 6px 0 0 var(--lv); }
+.lvp { display: flex; align-items: center; gap: 8px; background: #3a3532; border-radius: 14px; padding: 6px 8px; }
+.lv-out { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; background: none; color: #fff; font-size: 17px; line-height: 1; padding: 0; }
+.lv-out.on { background: #fff; color: #3a3532; }
+.lvbar { flex: 1; display: grid; grid-template-columns: repeat(6, 1fr); height: 32px; border-radius: 16px; overflow: hidden; }
+.lvbar .lv { border: 0; background: var(--c); position: relative; padding: 0; }
+.lvbar .lv.on::after { content: ''; position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--c); border: 3px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,.35); }
+.lvlab { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin: -2px 4px 0; }
+.lvgrad { display: inline-block; width: 46px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #e0342a, #f28c28, #f2c94c, #9fd9df, #4f8fd0, #1d3f8f); vertical-align: middle; margin-right: 4px; }
+.tb-reset { font-size: 13px; justify-self: start; padding: 2px 4px; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.5 · build du 27/11 à 18:58">v0.7.5</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.8.0 · build du 27/11 à 19:04">v0.8.0</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -4152,6 +4168,24 @@ function setTile(w, k, state) {
   });
   save();
 }
+/* niveau d'un mot (façon Nemo) : 1 rouge = à apprendre, difficile … 6 bleu foncé = connu, facile.
+   Il se lit dans les boîtes de ses cartes (il suit donc les révisions) ; le choisir place ses cartes dans la boîte correspondante. */
+const LV_COL = ['', '#e0342a', '#f28c28', '#f2c94c', '#9fd9df', '#4f8fd0', '#1d3f8f'];
+const LV_BOX = [0, 0, 1, 2, 3, 4, 6];
+function tileLevel(W, K) {
+  const s = tileState(W.id + '-' + K); if (!s || s === 'out') return 0;
+  const bs = tileCards(W, K).map(id => S.cards[id]).filter(Boolean).map(c => c.b); if (!bs.length) return s === 'known' ? 6 : 1;
+  const b = Math.min(...bs); return b >= 6 ? 6 : b >= 4 ? 5 : b + 1;
+}
+function setTileLevel(W, K, L) {
+  setTile(W, K, L >= 5 ? 'known' : 'learn');
+  const t = today(), B = LV_BOX[L];
+  tileCards(W, K).forEach(id => { S.cards[id] = Object.assign(S.cards[id] || { n: 0, ok: 0 }, { b: B, due: t + (L === 1 ? 0 : INTERVALS[B]), last: t, known: L >= 5 }); });
+  save();
+}
+const lvPicker = (L, s, attr) => '<div class="lvp"><button class="lv-out' + (s === 'out' ? ' on' : '') + '" ' + attr('out') + ' title="Exclure" aria-label="Exclure">⊖</button><div class="lvbar">' +
+  [1, 2, 3, 4, 5, 6].map(i => '<button class="lv' + (L === i ? ' on' : '') + '" style="--c:' + LV_COL[i] + '" ' + attr(i) + ' aria-label="Niveau ' + i + ' sur 6"></button>').join('') + '</div></div>' +
+  '<div class="lvlab"><span>à apprendre · difficile</span><span>connu · facile</span></div>';
 /* « Mots du jour » : N mots tirés au hasard parmi les tuiles jamais marquées ni travaillées ; le tirage est gardé pour la journée (S.daily) */
 const dailyN = () => S.opts.dailyN || 10;
 const tileSeen = wid => { const i = wid.lastIndexOf('-'), w = WBY[wid.slice(0, i)]; return !!tileState(wid) || (w && tileCards(w, +wid.slice(i + 1)).some(id => S.cards[id])); };
@@ -4212,13 +4246,12 @@ function tiles(arg) {
 function tileSet(w) {
   const sel = view.arg.sel, flip = view.arg.flip || {}, hideKnown = !!view.arg.hide;
   const n = w.vocab.length, nl = w.vocab.filter((v, k) => tst(w, k) === 'learn').length;
-  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div>' + '<p class="tlegend"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre du mot</span><span><b class="lg l-learn">★</b> à apprendre</span><span><b class="lg l-known">✓</b> connu</span><span><b class="lg l-fr">FR</b> côté français</span></p>' + '<div class="tilegrid">';
+  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div>' + '<p class="tlegend"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre du mot</span><span><b class="lvgrad"></b> à apprendre → connu</span><span><b class="lg l-fr">FR</b> côté français</span></p>' + '<div class="tilegrid">';
   w.vocab.forEach((v, k) => {
-    const s = tst(w, k);
+    const s = tst(w, k), [TW, TK] = tref(w, k), L = tileLevel(TW, TK);
     if ((s === 'out' && w.id !== 'v-out') || (hideKnown && s === 'known')) return;
     const c = tcard(w, k), done = s === 'learn' && c && c.b >= MASTER;
-    h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + ((flip[k] ? v.fr : svFull(v)).length > 15 ? ' long' : '') + '" data-tile="' + k + '">' +
-      (s === 'learn' || s === 'known' ? '<b class="tmark">' + (s === 'known' || done ? '✓' : '★') + '</b>' : '') +
+    h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + ((flip[k] ? v.fr : svFull(v)).length > 15 ? ' long' : '') + (L ? ' has-lv" style="--lv:' + LV_COL[L] : '') + '" data-tile="' + k + '">' +
       '<span>' + (flip[k] ? esc(v.fr) : (v.g ? '<i class="art a-' + v.g + '">' + v.g + '</i> ' : '') + esc(v.sv)) + '</span></button>';
   });
   h += '</div>';
@@ -4228,8 +4261,8 @@ function tileSet(w) {
     const tb = (st8, label, cls) => '<button class="tb-btn ' + cls + (s === st8 ? ' on' : '') + '" data-act="tset" data-s="' + st8 + '">' + label + '</button>';
     h += '<div class="tilebar"><div class="tb-row"><span class="tb-w">' + gBadge(v.g) + esc(v.sv) + '</span><span class="tb-fr">' + esc(v.fr) + '</span>' + playBtn(v.sv) + '</div>' +
       (info ? '<div class="tb-info">' + info + '</div>' : '') +
-      '<div class="tb-acts">' + tb('learn', 'À apprendre', 'learn') + tb('known', 'Je connais', 'known') + tb('out', 'Exclure', 'out') +
-      (s ? '<button class="tb-btn reset" data-act="tset" data-s="" title="Réinitialiser" aria-label="Réinitialiser">↺</button>' : '') + '</div></div>';
+      lvPicker(tileLevel(...tref(w, sel)), s, x => 'data-act="tlv" data-lv="' + x + '"') +
+      (s ? '<button class="link tb-reset" data-act="tset" data-s="">↺ Remettre en attente</button>' : '') + '</div>';
   }
   const hidden = w.vocab.filter((v, k) => tst(w, k) === 'out').length;
   h += '<div class="actions"><button class="btn primary" data-act="tlearn" data-id="' + w.id + '">' + (nl ? 'Réviser mes ' + plural(nl, 'mot') + ' à apprendre' : 'Tout apprendre (' + n + ')') + '</button>' + (w.id === 'daily' ? '<button class="btn" data-act="dmore">🎲 Encore ' + dailyN() + ' mots</button>' : '') + '<button class="btn" data-act="tflip">Tout retourner</button><button class="btn" data-act="thide">' + (hideKnown ? 'Afficher les mots connus' : 'Masquer les mots connus') + '</button>' + (hidden ? '<button class="link" data-act="trestore">Remettre les ' + hidden + ' exclus</button>' : '') + '</div>';
@@ -4264,12 +4297,12 @@ function dRow(e, mode, open) {
   const s = e.tile ? tileState(e.tile) : '';
   /* mêmes couleurs que les tuiles : article en couleur (en bleu, ett orange), fond jaune ★ à apprendre, vert ✓ connu */
   const svh = (e.v.g ? '<i class="art a-' + e.v.g + '">' + e.v.g + '</i> ' : '') + esc(e.v.sv), left = mode === 'fr' ? esc(e.fr) : svh, right = mode === 'fr' ? svh : esc(e.fr);
-  const mark = s === 'learn' ? '<b class="tmark">★</b>' : s === 'known' ? '<b class="tmark">✓</b>' : '';
-  let h = '<button class="drow' + (s ? ' s-' + s : '') + (open ? ' open' : '') + '" data-dk="' + e.i + '">' + mark + '<span class="dl' + (mode === 'fr' ? ' fr' : '') + '">' + left + '</span><span class="dr' + (mode === 'fr' ? '' : ' fr') + '">' + right + '</span></button>';
+  const WK = e.tile ? [WBY[e.tile.slice(0, e.tile.lastIndexOf('-'))], +e.tile.slice(e.tile.lastIndexOf('-') + 1)] : null, L = WK ? tileLevel(...WK) : 0;
+  let h = '<button class="drow' + (s ? ' s-' + s : '') + (open ? ' open' : '') + (L ? ' has-lv" style="--lv:' + LV_COL[L] : '') + '" data-dk="' + e.i + '">' + '<span class="dl' + (mode === 'fr' ? ' fr' : '') + '">' + left + '</span><span class="dr' + (mode === 'fr' ? '' : ' fr') + '">' + right + '</span></button>';
   if (open) {
     const v = e.v, info = [v.g && v.pl ? 'pluriel : <b>' + esc(v.pl) + '</b>' : '', v.forms ? 'formes : <b>' + esc(v.forms) + '</b>' : '', v.note ? esc(v.note) : ''].filter(Boolean).join('<br>');
     h += '<div class="dopen"><div class="tb-row"><span class="tb-info">' + (info || esc(v.fr)) + '</span>' + playBtn(v.sv) + '</div>' +
-      (e.tile ? '<div class="tb-acts">' + [['learn', 'À apprendre'], ['known', 'Je connais'], ['out', 'Exclure']].map(([k, l]) => '<button class="tb-btn ' + k + (s === k ? ' on' : '') + '" data-dset="' + k + '" data-dk="' + e.i + '">' + l + '</button>').join('') + (s ? '<button class="tb-btn reset" data-dset="" data-dk="' + e.i + '" title="Réinitialiser">↺</button>' : '') + '</div>' : '') + '</div>';
+      (e.tile ? lvPicker(L, s, x => 'data-dlv="' + x + '" data-dk="' + e.i + '"') + (s ? '<button class="link tb-reset" data-dset="" data-dk="' + e.i + '">↺ Remettre en attente</button>' : '') : '') + '</div>';
   }
   return h;
 }
@@ -4292,7 +4325,7 @@ function dIndex() {
 function words() {
   const a = view.arg || {}, mode = a.mode || 'sv';
   return '<div class="dict"><div class="dhead"><input type="search" class="search" id="dq" placeholder="Chercher en suédois ou en français" value="' + esc(a.q || '') + '" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">' +
-    '<div class="dseg"><button data-dmode="sv"' + (mode === 'sv' ? ' class="on"' : '') + '>Suédois</button><button data-dmode="fr"' + (mode === 'fr' ? ' class="on"' : '') + '>Français</button></div><p class="dcount">' + plural(dict().length, 'mot') + '<span class="tlegend dleg"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre</span><span><b class="lg l-learn">★</b> à apprendre</span><span><b class="lg l-known">✓</b> connu</span></span></p></div>' +
+    '<div class="dseg"><button data-dmode="sv"' + (mode === 'sv' ? ' class="on"' : '') + '>Suédois</button><button data-dmode="fr"' + (mode === 'fr' ? ' class="on"' : '') + '>Français</button></div><p class="dcount">' + plural(dict().length, 'mot') + '<span class="tlegend dleg"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre</span><span><b class="lvgrad"></b> à apprendre → connu</span></span></p></div>' +
     '<div id="dlist">' + dList() + '</div><nav class="dindex" id="dindex" aria-label="Lettres">' + dIndex() + '</nav></div>';
 }
 function dRefresh(keepScroll) {
@@ -4302,6 +4335,7 @@ document.addEventListener('click', e => {
   if (view.name !== 'words') return;
   const b = e.target.closest('button'); if (!b || b.dataset.say != null) return;
   const a = view.arg = view.arg || {};
+  if (b.dataset.dlv != null) { const d = DICT[+b.dataset.dk], i = d.tile.lastIndexOf('-'), W = WBY[d.tile.slice(0, i)], K = +d.tile.slice(i + 1); if (b.dataset.dlv === 'out') setTile(W, K, 'out'); else setTileLevel(W, K, +b.dataset.dlv); dRefresh(true); e.stopImmediatePropagation(); return; }
   if (b.dataset.dset != null) { const d = DICT[+b.dataset.dk], i = d.tile.lastIndexOf('-'); setTile(WBY[d.tile.slice(0, i)], +d.tile.slice(i + 1), b.dataset.dset); dRefresh(true); e.stopImmediatePropagation(); return; }
   if (b.dataset.dk != null) { a.open = a.open === +b.dataset.dk ? null : +b.dataset.dk; dRefresh(true); e.stopImmediatePropagation(); return; }
   if (b.dataset.dmode) { a.mode = b.dataset.dmode; a.open = null; render(); window.scrollTo(0, 0); e.stopImmediatePropagation(); return; }
@@ -4524,6 +4558,7 @@ document.addEventListener('click', e => {
   else if (a === 'extra') startSession('extra');
   else if (a === 'learn') startSession('fiche', b.dataset.id);
   else if (a === 'tset') { const [W, K] = tref(curSet(), view.arg.sel); setTile(W, K, b.dataset.s); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  else if (a === 'tlv') { const [W, K] = tref(curSet(), view.arg.sel); if (b.dataset.lv === 'out') setTile(W, K, 'out'); else setTileLevel(W, K, +b.dataset.lv); const y = window.scrollY; render(); window.scrollTo(0, y); }
   else if (a === 'tspeak') { S.opts.tileSpeak = !S.opts.tileSpeak; save(); const y = window.scrollY; render(); window.scrollTo(0, y); }
   else if (a === 'dmore') { const d = S.daily; d.refs = dailyDraw(dailyN(), d.refs); save(); render(); }
   else if (a === 'tflip') { const w = curSet(), f = view.arg.flip || {}, all = w.vocab.every((v, k) => f[k]); view.arg.flip = {}; if (!all) w.vocab.forEach((v, k) => { view.arg.flip[k] = true; }); render(); }
