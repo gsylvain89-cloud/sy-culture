@@ -289,11 +289,21 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .lg.l-learn { background: #fff4cc; color: #b38600; border: 1px solid #f0cf5a; }
 .lg.l-known { background: #e6f4e6; color: #2f8a3a; border: 1px solid #9fd09f; }
 .lg.l-fr { background: #eef2f7; color: #33465c; border: 1px dashed #9fb0c4; font-style: italic; }
+
+/* Rechercher : mêmes couleurs que les tuiles */
+.drow { position: relative; border-left: 0; }
+.drow .art { font-style: normal; font-weight: 700; font-size: .8em; margin-right: 4px; }
+.drow.s-learn { background: #fff4cc; } .drow.s-known { background: #e6f4e6; } .drow.s-known .dl { color: #2f7a3a; }
+.drow .tmark { top: 50%; right: 8px; transform: translateY(-50%); font-size: 13px; }
+.drow.s-known .tmark { color: #2f8a3a; }
+.drow.open.s-learn, .dopen { background: #fffaf0; }
+.dcount { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.tlegend.dleg { margin: 0; font-size: 12px; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.3 · build du 27/11 à 17:14">v0.7.3</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.4 · build du 27/11 à 18:53">v0.7.4</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -4217,8 +4227,11 @@ function dict() {
 }
 const dLetter = (e, mode) => { let c = mode === 'fr' ? (e.fk[0] || '#').normalize('NFD')[0] : (e.v.sv[0] || '#'); if (/[œŒ]/.test(c)) c = 'O'; return /[0-9#]/.test(c) ? '#' : c.toUpperCase(); };
 function dRow(e, mode, open) {
-  const s = e.tile ? tileState(e.tile) : '', left = mode === 'fr' ? esc(e.fr) : gBadge(e.v.g) + esc(e.v.sv), right = mode === 'fr' ? gBadge(e.v.g) + esc(e.v.sv) : esc(e.fr);
-  let h = '<button class="drow' + (s ? ' s-' + s : '') + (open ? ' open' : '') + '" data-dk="' + e.i + '"><span class="dl' + (mode === 'fr' ? ' fr' : '') + '">' + left + '</span><span class="dr' + (mode === 'fr' ? '' : ' fr') + '">' + right + '</span></button>';
+  const s = e.tile ? tileState(e.tile) : '';
+  /* mêmes couleurs que les tuiles : article en couleur (en bleu, ett orange), fond jaune ★ à apprendre, vert ✓ connu */
+  const svh = (e.v.g ? '<i class="art a-' + e.v.g + '">' + e.v.g + '</i> ' : '') + esc(e.v.sv), left = mode === 'fr' ? esc(e.fr) : svh, right = mode === 'fr' ? svh : esc(e.fr);
+  const mark = s === 'learn' ? '<b class="tmark">★</b>' : s === 'known' ? '<b class="tmark">✓</b>' : '';
+  let h = '<button class="drow' + (s ? ' s-' + s : '') + (open ? ' open' : '') + '" data-dk="' + e.i + '">' + mark + '<span class="dl' + (mode === 'fr' ? ' fr' : '') + '">' + left + '</span><span class="dr' + (mode === 'fr' ? '' : ' fr') + '">' + right + '</span></button>';
   if (open) {
     const v = e.v, info = [v.g && v.pl ? 'pluriel : <b>' + esc(v.pl) + '</b>' : '', v.forms ? 'formes : <b>' + esc(v.forms) + '</b>' : '', v.note ? esc(v.note) : ''].filter(Boolean).join('<br>');
     h += '<div class="dopen"><div class="tb-row"><span class="tb-info">' + (info || esc(v.fr)) + '</span>' + playBtn(v.sv) + '</div>' +
@@ -4245,7 +4258,7 @@ function dIndex() {
 function words() {
   const a = view.arg || {}, mode = a.mode || 'sv';
   return '<div class="dict"><div class="dhead"><input type="search" class="search" id="dq" placeholder="Chercher en suédois ou en français" value="' + esc(a.q || '') + '" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">' +
-    '<div class="dseg"><button data-dmode="sv"' + (mode === 'sv' ? ' class="on"' : '') + '>Suédois</button><button data-dmode="fr"' + (mode === 'fr' ? ' class="on"' : '') + '>Français</button></div><p class="dcount">' + plural(dict().length, 'mot') + '</p></div>' +
+    '<div class="dseg"><button data-dmode="sv"' + (mode === 'sv' ? ' class="on"' : '') + '>Suédois</button><button data-dmode="fr"' + (mode === 'fr' ? ' class="on"' : '') + '>Français</button></div><p class="dcount">' + plural(dict().length, 'mot') + '<span class="tlegend dleg"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre</span><span><b class="lg l-learn">★</b> à apprendre</span><span><b class="lg l-known">✓</b> connu</span></span></p></div>' +
     '<div id="dlist">' + dList() + '</div><nav class="dindex" id="dindex" aria-label="Lettres">' + dIndex() + '</nav></div>';
 }
 function dRefresh(keepScroll) {
