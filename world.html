@@ -408,13 +408,17 @@ body[data-mode="quiz"] .map .cap { stroke-width: 10px; stroke: rgba(11,63,148,.2
 .modes button:hover { background: rgba(255,255,255,.14); color: #fff; }
 .modes button[aria-selected="true"] { background: #fff; color: var(--band); box-shadow: none; }
 .modes button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.top { position: sticky; top: 0; z-index: 10; }
 .top #reload { color: rgba(255,255,255,.85); }
 .top #reload:hover { color: #fff; }
+
+/* numéro de version (lu dans __init__.py au build) */
+.ver { display: inline-block; margin-left: 7px; padding: 1px 6px; border-radius: 6px; background: rgba(255,255,255,.18); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: .02em; vertical-align: middle; white-space: nowrap; }
 </style>
 </head>
 <body data-mode="explore">
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">M</span><h1>Carte du monde</h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">M</span><h1>Carte du monde<span class="ver" title="SY Culture 0.20.3 · build du 27/11 à 15:23">v0.20.3</span></h1></div>
   <div class="top-right">
     <div class="modes" role="tablist" aria-label="Mode">
       <button role="tab" id="tab-explore" aria-selected="true" type="button">Explorer</button>

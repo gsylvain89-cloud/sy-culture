@@ -433,7 +433,7 @@ body.playing .rd-nav { bottom: 88px; }
 .nav button:hover { background: rgba(255,255,255,.14); color: #fff; }
 .nav button[aria-current="true"] { background: #fff; color: var(--band); box-shadow: none; }
 .nav button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.top { position: relative; z-index: 6; padding-top: calc(10px + env(safe-area-inset-top, 0px)); }
+.top { position: sticky; top: 0; z-index: 6; padding-top: calc(10px + env(safe-area-inset-top, 0px)); }   /* collé en haut comme Svenska : l'iPhone teinte alors la barre d'état au lieu de la flouter */
 .syncbtn { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.32); color: #fff; }
 .syncbtn:hover { background: rgba(255,255,255,.24); color: #fff; border-color: rgba(255,255,255,.5); }
 .sync, .sync.ok { color: rgba(255,255,255,.9); }
@@ -443,18 +443,22 @@ body.playing .rd-nav { bottom: 88px; }
 @media (max-width: 760px) {
   .top { gap: 6px 8px; padding: calc(8px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px)); }
   .brand { order: 1; } .brand-mark { width: 28px; height: 28px; }
-  .sync { order: 2; width: auto; margin: 0 0 0 auto; font-size: 12px; }
+  .sync { order: 2; width: auto; margin: 0 0 0 auto; font-size: 0; }
+  .sync::before { content: attr(data-ico); font-size: 16px; }
   .maps { order: 3; }
   .syncbtn { order: 4; padding: 4px 8px; font-size: 15px; line-height: 1.2; }
   .syncbtn .lbl { display: none; }
   .nav { order: 5; width: 100%; justify-content: space-between; gap: 2px; }
   .nav button { flex: 1; padding: 7px 2px; font-size: 14px; }
 }
+
+/* numéro de version (lu dans __init__.py au build) */
+.ver { display: inline-block; margin-left: 7px; padding: 1px 6px; border-radius: 6px; background: rgba(255,255,255,.18); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: .02em; vertical-align: middle; white-space: nowrap; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">C</span><h1>Culture générale</h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">C</span><h1>Culture générale<span class="ver" title="Culture 0.20.3 · build du 27/11 à 15:23">v0.20.3</span></h1></div>
   <span class="sync" id="sync" hidden></span>
   <button type="button" class="syncbtn" data-act="sync-box" title="Synchroniser la progression entre le PC et l'iPhone" aria-label="Synchro">🔄<span class="lbl"> Synchro</span></button>
   <nav class="nav" aria-label="Sections">
@@ -3582,7 +3586,7 @@ function ghBadge(state, detail) {
   GH.state = state;
   const e = document.getElementById('sync'); if (!e) return;
   const txt = { syncing: '🔄 Synchronisation…', ok: '☁️ Synchronisé', offline: '☁️ Hors ligne · enregistré ici', auth: '⚠️ Jeton GitHub refusé', error: '⚠️ Synchro en échec' }[state];
-  e.hidden = !txt; e.textContent = txt || ''; e.className = 'sync ' + (state === 'ok' || state === 'syncing' ? 'ok' : state === 'offline' ? '' : 'offline');
+  e.hidden = !txt; e.textContent = txt || ''; e.dataset.ico = txt ? txt.split(' ')[0] : '';   /* téléphone : l'icône seule */ e.className = 'sync ' + (state === 'ok' || state === 'syncing' ? 'ok' : state === 'offline' ? '' : 'offline');
   e.title = detail || (GH.lastOk ? 'Dernière synchro : ' + new Date(GH.lastOk).toLocaleString('fr-FR') : '');
   const s = document.getElementById('gh-status'); if (s) s.textContent = e.textContent + (GH.lastOk ? ' · dernière synchro ' + new Date(GH.lastOk).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '');
 }
