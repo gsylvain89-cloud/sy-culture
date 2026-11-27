@@ -336,7 +336,7 @@ html{overflow-x:hidden}body{overflow-x:clip}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.8.0 · build du 27/11 à 19:04">v0.8.0</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.8.1 · build du 27/11 à 19:10">v0.8.1</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -3948,6 +3948,9 @@ function grade(id, ok, practice) {
   if (ok) { if (!practice || s.b === 0) { s.b = Math.min(s.b + 1, INTERVALS.length - 1); s.due = t + INTERVALS[s.b]; } }
   else { s.b = 1; s.due = t + 1; }
   s.last = t; S.cards[id] = s;
+  /* tuile : bleu foncé (niveau 6) = connu ; si une erreur la fait redescendre, elle redevient « à apprendre » */
+  const m = /^(w[a-z0-9]+)-[sfgpt](\d+)$/.exec(id);
+  if (m && WBY[m[1]] && ['learn', 'known'].includes(S.tiles[m[1] + '-' + m[2]])) S.tiles[m[1] + '-' + m[2]] = tileLevel(WBY[m[1]], +m[2]) === 6 ? 'known' : 'learn';
   const d = S.days[dayIso(t)] || { n: 0, ok: 0 }; d.n++; if (ok) d.ok++; S.days[dayIso(t)] = d;
   save();
 }
@@ -4174,18 +4177,19 @@ const LV_COL = ['', '#e0342a', '#f28c28', '#f2c94c', '#9fd9df', '#4f8fd0', '#1d3
 const LV_BOX = [0, 0, 1, 2, 3, 4, 6];
 function tileLevel(W, K) {
   const s = tileState(W.id + '-' + K); if (!s || s === 'out') return 0;
-  const bs = tileCards(W, K).map(id => S.cards[id]).filter(Boolean).map(c => c.b); if (!bs.length) return s === 'known' ? 6 : 1;
+  const cs = tileCards(W, K).map(id => S.cards[id]).filter(Boolean), bs = cs.map(c => c.b);
+  if (!bs.length || (s === 'known' && cs.every(c => c.known))) return s === 'known' ? 6 : 1;   /* « Je connais » (pas encore révisé) = bleu foncé */
   const b = Math.min(...bs); return b >= 6 ? 6 : b >= 4 ? 5 : b + 1;
 }
 function setTileLevel(W, K, L) {
-  setTile(W, K, L >= 5 ? 'known' : 'learn');
+  setTile(W, K, L === 6 ? 'known' : 'learn');
   const t = today(), B = LV_BOX[L];
-  tileCards(W, K).forEach(id => { S.cards[id] = Object.assign(S.cards[id] || { n: 0, ok: 0 }, { b: B, due: t + (L === 1 ? 0 : INTERVALS[B]), last: t, known: L >= 5 }); });
+  tileCards(W, K).forEach(id => { S.cards[id] = Object.assign(S.cards[id] || { n: 0, ok: 0 }, { b: B, due: t + (L === 1 ? 0 : INTERVALS[B]), last: t, known: L === 6 }); });
   save();
 }
 const lvPicker = (L, s, attr) => '<div class="lvp"><button class="lv-out' + (s === 'out' ? ' on' : '') + '" ' + attr('out') + ' title="Exclure" aria-label="Exclure">⊖</button><div class="lvbar">' +
   [1, 2, 3, 4, 5, 6].map(i => '<button class="lv' + (L === i ? ' on' : '') + '" style="--c:' + LV_COL[i] + '" ' + attr(i) + ' aria-label="Niveau ' + i + ' sur 6"></button>').join('') + '</div></div>' +
-  '<div class="lvlab"><span>à apprendre · difficile</span><span>connu · facile</span></div>';
+  '<div class="lvlab"><span>à apprendre · difficile</span><span>bleu foncé = connu</span></div>';
 /* « Mots du jour » : N mots tirés au hasard parmi les tuiles jamais marquées ni travaillées ; le tirage est gardé pour la journée (S.daily) */
 const dailyN = () => S.opts.dailyN || 10;
 const tileSeen = wid => { const i = wid.lastIndexOf('-'), w = WBY[wid.slice(0, i)]; return !!tileState(wid) || (w && tileCards(w, +wid.slice(i + 1)).some(id => S.cards[id])); };
