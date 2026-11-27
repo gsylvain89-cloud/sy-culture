@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>France Explorer</title>
 <style>:root {
+  --band: #0b3f94;
   --sea: #d7e4ec;
   --land: #ebede7;
   --ink: #16222e;
@@ -378,6 +379,18 @@ body[data-mode="quiz"] .paris-tile { top: 12px; }
 .lr-nav .good { background: var(--ok); color: #fff; border-color: var(--ok); } .lr-nav .bad { border-color: var(--bad); color: var(--bad); }
 .lr-end .big { font-size: 34px; font-weight: 700; margin: 6px 0; } .lr-end .big span { font-size: 15px; font-weight: 500; color: var(--muted); }
 #learn > * { flex: none; }
+
+/* ---------------------------------------------------------------- en-tête en bandeau (même style que SY Svenska) */
+.top { background: var(--band); color: #fff; border-bottom: 0; box-shadow: 0 1px 0 rgba(0,0,0,.06); }
+.brand h1 { color: #fff; }
+.brand-mark { background: #fff; color: var(--band); }
+.modes { display: flex; gap: 4px; background: none; border: 0; border-radius: 0; padding: 0; overflow: visible; }
+.modes button { background: none; border: 0; color: rgba(255,255,255,.82); padding: 7px 14px; border-radius: 8px; font-weight: 600; box-shadow: none; }
+.modes button:hover { background: rgba(255,255,255,.14); color: #fff; }
+.modes button[aria-selected="true"] { background: #fff; color: var(--band); box-shadow: none; }
+.modes button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.top #reload { color: rgba(255,255,255,.85); }
+.top #reload:hover { color: #fff; }
 </style>
 </head>
 <body data-mode="explore">
@@ -2734,11 +2747,11 @@ const QUIZ = (() => {
 @media (max-width:700px){
   html,body{height:100%}
   body{height:100dvh !important;overflow:hidden !important;display:grid;grid-template-rows:auto minmax(0,1fr) !important;padding-bottom:calc(62px + env(safe-area-inset-bottom)) !important}
-  .top{height:auto !important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 10px 6px !important;flex-wrap:wrap;gap:4px 10px !important}
+  .top{height:auto !important;min-height:44px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px !important;flex-wrap:wrap;gap:6px 10px !important}
   .brand h1{font-size:16px !important;white-space:nowrap}
-  .top-right{margin-left:auto;gap:8px !important}
-  #reload{font-size:11px;max-width:92px;line-height:1.15;text-align:right}
-  .modes button{padding:7px 14px !important;font-size:14px}
+  .top-right{display:contents}
+  #reload{margin-left:auto;font-size:0;text-decoration:none;width:34px;height:30px;border-radius:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3)}#reload::before{content:'↻';font-size:17px;color:#fff;line-height:28px}
+  .modes{width:100%;gap:2px !important}.modes button{flex:1;padding:7px 4px !important;font-size:14px}
   .stage{display:grid !important;grid-template-columns:minmax(0,1fr) !important;grid-template-rows:minmax(0,1fr) var(--sh,52px) !important;min-height:0;overflow:hidden}
   .mapwrap{min-height:0}
   .panel{border-left:0 !important;border-top:0 !important;border-radius:16px 16px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.2);overflow-y:auto;overflow-x:hidden;min-height:0;position:relative;z-index:6;overscroll-behavior:contain}
