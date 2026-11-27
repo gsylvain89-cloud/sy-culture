@@ -383,11 +383,18 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .lesson.gram .gh2 { font-size: 20px; margin: 28px 0 8px; padding-top: 10px; border-top: 2px solid #ece7f8; color: #4b3a9a; scroll-margin-top: calc(var(--toph, 56px) + 12px); }
 .lesson.gram .vocab { margin: 10px 0 6px; }
 #gs-pit { scroll-margin-top: calc(var(--toph, 56px) + 12px); }
+
+/* compléments des fiches */
+.lesson .msec { font-size: 19px; margin: 26px 0 8px; padding-top: 10px; border-top: 2px solid color-mix(in srgb, var(--t, #1F5F99) 18%, #fff); color: var(--t, #1F5F99); }
+.lesson .msec + p { margin-top: 4px; }
+.gramlink { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; margin: 18px 0 6px; padding: 12px 14px; border: 1px solid #e2dcf3; background: #f4f1fb; border-radius: 12px; font: inherit; color: inherit; }
+.gramlink span { font-size: 24px; } .gramlink b { flex: 1; display: grid; font-size: 15.5px; color: #4b3a9a; } .gramlink small { font-weight: 500; font-size: 13px; color: var(--muted); }
+.gramlink i { font-style: normal; font-size: 24px; color: #6E56CF; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.11.0 · build du 27/11 à 22:15">v0.11.0</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.12.0 · build du 27/11 à 22:28">v0.12.0</span></h1></div>
   <button type="button" class="syncb" id="syncb" data-act="gh-box" title="Synchronisation PC ↔ iPhone">☁️</button>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
@@ -11373,6 +11380,6713 @@ GRAM.fiches = [
 }
 ];
 
+/* SY Svenska : compléments des fiches (onglet Fiches). MORE[id] = { sec: [{h, text[], tables[], ex[[sv, fr]]}], pit[], gram: id de fiche Grammaire liée }.
+   Affichage seulement : aucune carte, aucun id ne change. Contenu écrit à la main : vérifier tout ajout. */
+const MORE = {
+"pm1": {
+"sec": [
+{
+"h": "Saluer selon le moment et le ton",
+"text": [
+"**hej** marche partout, mais il existe d'autres formules. Entre amis : **hejsan** (un peu plus chaleureux), **tjena** ou **tja** (très familier, entre jeunes). Plus formel, et un peu vieilli : **god dag**. Le soir : **god kväll** ; au coucher : **god natt**.",
+"Pour prendre congé : **hej då** (au revoir), **vi ses!** (on se voit !), **ha det bra!** (porte-toi bien), **ha en bra dag!** (bonne journée). Au téléphone, on décroche souvent en disant son prénom : « Hej, det är Anna »."
+],
+"tables": [
+{
+"title": "Salutations",
+"cols": [
+"Suédois",
+"Sens",
+"Ton"
+],
+"rows": [
+[
+"hej / hejsan",
+"bonjour, salut",
+"neutre"
+],
+[
+"tjena / tja",
+"salut",
+"familier"
+],
+[
+"god morgon",
+"bonjour (matin)",
+"neutre"
+],
+[
+"god dag",
+"bonjour",
+"formel"
+],
+[
+"god kväll",
+"bonsoir",
+"neutre"
+],
+[
+"god natt",
+"bonne nuit",
+"neutre"
+],
+[
+"hej då",
+"au revoir",
+"neutre"
+],
+[
+"vi ses!",
+"à plus !",
+"neutre"
+],
+[
+"ha det bra!",
+"porte-toi bien",
+"neutre"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Remercier à la suédoise",
+"text": [
+"Les Suédois remercient pour tout, et ont des formules toutes faites pour des situations précises. Après un repas chez quelqu'un, on dit toujours **tack för maten** (merci pour le repas). En revoyant quelqu'un après une soirée ou une visite : **tack för senast** (merci pour la dernière fois). Pour rendre un souhait : **tack, detsamma** (merci, toi aussi).",
+"Pour répondre à un merci : **varsågod** (je t'en prie), **ingen orsak** (il n'y a pas de quoi), **det var så lite** (ce n'est rien)."
+],
+"tables": [],
+"ex": [
+[
+"Tack för maten!",
+"Merci pour le repas !"
+],
+[
+"Tack för senast!",
+"Merci pour la dernière fois !"
+],
+[
+"– Trevlig helg! – Tack, detsamma!",
+"– Bon week-end ! – Merci, à toi aussi !"
+],
+[
+"– Tack för hjälpen! – Ingen orsak!",
+"– Merci pour ton aide ! – Il n'y a pas de quoi !"
+],
+[
+"Tusen tack!",
+"Mille mercis !"
+]
+]
+},
+{
+"h": "S'excuser et attirer l'attention",
+"text": [
+"**ursäkta** sert à passer dans une foule, à interpeller un serveur ou un passant : « Ursäkta, kan du hjälpa mig? ». **förlåt** sert à s'excuser d'une faute : « Förlåt, det var mitt fel » (pardon, c'était ma faute). Si on n'a pas entendu : **förlåt?** ou **va?** (familier) = pardon ?"
+],
+"tables": [],
+"ex": [
+[
+"Ursäkta, är den här platsen ledig?",
+"Excusez-moi, cette place est-elle libre ?"
+],
+[
+"Förlåt att jag är sen.",
+"Désolé d'être en retard."
+],
+[
+"Förlåt, vad sa du?",
+"Pardon, qu'as-tu dit ?"
+]
+]
+}
+],
+"pit": [
+"**tack för maten** n'est pas facultatif : l'oublier après un repas chez quelqu'un passe pour impoli.",
+"**god dag** sonne très formel, presque administratif : à l'oral, **hej** suffit."
+],
+"gram": ""
+},
+"pm2": {
+"sec": [
+{
+"h": "En dire plus sur soi",
+"text": [
+"Après le prénom, on parle souvent de son âge, de son métier et des langues qu'on parle. Attention : pour un métier, **pas d'article** : **Jag är lärare** (je suis professeur). Pour l'âge : **Jag är 30 år** (gammal est facultatif)."
+],
+"tables": [
+{
+"title": "Se présenter",
+"cols": [
+"Suédois",
+"Français"
+],
+"rows": [
+[
+"Jag heter…",
+"Je m'appelle…"
+],
+[
+"Jag är … år (gammal).",
+"J'ai … ans."
+],
+[
+"Jag kommer från Frankrike.",
+"Je viens de France."
+],
+[
+"Jag är fransman / fransyska.",
+"Je suis français / française."
+],
+[
+"Jag bor i Nantes.",
+"J'habite à Nantes."
+],
+[
+"Jag jobbar som designer.",
+"Je travaille comme designer."
+],
+[
+"Jag talar franska och lite svenska.",
+"Je parle français et un peu suédois."
+],
+[
+"Jag lär mig svenska.",
+"J'apprends le suédois."
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Retourner la question",
+"text": [
+"Pour relancer la conversation, il suffit souvent de dire **Och du?** (et toi ?). Autres questions utiles : **Var kommer du ifrån?** (d'où viens-tu ?), **Vad jobbar du med?** (que fais-tu comme travail ?), **Hur länge har du bott här?** (depuis combien de temps habites-tu ici ?)."
+],
+"tables": [],
+"ex": [
+[
+"– Hur mår du? – Bra, tack. Och du?",
+"– Comment vas-tu ? – Bien, merci. Et toi ?"
+],
+[
+"Var kommer du ifrån?",
+"D'où viens-tu ?"
+],
+[
+"Vad jobbar du med?",
+"Que fais-tu dans la vie ?"
+],
+[
+"Trevligt att träffas!",
+"Ravi de te rencontrer !"
+]
+]
+},
+{
+"h": "Quand on ne comprend pas",
+"text": [
+"Des phrases de survie à connaître dès le premier jour : les Suédois passent vite à l'anglais, et ces phrases montrent qu'on veut rester en suédois."
+],
+"tables": [],
+"ex": [
+[
+"Kan du prata långsammare?",
+"Peux-tu parler plus lentement ?"
+],
+[
+"Kan du säga det igen?",
+"Peux-tu le redire ?"
+],
+[
+"Jag förstår inte.",
+"Je ne comprends pas."
+],
+[
+"Vad betyder det?",
+"Qu'est-ce que ça veut dire ?"
+],
+[
+"Hur säger man … på svenska?",
+"Comment dit-on … en suédois ?"
+],
+[
+"Kan vi prata svenska?",
+"On peut parler suédois ?"
+]
+]
+}
+],
+"pit": [
+"Métier sans article : **Jag är lärare** (pas *en lärare).",
+"Nationalités et langues sans majuscule : **svenska**, **fransk** ; seuls les pays en prennent : **Frankrike**.",
+"Une Suédoise = **en svenska**, la langue = **svenska** : le contexte les distingue."
+],
+"gram": ""
+},
+"pm3": {
+"sec": [
+{
+"h": "De 11 à 20",
+"text": [
+"Les nombres de 13 à 19 finissent par **-ton** : **tretton, fjorton, femton, sexton, sjutton, arton, nitton**. 11 et 12 sont à part : **elva, tolv**. 20 = **tjugo**."
+],
+"tables": [
+{
+"title": "11 à 20",
+"cols": [
+"Nombre",
+"Suédois",
+"Nombre",
+"Suédois"
+],
+"rows": [
+[
+"11",
+"elva",
+"16",
+"sexton"
+],
+[
+"12",
+"tolv",
+"17",
+"sjutton"
+],
+[
+"13",
+"tretton",
+"18",
+"arton"
+],
+[
+"14",
+"fjorton",
+"19",
+"nitton"
+],
+[
+"15",
+"femton",
+"20",
+"tjugo"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Les dizaines et au-delà",
+"text": [
+"Les dizaines finissent par **-tio**, prononcé souvent « -ti » : **trettio** (30), **fyrtio** (40), **femtio** (50), **sextio** (60), **sjuttio** (70), **åttio** (80), **nittio** (90). On colle l'unité derrière, sans « et » : **tjugoett** (21), **trettiofem** (35). **hundra** = 100, **tusen** = 1 000.",
+"Bonne nouvelle : pas de « soixante-dix » ou « quatre-vingts » à la française, tout est régulier."
+],
+"tables": [],
+"ex": [
+[
+"Det kostar fyrtionio kronor.",
+"Ça coûte 49 couronnes."
+],
+[
+"Jag bor på nummer tolv.",
+"J'habite au numéro 12."
+],
+[
+"Vi är fem personer.",
+"Nous sommes cinq."
+],
+[
+"Hur mycket kostar det?",
+"Combien ça coûte ?"
+]
+]
+},
+{
+"h": "en ou ett devant un nom",
+"text": [
+"« Un » s'accorde : **en kopp** (une tasse), **ett glas** (un verre). Les autres nombres ne changent jamais : **två koppar, två glas**. Quand on compte à voix haute, on dit **ett, två, tre**."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [
+"**sju** (7) se prononce avec le son « sj », un souffle proche de « hw » : écoute-le bien.",
+"**tjugo** (20) commence par le son « tj », proche du « ch » français."
+],
+"gram": "g-tal"
+},
+"pm4": {
+"sec": [
+{
+"h": "Les mois et les saisons",
+"text": [
+"Les mois s'écrivent aussi en **minuscule** : januari, februari, mars, april, maj, juni, juli, augusti, september, oktober, november, december. Les saisons : **vår** (printemps), **sommar** (été), **höst** (automne), **vinter** (hiver)."
+],
+"tables": [
+{
+"title": "Mois",
+"cols": [
+"",
+"",
+""
+],
+"rows": [
+[
+"januari",
+"februari",
+"mars"
+],
+[
+"april",
+"maj",
+"juni"
+],
+[
+"juli",
+"augusti",
+"september"
+],
+[
+"oktober",
+"november",
+"december"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Dire quand",
+"text": [
+"**på måndag** = lundi (qui vient), **i måndags** = lundi dernier, **på måndagar** = le lundi (chaque semaine). **i dag** (aujourd'hui), **i morgon** (demain), **i går** (hier), **i kväll** (ce soir), **i helgen** (ce week-end)."
+],
+"tables": [],
+"ex": [
+[
+"Vi ses på fredag!",
+"On se voit vendredi !"
+],
+[
+"Vad gjorde du i lördags?",
+"Qu'as-tu fait samedi dernier ?"
+],
+[
+"Jag jobbar inte på söndagar.",
+"Je ne travaille pas le dimanche."
+],
+[
+"Vilken dag är det i dag?",
+"Quel jour sommes-nous ?"
+],
+[
+"Det är tisdag.",
+"C'est mardi."
+]
+]
+},
+{
+"h": "Les semaines numérotées",
+"text": [
+"Particularité suédoise : on se repère beaucoup avec le **numéro de la semaine**. « Vi ses **vecka 32** » (on se voit la semaine 32). Les agendas et calendriers l'indiquent toujours, et on vous demandera facilement **Vilken vecka?** (quelle semaine ?).",
+"Autre tradition : le **lördagsgodis**, les bonbons du samedi, qu'on achète au poids dans des bacs en libre-service."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [
+"i lördags (passé) ≠ på lördag (à venir) : le petit **-s** change tout.",
+"Pas de majuscule aux jours et aux mois : **måndag**, **juli**."
+],
+"gram": "g-tidsprep"
+},
+"gr1": {
+"sec": [
+{
+"h": "Pourquoi le genre compte tant",
+"text": [
+"Le genre décide de trois choses : l'article (**en / ett**), la forme définie (**-en / -et**) et l'accord de l'adjectif (**en stor bil / ett stort hus**). Se tromper de genre ne bloque pas la compréhension, mais c'est l'erreur la plus visible des débutants."
+],
+"tables": [
+{
+"title": "Ce que change le genre",
+"cols": [
+"",
+"en bil",
+"ett hus"
+],
+"rows": [
+[
+"un / une",
+"en bil",
+"ett hus"
+],
+[
+"le / la",
+"bilen",
+"huset"
+],
+[
+"adjectif",
+"en röd bil",
+"ett rött hus"
+],
+[
+"ce…-ci",
+"den här bilen",
+"det här huset"
+],
+[
+"reprise",
+"den",
+"det"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Une méthode pour retenir",
+"text": [
+"Apprenez le mot **avec son article**, à voix haute : « en bil, ett hus », jamais « bil, hus ». Dans l'app, la couleur aide : **bleu = en**, **orange = ett**. Petite astuce : beaucoup de mots courts et très anciens de la vie quotidienne sont **ett** (ett hus, ett bord, ett barn, ett år, ett land)."
+],
+"tables": [],
+"ex": [
+[
+"Jag har en bil och ett hus.",
+"J'ai une voiture et une maison."
+],
+[
+"Bilen är ny, huset är gammalt.",
+"La voiture est neuve, la maison est vieille."
+],
+[
+"Var är äpplet?",
+"Où est la pomme ?"
+],
+[
+"Det är ett bra år.",
+"C'est une bonne année."
+]
+]
+}
+],
+"pit": [
+"Les mots pour des personnes peuvent être ett : **ett barn** (un enfant).",
+"Après un possessif, pas de forme définie : **min bil** (pas *min bilen)."
+],
+"gram": "g-substantiv"
+},
+"gr2": {
+"sec": [
+{
+"h": "Les autres temps de vara et ha",
+"text": [
+"Ces deux verbes sont irréguliers et très fréquents : apprenez leurs quatre formes d'un coup. **vara – är – var – varit** et **ha – har – hade – haft**."
+],
+"tables": [
+{
+"title": "vara et ha",
+"cols": [
+"",
+"vara (être)",
+"ha (avoir)"
+],
+"rows": [
+[
+"présent",
+"är",
+"har"
+],
+[
+"prétérit",
+"var",
+"hade"
+],
+[
+"parfait",
+"har varit",
+"har haft"
+],
+[
+"futur",
+"ska vara",
+"ska ha"
+],
+[
+"impératif",
+"Var!",
+"Ha!"
+]
+],
+"note": ""
+}
+],
+"ex": [
+[
+"Jag var hemma i går.",
+"J'étais à la maison hier."
+],
+[
+"Vi hade tur.",
+"Nous avons eu de la chance."
+],
+[
+"Har du varit i Sverige?",
+"Es-tu déjà allé en Suède ?"
+],
+[
+"Var inte ledsen!",
+"Ne sois pas triste !"
+]
+]
+},
+{
+"h": "Expressions avec är et har",
+"text": [
+"Certaines expressions françaises avec « avoir » utilisent **vara** en suédois, et inversement. « J'ai faim » = **Jag är hungrig**. « J'ai froid » = **Jag fryser** (verbe). « J'ai 30 ans » = **Jag är 30 år**. Mais « avoir du temps » = **ha tid**, « avoir raison » = **ha rätt**, « s'amuser » = **ha roligt**."
+],
+"tables": [
+{
+"title": "Attention aux traductions",
+"cols": [
+"Français",
+"Suédois"
+],
+"rows": [
+[
+"j'ai faim",
+"jag är hungrig"
+],
+[
+"j'ai soif",
+"jag är törstig"
+],
+[
+"j'ai peur",
+"jag är rädd"
+],
+[
+"j'ai 30 ans",
+"jag är 30 år"
+],
+[
+"j'ai raison",
+"jag har rätt"
+],
+[
+"j'ai tort",
+"jag har fel"
+],
+[
+"je m'amuse",
+"jag har roligt"
+],
+[
+"je suis pressé",
+"jag har bråttom"
+]
+],
+"note": ""
+}
+],
+"ex": []
+}
+],
+"pit": [
+"**var** = était (prétérit de vara), mais aussi **var?** = où ? Le contexte tranche.",
+"« J'ai faim / peur » = **jag är** hungrig / rädd."
+],
+"gram": "g-present"
+},
+"gr3": {
+"sec": [
+{
+"h": "inte avec les autres verbes",
+"text": [
+"Avec deux verbes (modal + infinitif, ou har + supin), **inte** se place entre les deux : **Jag kan inte komma** (je ne peux pas venir), **Jag har inte ätit** (je n'ai pas mangé). Si la phrase commence par autre chose que le sujet, inte vient après le sujet : **I dag jobbar jag inte**."
+],
+"tables": [],
+"ex": [
+[
+"Jag kan inte simma.",
+"Je ne sais pas nager."
+],
+[
+"Hon har inte sett filmen.",
+"Elle n'a pas vu le film."
+],
+[
+"I dag regnar det inte.",
+"Aujourd'hui, il ne pleut pas."
+],
+[
+"Varför kommer du inte?",
+"Pourquoi tu ne viens pas ?"
+]
+]
+},
+{
+"h": "Les autres mots de négation",
+"text": [
+"**aldrig** (jamais) se place comme inte : **Jag dricker aldrig kaffe**. **ingen / inget / inga** = aucun, personne, rien : **Ingen vet** (personne ne sait). **ingenting** = rien. **inte heller** = non plus : **Jag vet inte heller**. Et pour dire « si » après une question négative : **jo**."
+],
+"tables": [
+{
+"title": "Négations utiles",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"inte",
+"ne… pas"
+],
+[
+"aldrig",
+"ne… jamais"
+],
+[
+"ingen / inget / inga",
+"aucun, personne"
+],
+[
+"ingenting",
+"ne… rien"
+],
+[
+"inte heller",
+"non plus"
+],
+[
+"inte än",
+"pas encore"
+],
+[
+"inte längre",
+"ne… plus"
+],
+[
+"inte alls",
+"pas du tout"
+]
+],
+"note": ""
+}
+],
+"ex": []
+}
+],
+"pit": [
+"« Je ne… rien » = **Jag … ingenting**, sans inte : **Jag ser ingenting**.",
+"« Si ! » après une question négative = **Jo!**, pas ja."
+],
+"gram": "g-negation"
+},
+"gr4": {
+"sec": [
+{
+"h": "Encore plus de questions",
+"text": [
+"Avec **hur** on construit beaucoup de questions : **hur mycket** (combien, quantité), **hur många** (combien, nombre), **hur länge** (combien de temps), **hur gammal** (quel âge), **hur ofta** (à quelle fréquence). **vilken / vilket / vilka** = quel / quelle / quels, accordé au nom."
+],
+"tables": [],
+"ex": [
+[
+"Hur mycket kostar det?",
+"Combien ça coûte ?"
+],
+[
+"Hur många barn har du?",
+"Combien d'enfants as-tu ?"
+],
+[
+"Hur gammal är du?",
+"Quel âge as-tu ?"
+],
+[
+"Vilken buss går till centrum?",
+"Quel bus va au centre ?"
+],
+[
+"Vart ska du?",
+"Où vas-tu ?"
+]
+]
+},
+{
+"h": "Répondre comme un Suédois",
+"text": [
+"On répond rarement juste « ja » : on reprend le verbe. – Talar du svenska? – **Ja, det gör jag.** – Är du trött? – **Ja, det är jag.** Le verbe **göra** remplace les verbes ordinaires, **vara** et **ha** se reprennent tels quels.",
+"Et pour dire « si » à une question négative : – Kommer du inte? – **Jo!**"
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [
+"**var** = où (sans mouvement), **vart** = où (vers où) : **Var bor du? / Vart åker du?**"
+],
+"gram": "g-fragor"
+},
+"gr5": {
+"sec": [
+{
+"h": "Les verbes les plus utiles au présent",
+"text": [
+"Avec ces quinze verbes, vous pouvez déjà dire beaucoup de choses. Remarquez les trois terminaisons : **-ar**, **-er** et **-r**."
+],
+"tables": [
+{
+"title": "Top 15 au présent",
+"cols": [
+"Infinitif",
+"Présent",
+"Sens"
+],
+"rows": [
+[
+"vara",
+"är",
+"être"
+],
+[
+"ha",
+"har",
+"avoir"
+],
+[
+"göra",
+"gör",
+"faire"
+],
+[
+"gå",
+"går",
+"aller (à pied)"
+],
+[
+"åka",
+"åker",
+"aller (en véhicule)"
+],
+[
+"komma",
+"kommer",
+"venir"
+],
+[
+"se",
+"ser",
+"voir"
+],
+[
+"säga",
+"säger",
+"dire"
+],
+[
+"ta",
+"tar",
+"prendre"
+],
+[
+"veta",
+"vet",
+"savoir"
+],
+[
+"vilja",
+"vill",
+"vouloir"
+],
+[
+"kunna",
+"kan",
+"pouvoir"
+],
+[
+"tycka",
+"tycker",
+"penser"
+],
+[
+"prata",
+"pratar",
+"parler"
+],
+[
+"jobba",
+"jobbar",
+"travailler"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "gå ou åka ?",
+"text": [
+"Le français « aller » se traduit par deux verbes : **gå** quand on y va **à pied** (ou en général pour une sortie : gå på bio), **åka** quand on prend un **véhicule** : åka buss, åka till Stockholm. **köra** = conduire."
+],
+"tables": [],
+"ex": [
+[
+"Jag går till jobbet.",
+"Je vais au travail à pied."
+],
+[
+"Vi åker till Malmö i morgon.",
+"Nous allons à Malmö demain."
+],
+[
+"Hon kör bil varje dag.",
+"Elle conduit tous les jours."
+],
+[
+"Ska vi gå på bio?",
+"On va au cinéma ?"
+]
+]
+}
+],
+"pit": [
+"Après **kan, vill, ska, måste**, l'infinitif reste sans -r : **Jag vill äta**."
+],
+"gram": "g-groupes"
+},
+"vq1": {
+"sec": [
+{
+"h": "Les classiques du fika",
+"text": [
+"Au-delà de la **kanelbulle**, la pâtisserie suédoise a ses stars : **kardemummabulle** (brioche à la cardamome), **kladdkaka** (gâteau au chocolat fondant), **prinsesstårta** (gâteau vert à la pâte d'amande), **chokladboll** (boule chocolat-avoine-coco), **semla** (brioche crème et pâte d'amande, de janvier à Pâques, surtout le **fettisdagen**, le mardi gras)."
+],
+"tables": [
+{
+"title": "Douceurs suédoises",
+"cols": [
+"Suédois",
+"Ce que c'est"
+],
+"rows": [
+[
+"en kanelbulle",
+"brioche roulée à la cannelle"
+],
+[
+"en kardemummabulle",
+"brioche à la cardamome"
+],
+[
+"en kladdkaka",
+"gâteau au chocolat fondant"
+],
+[
+"en prinsesstårta",
+"gâteau à la pâte d'amande verte"
+],
+[
+"en chokladboll",
+"boule chocolat, avoine, coco"
+],
+[
+"en semla",
+"brioche fourrée crème et amande"
+],
+[
+"en pepparkaka",
+"biscuit au gingembre (Noël)"
+],
+[
+"en lussekatt",
+"brioche au safran (Lucia)"
+]
+],
+"note": "Le 4 octobre, c'est le kanelbullens dag, le jour de la brioche à la cannelle."
+}
+],
+"ex": []
+},
+{
+"h": "Commander au café",
+"text": [
+"Pour commander : **Jag tar…** (je prends…) ou **Kan jag få…?** (puis-je avoir… ?). Le serveur peut demander **Något mer?** (autre chose ?) et **Ska du ha det här eller ta med?** (sur place ou à emporter ?). Dans beaucoup de cafés, la deuxième tasse, la **påtår**, est gratuite ou à petit prix."
+],
+"tables": [],
+"ex": [
+[
+"Kan jag få en kaffe och en kanelbulle?",
+"Je peux avoir un café et une brioche à la cannelle ?"
+],
+[
+"Med mjölk, tack.",
+"Avec du lait, s'il vous plaît."
+],
+[
+"Jag tar med mig.",
+"C'est à emporter."
+],
+[
+"Ingenting mer, tack.",
+"Rien d'autre, merci."
+],
+[
+"Ska vi ta en fika?",
+"On va prendre un café ?"
+]
+]
+}
+],
+"pit": [
+"**kaffe** est ett ou en selon les dictionnaires : on entend les deux (en kaffe pour « un café » commandé).",
+"**en kaka** peut être un gâteau ou un biscuit ; **en tårta** est un gâteau à étages (d'anniversaire)."
+],
+"gram": ""
+},
+"vq2": {
+"sec": [
+{
+"h": "Le déjeuner : dagens lunch",
+"text": [
+"En semaine, beaucoup de restaurants proposent **dagens lunch** (ou **dagens rätt**), le plat du jour à prix fixe. Il inclut souvent la salade, le pain, une boisson et le café. C'est la façon la plus économique de manger au restaurant en Suède."
+],
+"tables": [],
+"ex": []
+},
+{
+"h": "Pendant le repas",
+"text": [
+"Le serveur passe demander **Smakar det bra?** (c'est bon ?). On répond **Ja, mycket gott!** (oui, très bon). Pour un plat : **Jag tar laxen** (je prends le saumon). Pour une allergie : **Jag är allergisk mot nötter**. Pour payer : **Kan jag betala med kort?** — en Suède, la carte est presque toujours la norme."
+],
+"tables": [
+{
+"title": "Au restaurant",
+"cols": [
+"Suédois",
+"Français"
+],
+"rows": [
+[
+"Har ni ett bord för fyra?",
+"Avez-vous une table pour quatre ?"
+],
+[
+"Jag har bokat ett bord.",
+"J'ai réservé une table."
+],
+[
+"Vad rekommenderar du?",
+"Que recommandez-vous ?"
+],
+[
+"Jag tar dagens lunch.",
+"Je prends le plat du jour."
+],
+[
+"Kan jag få vatten?",
+"Je peux avoir de l'eau ?"
+],
+[
+"Det var jättegott!",
+"C'était délicieux !"
+],
+[
+"Kan vi få notan?",
+"On peut avoir l'addition ?"
+],
+[
+"Kan jag betala med kort?",
+"Je peux payer par carte ?"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Pourboire et alcool",
+"text": [
+"Le pourboire (**dricks**) n'est pas obligatoire : le service est compris. Au restaurant, on arrondit volontiers ou on laisse environ 5 à 10 % si on est content. Hors bars et restaurants, l'alcool fort, le vin et la bière forte se vendent uniquement au **Systembolaget**, le monopole d'État."
+],
+"tables": [],
+"ex": [
+[
+"Smaklig måltid!",
+"Bon appétit !"
+],
+[
+"Skål!",
+"Santé !"
+],
+[
+"Tack för maten!",
+"Merci pour le repas !"
+]
+]
+}
+],
+"pit": [
+"**gott** = bon (goût) ; **bra** = bien, bon (qualité) : **Maten är god**, **Restaurangen är bra**.",
+"**notan** et **kvittot** : l'addition et le ticket de caisse."
+],
+"gram": ""
+},
+"vq3": {
+"sec": [
+{
+"h": "La famille élargie",
+"text": [
+"La logique « mor / far » s'étend aux oncles et tantes : **moster** (sœur de la mère), **faster** (sœur du père), **morbror** (frère de la mère), **farbror** (frère du père). **kusin** = cousin ou cousine. Les petits-enfants : **barnbarn**. Frères et sœurs ensemble : **syskon**."
+],
+"tables": [
+{
+"title": "La famille",
+"cols": [
+"Suédois",
+"Français"
+],
+"rows": [
+[
+"föräldrar",
+"parents"
+],
+[
+"syskon",
+"frères et sœurs"
+],
+[
+"moster / faster",
+"tante (côté mère / père)"
+],
+[
+"morbror / farbror",
+"oncle (côté mère / père)"
+],
+[
+"kusin",
+"cousin(e)"
+],
+[
+"barnbarn",
+"petit-enfant"
+],
+[
+"svärmor / svärfar",
+"belle-mère / beau-père"
+],
+[
+"svåger / svägerska",
+"beau-frère / belle-sœur"
+],
+[
+"sambo",
+"concubin(e)"
+],
+[
+"bonusbarn / bonuspappa",
+"enfant / père de famille recomposée"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Le couple en Suède",
+"text": [
+"Beaucoup de couples ne se marient pas : on vit en **sambo** (sam + bo, « habiter ensemble »), une situation reconnue par la loi. Un couple qui ne vit pas ensemble : **särbo**. Marié = **gift**, la femme / le mari = **fru** / **man**, et la forme neutre **partner**. Dans les familles recomposées, on dit joliment **bonusbarn** (enfant du conjoint)."
+],
+"tables": [],
+"ex": [
+[
+"Jag har två syskon.",
+"J'ai un frère et une sœur (deux frères et sœurs)."
+],
+[
+"Min moster bor i Umeå.",
+"Ma tante (sœur de ma mère) habite à Umeå."
+],
+[
+"Vi är sambo.",
+"Nous vivons ensemble."
+],
+[
+"Har du barn?",
+"As-tu des enfants ?"
+],
+[
+"Mina föräldrar heter Eva och Per.",
+"Mes parents s'appellent Eva et Per."
+]
+]
+}
+],
+"pit": [
+"**barn** = enfant ET enfants (pluriel identique) : **ett barn, två barn**.",
+"**bror** a un pluriel irrégulier : **bröder** ; **syster → systrar**."
+],
+"gram": ""
+},
+"vq4": {
+"sec": [
+{
+"h": "Les lieux de la ville",
+"text": [
+"On va **till** un endroit et on est **på** la plupart des lieux publics : på stationen, på apoteket, på banken, på biblioteket, på torget. Mais **i** pour un parc ou un magasin : i parken, i affären."
+],
+"tables": [
+{
+"title": "En ville",
+"cols": [
+"Suédois",
+"Français"
+],
+"rows": [
+[
+"stationen",
+"la gare"
+],
+[
+"hållplatsen",
+"l'arrêt (bus, tram)"
+],
+[
+"tunnelbanan (T-banan)",
+"le métro"
+],
+[
+"spårvagnen",
+"le tramway"
+],
+[
+"torget",
+"la place, le marché"
+],
+[
+"apoteket",
+"la pharmacie"
+],
+[
+"affären / butiken",
+"le magasin"
+],
+[
+"biblioteket",
+"la bibliothèque"
+],
+[
+"sjukhuset",
+"l'hôpital"
+],
+[
+"korsningen",
+"le carrefour"
+],
+[
+"rondellen",
+"le rond-point"
+],
+[
+"trottoaren",
+"le trottoir"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Comprendre un itinéraire",
+"text": [
+"Les réponses suivent souvent le même modèle : **Gå rakt fram** (allez tout droit), **ta andra gatan till vänster** (prenez la deuxième rue à gauche), **sväng höger vid rondellen** (tournez à droite au rond-point), **det ligger mittemot banken** (c'est en face de la banque). **Det är inte långt** = ce n'est pas loin."
+],
+"tables": [],
+"ex": [
+[
+"Ursäkta, hur hittar jag till museet?",
+"Excusez-moi, comment aller au musée ?"
+],
+[
+"Gå rakt fram och sväng vänster.",
+"Allez tout droit et tournez à gauche."
+],
+[
+"Det ligger bredvid kyrkan.",
+"C'est à côté de l'église."
+],
+[
+"Hur långt är det?",
+"C'est à quelle distance ?"
+],
+[
+"Det tar fem minuter att gå.",
+"C'est à cinq minutes à pied."
+],
+[
+"Var ligger närmaste hållplats?",
+"Où est l'arrêt le plus proche ?"
+]
+]
+}
+],
+"pit": [
+"« aller à » + lieu = **till** : **till stationen**. Mais « rentrer » = **gå hem**, sans till.",
+"**ligga** (être couché) sert aussi pour la position d'un lieu : **Banken ligger här**."
+],
+"gram": "g-prep"
+},
+"cu1": {
+"sec": [
+{
+"h": "Une institution au travail",
+"text": [
+"Dans beaucoup d'entreprises, la **fikapaus** est sacrée, souvent vers 10 h et 15 h. On s'y retrouve tous, chefs compris, et c'est là que se discutent beaucoup de choses informelles. Refuser systématiquement le fika peut passer pour un manque d'esprit d'équipe.",
+"Les Suédois sont parmi les plus gros buveurs de café au monde. Le café filtre (**bryggkaffe**) reste le classique."
+],
+"tables": [],
+"ex": []
+},
+{
+"h": "Les mots du fika",
+"text": [],
+"tables": [
+{
+"title": "Vocabulaire",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"fika (verbe et nom)",
+"faire une pause café"
+],
+[
+"en fikapaus",
+"pause fika"
+],
+[
+"fikarummet",
+"la salle de pause"
+],
+[
+"bryggkaffe",
+"café filtre"
+],
+[
+"en påtår",
+"deuxième tasse (resservie)"
+],
+[
+"sju sorters kakor",
+"les « sept sortes de biscuits » de la tradition"
+],
+[
+"ett konditori",
+"un salon de thé-pâtisserie"
+]
+],
+"note": "Sju sorters kakor est aussi le titre d'un livre de pâtisserie très célèbre (1945), présent dans beaucoup de foyers."
+}
+],
+"ex": [
+[
+"Ska vi fika?",
+"On fait une pause café ?"
+],
+[
+"Vi fikar klockan tre.",
+"On prend le café à trois heures."
+],
+[
+"Vill du ha påtår?",
+"Tu veux une deuxième tasse ?"
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"cu2": {
+"sec": [
+{
+"h": "Ce qui est permis",
+"text": [
+"Le droit d'accès à la nature est inscrit dans la **Constitution** suédoise depuis 1994. Il permet de marcher, faire du vélo, skier et se baigner presque partout, de **cueillir** baies, champignons et fleurs non protégées, et de **camper** une nuit ou deux à l'écart des habitations.",
+"La pêche à la ligne à la main est libre sur la côte et dans les cinq plus grands lacs (Vänern, Vättern, Mälaren, Hjälmaren et Storsjön)."
+],
+"tables": [],
+"ex": []
+},
+{
+"h": "Ce qui est interdit",
+"text": [
+"Pas de camping près d'une maison (on ne doit pas être vu depuis les fenêtres), pas de feu en cas d'interdiction (**eldningsförbud**), pas de voiture hors des routes, pas de traversée de champs cultivés. On remporte ses déchets. La règle tient en une phrase : **inte störa, inte förstöra**."
+],
+"tables": [
+{
+"title": "Vocabulaire de la nature",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"en skog",
+"une forêt"
+],
+[
+"en sjö",
+"un lac"
+],
+[
+"ett blåbär / ett lingon",
+"une myrtille / une airelle"
+],
+[
+"en svamp",
+"un champignon"
+],
+[
+"ett tält",
+"une tente"
+],
+[
+"att tälta",
+"camper"
+],
+[
+"att plocka",
+"cueillir"
+],
+[
+"eldningsförbud",
+"interdiction de faire du feu"
+]
+],
+"note": ""
+}
+],
+"ex": [
+[
+"Får man tälta här?",
+"A-t-on le droit de camper ici ?"
+],
+[
+"Vi plockar blåbär i skogen.",
+"Nous cueillons des myrtilles dans la forêt."
+],
+[
+"Det är eldningsförbud i hela länet.",
+"Il est interdit de faire du feu dans tout le département."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"cu3": {
+"sec": [
+{
+"h": "Le cortège de Lucia",
+"text": [
+"Le **luciatåg** (cortège) avance dans la pénombre en chantant. En tête, **Lucia** avec sa couronne de bougies et une ceinture rouge ; derrière, les **tärnor** (demoiselles en blanc, une bougie à la main), les **stjärngossar** (garçons coiffés d'un chapeau pointu étoilé), parfois des **tomtenissar** (lutins) et des **pepparkaksgubbar** (bonshommes en pain d'épice). On l'organise dans les écoles, les bureaux, les églises, et à la télévision le matin du 13 décembre."
+],
+"tables": [],
+"ex": []
+},
+{
+"h": "La fête de midsommar",
+"text": [
+"**Midsommarafton**, la veille, tombe toujours un **vendredi entre le 19 et le 25 juin** : c'est le vrai jour de fête. On dresse la **midsommarstång** (mât couvert de feuillages et de fleurs), on danse autour en chantant **Små grodorna** (les petites grenouilles, en sautillant !), puis on mange **sill** (hareng mariné), **färskpotatis** (pommes de terre nouvelles) à la **gräddfil** et à la ciboulette, et des **jordgubbar** (fraises). Les jeunes filles cueillent sept fleurs à mettre sous l'oreiller pour rêver de leur futur amour."
+],
+"tables": [
+{
+"title": "Autres fêtes de l'année",
+"cols": [
+"Fête",
+"Date",
+"Tradition"
+],
+"rows": [
+[
+"Påsk",
+"mars / avril",
+"œufs peints, enfants déguisés en påskkärringar (petites sorcières)"
+],
+[
+"Valborg",
+"30 avril",
+"grands feux (valborgsbål), chants au printemps"
+],
+[
+"Nationaldagen",
+"6 juin",
+"fête nationale"
+],
+[
+"Midsommar",
+"fin juin",
+"mât fleuri, hareng, fraises"
+],
+[
+"Kräftskiva",
+"août",
+"fête des écrevisses, chapeaux en papier, chansons à boire"
+],
+[
+"Lucia",
+"13 décembre",
+"cortège de lumière, lussekatter"
+],
+[
+"Julafton",
+"24 décembre",
+"julbord, Kalle Anka à la télé à 15 h"
+]
+],
+"note": ""
+}
+],
+"ex": [
+[
+"Glad midsommar!",
+"Joyeuse Saint-Jean !"
+],
+[
+"God jul och gott nytt år!",
+"Joyeux Noël et bonne année !"
+],
+[
+"Glad påsk!",
+"Joyeuses Pâques !"
+]
+]
+}
+],
+"pit": [
+"Noël se fête surtout le **24** (julafton), pas le 25."
+],
+"gram": ""
+},
+"cu4": {
+"sec": [
+{
+"h": "La Suède en chiffres",
+"text": [],
+"tables": [
+{
+"title": "Repères",
+"cols": [
+"",
+""
+],
+"rows": [
+[
+"Population",
+"environ 10,5 millions d'habitants"
+],
+[
+"Superficie",
+"environ 450 000 km², un peu moins que la France métropolitaine"
+],
+[
+"Grandes villes",
+"Stockholm, Göteborg, Malmö, Uppsala"
+],
+[
+"Chef de l'État",
+"le roi Carl XVI Gustaf (depuis 1973)"
+],
+[
+"Régime",
+"monarchie constitutionnelle et démocratie parlementaire"
+],
+[
+"Fête nationale",
+"6 juin"
+],
+[
+"Drapeau",
+"croix jaune sur fond bleu"
+],
+[
+"Plus grand lac",
+"Vänern"
+],
+[
+"Plus haut sommet",
+"Kebnekaise, en Laponie"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Les langues et les régions",
+"text": [
+"Le **suédois** est la langue principale. Cinq langues ont le statut de **langues minoritaires nationales** : le finnois, le meänkieli (finnois de la vallée de la Torne), le same, le romani chib et le yiddish. Le pays se découpe en **21 län** (départements / régions) et, de façon traditionnelle, en 25 **landskap** (provinces historiques) comme Skåne, Dalarna ou Lappland."
+],
+"tables": [],
+"ex": [
+[
+"Sverige ligger i norra Europa.",
+"La Suède se trouve en Europe du Nord."
+],
+[
+"Stockholm är Sveriges huvudstad.",
+"Stockholm est la capitale de la Suède."
+],
+[
+"Hur många bor i Sverige?",
+"Combien de personnes habitent en Suède ?"
+],
+[
+"En krona är hundra öre.",
+"Une couronne vaut cent öre."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"ob1": {
+"sec": [
+{
+"h": "Ce qui peut occuper la 1re place",
+"text": [
+"Presque tout peut ouvrir la phrase : un **moment** (I morgon…), un **lieu** (I Sverige…), un **objet** mis en valeur (Kaffe dricker jag inte), un **adverbe** (Kanske…, Tyvärr…, Därför…), une **subordonnée** (Om det regnar…). Dans tous les cas, le verbe suit immédiatement."
+],
+"tables": [
+{
+"title": "Même phrase, autre départ",
+"cols": [
+"1re place",
+"Verbe",
+"Suite"
+],
+"rows": [
+[
+"Jag",
+"åker",
+"till Stockholm i morgon."
+],
+[
+"I morgon",
+"åker",
+"jag till Stockholm."
+],
+[
+"Till Stockholm",
+"åker",
+"jag i morgon."
+],
+[
+"Kanske",
+"åker",
+"jag till Stockholm i morgon."
+],
+[
+"Om det inte regnar,",
+"åker",
+"jag till Stockholm."
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Pourquoi c'est si fréquent",
+"text": [
+"Les Suédois aiment commencer par le **contexte** (quand, où) ou par ce qui relie à la phrase précédente (**Då**, **Sedan**, **Därför**). Résultat : la moitié des phrases d'un récit ont une inversion. Entraînez-vous en racontant votre journée : « Först äter jag frukost. Sedan cyklar jag till jobbet. På kvällen lagar jag mat. »"
+],
+"tables": [],
+"ex": [
+[
+"Först dricker jag kaffe.",
+"D'abord, je bois un café."
+],
+[
+"Sedan går vi ut.",
+"Ensuite, nous sortons."
+],
+[
+"Tyvärr kan jag inte komma.",
+"Malheureusement, je ne peux pas venir."
+],
+[
+"Därför stannar hon hemma.",
+"C'est pourquoi elle reste à la maison."
+],
+[
+"Kanske kommer han i kväll.",
+"Peut-être qu'il viendra ce soir."
+]
+]
+}
+],
+"pit": [
+"**och, men, eller, så** ne comptent pas comme 1re place : « …men jag **kan** inte ». ",
+"Une question commence aussi par le verbe (ou par un mot interrogatif + verbe) : **Kommer du?**"
+],
+"gram": "g-ordfoljd"
+},
+"ob2": {
+"sec": [
+{
+"h": "Les autres adverbes concernés",
+"text": [
+"Ce n'est pas que **inte** : tous les **adverbes de phrase** passent avant le verbe en subordonnée : **aldrig, alltid, ofta, redan, också, bara, kanske, nog, gärna, ju, väl**. Repère facile : ce sont les petits mots qu'on placerait entre le verbe et l'objet dans une principale."
+],
+"tables": [
+{
+"title": "Principale → subordonnée",
+"cols": [
+"Principale",
+"Subordonnée"
+],
+"rows": [
+[
+"Han kommer alltid sent.",
+"…eftersom han alltid kommer sent."
+],
+[
+"Hon har redan ätit.",
+"…att hon redan har ätit."
+],
+[
+"Jag kan tyvärr inte.",
+"…om jag tyvärr inte kan."
+],
+[
+"Vi bor också här.",
+"…att vi också bor här."
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Pas d'inversion dans la subordonnée",
+"text": [
+"Même si une subordonnée commence par un mot de temps, il n'y a **pas d'inversion** : le sujet reste avant le verbe. Et une question indirecte garde l'ordre de la subordonnée : **Jag vet inte var hon bor** (pas *var bor hon)."
+],
+"tables": [],
+"ex": [
+[
+"Jag tror att han inte är hemma.",
+"Je crois qu'il n'est pas chez lui."
+],
+[
+"Hon frågade om jag aldrig hade varit i Paris.",
+"Elle a demandé si je n'étais jamais allé à Paris."
+],
+[
+"Vi går ut när det inte regnar.",
+"Nous sortons quand il ne pleut pas."
+],
+[
+"Vet du var han bor?",
+"Sais-tu où il habite ?"
+]
+]
+}
+],
+"pit": [
+"**för** (car) n'introduit PAS de subordonnée : « …för jag **är inte** hungrig ». Mais **eftersom** oui : « …eftersom jag **inte är** hungrig ».",
+"Après **att**, à l'oral, on entend parfois l'ordre de la principale : à l'écrit, gardez inte + verbe."
+],
+"gram": "g-bisats"
+},
+"vb1": {
+"sec": [
+{
+"h": "Les modèles des verbes forts",
+"text": [
+"Les verbes forts ne sont pas totalement chaotiques : ils suivent quelques **séries de voyelles**. Les reconnaître aide énormément."
+],
+"tables": [
+{
+"title": "Séries fréquentes",
+"cols": [
+"Modèle",
+"Exemples"
+],
+"rows": [
+[
+"i – e – i",
+"skriva, skrev, skrivit · bli, blev, blivit · bita, bet, bitit"
+],
+[
+"i – a – u",
+"dricka, drack, druckit · springa, sprang, sprungit · vinna, vann, vunnit"
+],
+[
+"y / ju – ö – u",
+"flyga, flög, flugit · bjuda, bjöd, bjudit · frysa, frös, frusit"
+],
+[
+"a – o – a",
+"ta, tog, tagit · dra, drog, dragit"
+],
+[
+"à part",
+"gå, gick, gått · få, fick, fått · göra, gjorde, gjort · vara, var, varit"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Utiliser les formes dans une phrase",
+"text": [
+"Le **prétérit** raconte : « I går **gick** jag på bio och **såg** en film. » Le **supin** suit **har / hade** : « Jag **har** aldrig **sett** den filmen. » Le **présent** de presque tous les verbes forts finit en **-er** (skriver, dricker), sauf les courts (går, ser, tar, får)."
+],
+"tables": [],
+"ex": [
+[
+"Vi åt middag och drack vin.",
+"Nous avons dîné et bu du vin."
+],
+[
+"Hon har skrivit tre böcker.",
+"Elle a écrit trois livres."
+],
+[
+"Jag fick ett brev i går.",
+"J'ai reçu une lettre hier."
+],
+[
+"Har du förstått?",
+"Tu as compris ?"
+],
+[
+"Han blev arg.",
+"Il s'est mis en colère."
+]
+]
+}
+],
+"pit": [
+"**sa** (dit) est la forme courante, **sade** la forme écrite soignée.",
+"Le supin des verbes forts finit en **-it** (skrivit, druckit), sauf quelques-uns : **gått, sett, fått, gjort, sagt**."
+],
+"gram": "g-preteritum"
+},
+"vb2": {
+"sec": [
+{
+"h": "Les mots qui décident",
+"text": [],
+"tables": [
+{
+"title": "Indices de temps",
+"cols": [
+"Prétérit",
+"Parfait"
+],
+"rows": [
+[
+"i går, i förrgår",
+"redan (déjà)"
+],
+[
+"förra veckan / förra året",
+"aldrig (jamais)"
+],
+[
+"för tre år sedan",
+"någon gång (déjà, une fois)"
+],
+[
+"1998, i maj",
+"ännu inte / inte än (pas encore)"
+],
+[
+"när jag var liten",
+"just (venir de)"
+],
+[
+"då (à ce moment-là)",
+"sedan + point de départ, i + durée qui continue"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Une conversation typique",
+"text": [
+"On ouvre souvent au **parfait** (est-ce arrivé ?) puis on passe au **prétérit** dès qu'on donne les détails (quand, comment)."
+],
+"tables": [],
+"ex": [
+[
+"– Har du varit i Norrland? – Ja, jag var där i fjol.",
+"– Tu es déjà allé dans le Norrland ? – Oui, j'y suis allé l'an dernier."
+],
+[
+"– Har du ätit? – Ja, jag åt klockan tolv.",
+"– Tu as mangé ? – Oui, j'ai mangé à midi."
+],
+[
+"Jag har bott i Lund sedan 2020.",
+"J'habite à Lund depuis 2020."
+],
+[
+"Jag bodde i Lund i tre år.",
+"J'ai habité à Lund pendant trois ans (c'est fini)."
+],
+[
+"Har du sett Anna i dag?",
+"Tu as vu Anna aujourd'hui ?"
+]
+]
+}
+],
+"pit": [
+"« J'habite ici depuis 2 ans » = **Jag har bott** här i två år (parfait, pas présent).",
+"Jamais de parfait avec un moment passé précis : *Jag har sett honom i går."
+],
+"gram": "g-perfekt"
+},
+"vb3": {
+"sec": [
+{
+"h": "Les modaux au passé",
+"text": [
+"Les modaux ont aussi un prétérit, très utilisé pour la politesse et le conditionnel : **kunde** (pouvait, pourrait), **ville** (voulait), **skulle** (allait, -rait), **måste** (dut, même forme), **fick** (a eu le droit), **borde** (devrait)."
+],
+"tables": [
+{
+"title": "Les formes",
+"cols": [
+"Infinitif",
+"Présent",
+"Prétérit",
+"Supin"
+],
+"rows": [
+[
+"kunna",
+"kan",
+"kunde",
+"kunnat"
+],
+[
+"vilja",
+"vill",
+"ville",
+"velat"
+],
+[
+"ska (skola)",
+"ska",
+"skulle",
+"skolat"
+],
+[
+"måste",
+"måste",
+"måste",
+"(måst)"
+],
+[
+"få",
+"får",
+"fick",
+"fått"
+],
+[
+"böra",
+"bör",
+"borde",
+"bort"
+]
+],
+"note": ""
+}
+],
+"ex": [
+[
+"Jag kunde inte sova i natt.",
+"Je n'ai pas pu dormir cette nuit."
+],
+[
+"Hon ville inte äta.",
+"Elle ne voulait pas manger."
+],
+[
+"Du borde vila lite.",
+"Tu devrais te reposer un peu."
+],
+[
+"Vi fick vänta en timme.",
+"Nous avons dû attendre une heure."
+]
+]
+},
+{
+"h": "Les pièges de sens",
+"text": [
+"**får** a deux sens : « avoir le droit » (Du får gå nu) et « recevoir / devoir subir » (Jag fick vänta = j'ai dû attendre). **måste inte** est rare ; pour « ne pas être obligé de », on dit **behöver inte** : Du behöver inte komma (tu n'es pas obligé de venir). **Du får inte** = tu n'as pas le droit."
+],
+"tables": [],
+"ex": [
+[
+"Du behöver inte betala.",
+"Tu n'as pas besoin de payer."
+],
+[
+"Man får inte röka här.",
+"Il est interdit de fumer ici."
+],
+[
+"Kan jag få notan?",
+"Je peux avoir l'addition ?"
+],
+[
+"Skulle du vilja följa med?",
+"Voudrais-tu venir avec nous ?"
+]
+]
+}
+],
+"pit": [
+"**Du måste inte** sonne étrange : « tu n'es pas obligé » = **Du behöver inte**.",
+"Jamais d'**att** après un modal : **Jag vill äta** (pas *vill att äta)."
+],
+"gram": "g-infinitiv"
+},
+"vb4": {
+"sec": [
+{
+"h": "Prépositions fixes à connaître",
+"text": [
+"Le français et le suédois choisissent rarement la même préposition. Apprenez-les en bloc avec le verbe."
+],
+"tables": [
+{
+"title": "Verbe + préposition",
+"cols": [
+"Suédois",
+"Français"
+],
+"rows": [
+[
+"vänta på",
+"attendre"
+],
+[
+"tänka på",
+"penser à"
+],
+[
+"titta på",
+"regarder"
+],
+[
+"lyssna på",
+"écouter"
+],
+[
+"tro på",
+"croire en"
+],
+[
+"leta efter",
+"chercher"
+],
+[
+"fråga efter",
+"demander (quelqu'un, quelque chose)"
+],
+[
+"prata om",
+"parler de"
+],
+[
+"drömma om",
+"rêver de"
+],
+[
+"bry sig om",
+"se soucier de"
+],
+[
+"vara rädd för",
+"avoir peur de"
+],
+[
+"vara intresserad av",
+"s'intéresser à"
+],
+[
+"vara arg på",
+"être fâché contre"
+],
+[
+"vara gift med",
+"être marié à"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Particule ou préposition ?",
+"text": [
+"Une **particule** change le sens et porte l'accent : **tycka OM** (aimer). Une **préposition** introduit simplement un complément, sans accent : **titta på** tv. Avec une question ou une relative, la préposition part **à la fin** : **Vad tänker du på?** (à quoi penses-tu ?), **Filmen som jag tittade på**."
+],
+"tables": [],
+"ex": [
+[
+"Vad väntar du på?",
+"Qu'est-ce que tu attends ?"
+],
+[
+"Jag letar efter mina nycklar.",
+"Je cherche mes clés."
+],
+[
+"Hon är intresserad av konst.",
+"Elle s'intéresse à l'art."
+],
+[
+"Vem pratar ni om?",
+"De qui parlez-vous ?"
+],
+[
+"Jag har gett upp.",
+"J'ai abandonné."
+]
+]
+}
+],
+"pit": [
+"« attendre quelqu'un » = **vänta på** någon (la préposition est obligatoire).",
+"« regarder la télé » = **titta på** tv ; « écouter la radio » = **lyssna på** radio."
+],
+"gram": "g-partikel"
+},
+"vb5": {
+"sec": [
+{
+"h": "Où rencontre-t-on le passif ?",
+"text": [
+"Partout dans l'écrit public : panneaux, annonces, recettes, journaux. **Rökning förbjuden** ; **Butiken öppnas kl. 9** ; **Pannkakorna serveras med sylt** (les crêpes sont servies avec de la confiture) ; **Mannen greps i natt** (l'homme a été arrêté cette nuit)."
+],
+"tables": [
+{
+"title": "Toutes les formes",
+"cols": [
+"Temps",
+"Actif",
+"Passif"
+],
+"rows": [
+[
+"présent",
+"man öppnar",
+"öppnas"
+],
+[
+"prétérit",
+"man öppnade",
+"öppnades"
+],
+[
+"parfait",
+"man har öppnat",
+"har öppnats"
+],
+[
+"modal",
+"man ska öppna",
+"ska öppnas"
+],
+[
+"groupe 2",
+"man stänger / stängde",
+"stängs / stängdes"
+],
+[
+"verbe fort",
+"man skriver / skrev",
+"skrivs / skrevs"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "L'agent et le « on »",
+"text": [
+"L'auteur de l'action se dit avec **av** : **Huset ritades av en känd arkitekt**. Souvent, on ne le dit pas : le passif sert justement quand l'auteur est inconnu ou sans importance, comme le « on » français : **Det sägs att…** (on dit que…)."
+],
+"tables": [],
+"ex": [
+[
+"Svenska talas av tio miljoner människor.",
+"Le suédois est parlé par dix millions de personnes."
+],
+[
+"Det sägs att han är rik.",
+"On dit qu'il est riche."
+],
+[
+"Mötet har flyttats till fredag.",
+"La réunion a été déplacée à vendredi."
+],
+[
+"Biljetter säljs i entrén.",
+"Les billets sont vendus à l'entrée."
+]
+]
+}
+],
+"pit": [
+"Des verbes en -s ne sont pas passifs : **hoppas** (espérer), **minnas** (se souvenir), **finnas** (exister), **trivas** (se plaire)."
+],
+"gram": "g-passiv"
+},
+"vb6": {
+"sec": [
+{
+"h": "Conjuguer un verbe réfléchi",
+"text": [],
+"tables": [
+{
+"title": "lägga sig (se coucher)",
+"cols": [
+"",
+"Présent",
+"Prétérit"
+],
+"rows": [
+[
+"jag",
+"lägger mig",
+"la mig"
+],
+[
+"du",
+"lägger dig",
+"la dig"
+],
+[
+"han / hon",
+"lägger sig",
+"la sig"
+],
+[
+"vi",
+"lägger oss",
+"la oss"
+],
+[
+"ni",
+"lägger er",
+"la er"
+],
+[
+"de",
+"lägger sig",
+"la sig"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Réfléchi en suédois, pas en français (et inversement)",
+"text": [
+"**lära sig** (apprendre), **gifta sig** (se marier), **ångra sig** (changer d'avis), **förkyla sig** (attraper froid), **klä sig** (s'habiller). À l'inverse, certains verbes réfléchis en français ne le sont pas en suédois : **promenera** (se promener), **vakna** (se réveiller), **minnas** (se souvenir), **undra** (se demander), **hända** (se passer)."
+],
+"tables": [],
+"ex": [
+[
+"Jag lär mig svenska på kvällarna.",
+"J'apprends le suédois le soir."
+],
+[
+"Han kände sig ensam.",
+"Il se sentait seul."
+],
+[
+"Vi vaknade tidigt.",
+"Nous nous sommes réveillés tôt."
+],
+[
+"Sätt dig här!",
+"Assieds-toi ici !"
+],
+[
+"De bestämde sig för att flytta.",
+"Ils ont décidé de déménager."
+]
+]
+}
+],
+"pit": [
+"**sig** uniquement à la 3e personne : **jag sätter mig**, **du sätter dig**.",
+"« se réveiller » = **vakna**, sans sig."
+],
+"gram": "g-reflexiv"
+},
+"nd1": {
+"sec": [
+{
+"h": "Deviner le pluriel",
+"text": [
+"La terminaison du singulier donne souvent la bonne famille : **-a** → **-or** ; mot en court ou en **-e, -ing** → **-ar** ; **-het, -tion, -ad** et mots étrangers → **-er** ; mot **ett** en voyelle → **-n** ; mot **ett** en consonne ou mot en **-are** → **inchangé**."
+],
+"tables": [
+{
+"title": "Du singulier au pluriel défini",
+"cols": [
+"Singulier",
+"Pluriel",
+"Pluriel défini"
+],
+"rows": [
+[
+"en gata",
+"gator",
+"gatorna"
+],
+[
+"en pojke",
+"pojkar",
+"pojkarna"
+],
+[
+"en tidning",
+"tidningar",
+"tidningarna"
+],
+[
+"en månad",
+"månader",
+"månaderna"
+],
+[
+"en station",
+"stationer",
+"stationerna"
+],
+[
+"ett ställe",
+"ställen",
+"ställena"
+],
+[
+"ett land",
+"länder",
+"länderna"
+],
+[
+"en lärare",
+"lärare",
+"lärarna"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Changement de voyelle",
+"text": [
+"Quelques mots très courants changent de voyelle au pluriel, comme « man → men » en anglais : **man → män**, **tand → tänder**, **hand → händer**, **stad → städer**, **land → länder**, **bok → böcker**, **fot → fötter**, **natt → nätter**, **son → söner**, **dotter → döttrar**."
+],
+"tables": [],
+"ex": [
+[
+"Jag har två söner och en dotter.",
+"J'ai deux fils et une fille."
+],
+[
+"Hon har besökt många länder.",
+"Elle a visité beaucoup de pays."
+],
+[
+"Barnen leker med bollarna.",
+"Les enfants jouent avec les ballons."
+],
+[
+"Tre nätter på hotell.",
+"Trois nuits à l'hôtel."
+]
+]
+}
+],
+"pit": [],
+"gram": "g-substantiv"
+},
+"nd2": {
+"sec": [
+{
+"h": "Les terminaisons spéciales",
+"text": [
+"Adjectif en **-d** → **-tt** au neutre : röd → rött, glad → glatt. Voyelle longue finale → **-tt** : ny → nytt, blå → blått. Adjectif déjà en **-t** → pas de t en plus : svart, trött. Adjectifs en **-el, -er, -en** : le **e** tombe devant -a : enkel → enkla, vacker → vackra, mogen → mogna."
+],
+"tables": [
+{
+"title": "Cas fréquents",
+"cols": [
+"en",
+"ett",
+"pluriel / défini",
+"Sens"
+],
+"rows": [
+[
+"röd",
+"rött",
+"röda",
+"rouge"
+],
+[
+"vit",
+"vitt",
+"vita",
+"blanc"
+],
+[
+"ny",
+"nytt",
+"nya",
+"nouveau"
+],
+[
+"blå",
+"blått",
+"blå(a)",
+"bleu"
+],
+[
+"svart",
+"svart",
+"svarta",
+"noir"
+],
+[
+"vacker",
+"vackert",
+"vackra",
+"beau"
+],
+[
+"enkel",
+"enkelt",
+"enkla",
+"simple"
+],
+[
+"bra",
+"bra",
+"bra",
+"bien (invariable)"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "L'adjectif après le verbe",
+"text": [
+"Après **vara** ou **bli**, l'adjectif s'accorde aussi avec le sujet : **Bilen är ny**, **Huset är nytt**, **Bilarna är nya**. C'est un réflexe à prendre, car le français n'accorde pas de la même façon."
+],
+"tables": [],
+"ex": [
+[
+"Vädret är fint i dag.",
+"Il fait beau aujourd'hui."
+],
+[
+"Rummet är stort och ljust.",
+"La chambre est grande et lumineuse."
+],
+[
+"Barnen blev glada.",
+"Les enfants étaient contents."
+],
+[
+"Det var ett rött hus med vita fönster.",
+"C'était une maison rouge aux fenêtres blanches."
+]
+]
+}
+],
+"pit": [],
+"gram": "g-adjektiv"
+},
+"nd3": {
+"sec": [
+{
+"h": "Comparer : plus, moins, aussi",
+"text": [
+"**plus … que** = **-are än** (ou mer … än) ; **aussi … que** = **lika … som** ; **moins … que** = **mindre … än** ou **inte lika … som** (plus naturel). **de plus en plus** = **allt + comparatif** : allt bättre (de mieux en mieux)."
+],
+"tables": [],
+"ex": [
+[
+"Hon är lika lång som sin bror.",
+"Elle est aussi grande que son frère."
+],
+[
+"Det är inte lika kallt som i går.",
+"Il fait moins froid qu'hier."
+],
+[
+"Det blir allt mörkare.",
+"Il fait de plus en plus sombre."
+],
+[
+"Det här är mycket billigare.",
+"C'est beaucoup moins cher."
+],
+[
+"Vilken är den bästa restaurangen här?",
+"Quel est le meilleur restaurant ici ?"
+]
+]
+},
+{
+"h": "mer / mest",
+"text": [
+"Les adjectifs longs, les participes et ceux en **-isk** se comparent avec **mer / mest** : **mer intressant**, **mest känd**, **mer praktisk**. Les adjectifs courts gardent -are / -ast : **snabbare**, **varmast**."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [
+"« beaucoup plus » = **mycket** + comparatif : **mycket större** (jamais *mer större).",
+"**fler** (plus nombreux, dénombrable) ≠ **mer** (plus, quantité) : **fler bilar**, **mer vatten**."
+],
+"gram": "g-adjektiv"
+},
+"nd4": {
+"sec": [
+{
+"h": "Le test du sujet",
+"text": [
+"Pour choisir, demandez-vous : **le possesseur est-il le sujet du même verbe ?** Oui → **sin / sitt / sina**. Non → **hans / hennes / deras**. Dans le sujet lui-même, jamais sin : **Hans fru heter Eva**."
+],
+"tables": [
+{
+"title": "Exemples",
+"cols": [
+"Phrase",
+"Sens"
+],
+"rows": [
+[
+"Anna ringer sin syster.",
+"Anna appelle sa (propre) sœur."
+],
+[
+"Anna ringer hennes syster.",
+"Anna appelle la sœur d'une autre femme."
+],
+[
+"Barnen leker med sina leksaker.",
+"Les enfants jouent avec leurs jouets."
+],
+[
+"Hennes syster bor i Lund.",
+"Sa sœur habite à Lund."
+],
+[
+"Han bad mig ta hans väska.",
+"Il m'a demandé de prendre son sac (à lui)."
+]
+],
+"note": "Dans le dernier exemple, le sujet de « ta » est « mig » : on emploie donc hans pour parler du sac de « han »."
+}
+],
+"ex": []
+},
+{
+"h": "Possessifs et forme du nom",
+"text": [
+"Après un possessif, le nom est toujours **indéfini** : **min bil**, **vårt hus**, **hennes barn**. Avec un adjectif, l'adjectif prend **-a** : **min nya bil**, **vårt gamla hus**."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-pronomen"
+},
+"ux1": {
+"sec": [
+{
+"h": "Connecteurs de base",
+"text": [],
+"tables": [
+{
+"title": "Les plus utiles",
+"cols": [
+"Suédois",
+"Sens",
+"Exemple"
+],
+"rows": [
+[
+"och",
+"et",
+"Jag och du."
+],
+[
+"men",
+"mais",
+"Det är dyrt, men bra."
+],
+[
+"eller",
+"ou",
+"Te eller kaffe?"
+],
+[
+"så",
+"donc, alors",
+"Jag var trött, så jag gick hem."
+],
+[
+"för",
+"car",
+"Jag stannar, för det regnar."
+],
+[
+"sedan / sen",
+"ensuite",
+"Sen åt vi middag."
+],
+[
+"först",
+"d'abord",
+"Först handlar vi."
+],
+[
+"till slut",
+"finalement",
+"Till slut kom bussen."
+],
+[
+"i alla fall",
+"en tout cas, quand même",
+"Det var kul i alla fall."
+],
+[
+"faktiskt",
+"en fait, vraiment",
+"Det är faktiskt sant."
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Connecteur en tête = inversion",
+"text": [
+"La plupart de ces mots, placés en début de phrase, déclenchent l'inversion : **Därför kommer jag inte. Dessutom är det dyrt. Sedan gick vi hem.** Exceptions : **och, men, eller, för, så** (sauf « så » à l'oral, souvent suivi d'inversion)."
+],
+"tables": [],
+"ex": [
+[
+"Dessutom är det för sent.",
+"En plus, il est trop tard."
+],
+[
+"Egentligen vill jag inte.",
+"En fait, je n'ai pas envie."
+],
+[
+"Förresten, har du sett Lisa?",
+"Au fait, tu as vu Lisa ?"
+],
+[
+"Istället tog vi tåget.",
+"À la place, nous avons pris le train."
+]
+]
+}
+],
+"pit": [],
+"gram": "g-adverb"
+},
+"ux2": {
+"sec": [
+{
+"h": "Exprimer son accord et son désaccord",
+"text": [],
+"tables": [
+{
+"title": "Formules",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"Jag håller med (dig).",
+"Je suis d'accord (avec toi)."
+],
+[
+"Precis! / Exakt!",
+"Exactement !"
+],
+[
+"Det har du rätt i.",
+"Tu as raison sur ce point."
+],
+[
+"Jag är inte så säker på det.",
+"Je n'en suis pas si sûr."
+],
+[
+"Jag ser det på ett annat sätt.",
+"Je vois les choses autrement."
+],
+[
+"Ja, men samtidigt…",
+"Oui, mais en même temps…"
+],
+[
+"Det låter bra.",
+"Ça a l'air bien."
+],
+[
+"Det spelar ingen roll för mig.",
+"Ça m'est égal."
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Le style de discussion suédois",
+"text": [
+"Les Suédois valorisent le **consensus** et évitent la confrontation directe. On nuance beaucoup (**kanske, ganska, lite**), on laisse l'autre finir, et les silences ne gênent personne. Un désaccord trop frontal peut surprendre ; commencer par **Jag förstår vad du menar, men…** (je comprends ce que tu veux dire, mais…) passe beaucoup mieux."
+],
+"tables": [],
+"ex": [
+[
+"Jag tycker nog att vi borde vänta.",
+"Je pense quand même qu'on devrait attendre."
+],
+[
+"Vad tycker du?",
+"Qu'en penses-tu ?"
+],
+[
+"Jag förstår vad du menar, men jag håller inte med.",
+"Je comprends, mais je ne suis pas d'accord."
+],
+[
+"Det är en bra poäng.",
+"C'est un bon argument."
+]
+]
+}
+],
+"pit": [
+"**tycker** pour un avis, **tror** pour une supposition : « Jag **tycker** att filmen är bra » / « Jag **tror** att han kommer »."
+],
+"gram": ""
+},
+"ux3": {
+"sec": [
+{
+"h": "Les mots du bureau",
+"text": [],
+"tables": [
+{
+"title": "Au travail",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"ett möte",
+"une réunion"
+],
+[
+"en arbetsplats",
+"un lieu de travail"
+],
+[
+"ett kontor",
+"un bureau (pièce)"
+],
+[
+"en lön",
+"un salaire"
+],
+[
+"en semester",
+"des vacances"
+],
+[
+"en sjukskrivning",
+"un arrêt maladie"
+],
+[
+"att jobba hemifrån",
+"télétravailler"
+],
+[
+"en deadline",
+"une échéance"
+],
+[
+"ett projekt",
+"un projet"
+],
+[
+"en kund",
+"un client"
+],
+[
+"en faktura",
+"une facture"
+],
+[
+"ett avtal",
+"un contrat, un accord"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "La culture de travail suédoise",
+"text": [
+"Hiérarchie plate : on tutoie son chef et on attend l'avis de tous avant une décision, ce qui prend du temps mais crée du consensus. On respecte les horaires : partir tôt pour chercher les enfants est normal. En juillet, beaucoup d'entreprises tournent au ralenti : c'est la période des **semestrar** (souvent 4 semaines d'affilée)."
+],
+"tables": [],
+"ex": [
+[
+"Jag har semester hela juli.",
+"Je suis en vacances tout le mois de juillet."
+],
+[
+"Kan vi boka ett möte på tisdag?",
+"On peut fixer une réunion mardi ?"
+],
+[
+"Jag jobbar hemifrån i dag.",
+"Je télétravaille aujourd'hui."
+],
+[
+"Jag återkommer i morgon.",
+"Je reviens vers vous demain."
+],
+[
+"Med vänliga hälsningar",
+"Cordialement"
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"ux4": {
+"sec": [
+{
+"h": "D'autres expressions du quotidien",
+"text": [],
+"tables": [
+{
+"title": "Expressions",
+"cols": [
+"Suédois",
+"Sens",
+"Mot à mot"
+],
+"rows": [
+[
+"Det är lugnt.",
+"Pas de souci, c'est bon.",
+"c'est calme"
+],
+[
+"Ingen fara!",
+"Pas de problème !",
+"aucun danger"
+],
+[
+"Ha det så kul!",
+"Amuse-toi bien !",
+"aie-le si amusant"
+],
+[
+"Lycka till!",
+"Bonne chance !",
+"bonheur à"
+],
+[
+"Krya på dig!",
+"Rétablis-toi vite !",
+"guéris-toi"
+],
+[
+"Vad synd!",
+"Dommage !",
+"quel péché"
+],
+[
+"Det är inte hela världen.",
+"Ce n'est pas grave.",
+"ce n'est pas le monde entier"
+],
+[
+"Sova som en stock.",
+"Dormir comme une souche.",
+"dormir comme une bûche"
+],
+[
+"Ingen ko på isen.",
+"Pas de quoi s'inquiéter.",
+"pas de vache sur la glace"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Réagir dans la conversation",
+"text": [
+"Les Suédois ponctuent l'écoute de petits mots : **jaha** (ah bon, d'accord), **precis** (exactement), **va kul!** (chouette !), **oj!** (oh !), **usch!** (beurk, quelle horreur), **ja, ja** (oui, oui). Une particularité célèbre : un **« ja » inspiré**, dit en aspirant l'air, qui signifie simplement « oui, je t'écoute »."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": ""
+},
+"ux5": {
+"sec": [
+{
+"h": "Faux amis",
+"text": [],
+"tables": [
+{
+"title": "Faux amis franco-suédois",
+"cols": [
+"Suédois",
+"Sens réel",
+"À ne pas confondre avec"
+],
+"rows": [
+[
+"gift",
+"marié / poison",
+"un cadeau = en present"
+],
+[
+"en semester",
+"des vacances",
+"un semestre = en termin"
+],
+[
+"rolig",
+"amusant",
+"drôle de (bizarre) = konstig"
+],
+[
+"en kock",
+"un cuisinier",
+"un coq = en tupp"
+],
+[
+"fin",
+"joli, beau",
+"fin (mince) = tunn"
+],
+[
+"en tur",
+"une chance, une balade",
+"une tour = ett torn"
+],
+[
+"en affär",
+"un magasin, une affaire",
+"une liaison aussi"
+],
+[
+"ett barn",
+"un enfant",
+"une grange = en lada"
+],
+[
+"glass",
+"glace (à manger)",
+"un verre = ett glas"
+],
+[
+"en rabatt",
+"réduction, ou parterre de fleurs",
+""
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Quelques réflexes à prendre",
+"text": [
+"**Le** sujet est obligatoire : « il pleut » = **det regnar**. Pas de **-s** au pluriel : **två hus**. **gå** (à pied) ≠ **åka** (en véhicule). « J'ai faim » = **jag är hungrig**. Pas de vouvoiement : **du** partout. « Depuis » + durée = **parfait** : jag har bott här i två år."
+],
+"tables": [],
+"ex": [
+[
+"Jag fick en present av min syster.",
+"J'ai reçu un cadeau de ma sœur."
+],
+[
+"Filmen var jätterolig!",
+"Le film était super drôle !"
+],
+[
+"Jag ska åka på semester.",
+"Je vais partir en vacances."
+],
+[
+"Vi åkte till Göteborg.",
+"Nous sommes allés à Göteborg (en véhicule)."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"ls1": {
+"sec": [
+{
+"h": "Göteborg en quelques mots",
+"text": [
+"**Göteborg** est la deuxième ville de Suède, sur la côte ouest, avec l'un des plus grands ports de Scandinavie. Elle est connue pour ses **spårvagnar** (trams, le plus grand réseau du pays), son archipel (**skärgården**), le parc d'attractions **Liseberg**, et son humour : les Göteborgeois ont la réputation d'aimer les jeux de mots (les **Göteborgsvitsar**)."
+],
+"tables": [],
+"ex": []
+},
+{
+"h": "Les mots du texte",
+"text": [
+"Repérez les inversions : « **På vägen köper hon**… », « **Klockan nio har hon**… », « **Efter jobbet går hon**… ». Chaque fois, un complément ouvre la phrase et le verbe passe en 2e position."
+],
+"tables": [
+{
+"title": "Vocabulaire",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"en spårvagn",
+"un tramway"
+],
+[
+"på vägen",
+"en chemin"
+],
+[
+"ett möte",
+"une réunion"
+],
+[
+"en kollega",
+"un collègue"
+],
+[
+"att träna",
+"s'entraîner, faire du sport"
+],
+[
+"varje dag",
+"chaque jour"
+]
+],
+"note": ""
+}
+],
+"ex": []
+}
+],
+"pit": [],
+"gram": ""
+},
+"ls2": {
+"sec": [
+{
+"h": "La stuga et le week-end",
+"text": [
+"Beaucoup de Suédois ont accès à une **stuga** (petit chalet, souvent rouge, à la campagne ou au bord d'un lac). Le week-end d'été, on y va pour **grilla** (faire un barbecue), **bada** (se baigner) et **mysa** (se détendre tranquillement)."
+],
+"tables": [
+{
+"title": "Vocabulaire",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"en stuga",
+"un chalet, une maison de campagne"
+],
+[
+"att grilla",
+"faire un barbecue"
+],
+[
+"att bada",
+"se baigner"
+],
+[
+"inomhus / utomhus",
+"à l'intérieur / dehors"
+],
+[
+"att följa med",
+"venir avec, accompagner"
+],
+[
+"gärna",
+"volontiers"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Om + inversion",
+"text": [
+"« **Om vädret är fint, ska vi grilla.** » La subordonnée avec om occupe la 1re place, donc le verbe **ska** vient tout de suite, avant le sujet **vi**. Même chose : « Om det regnar, **spelar vi** kort. »"
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": ""
+},
+"sb1": {
+"sec": [
+{
+"h": "Le pluriel défini",
+"text": [
+"Au pluriel, « les » se colle aussi à la fin : **-na** après un pluriel en -or / -ar / -er (**bilarna, flickorna**), **-a** après un pluriel en -n (**äpplena**), **-en** pour les mots ett au pluriel inchangé (**husen, barnen**)."
+],
+"tables": [
+{
+"title": "Toutes les formes",
+"cols": [
+"Indéfini",
+"Défini",
+"Pluriel",
+"Pluriel défini"
+],
+"rows": [
+[
+"en katt",
+"katten",
+"katter",
+"katterna"
+],
+[
+"en hund",
+"hunden",
+"hundar",
+"hundarna"
+],
+[
+"en gata",
+"gatan",
+"gator",
+"gatorna"
+],
+[
+"ett bord",
+"bordet",
+"bord",
+"borden"
+],
+[
+"ett barn",
+"barnet",
+"barn",
+"barnen"
+],
+[
+"en dag",
+"dagen",
+"dagar",
+"dagarna"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Quand employer la forme définie",
+"text": [
+"Comme en français, pour une chose déjà connue ou unique : **Solen skiner** (le soleil brille), **Var är nyckeln?**. Mais pas avec un possessif (**min nyckel**), ni après **nästa** (**nästa år**), ni pour un métier (**Hon är läkare**). Pour les notions générales, le suédois suit souvent le français : **Livet är kort**."
+],
+"tables": [],
+"ex": [
+[
+"Hunden sover i soffan.",
+"Le chien dort dans le canapé."
+],
+[
+"Kan du stänga fönstret?",
+"Peux-tu fermer la fenêtre ?"
+],
+[
+"Barnen är i skolan.",
+"Les enfants sont à l'école."
+],
+[
+"Solen går upp klockan sex.",
+"Le soleil se lève à six heures."
+]
+]
+}
+],
+"pit": [
+"Mots en -el / -er / -en : **nyckel → nyckeln**, **fönster → fönstret**, **vatten → vattnet** (le e tombe)."
+],
+"gram": "g-bestamd"
+},
+"sb2": {
+"sec": [
+{
+"h": "Les mots qui ne changent pas",
+"text": [
+"Deux grandes familles gardent la même forme au pluriel : les mots **ett terminés par une consonne** (ett hus – hus, ett år – år, ett barn – barn, ett djur – djur) et les mots **en en -are, -er (personnes), -ande** (en lärare – lärare, en läkare – läkare, en studerande – studerande). Seule la forme définie les distingue : **huset** (la maison) / **husen** (les maisons)."
+],
+"tables": [],
+"ex": [
+[
+"Ett år – två år.",
+"Un an – deux ans."
+],
+[
+"Vi har tre barn.",
+"Nous avons trois enfants."
+],
+[
+"Alla lärare var där.",
+"Tous les professeurs étaient là."
+],
+[
+"Husen vid sjön är röda.",
+"Les maisons au bord du lac sont rouges."
+]
+]
+},
+{
+"h": "Les pluriels à retenir par cœur",
+"text": [],
+"tables": [
+{
+"title": "Irréguliers fréquents",
+"cols": [
+"Singulier",
+"Pluriel",
+"Sens"
+],
+"rows": [
+[
+"en man",
+"män",
+"homme"
+],
+[
+"en kvinna",
+"kvinnor",
+"femme"
+],
+[
+"en mus",
+"möss",
+"souris"
+],
+[
+"en tand",
+"tänder",
+"dent"
+],
+[
+"en natt",
+"nätter",
+"nuit"
+],
+[
+"ett öga / ett öra",
+"ögon / öron",
+"œil / oreille"
+],
+[
+"en sko",
+"skor",
+"chaussure"
+],
+[
+"en mor / far",
+"mödrar / fäder",
+"mère / père"
+],
+[
+"en bror / syster",
+"bröder / systrar",
+"frère / sœur"
+],
+[
+"en dotter / son",
+"döttrar / söner",
+"fille / fils"
+]
+],
+"note": ""
+}
+],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-substantiv"
+},
+"sb3": {
+"sec": [
+{
+"h": "Mots composés : le dernier mot décide",
+"text": [
+"Un mot composé prend le genre de son **dernier élément** : **en tandborste** (brosse à dents) est en parce que **en borste** l'est ; **ett sovrum** (chambre) est ett parce que **ett rum** l'est. Utile : si vous connaissez la fin du mot, vous connaissez son genre."
+],
+"tables": [
+{
+"title": "Exemples",
+"cols": [
+"Mot composé",
+"Dernier élément",
+"Genre"
+],
+"rows": [
+[
+"sovrum (chambre)",
+"ett rum",
+"ett"
+],
+[
+"tandborste (brosse à dents)",
+"en borste",
+"en"
+],
+[
+"busshållplats (arrêt de bus)",
+"en plats",
+"en"
+],
+[
+"kylskåp (frigo)",
+"ett skåp",
+"ett"
+],
+[
+"skrivbord (bureau)",
+"ett bord",
+"ett"
+],
+[
+"järnväg (chemin de fer)",
+"en väg",
+"en"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Indices fiables",
+"text": [
+"**en** : -are, -ing, -het, -tion, -else, -ism, -ör, -ist et presque tous les mots pour des personnes et animaux (sauf ett barn, ett djur, ett lejon). **ett** : -eri, -um, -ment, -skap (souvent), -ande désignant une action (ett meddelande, ett leende)."
+],
+"tables": [],
+"ex": [
+[
+"Ett meddelande från banken.",
+"Un message de la banque."
+],
+[
+"En tidning ligger på bordet.",
+"Un journal est sur la table."
+],
+[
+"Vi bor i ett litet samhälle.",
+"Nous habitons dans une petite localité."
+]
+]
+}
+],
+"pit": [
+"**ett vatten**, **ett kaffe** (ou en), **en mjölk**, **en juice** : les liquides n'ont pas de règle."
+],
+"gram": "g-substantiv"
+},
+"sb4": {
+"sec": [
+{
+"h": "Les adjectifs irréguliers",
+"text": [],
+"tables": [
+{
+"title": "À connaître",
+"cols": [
+"en",
+"ett",
+"pluriel",
+"défini"
+],
+"rows": [
+[
+"liten",
+"litet",
+"små",
+"lilla (sg) / små (pl)"
+],
+[
+"gammal",
+"gammalt",
+"gamla",
+"gamla"
+],
+[
+"god",
+"gott",
+"goda",
+"goda"
+],
+[
+"bra",
+"bra",
+"bra",
+"bra"
+],
+[
+"ny",
+"nytt",
+"nya",
+"nya"
+],
+[
+"röd",
+"rött",
+"röda",
+"röda"
+],
+[
+"vacker",
+"vackert",
+"vackra",
+"vackra"
+],
+[
+"annan",
+"annat",
+"andra",
+"andra"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "L'ordre : article, adjectif, nom",
+"text": [
+"En suédois, l'adjectif se place **toujours devant** le nom : **en röd bil** (une voiture rouge). Avec plusieurs adjectifs, chacun s'accorde : **ett stort, gammalt hus**. Au défini : **det stora, gamla huset**."
+],
+"tables": [],
+"ex": [
+[
+"Jag köpte en ny jacka.",
+"J'ai acheté une nouvelle veste."
+],
+[
+"Det är ett vackert land.",
+"C'est un beau pays."
+],
+[
+"De små barnen sover.",
+"Les petits enfants dorment."
+],
+[
+"Den lilla katten är söt.",
+"Le petit chat est mignon."
+],
+[
+"Gamla vänner är bäst.",
+"Les vieux amis sont les meilleurs."
+]
+]
+}
+],
+"pit": [],
+"gram": "g-adjektiv"
+},
+"sb5": {
+"sec": [
+{
+"h": "Tous les possessifs",
+"text": [],
+"tables": [
+{
+"title": "Possessifs",
+"cols": [
+"",
+"en",
+"ett",
+"pluriel"
+],
+"rows": [
+[
+"mon",
+"min",
+"mitt",
+"mina"
+],
+[
+"ton",
+"din",
+"ditt",
+"dina"
+],
+[
+"son (à lui / à elle)",
+"hans / hennes",
+"hans / hennes",
+"hans / hennes"
+],
+[
+"son propre",
+"sin",
+"sitt",
+"sina"
+],
+[
+"notre",
+"vår",
+"vårt",
+"våra"
+],
+[
+"votre",
+"er",
+"ert",
+"era"
+],
+[
+"leur",
+"deras",
+"deras",
+"deras"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Avec un adjectif",
+"text": [
+"Après un possessif, l'adjectif prend toujours **-a** et le nom reste indéfini : **min nya bil**, **mitt stora rum**, **mina gamla vänner**. C'est la même règle qu'après le génitif : **Annas nya bil**."
+],
+"tables": [],
+"ex": [
+[
+"Var är min telefon?",
+"Où est mon téléphone ?"
+],
+[
+"Det är mitt hus.",
+"C'est ma maison."
+],
+[
+"Är det dina nycklar?",
+"Ce sont tes clés ?"
+],
+[
+"Vi älskar vårt nya hem.",
+"Nous adorons notre nouveau chez-nous."
+],
+[
+"Är det er bil?",
+"C'est votre voiture ?"
+]
+]
+}
+],
+"pit": [],
+"gram": "g-pronomen"
+},
+"vf1": {
+"sec": [
+{
+"h": "Le groupe 1 en action",
+"text": [
+"C'est le groupe des verbes les plus fréquents du quotidien : **prata, jobba, titta, lyssna, laga (mat), städa, handla, fråga, svara, vänta, träna**. Et tous les mots nouveaux : **googla, mejla, swisha, sms:a, chatta**."
+],
+"tables": [
+{
+"title": "Conjugaison complète : prata",
+"cols": [
+"Temps",
+"Forme",
+"Sens"
+],
+"rows": [
+[
+"infinitif",
+"att prata",
+"parler"
+],
+[
+"présent",
+"pratar",
+"parle"
+],
+[
+"prétérit",
+"pratade",
+"parlait, a parlé"
+],
+[
+"parfait",
+"har pratat",
+"a parlé"
+],
+[
+"plus-que-parfait",
+"hade pratat",
+"avait parlé"
+],
+[
+"futur",
+"ska prata",
+"va parler"
+],
+[
+"impératif",
+"Prata!",
+"Parle !"
+],
+[
+"participe",
+"pratad / pratat / pratade",
+"parlé"
+]
+],
+"note": ""
+}
+],
+"ex": [
+[
+"Vi pratade länge i telefon.",
+"Nous avons parlé longtemps au téléphone."
+],
+[
+"Har du handlat?",
+"Tu as fait les courses ?"
+],
+[
+"Jag swishar dig pengarna.",
+"Je te fais un virement Swish."
+],
+[
+"Vänta lite!",
+"Attends un peu !"
+]
+]
+}
+],
+"pit": [
+"**åka** et **köpa** ne sont pas du groupe 1 : åker / åkte, köper / köpte."
+],
+"gram": "g-groupes"
+},
+"vf2": {
+"sec": [
+{
+"h": "Les verbes du groupe 2 les plus courants",
+"text": [],
+"tables": [
+{
+"title": "Groupe 2",
+"cols": [
+"Infinitif",
+"Présent",
+"Prétérit",
+"Supin",
+"Sens"
+],
+"rows": [
+[
+"åka",
+"åker",
+"åkte",
+"åkt",
+"aller (véhicule)"
+],
+[
+"köpa",
+"köper",
+"köpte",
+"köpt",
+"acheter"
+],
+[
+"läsa",
+"läser",
+"läste",
+"läst",
+"lire"
+],
+[
+"tycka",
+"tycker",
+"tyckte",
+"tyckt",
+"penser"
+],
+[
+"ringa",
+"ringer",
+"ringde",
+"ringt",
+"appeler"
+],
+[
+"höra",
+"hör",
+"hörde",
+"hört",
+"entendre"
+],
+[
+"köra",
+"kör",
+"körde",
+"kört",
+"conduire"
+],
+[
+"leva",
+"lever",
+"levde",
+"levt",
+"vivre"
+],
+[
+"stänga",
+"stänger",
+"stängde",
+"stängt",
+"fermer"
+],
+[
+"känna",
+"känner",
+"kände",
+"känt",
+"sentir, connaître"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Les verbes courts du groupe 3",
+"text": [
+"Peu nombreux mais incontournables : **bo** (habiter), **tro** (croire), **må** (aller, se porter), **nå** (atteindre), **sy** (coudre), **klä** (habiller), **ske** (se passer). Hur **mår** du? Jag **mådde** dåligt i går (je n'allais pas bien hier)."
+],
+"tables": [],
+"ex": [
+[
+"Var bodde du förut?",
+"Où habitais-tu avant ?"
+],
+[
+"Jag trodde att du var hemma.",
+"Je croyais que tu étais à la maison."
+],
+[
+"Vi åkte buss till stan.",
+"Nous sommes allés en ville en bus."
+],
+[
+"Hon har läst hela boken.",
+"Elle a lu tout le livre."
+]
+]
+}
+],
+"pit": [
+"Radical en -r : présent sans -er : **hör, kör, lär, gör**."
+],
+"gram": "g-groupes"
+},
+"vf3": {
+"sec": [
+{
+"h": "Les 20 verbes forts essentiels",
+"text": [],
+"tables": [
+{
+"title": "À savoir par cœur",
+"cols": [
+"Infinitif",
+"Présent",
+"Prétérit",
+"Supin",
+"Sens"
+],
+"rows": [
+[
+"vara",
+"är",
+"var",
+"varit",
+"être"
+],
+[
+"bli",
+"blir",
+"blev",
+"blivit",
+"devenir"
+],
+[
+"gå",
+"går",
+"gick",
+"gått",
+"aller"
+],
+[
+"komma",
+"kommer",
+"kom",
+"kommit",
+"venir"
+],
+[
+"se",
+"ser",
+"såg",
+"sett",
+"voir"
+],
+[
+"ge",
+"ger",
+"gav",
+"gett",
+"donner"
+],
+[
+"ta",
+"tar",
+"tog",
+"tagit",
+"prendre"
+],
+[
+"få",
+"får",
+"fick",
+"fått",
+"recevoir"
+],
+[
+"äta",
+"äter",
+"åt",
+"ätit",
+"manger"
+],
+[
+"dricka",
+"dricker",
+"drack",
+"druckit",
+"boire"
+],
+[
+"sova",
+"sover",
+"sov",
+"sovit",
+"dormir"
+],
+[
+"skriva",
+"skriver",
+"skrev",
+"skrivit",
+"écrire"
+],
+[
+"sitta",
+"sitter",
+"satt",
+"suttit",
+"être assis"
+],
+[
+"ligga",
+"ligger",
+"låg",
+"legat",
+"être couché"
+],
+[
+"stå",
+"står",
+"stod",
+"stått",
+"être debout"
+],
+[
+"finnas",
+"finns",
+"fanns",
+"funnits",
+"exister"
+],
+[
+"springa",
+"springer",
+"sprang",
+"sprungit",
+"courir"
+],
+[
+"flyga",
+"flyger",
+"flög",
+"flugit",
+"voler (avion)"
+],
+[
+"veta",
+"vet",
+"visste",
+"vetat",
+"savoir"
+],
+[
+"göra",
+"gör",
+"gjorde",
+"gjort",
+"faire"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Astuce de mémorisation",
+"text": [
+"Récitez les formes en **rythme** : « dricka – drack – druckit », « skriva – skrev – skrivit ». Regroupez par modèle de voyelles (voir l'onglet Grammaire → Verbes irréguliers) : apprendre « bita, bet, bitit » aide à retenir « skriva, skrev, skrivit », qui suit le même chemin."
+],
+"tables": [],
+"ex": [
+[
+"Jag sov dåligt i natt.",
+"J'ai mal dormi cette nuit."
+],
+[
+"Vi satt i solen hela dagen.",
+"Nous étions assis au soleil toute la journée."
+],
+[
+"Har du ätit frukost?",
+"As-tu pris ton petit-déjeuner ?"
+],
+[
+"Han sprang hela vägen.",
+"Il a couru tout le long du chemin."
+]
+]
+}
+],
+"pit": [],
+"gram": "g-groupes"
+},
+"b2g1": {
+"sec": [
+{
+"h": "som sujet dans les questions indirectes",
+"text": [
+"Quand le mot interrogatif est **sujet** d'une question indirecte, on ajoute **som** : **Jag vet inte vem som ringde** (je ne sais pas qui a appelé). **Vad som hände är oklart** (ce qui s'est passé n'est pas clair). Sans som, la phrase est fautive."
+],
+"tables": [],
+"ex": [
+[
+"Kan du säga vem som kommer?",
+"Peux-tu dire qui vient ?"
+],
+[
+"Det är svårt att veta vad som är sant.",
+"Il est difficile de savoir ce qui est vrai."
+],
+[
+"Huset där jag växte upp är rivet.",
+"La maison où j'ai grandi a été démolie."
+],
+[
+"Författaren, vars bok jag läser, bor i Lund.",
+"L'auteur, dont je lis le livre, habite à Lund."
+]
+]
+},
+{
+"h": "Relatives et virgules",
+"text": [
+"Une relative **déterminative** (qui précise de quoi on parle) ne prend **pas de virgule** : **Bilen som står där är min**. Une relative **explicative** (qui ajoute une information) est entre virgules : **Min bror, som bor i Malmö, är läkare**. Seule la première peut omettre som."
+],
+"tables": [
+{
+"title": "Les relatifs",
+"cols": [
+"Relatif",
+"Sens",
+"Exemple"
+],
+"rows": [
+[
+"som",
+"qui, que",
+"boken som jag läser"
+],
+[
+"vars",
+"dont, de qui",
+"mannen vars bil…"
+],
+[
+"där",
+"où (lieu)",
+"staden där jag bor"
+],
+[
+"dit",
+"où (direction)",
+"landet dit vi flyttade"
+],
+[
+"då / när",
+"où (temps)",
+"dagen då vi träffades"
+],
+[
+"vilket",
+"ce qui (toute la phrase)",
+"…, vilket var bra"
+],
+[
+"vad",
+"ce que",
+"Jag gör vad jag vill."
+]
+],
+"note": ""
+}
+],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-bisats"
+},
+"b2g2": {
+"sec": [
+{
+"h": "Choisir la bonne forme",
+"text": [
+"**-s** : neutre, écrit, règles et habitudes (**Skatten betalas varje månad**). **bli + participe** : événement ponctuel, souvent subi, plus oral (**Han blev påkörd**). **vara + participe** : état résultant (**Han är skadad**). Avec un modal, le **-s** domine : **Formuläret måste fyllas i** (le formulaire doit être rempli)."
+],
+"tables": [],
+"ex": [
+[
+"Ansökan ska skickas senast fredag.",
+"La candidature doit être envoyée vendredi au plus tard."
+],
+[
+"Hon blev erbjuden jobbet.",
+"On lui a proposé le poste."
+],
+[
+"Butiken är stängd för renovering.",
+"Le magasin est fermé pour rénovation."
+],
+[
+"Det har skrivits mycket om saken.",
+"On a beaucoup écrit sur l'affaire."
+],
+[
+"Bilen stals i natt.",
+"La voiture a été volée cette nuit."
+]
+]
+},
+{
+"h": "Le participe selon le groupe",
+"text": [],
+"tables": [
+{
+"title": "Participes accordés",
+"cols": [
+"Verbe",
+"en",
+"ett",
+"pluriel / défini"
+],
+"rows": [
+[
+"stänga",
+"stängd",
+"stängt",
+"stängda"
+],
+[
+"köpa",
+"köpt",
+"köpt",
+"köpta"
+],
+[
+"måla",
+"målad",
+"målat",
+"målade"
+],
+[
+"sy",
+"sydd",
+"sytt",
+"sydda"
+],
+[
+"stjäla",
+"stulen",
+"stulet",
+"stulna"
+],
+[
+"skriva",
+"skriven",
+"skrivet",
+"skrivna"
+]
+],
+"note": ""
+}
+],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-passiv"
+},
+"b2g3": {
+"sec": [
+{
+"h": "Les tournures du souhait et du regret",
+"text": [
+"**Om jag ändå hade…** = si seulement j'avais… ; **Jag önskar att jag kunde…** = j'aimerais pouvoir… ; **Det hade varit bättre om…** = il aurait mieux valu que… ; **Tänk om…** = et si… À l'oral, **hade** remplace souvent **skulle ha** : **Jag hade gärna kommit** (je serais volontiers venu)."
+],
+"tables": [],
+"ex": [
+[
+"Om jag ändå hade lyssnat!",
+"Si seulement j'avais écouté !"
+],
+[
+"Jag önskar att jag kunde flyga.",
+"J'aimerais savoir voler."
+],
+[
+"Tänk om vi vann!",
+"Et si on gagnait !"
+],
+[
+"Om jag vore du skulle jag tacka ja.",
+"Si j'étais toi, j'accepterais."
+],
+[
+"Det hade varit bättre att vänta.",
+"Il aurait mieux valu attendre."
+]
+]
+},
+{
+"h": "Ordre des mots dans l'hypothèse",
+"text": [
+"Si la phrase commence par **om …**, la principale démarre par le verbe : **Om jag hade tid, skulle jag resa**. On peut aussi supprimer om et commencer par le verbe (style écrit) : **Hade jag vetat det, hade jag stannat** (si je l'avais su…)."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-konditional"
+},
+"b2g4": {
+"sec": [
+{
+"h": "Les changements de temps et de mots",
+"text": [],
+"tables": [
+{
+"title": "Direct → indirect",
+"cols": [
+"Direct",
+"Indirect"
+],
+"rows": [
+[
+"« Jag är trött. »",
+"Hon sa att hon var trött."
+],
+[
+"« Jag har ätit. »",
+"Han sa att han hade ätit."
+],
+[
+"« Jag ska komma. »",
+"Hon sa att hon skulle komma."
+],
+[
+"« Kommer du? »",
+"Han frågade om jag skulle komma."
+],
+[
+"« Var bor du? »",
+"Hon frågade var jag bodde."
+],
+[
+"« Kom hit! »",
+"Han bad mig (att) komma dit."
+],
+[
+"« här, i dag, i morgon »",
+"där, den dagen, dagen efter"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Rapporter avec nuance",
+"text": [
+"Le verbe introducteur donne le ton : **påstå** (prétendre, met en doute), **hävda** (soutenir), **erkänna** (avouer), **förneka** (nier), **lova** (promettre), **varna** (avertir), **föreslå** (proposer). Le journalisme suédois utilise beaucoup **enligt** (selon) : **Enligt polisen var det en olycka**."
+],
+"tables": [],
+"ex": [
+[
+"Han påstod att han inte visste något.",
+"Il a prétendu ne rien savoir."
+],
+[
+"Hon lovade att hon skulle ringa.",
+"Elle a promis qu'elle appellerait."
+],
+[
+"De frågade varför vi inte hade kommit.",
+"Ils ont demandé pourquoi nous n'étions pas venus."
+],
+[
+"Enligt rapporten ökar arbetslösheten.",
+"Selon le rapport, le chômage augmente."
+]
+]
+}
+],
+"pit": [],
+"gram": "g-bisats"
+},
+"b2g5": {
+"sec": [
+{
+"h": "Participes présents utiles",
+"text": [
+"Le participe présent sert aussi de **nom** (souvent pour des personnes) et d'**adverbe** : **en resande** (un voyageur), **de boende** (les résidents), **en sökande** (un candidat), **hon kom springande** (elle est arrivée en courant), **han satt tyst, väntande** (il attendait, silencieux)."
+],
+"tables": [],
+"ex": [
+[
+"Alla sökande kallas till intervju.",
+"Tous les candidats sont convoqués à un entretien."
+],
+[
+"Det var en skrämmande upplevelse.",
+"C'était une expérience effrayante."
+],
+[
+"Hon kom gående längs vägen.",
+"Elle arrivait à pied le long de la route."
+],
+[
+"Han är en mycket omtyckt lärare.",
+"C'est un professeur très apprécié."
+]
+]
+},
+{
+"h": "Émotion ressentie ou provoquée",
+"text": [],
+"tables": [
+{
+"title": "Paires à ne pas confondre",
+"cols": [
+"Ressenti (participe passé)",
+"Provoqué (adjectif / participe présent)"
+],
+"rows": [
+[
+"uttråkad (ennuyé)",
+"tråkig (ennuyeux)"
+],
+[
+"intresserad (intéressé)",
+"intressant (intéressant)"
+],
+[
+"förvånad (surpris)",
+"förvånande (surprenant)"
+],
+[
+"irriterad (agacé)",
+"irriterande (agaçant)"
+],
+[
+"skrämd (effrayé)",
+"skrämmande (effrayant)"
+],
+[
+"imponerad (impressionné)",
+"imponerande (impressionnant)"
+]
+],
+"note": ""
+}
+],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-particip"
+},
+"b2g6": {
+"sec": [
+{
+"h": "Une même base, des sens très différents",
+"text": [],
+"tables": [
+{
+"title": "Avec ta et komma",
+"cols": [
+"Verbe",
+"Sens",
+"Exemple"
+],
+"rows": [
+[
+"ta upp",
+"aborder ; ramasser",
+"Hon tog upp frågan på mötet."
+],
+[
+"ta bort",
+"enlever, supprimer",
+"Ta bort bilden!"
+],
+[
+"ta emot",
+"recevoir, accueillir",
+"Vi tog emot gästerna."
+],
+[
+"ta hand om",
+"s'occuper de",
+"Vem tar hand om hunden?"
+],
+[
+"ta över",
+"reprendre (la direction)",
+"Hon tog över företaget."
+],
+[
+"komma på",
+"trouver (une idée)",
+"Jag kom på en lösning."
+],
+[
+"komma ihåg",
+"se souvenir",
+"Kommer du ihåg henne?"
+],
+[
+"komma fram",
+"arriver (à destination)",
+"När kommer vi fram?"
+],
+[
+"komma överens",
+"s'entendre",
+"Vi kommer bra överens."
+],
+[
+"komma tillbaka",
+"revenir",
+"Jag kommer tillbaka snart."
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Particule détachée ou collée",
+"text": [
+"Certains verbes existent sous deux formes, avec une **nuance de registre** : particule détachée = concret, oral ; préfixe collé = abstrait, écrit. **bryta av** (casser en deux) / **avbryta** (interrompre). **ta över** (reprendre) / **överta** (reprendre, écrit). **föra in** (faire entrer) / **införa** (instaurer, introduire une loi). Au participe, la particule passe toujours devant : **en uppsatt affisch**, **ett avbrutet möte**."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-partikel"
+},
+"b2g7": {
+"sec": [
+{
+"h": "Fréquence et répétition",
+"text": [
+"**en gång i veckan** (une fois par semaine), **två gånger om dagen** (deux fois par jour), **varannan dag** (un jour sur deux), **då och då** (de temps en temps), **i längden** (à la longue), **för första gången** (pour la première fois), **i tid** (à l'heure), **i sista stund** (au dernier moment)."
+],
+"tables": [],
+"ex": [
+[
+"Jag tränar tre gånger i veckan.",
+"Je m'entraîne trois fois par semaine."
+],
+[
+"Ta tabletten två gånger om dagen.",
+"Prenez le comprimé deux fois par jour."
+],
+[
+"Vi ses varannan helg.",
+"On se voit un week-end sur deux."
+],
+[
+"Hon kom i sista stund.",
+"Elle est arrivée au dernier moment."
+],
+[
+"Han har inte varit här på flera år.",
+"Il n'est pas venu ici depuis plusieurs années."
+]
+]
+},
+{
+"h": "Le piège i / på / under",
+"text": [
+"« Pendant » se dit **i** (durée totale, souvent avec un chiffre : i tre veckor), **under** (au cours d'une période nommée : under sommaren, under mötet) ou **på** dans une phrase négative (**på länge**, **på tre år** = depuis trois ans)."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-tidsprep"
+},
+"b2g8": {
+"sec": [
+{
+"h": "Préfixes fréquents",
+"text": [],
+"tables": [
+{
+"title": "Préfixes",
+"cols": [
+"Préfixe",
+"Sens",
+"Exemples"
+],
+"rows": [
+[
+"o-",
+"négation (in-, im-)",
+"omöjlig, olycklig, ovanlig"
+],
+[
+"miss-",
+"mal, mé-",
+"missförstå, missnöjd"
+],
+[
+"för-",
+"intensif, avant",
+"förklara, förbättra, förort"
+],
+[
+"be-",
+"rendre transitif",
+"betala, besöka, beskriva"
+],
+[
+"sam-",
+"co-, ensemble",
+"samarbete, samhälle, sambo"
+],
+[
+"åter-",
+"re-",
+"återvända, återvinning"
+],
+[
+"över-",
+"sur-, trop",
+"överraska, övervikt"
+],
+[
+"under-",
+"sous-",
+"underskatta, underhåll"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Lire un long mot composé",
+"text": [
+"Face à un mot comme **sjukhusparkeringsavgift**, découpez-le à partir de la fin : **avgift** (frais) ← **parkering** (stationnement) ← **sjukhus** (hôpital) → « frais de stationnement de l'hôpital ». Le dernier élément est le **mot principal** et donne le genre (**en avgift**)."
+],
+"tables": [],
+"ex": [
+[
+"Var ligger busshållplatsen?",
+"Où est l'arrêt de bus ?"
+],
+[
+"Det var ett missförstånd.",
+"C'était un malentendu."
+],
+[
+"Vi behöver förbättra samarbetet.",
+"Nous devons améliorer la collaboration."
+],
+[
+"Det är omöjligt att veta.",
+"C'est impossible à savoir."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"b2g9": {
+"sec": [
+{
+"h": "Det dans les phrases présentatives",
+"text": [
+"Pour introduire un sujet **indéfini**, le suédois préfère **det** + verbe + sujet réel : **Det sitter en katt på taket** (il y a un chat sur le toit), **Det kom många människor** (beaucoup de gens sont venus), **Det står i tidningen att…** (il est écrit dans le journal que…)."
+],
+"tables": [],
+"ex": [
+[
+"Det bor en familj i huset.",
+"Une famille habite dans la maison."
+],
+[
+"Det har hänt en olycka.",
+"Il est arrivé un accident."
+],
+[
+"Det gäller att vara snabb.",
+"Il s'agit d'être rapide."
+],
+[
+"Det lönar sig inte.",
+"Ça ne vaut pas la peine."
+],
+[
+"Man vet aldrig.",
+"On ne sait jamais."
+]
+]
+},
+{
+"h": "Det est … som : la mise en relief",
+"text": [
+"Pour insister, comme « c'est … qui » : **Det var Anna som ringde** (c'est Anna qui a appelé). **Det är därför som jag inte kom** (c'est pour ça que je ne suis pas venu). **Det är inte pengarna som är problemet** (ce n'est pas l'argent le problème)."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-det"
+},
+"b2g10": {
+"sec": [
+{
+"h": "Le futur dans le passé et le futur antérieur",
+"text": [
+"Dans un récit au passé, **skulle** remplace ska : **Vi skulle åka nästa dag** (nous devions partir le lendemain). **Kommer att** devient **skulle** aussi : **Hon visste att det skulle bli svårt**. Futur antérieur : **ska ha + supin** ou **kommer att ha + supin** : **Till sommaren kommer vi att ha bott här i tio år**."
+],
+"tables": [],
+"ex": [
+[
+"Jag trodde att det skulle regna.",
+"Je croyais qu'il allait pleuvoir."
+],
+[
+"I morgon har jag slutat.",
+"Demain, j'aurai fini."
+],
+[
+"Vi ska ha flyttat innan jul.",
+"Nous aurons déménagé avant Noël."
+],
+[
+"Tåget ska gå om fem minuter.",
+"Le train doit partir dans cinq minutes."
+]
+]
+},
+{
+"h": "ska : plus qu'un futur",
+"text": [
+"**ska** exprime aussi l'obligation (**Du ska vara här klockan åtta**), la rumeur (**Hon ska vara jättesnäll** = il paraît qu'elle est très gentille) et la proposition (**Ska jag öppna fönstret?**). Le contexte permet de choisir."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": "g-futur"
+},
+"b2v1": {
+"sec": [
+{
+"h": "Les institutions",
+"text": [],
+"tables": [
+{
+"title": "Qui fait quoi",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"kungen",
+"le roi (rôle uniquement représentatif)"
+],
+[
+"riksdagen",
+"le Parlement (349 sièges, une seule chambre)"
+],
+[
+"talmannen",
+"le président du Parlement"
+],
+[
+"regeringen",
+"le gouvernement"
+],
+[
+"statsministern",
+"le Premier ministre"
+],
+[
+"ett departement",
+"un ministère"
+],
+[
+"en myndighet",
+"une agence publique (Skatteverket, Försäkringskassan…)"
+],
+[
+"regionen",
+"la région (santé, transports)"
+],
+[
+"kommunen",
+"la commune (écoles, aide sociale, urbanisme)"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Le jour des élections",
+"text": [
+"Le même dimanche, on vote pour trois niveaux : le **riksdag**, la **région** et la **commune**, avec trois bulletins de couleur différente. On peut voter à partir de **18 ans**, et voter par anticipation (**förtidsrösta**) dans les semaines précédentes. Huit partis siègent actuellement au riksdag ; un parti doit obtenir au moins **4 %** des voix au niveau national pour y entrer."
+],
+"tables": [],
+"ex": [
+[
+"Valdeltagandet var högt i år.",
+"La participation électorale a été élevée cette année."
+],
+[
+"Regeringen lade fram ett nytt förslag.",
+"Le gouvernement a présenté une nouvelle proposition."
+],
+[
+"Jag har redan förtidsröstat.",
+"J'ai déjà voté par anticipation."
+],
+[
+"Frågan debatteras i riksdagen i dag.",
+"La question est débattue au Parlement aujourd'hui."
+]
+]
+},
+{
+"h": "Le principe de transparence",
+"text": [
+"**Offentlighetsprincipen** permet à toute personne de consulter la plupart des documents officiels (**allmänna handlingar**). Le salaire ou les impôts déclarés d'un voisin, par exemple, sont publics. Et le **JO** (médiateur parlementaire) contrôle que les autorités respectent la loi."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [],
+"gram": ""
+},
+"b2v2": {
+"sec": [
+{
+"h": "Le droit du travail en bref",
+"text": [
+"Il n'existe **pas de salaire minimum légal** : il est fixé par les conventions collectives. La loi garantit **25 jours de congés payés** par an. Un contrat commence souvent par une **provanställning** (période d'essai, jusqu'à 6 mois). La loi sur la protection de l'emploi, la **LAS**, applique le principe « dernier arrivé, premier parti » en cas de licenciement économique."
+],
+"tables": [
+{
+"title": "Vocabulaire du contrat",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"en fast anställning",
+"un CDI"
+],
+[
+"en visstidsanställning",
+"un CDD"
+],
+[
+"en provanställning",
+"une période d'essai"
+],
+[
+"heltid / deltid",
+"temps plein / temps partiel"
+],
+[
+"en uppsägningstid",
+"un préavis"
+],
+[
+"a-kassa",
+"caisse d'assurance chômage"
+],
+[
+"föräldraledig",
+"en congé parental"
+],
+[
+"vabba",
+"rester à la maison pour un enfant malade"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Postuler",
+"text": [
+"Une candidature contient un **CV** et un **personligt brev** (lettre de motivation). On envoie une **ansökan** pour une **tjänst** (poste) avant la **sista ansökningsdag** (date limite). Le mot **vabba** (vård av barn) est entré dans la langue : rester à la maison pour s'occuper d'un enfant malade, avec une indemnité de l'État."
+],
+"tables": [],
+"ex": [
+[
+"Jag söker jobb som grafisk designer.",
+"Je cherche un emploi de graphiste."
+],
+[
+"Hon fick en fast anställning.",
+"Elle a obtenu un CDI."
+],
+[
+"Jag vabbar i dag.",
+"Je reste à la maison avec mon enfant malade aujourd'hui."
+],
+[
+"Vilken lön har du tänkt dig?",
+"Quel salaire envisagez-vous ?"
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"b2v3": {
+"sec": [
+{
+"h": "Dire où on a mal",
+"text": [
+"La tournure clé : **ha ont i** + partie du corps (avoir mal à) : **Jag har ont i huvudet** (j'ai mal à la tête). Autres phrases utiles : **Jag mår illa** (j'ai la nausée), **Jag är förkyld** (je suis enrhumé), **Jag har feber**."
+],
+"tables": [
+{
+"title": "Chez le médecin",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"Jag har ont i magen / halsen / ryggen.",
+"J'ai mal au ventre / à la gorge / au dos."
+],
+[
+"Jag mår illa.",
+"J'ai la nausée."
+],
+[
+"Jag är yr.",
+"J'ai des vertiges."
+],
+[
+"Jag hostar.",
+"Je tousse."
+],
+[
+"Jag är allergisk mot…",
+"Je suis allergique à…"
+],
+[
+"Jag behöver ett sjukintyg.",
+"J'ai besoin d'un certificat médical."
+],
+[
+"Hur ofta ska jag ta medicinen?",
+"À quelle fréquence prendre le médicament ?"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Le parcours de soins",
+"text": [
+"Urgence vitale : **112**. Conseil médical : **1177**, aussi un site très complet. Rendez-vous : à la **vårdcentral**. Les consultations et médicaments sont plafonnés grâce au **högkostnadsskydd** (protection contre les coûts élevés) : au-delà d'un certain montant par an, tout devient gratuit. En arrêt maladie, un **sjukintyg** (certificat) est demandé à partir du 8e jour."
+],
+"tables": [],
+"ex": [
+[
+"Jag vill boka en tid hos läkaren.",
+"Je voudrais prendre rendez-vous chez le médecin."
+],
+[
+"Ring 112 om det är akut.",
+"Appelle le 112 si c'est urgent."
+],
+[
+"Krya på dig!",
+"Rétablis-toi vite !"
+],
+[
+"Hon är sjukskriven en vecka.",
+"Elle est en arrêt maladie pour une semaine."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"b2v4": {
+"sec": [
+{
+"h": "Le tri au quotidien",
+"text": [
+"Le tri (**sopsortering**) est très poussé : déchets alimentaires (**matavfall**), emballages en papier, plastique, métal et verre (**förpackningar**), journaux, piles, électronique. Ce qui ne se trie pas va à la **återvinningscentral** (déchetterie). La **pant** (consigne) des canettes et bouteilles se récupère au supermarché."
+],
+"tables": [
+{
+"title": "Les poubelles",
+"cols": [
+"Suédois",
+"Ce qu'on y met"
+],
+"rows": [
+[
+"matavfall",
+"restes alimentaires"
+],
+[
+"plastförpackningar",
+"emballages plastique"
+],
+[
+"pappersförpackningar",
+"emballages carton"
+],
+[
+"glas (färgat / ofärgat)",
+"verre (coloré / incolore)"
+],
+[
+"metallförpackningar",
+"boîtes de conserve, couvercles"
+],
+[
+"restavfall",
+"le reste"
+],
+[
+"pantburkar / pantflaskor",
+"canettes et bouteilles consignées"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Débattre du climat",
+"text": [],
+"tables": [],
+"ex": [
+[
+"Vi måste minska utsläppen.",
+"Nous devons réduire les émissions."
+],
+[
+"Förnybar energi blir allt billigare.",
+"Les énergies renouvelables sont de moins en moins chères."
+],
+[
+"Hur påverkar det miljön?",
+"Quel impact cela a-t-il sur l'environnement ?"
+],
+[
+"Jag pantar burkarna i affären.",
+"Je rapporte les canettes consignées au magasin."
+],
+[
+"Det är ett hållbart alternativ.",
+"C'est une alternative durable."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"b2v5": {
+"sec": [
+{
+"h": "Les médias suédois",
+"text": [
+"Le service public : **SVT** (télévision) et **SR** (radio, Sveriges Radio). Grands quotidiens : **Dagens Nyheter (DN)** et **Svenska Dagbladet (SvD)** ; tabloïds (**kvällstidningar**) : **Aftonbladet** et **Expressen**. Pour apprendre, **8 Sidor** publie des nouvelles en suédois facile, et **Klartext** (SR) les lit à voix lente."
+],
+"tables": [],
+"ex": []
+},
+{
+"h": "Le vocabulaire numérique",
+"text": [],
+"tables": [
+{
+"title": "En ligne",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"att logga in / ut",
+"se connecter / déconnecter"
+],
+[
+"att ladda ner / upp",
+"télécharger / téléverser"
+],
+[
+"att lägga upp",
+"publier (un post)"
+],
+[
+"att dela",
+"partager"
+],
+[
+"att gilla",
+"aimer (liker)"
+],
+[
+"en skärmdump",
+"une capture d'écran"
+],
+[
+"ett lösenord",
+"un mot de passe"
+],
+[
+"en länk",
+"un lien"
+],
+[
+"sökmotor",
+"moteur de recherche"
+],
+[
+"att uppdatera",
+"mettre à jour"
+]
+],
+"note": ""
+}
+],
+"ex": [
+[
+"Jag la upp en bild på Instagram.",
+"J'ai publié une photo sur Instagram."
+],
+[
+"Har du läst artikeln jag delade?",
+"As-tu lu l'article que j'ai partagé ?"
+],
+[
+"Logga in med BankID.",
+"Connectez-vous avec BankID."
+],
+[
+"Kolla källan innan du delar!",
+"Vérifie la source avant de partager !"
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"b2v6": {
+"sec": [
+{
+"h": "Payer en Suède",
+"text": [
+"La plupart des paiements se font par **kort** ou par **Swish** ; beaucoup de magasins affichent **Vi hanterar inte kontanter** (nous n'acceptons pas d'espèces). Les prix affichés incluent la **moms** (TVA, 25 % au taux normal, réduite pour l'alimentation et les livres). La **Riksbanken**, fondée en 1668, est la plus ancienne banque centrale encore en activité au monde."
+],
+"tables": [
+{
+"title": "Argent du quotidien",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"att swisha",
+"payer / envoyer par Swish"
+],
+[
+"kontanter",
+"espèces"
+],
+[
+"ett kvitto",
+"un ticket de caisse"
+],
+[
+"moms",
+"TVA"
+],
+[
+"en faktura",
+"une facture"
+],
+[
+"att spara",
+"économiser, épargner"
+],
+[
+"ett sparkonto",
+"un compte d'épargne"
+],
+[
+"dyr / billig",
+"cher / bon marché"
+],
+[
+"en rea",
+"des soldes"
+],
+[
+"prisvärd",
+"d'un bon rapport qualité-prix"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "En parler",
+"text": [],
+"tables": [],
+"ex": [
+[
+"Kan jag swisha?",
+"Je peux payer par Swish ?"
+],
+[
+"Det är rea på allt i dag.",
+"Tout est en soldes aujourd'hui."
+],
+[
+"Räntan har höjts igen.",
+"Le taux d'intérêt a encore augmenté."
+],
+[
+"Vi sparar till en resa.",
+"Nous économisons pour un voyage."
+],
+[
+"Det var mycket prisvärt.",
+"C'était un très bon rapport qualité-prix."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"b2v7": {
+"sec": [
+{
+"h": "Le système scolaire",
+"text": [],
+"tables": [
+{
+"title": "Les étapes",
+"cols": [
+"Étape",
+"Âge",
+"Sens"
+],
+"rows": [
+[
+"förskola",
+"1–5 ans",
+"crèche, maternelle (non obligatoire)"
+],
+[
+"förskoleklass",
+"6 ans",
+"classe préparatoire (obligatoire)"
+],
+[
+"grundskola",
+"7–16 ans",
+"école obligatoire (classes 1 à 9)"
+],
+[
+"gymnasium",
+"16–19 ans",
+"lycée, programmes généraux ou professionnels"
+],
+[
+"högskola / universitet",
+"dès 19 ans",
+"études supérieures"
+],
+[
+"komvux / SFI",
+"adultes",
+"formation adulte / suédois pour immigrés"
+]
+],
+"note": "Notes de A (meilleure) à F (échec), à partir de la 6e année."
+}
+],
+"ex": []
+},
+{
+"h": "À l'université",
+"text": [
+"Une année à temps plein vaut **60 högskolepoäng (hp)**. On s'inscrit sur **antagning.se**. L'aide financière (**studiemedel**) est gérée par **CSN** : une part de bourse (**bidrag**) et une part de prêt (**lån**). Les étudiants s'organisent en **nationer** (à Uppsala et Lund) et en associations (**kårer**)."
+],
+"tables": [],
+"ex": [
+[
+"Jag läser ekonomi på universitetet.",
+"J'étudie l'économie à l'université."
+],
+[
+"Hon skriver sin uppsats i vår.",
+"Elle écrit son mémoire ce printemps."
+],
+[
+"Kursen ger 7,5 högskolepoäng.",
+"Le cours vaut 7,5 crédits."
+],
+[
+"Vilket betyg fick du?",
+"Quelle note as-tu eue ?"
+]
+]
+}
+],
+"pit": [
+"« étudier une matière » = **läsa** ou **plugga** (familier) : **Jag pluggar svenska**."
+],
+"gram": ""
+},
+"b2v8": {
+"sec": [
+{
+"h": "Verbes des émotions",
+"text": [
+"Beaucoup d'émotions se disent avec un verbe plutôt qu'un adjectif : **sakna** (manquer : Jag saknar dig = tu me manques), **längta efter** (avoir hâte, se languir de), **skämmas** (avoir honte), **oroa sig** (s'inquiéter), **glädja sig åt** (se réjouir de), **irritera sig på** (être agacé par), **bli kär i** (tomber amoureux de)."
+],
+"tables": [],
+"ex": [
+[
+"Jag saknar dig.",
+"Tu me manques."
+],
+[
+"Vi längtar efter sommaren.",
+"Nous avons hâte d'être en été."
+],
+[
+"Han skäms över sitt beteende.",
+"Il a honte de son comportement."
+],
+[
+"Oroa dig inte!",
+"Ne t'inquiète pas !"
+],
+[
+"Jag har ångest inför provet.",
+"Je suis angoissé avant l'examen."
+],
+[
+"Hon blev kär i honom direkt.",
+"Elle est tombée amoureuse de lui tout de suite."
+]
+]
+},
+{
+"h": "Décrire un caractère",
+"text": [],
+"tables": [
+{
+"title": "Adjectifs de caractère",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"blyg",
+"timide"
+],
+[
+"envis",
+"têtu"
+],
+[
+"snäll",
+"gentil"
+],
+[
+"omtänksam",
+"attentionné"
+],
+[
+"pålitlig",
+"fiable"
+],
+[
+"lat",
+"paresseux"
+],
+[
+"noggrann",
+"méticuleux"
+],
+[
+"sur",
+"grognon (aussi : aigre)"
+],
+[
+"avundsjuk",
+"jaloux, envieux"
+],
+[
+"självsäker",
+"sûr de soi"
+]
+],
+"note": ""
+}
+],
+"ex": []
+}
+],
+"pit": [
+"« Tu me manques » = **Jag saknar dig** : c'est celui qui ressent le manque qui est sujet.",
+"**ångest** est fort en français (angoisse) mais courant en suédois pour un simple stress."
+],
+"gram": ""
+},
+"b2v9": {
+"sec": [
+{
+"h": "Lire une annonce de logement",
+"text": [
+"En Suède, on compte les **pièces en incluant le séjour** : **en etta** (studio), **en tvåa** (une chambre + séjour), **en trea** (deux chambres + séjour). **kvm** = m². **rok** = rum och kök (pièces et cuisine) : « 3 rok ». Une **bostadsrätt** a une **månadsavgift** (charges mensuelles) payée à l'association (**BRF**)."
+],
+"tables": [
+{
+"title": "Annonces",
+"cols": [
+"Abréviation / mot",
+"Sens"
+],
+"rows": [
+[
+"1 rok / en etta",
+"studio avec cuisine"
+],
+[
+"2 rok / en tvåa",
+"deux pièces (1 chambre)"
+],
+[
+"kvm",
+"mètres carrés"
+],
+[
+"BRF",
+"association de copropriétaires"
+],
+[
+"avgift",
+"charges mensuelles"
+],
+[
+"andrahandskontrakt",
+"sous-location (accord du propriétaire requis)"
+],
+[
+"villa / radhus",
+"maison individuelle / maison mitoyenne"
+],
+[
+"visning",
+"visite"
+],
+[
+"budgivning",
+"enchères (à l'achat)"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Vivre en immeuble",
+"text": [],
+"tables": [],
+"ex": [
+[
+"Jag har bokat tvättstugan på torsdag.",
+"J'ai réservé la buanderie pour jeudi."
+],
+[
+"Vi bor i en trea på 75 kvadrat.",
+"Nous habitons un trois-pièces de 75 m²."
+],
+[
+"I hyran ingår värme och el.",
+"Le loyer comprend le chauffage et l'électricité."
+],
+[
+"Det är visning på söndag.",
+"La visite a lieu dimanche."
+],
+[
+"Grannarna spelar musik efter tio.",
+"Les voisins mettent de la musique après dix heures."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"b2v10": {
+"sec": [
+{
+"h": "Les démarches et les agences",
+"text": [],
+"tables": [
+{
+"title": "Qui contacter",
+"cols": [
+"Agence",
+"Rôle"
+],
+"rows": [
+[
+"Skatteverket",
+"impôts, état civil, personnummer, carte d'identité"
+],
+[
+"Försäkringskassan",
+"assurance sociale (congé parental, maladie)"
+],
+[
+"Migrationsverket",
+"titres de séjour"
+],
+[
+"Arbetsförmedlingen",
+"agence pour l'emploi"
+],
+[
+"CSN",
+"aides aux études"
+],
+[
+"Polisen",
+"passeport"
+],
+[
+"Transportstyrelsen",
+"permis de conduire, immatriculation"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Voyager",
+"text": [
+"En train, **SJ** dessert les grandes lignes ; dans les régions, les trains et bus régionaux et le **pendeltåg** (RER). Le numéro d'identité suédois a la forme **ÅÅMMDD-XXXX** (date de naissance + 4 chiffres). Dans une gare : **Tåget är försenat** (le train a du retard), **inställt** (supprimé), **spår 3** (voie 3)."
+],
+"tables": [],
+"ex": [
+[
+"Tåget mot Uppsala är inställt.",
+"Le train pour Uppsala est supprimé."
+],
+[
+"Från vilket spår går tåget?",
+"De quelle voie part le train ?"
+],
+[
+"Jag behöver förnya mitt pass.",
+"Je dois renouveler mon passeport."
+],
+[
+"Fyll i blanketten och skriv under.",
+"Remplissez le formulaire et signez."
+],
+[
+"En enkelbiljett till Malmö, tack.",
+"Un aller simple pour Malmö, s'il vous plaît."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1a1": {
+"sec": [
+{
+"h": "Les particules en contexte",
+"text": [],
+"tables": [],
+"ex": [
+[
+"Det vet du ju.",
+"Tu le sais bien (voyons)."
+],
+[
+"Du har väl inte glömt?",
+"Tu n'as pas oublié, j'espère ?"
+],
+[
+"Det blir nog bra.",
+"Ça va sûrement bien se passer."
+],
+[
+"Det var ändå ganska kul.",
+"C'était quand même assez sympa."
+],
+[
+"Jag vet faktiskt inte.",
+"Je ne sais vraiment pas, en fait."
+],
+[
+"Vi kan ju ta en taxi.",
+"On n'a qu'à prendre un taxi."
+],
+[
+"Det är väl okej?",
+"C'est bon, non ?"
+]
+]
+},
+{
+"h": "Nuances délicates",
+"text": [
+"**väl** dans une affirmation adoucit ou exprime l'espoir : **Det går väl bra** (ça devrait aller). **nog** peut être rassurant (Det ordnar sig nog) ou poliment négatif (**Jag tror nog inte det** = je ne pense pas, non). **ju** peut rendre une phrase un peu condescendante si l'autre ne savait pas : à manier avec soin.",
+"**visst** = bien sûr, certes : **Visst är det dyrt, men…** (certes c'est cher, mais…). **ändå** en fin de phrase = « quand même, après tout » : **Vi går ändå**."
+],
+"tables": [],
+"ex": []
+}
+],
+"pit": [
+"**ju** et **väl** se placent avant inte : **Du vet ju inte**, **Det är väl inte sant?**"
+],
+"gram": "g-adverb"
+},
+"c1a2": {
+"sec": [
+{
+"h": "Écrire un mail selon le registre",
+"text": [],
+"tables": [
+{
+"title": "Formules de mail",
+"cols": [
+"Informel",
+"Neutre",
+"Formel"
+],
+"rows": [
+[
+"Hej!",
+"Hej Anna,",
+"Hej Anna Svensson, / Bästa Anna,"
+],
+[
+"Tack!",
+"Tack för ditt mejl.",
+"Tack för er förfrågan."
+],
+[
+"Hörs!",
+"Hör av dig om du har frågor.",
+"Kontakta mig gärna vid frågor."
+],
+[
+"Kram",
+"Ha det bra!",
+"Med vänliga hälsningar"
+],
+[
+"Ses!",
+"Vi ses på mötet.",
+"Jag ser fram emot vårt möte."
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Le « ni » aujourd'hui",
+"text": [
+"**ni** est d'abord le pluriel de « vous ». Comme forme de politesse au singulier, il a presque disparu depuis la **du-reformen** des années 1960-70, mais revient parfois dans le commerce ou avec des personnes âgées. Dans le doute, **du** n'offense personne. La politesse passe plutôt par **gärna**, **tack**, **skulle du kunna**, **vänligen**."
+],
+"tables": [],
+"ex": [
+[
+"Jag skulle vilja ställa en fråga.",
+"J'aimerais poser une question."
+],
+[
+"Vänligen återkom senast fredag.",
+"Merci de nous répondre au plus tard vendredi."
+],
+[
+"Med anledning av ert mejl…",
+"Suite à votre mail…"
+],
+[
+"Hör av dig!",
+"Donne-moi des nouvelles !"
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1a3": {
+"sec": [
+{
+"h": "Encore des formes orales",
+"text": [],
+"tables": [
+{
+"title": "Écrit → parlé",
+"cols": [
+"Écrit",
+"Parlé",
+"Sens"
+],
+"rows": [
+[
+"de / dem",
+"dom",
+"ils / eux"
+],
+[
+"mig, dig, sig",
+"mej, dej, sej",
+"me, te, se"
+],
+[
+"något / någon",
+"nåt / nån",
+"quelque chose / quelqu'un"
+],
+[
+"sedan",
+"sen",
+"ensuite, depuis"
+],
+[
+"säga / sade",
+"säga / sa",
+"dire / dit"
+],
+[
+"lägga / lade",
+"lägga / la",
+"poser / posa"
+],
+[
+"skall",
+"ska",
+"va (futur)"
+],
+[
+"vad",
+"va",
+"quoi"
+],
+[
+"alltså",
+"asså",
+"donc, genre"
+],
+[
+"jättebra / skitbra",
+"super bien",
+"intensifs"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Argot et mots des jeunes",
+"text": [
+"**typ** (genre), **asså** (genre, bon), **sjukt** (grave, super : sjukt bra), **fett** (trop : fett nice), **ba** (« bara », pour citer : och hon ba « nej »), **najs** (sympa), **orka** (avoir la force de : orkar inte = j'ai pas le courage). Le suédois des banlieues (**förortssvenska**) apporte aussi des mots comme **guss** (fille), **len** (mec), **para** (argent)."
+],
+"tables": [],
+"ex": [
+[
+"Va gör du sen?",
+"Tu fais quoi après ?"
+],
+[
+"Orkar inte gå ut i dag.",
+"J'ai pas le courage de sortir aujourd'hui."
+],
+[
+"Det var sjukt bra!",
+"C'était trop bien !"
+],
+[
+"Han ba: « Nej, aldrig! »",
+"Et lui, genre : « Non, jamais ! »"
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1a4": {
+"sec": [
+{
+"h": "D'autres expressions imagées",
+"text": [],
+"tables": [
+{
+"title": "Expressions",
+"cols": [
+"Suédois",
+"Sens",
+"Mot à mot"
+],
+"rows": [
+[
+"Att glida in på en räkmacka",
+"avoir tout sans effort",
+"glisser sur une tartine aux crevettes"
+],
+[
+"Att ana ugglor i mossen",
+"flairer quelque chose de louche",
+"soupçonner des hiboux dans la tourbière"
+],
+[
+"Det är ingen ko på isen",
+"pas d'inquiétude",
+"pas de vache sur la glace"
+],
+[
+"Att vara ute och cykla",
+"être complètement à côté de la plaque",
+"être sorti faire du vélo"
+],
+[
+"Att få kalla fötter",
+"avoir la frousse, renoncer",
+"avoir les pieds froids"
+],
+[
+"Att ha en räv bakom örat",
+"être rusé",
+"avoir un renard derrière l'oreille"
+],
+[
+"Att dra alla över en kam",
+"mettre tout le monde dans le même sac",
+"passer tout le monde au même peigne"
+],
+[
+"Nu ska vi inte gå över ån efter vatten",
+"ne pas chercher loin ce qu'on a sous la main",
+"traverser la rivière pour chercher de l'eau"
+],
+[
+"Lika barn leka bäst",
+"qui se ressemble s'assemble",
+"les enfants semblables jouent le mieux"
+],
+[
+"Borta bra men hemma bäst",
+"on n'est jamais mieux que chez soi",
+"dehors bien, mais à la maison mieux"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Les utiliser",
+"text": [
+"Ces expressions donnent une couleur très naturelle, mais à petites doses. Certaines sont familières (**vara ute och cykla**), d'autres passe-partout (**ingen ko på isen**). Un francophone qui en place une au bon moment fait toujours sourire."
+],
+"tables": [],
+"ex": [
+[
+"Han har glidit in på en räkmacka.",
+"Il a tout eu sans effort."
+],
+[
+"Nu är du ute och cyklar!",
+"Là, tu dis n'importe quoi !"
+],
+[
+"Jag anar ugglor i mossen.",
+"Je sens qu'il y a anguille sous roche."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1a5": {
+"sec": [
+{
+"h": "Classer les connecteurs par fonction",
+"text": [],
+"tables": [
+{
+"title": "Par fonction",
+"cols": [
+"Fonction",
+"Connecteurs"
+],
+"rows": [
+[
+"ajouter",
+"dessutom, därtill, även, likaså"
+],
+[
+"opposer",
+"men, däremot, emellertid, å andra sidan, trots det"
+],
+[
+"concéder",
+"visserligen … men, även om, trots att, fastän"
+],
+[
+"expliquer",
+"eftersom, ty (soutenu), nämligen"
+],
+[
+"conclure",
+"alltså, således, därmed, sammanfattningsvis"
+],
+[
+"illustrer",
+"till exempel (t.ex.), bland annat (bl.a.), såsom"
+],
+[
+"reformuler",
+"med andra ord, det vill säga (dvs.)"
+],
+[
+"conséquence",
+"därför, följaktligen, vilket innebär att"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "nämligen et visserligen",
+"text": [
+"**nämligen** = « en effet, c'est que » : il explique ce qui précède et se place **après le verbe** : **Jag kan inte komma. Jag är nämligen sjuk.** **visserligen … men** = « certes … mais » : **Det är visserligen dyrt, men det håller länge.**"
+],
+"tables": [],
+"ex": [
+[
+"Jag är nämligen allergisk.",
+"C'est que je suis allergique."
+],
+[
+"Visserligen har du rätt, men…",
+"Certes tu as raison, mais…"
+],
+[
+"Priset steg, vilket innebar att färre köpte.",
+"Le prix a augmenté, ce qui a fait que moins de gens ont acheté."
+],
+[
+"Det vill säga: vi börjar om.",
+"C'est-à-dire : on recommence."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1a6": {
+"sec": [
+{
+"h": "D'autres séries de synonymes",
+"text": [],
+"tables": [
+{
+"title": "Nuances",
+"cols": [
+"Sens",
+"Courant",
+"Familier",
+"Soutenu"
+],
+"rows": [
+[
+"obtenir",
+"få",
+"—",
+"erhålla"
+],
+[
+"aider",
+"hjälpa",
+"—",
+"bistå"
+],
+[
+"acheter",
+"köpa",
+"handla",
+"införskaffa"
+],
+[
+"manger",
+"äta",
+"käka",
+"inta"
+],
+[
+"travailler",
+"arbeta",
+"jobba",
+"—"
+],
+[
+"étudier",
+"studera",
+"plugga",
+"bedriva studier"
+],
+[
+"argent",
+"pengar",
+"stålar, para",
+"medel"
+],
+[
+"voir",
+"se",
+"kolla",
+"betrakta"
+],
+[
+"habiter",
+"bo",
+"—",
+"vara bosatt"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "tycka, tro, tänka, anse, mena",
+"text": [
+"**tycka** : avis subjectif (goût, jugement). **tro** : croire, supposer. **tänka** : réfléchir, avoir l'intention. **anse** : estimer (plus formel que tycka). **mena** : vouloir dire, penser (Vad menar du? = que veux-tu dire ?). **tycka till** : donner son avis."
+],
+"tables": [],
+"ex": [
+[
+"Jag anser att förslaget är orimligt.",
+"J'estime que la proposition est déraisonnable."
+],
+[
+"Vad menar du med det?",
+"Que veux-tu dire par là ?"
+],
+[
+"Vi käkade pizza i går.",
+"On a mangé une pizza hier (familier)."
+],
+[
+"Hon pluggar inför tentan.",
+"Elle révise pour l'examen."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1a7": {
+"sec": [
+{
+"h": "Encore des mots typiques",
+"text": [],
+"tables": [
+{
+"title": "Mots et valeurs",
+"cols": [
+"Mot",
+"Sens"
+],
+"rows": [
+[
+"mysa / mysig",
+"se détendre dans une ambiance douillette / douillet"
+],
+[
+"ensamvarg",
+"loup solitaire, quelqu'un qui aime être seul"
+],
+[
+"smultronställe",
+"petit coin secret qu'on adore (« endroit à fraises des bois »)"
+],
+[
+"fredagsmys",
+"soirée cocooning du vendredi (tacos, chips, télé)"
+],
+[
+"gökotta",
+"se lever à l'aube pour écouter les oiseaux"
+],
+[
+"mångata",
+"le reflet de la lune sur l'eau, comme une route"
+],
+[
+"tretår",
+"troisième tasse de café"
+],
+[
+"resfeber",
+"l'excitation et le trac avant un voyage"
+],
+[
+"döstädning",
+"« ménage de la mort » : trier ses affaires en vieillissant"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Jantelagen et lagom aujourd'hui",
+"text": [
+"La **Jantelagen** vient d'un roman de l'écrivain dano-norvégien **Aksel Sandemose** (1933) ; ses « dix commandements » se résument à « ne crois pas que tu vaux mieux que nous ». On l'invoque pour expliquer la modestie et la discrétion scandinaves, souvent avec autocritique. **Lagom** (« juste ce qu'il faut ») décrit un idéal d'équilibre, mais peut aussi être moqué comme un manque d'audace."
+],
+"tables": [],
+"ex": [
+[
+"Det var en riktigt mysig kväll.",
+"C'était une soirée vraiment douillette."
+],
+[
+"Vi har fredagsmys med barnen.",
+"On fait notre soirée cocooning du vendredi avec les enfants."
+],
+[
+"Det här är mitt smultronställe.",
+"C'est mon petit coin secret."
+],
+[
+"Jag har lite resfeber.",
+"J'ai un peu le trac avant le voyage."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1a8": {
+"sec": [
+{
+"h": "Structurer un texte argumentatif",
+"text": [],
+"tables": [
+{
+"title": "Plan type",
+"cols": [
+"Partie",
+"Formules"
+],
+"rows": [
+[
+"introduction",
+"I denna text kommer jag att diskutera… / Frågan är om…"
+],
+[
+"thèse",
+"Det finns flera skäl till att… / För det första…"
+],
+[
+"antithèse",
+"Å andra sidan kan man hävda att… / Kritiker menar att…"
+],
+[
+"exemple",
+"Ett exempel på detta är… / Detta illustreras av…"
+],
+[
+"nuance",
+"Det bör dock påpekas att… / Samtidigt…"
+],
+[
+"conclusion",
+"Sammanfattningsvis… / Avslutningsvis vill jag betona att…"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Prudence et impersonnel",
+"text": [
+"L'écrit académique suédois évite le **jag** trop présent : on préfère **man**, le passif ou **det**. **Det kan konstateras att…** (on constate que), **Det framgår av tabellen att…** (il ressort du tableau que), **Resultaten tyder på att…** (les résultats suggèrent que). Les verbes prudents **torde** (devrait), **tycks** (semble), **förefaller** (paraît) évitent d'affirmer trop vite."
+],
+"tables": [],
+"ex": [
+[
+"Syftet med studien är att undersöka…",
+"L'objectif de l'étude est d'examiner…"
+],
+[
+"Det framgår av figur 2 att…",
+"Il ressort de la figure 2 que…"
+],
+[
+"Resultaten tyder på ett samband.",
+"Les résultats suggèrent un lien."
+],
+[
+"Detta torde förklara skillnaden.",
+"Cela devrait expliquer la différence."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1b1": {
+"sec": [
+{
+"h": "Familles de mots",
+"text": [],
+"tables": [
+{
+"title": "Adjectif / verbe → nom abstrait",
+"cols": [
+"Base",
+"Nom",
+"Sens"
+],
+"rows": [
+[
+"trygg",
+"trygghet",
+"sécurité (sentiment)"
+],
+[
+"säker",
+"säkerhet",
+"sûreté, sécurité"
+],
+[
+"ansvarig",
+"ansvar",
+"responsabilité"
+],
+[
+"jämlik",
+"jämlikhet",
+"égalité"
+],
+[
+"rättvis",
+"rättvisa",
+"justice"
+],
+[
+"utveckla",
+"utveckling",
+"développement"
+],
+[
+"förändra",
+"förändring",
+"changement"
+],
+[
+"uppleva",
+"upplevelse",
+"expérience vécue"
+],
+[
+"känna",
+"känsla",
+"sentiment"
+],
+[
+"sann",
+"sanning",
+"vérité"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "trygghet ou säkerhet ?",
+"text": [
+"Le français dit « sécurité » pour les deux : **trygghet** est le **sentiment** d'être en sécurité, protégé (un mot clé de l'État-providence suédois : **social trygghet**) ; **säkerhet** est la **sécurité objective**, technique (**säkerhetsbälte**, **IT-säkerhet**)."
+],
+"tables": [],
+"ex": [
+[
+"Barn behöver trygghet.",
+"Les enfants ont besoin de sécurité affective."
+],
+[
+"Säkerheten på flygplatsen har skärpts.",
+"La sécurité à l'aéroport a été renforcée."
+],
+[
+"Vi tar ansvar för våra beslut.",
+"Nous assumons nos décisions."
+],
+[
+"Det är ett faktum.",
+"C'est un fait."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1b2": {
+"sec": [
+{
+"h": "Le déroulé d'une affaire",
+"text": [
+"La **polis** enquête (**utredning**), le **åklagare** (procureur) décide d'**åtala** (poursuivre). Au **tingsrätt**, le **domare** (juge) siège avec des **nämndemän** (juges non professionnels, élus par les conseils municipaux sur proposition des partis). Le jugement (**dom**) peut être porté en appel (**överklaga**) devant le **hovrätt**. Le suédois distingue **brott** (infraction, crime) et **straff** (peine)."
+],
+"tables": [
+{
+"title": "Vocabulaire",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"en misstänkt",
+"un suspect"
+],
+[
+"den åtalade",
+"l'accusé"
+],
+[
+"att häkta",
+"placer en détention provisoire"
+],
+[
+"att överklaga",
+"faire appel"
+],
+[
+"fängelse",
+"prison"
+],
+[
+"böter",
+"amende"
+],
+[
+"villkorlig dom",
+"condamnation avec sursis"
+],
+[
+"skyldig / oskyldig",
+"coupable / innocent"
+],
+[
+"en nämndeman",
+"juge non professionnel"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "En contexte",
+"text": [],
+"tables": [],
+"ex": [
+[
+"Mannen åtalades för bedrägeri.",
+"L'homme a été poursuivi pour escroquerie."
+],
+[
+"Domen överklagades till hovrätten.",
+"Le jugement a fait l'objet d'un appel devant la cour d'appel."
+],
+[
+"Hon dömdes till två års fängelse.",
+"Elle a été condamnée à deux ans de prison."
+],
+[
+"Han friades i brist på bevis.",
+"Il a été acquitté faute de preuves."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1b3": {
+"sec": [
+{
+"h": "Inventions et inventeurs suédois",
+"text": [],
+"tables": [
+{
+"title": "Made in Sweden",
+"cols": [
+"Invention",
+"Inventeur / origine"
+],
+"rows": [
+[
+"la dynamite",
+"Alfred Nobel (1867)"
+],
+[
+"l'échelle Celsius",
+"Anders Celsius (1742)"
+],
+[
+"la classification des espèces",
+"Carl von Linné (Linnaeus)"
+],
+[
+"la clé à molette (skiftnyckel)",
+"Johan Petter Johansson"
+],
+[
+"le pacemaker implantable",
+"Rune Elmqvist et Åke Senning (1958)"
+],
+[
+"la ceinture de sécurité à trois points",
+"Nils Bohlin, chez Volvo (1959)"
+],
+[
+"le Tetra Pak",
+"Ruben Rausing et Erik Wallenberg"
+],
+[
+"Skype, Spotify",
+"fondateurs suédois (avec d'autres pour Skype)"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Le langage de la recherche",
+"text": [],
+"tables": [],
+"ex": [
+[
+"Studien visar ett tydligt samband.",
+"L'étude montre un lien clair."
+],
+[
+"Hypotesen kunde inte bekräftas.",
+"L'hypothèse n'a pas pu être confirmée."
+],
+[
+"Forskarna gjorde en viktig upptäckt.",
+"Les chercheurs ont fait une découverte importante."
+],
+[
+"Resultaten måste tolkas med försiktighet.",
+"Les résultats doivent être interprétés avec prudence."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1b4": {
+"sec": [
+{
+"h": "D'autres grands noms",
+"text": [
+"**Ingmar Bergman** (cinéma : Le Septième Sceau, Fanny et Alexandre), **Carl Larsson** (peintre de la vie familiale), **Hilma af Klint** (pionnière de l'art abstrait), **ABBA** (pop), **Henning Mankell** (Wallander) et **Camilla Läckberg** (polars), **Selma Lagerlöf** (Le Merveilleux Voyage de Nils Holgersson), **Tove Jansson** (les Moumines, suédophone de Finlande)."
+],
+"tables": [],
+"ex": []
+},
+{
+"h": "Parler d'une œuvre",
+"text": [],
+"tables": [
+{
+"title": "Vocabulaire critique",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"handlingen",
+"l'intrigue"
+],
+[
+"huvudpersonen",
+"le personnage principal"
+],
+[
+"en berättare",
+"un narrateur"
+],
+[
+"ett tema",
+"un thème"
+],
+[
+"en utställning",
+"une exposition"
+],
+[
+"en föreställning",
+"une représentation"
+],
+[
+"att skildra",
+"dépeindre, décrire"
+],
+[
+"gripande",
+"émouvant"
+],
+[
+"tankeväckande",
+"qui fait réfléchir"
+],
+[
+"en deckare",
+"un polar"
+]
+],
+"note": ""
+}
+],
+"ex": [
+[
+"Romanen skildrar livet i en småstad.",
+"Le roman dépeint la vie dans une petite ville."
+],
+[
+"Föreställningen var gripande.",
+"Le spectacle était émouvant."
+],
+[
+"Har du sett utställningen på Moderna museet?",
+"As-tu vu l'exposition au Moderna museet ?"
+],
+[
+"Jag läser mest deckare.",
+"Je lis surtout des polars."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1b5": {
+"sec": [
+{
+"h": "La Suède dans le monde",
+"text": [
+"En paix depuis 1814 et longtemps non alignée, jusqu'à son adhésion à l'**OTAN** en **2024**, la Suède est connue pour sa diplomatie et son aide au développement (**bistånd**). Elle a voté **non à l'euro** par référendum en **2003**. Les grandes entreprises (**IKEA, Volvo, Ericsson, H&M, Spotify**) font d'elle une économie très tournée vers l'exportation (**export**)."
+],
+"tables": [
+{
+"title": "Économie",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"export / import",
+"exportation / importation"
+],
+[
+"ett handelsavtal",
+"un accord commercial"
+],
+[
+"en tull",
+"un droit de douane"
+],
+[
+"en lågkonjunktur",
+"une récession"
+],
+[
+"en högkonjunktur",
+"une période de forte croissance"
+],
+[
+"näringslivet",
+"le monde des entreprises"
+],
+[
+"ett bistånd",
+"une aide au développement"
+],
+[
+"en folkomröstning",
+"un référendum"
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "En contexte",
+"text": [],
+"tables": [],
+"ex": [
+[
+"Sverige gick med i Nato 2024.",
+"La Suède a rejoint l'OTAN en 2024."
+],
+[
+"Exporten står för en stor del av BNP.",
+"Les exportations représentent une grande part du PIB."
+],
+[
+"Landet befinner sig i en lågkonjunktur.",
+"Le pays est en récession."
+],
+[
+"Folkomröstningen om euron hölls 2003.",
+"Le référendum sur l'euro a eu lieu en 2003."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+},
+"c1b6": {
+"sec": [
+{
+"h": "Construire un débat",
+"text": [],
+"tables": [
+{
+"title": "Formules de débat",
+"cols": [
+"Suédois",
+"Sens"
+],
+"rows": [
+[
+"Jag vill invända att…",
+"Je voudrais objecter que…"
+],
+[
+"Det är en rimlig poäng, men…",
+"C'est un argument raisonnable, mais…"
+],
+[
+"Det beror på hur man ser det.",
+"Ça dépend du point de vue."
+],
+[
+"Var drar man gränsen?",
+"Où met-on la limite ?"
+],
+[
+"Det finns en risk att…",
+"Il y a un risque que…"
+],
+[
+"Ur ett etiskt perspektiv…",
+"D'un point de vue éthique…"
+],
+[
+"Jag ifrågasätter att…",
+"Je remets en question le fait que…"
+],
+[
+"Båda sidor har en poäng.",
+"Les deux camps ont raison sur certains points."
+]
+],
+"note": ""
+}
+],
+"ex": []
+},
+{
+"h": "Les grands débats de société",
+"text": [
+"Thèmes fréquents dans la presse : **jämställdhet** (égalité femmes-hommes), **integration**, **välfärd** (protection sociale) et son financement, **skolval** (le choix de l'école et les écoles privées financées par l'État, **friskolor**), **klimat**, **brottslighet** (criminalité), **yttrandefrihet** (liberté d'expression). Le **consensus** reste une valeur forte du débat public."
+],
+"tables": [],
+"ex": [
+[
+"Frågan väcker starka känslor.",
+"La question suscite de vives émotions."
+],
+[
+"Förslaget har mött hård kritik.",
+"La proposition a rencontré de vives critiques."
+],
+[
+"Det är en balansgång mellan frihet och säkerhet.",
+"C'est un équilibre entre liberté et sécurité."
+]
+]
+}
+],
+"pit": [],
+"gram": ""
+}
+};
+
 /* Genre (en / ett) et pluriel des mots déjà écrits avant 0.5 (clé = le mot sans article). Pluriel vide = pas de pluriel courant (mot massif). */
 GN(`en bil|bilar
 en bok|böcker
@@ -11706,6 +18420,8 @@ CG.themes.forEach(t => t.fiches.forEach(f => {
   if (u.text) f.text = u.text; if (u.keys) f.keys = u.keys;
   [['vocabAdd', 'vocab'], ['phrasesAdd', 'phrases'], ['clozeAdd', 'cloze'], ['extraAdd', 'extra']].forEach(([a, k]) => { if (u[a]) f[k] = (f[k] || []).concat(u[a]); });
 }));
+/* compléments de lecture (data-more.js) : sections, pièges, lien vers la fiche Grammaire ; aucune carte ajoutée */
+CG.themes.forEach(t => t.fiches.forEach(f => { const m = MORE[f.id]; if (!m) return; f.more = m.sec || []; f.gram = m.gram || ''; if (m.pit && m.pit.length) f.pit = (f.pit || []).concat(m.pit); }));
 CG.themes.forEach(t => t.fiches.forEach(f => (f.vocab || []).forEach(fixWord)));
 CG.words.forEach(w => w.words.forEach(fixWord));
 const THEMES = CG.themes, FICHES = [], CARDS = {}, FBY = {}, TBY = {}, POOL = {};
@@ -11989,7 +18705,7 @@ function toast(msg) {
   let el = $('toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
   el.textContent = msg; el.className = 'show'; clearTimeout(toast.t); toast.t = setTimeout(() => { el.className = ''; }, 2600);
 }
-const readMins = f => Math.max(1, Math.round((f.text.join(' ').split(/\s+/).length + (f.keys || []).join(' ').split(/\s+/).length) / 180));
+const readMins = f => Math.max(1, Math.round((f.text.join(' ').split(/\s+/).length + (f.keys || []).join(' ').split(/\s+/).length + (f.more || []).map(x => x.text.join(' ')).join(' ').split(/\s+/).length) / 180));
 const gBadge = g => g ? '<span class="gb g-' + g + '">' + g + '</span>' : '';
 function vocabRows(list) {
   return '<div class="vocab">' + list.map(v => {
@@ -12005,10 +18721,18 @@ function lessonBody(f, inSess) {
   let h = '<p class="rd-meta">⏱ ' + readMins(f) + ' min de lecture' + (inSess ? ' · ' + plural(f.cards.length, 'exercice') + ' à la suite' : '') + '</p>';
   f.text.forEach(p => { h += '<p>' + md(p) + '</p>'; });
   (f.tables || []).forEach(t => { h += tableHtml(t); });
+  if (!inSess) (f.more || []).forEach(x => {
+    h += '<h2 class="msec">' + esc(x.h) + '</h2>';
+    x.text.forEach(p => { h += '<p>' + md(p) + '</p>'; });
+    x.tables.forEach(t => { h += tableHtml(t); });
+    if (x.ex.length) h += vocabRows(x.ex.map(([sv, fr]) => ({ sv, fr })));
+  });
   if (f.keys && f.keys.length) h += '<div class="keys"><h3>L\'essentiel</h3><ul class="ess">' + f.keys.map(k => '<li>' + md(k) + '</li>').join('') + '</ul></div>';
   if (f.vocab && f.vocab.length) h += '<h3 class="vh">Mots à retenir <small>' + gBadge('en') + ' ' + gBadge('ett') + ' = le genre, à apprendre avec le mot</small></h3>' + vocabRows(f.vocab);
   if (f.phrases && f.phrases.length) h += '<h3 class="vh">Phrases <small>avec leur traduction</small></h3>' + vocabRows(f.phrases);
   if (f.pit && f.pit.length) h += '<div class="pits"><h3>⚠️ Pièges</h3><ul class="ess">' + f.pit.map(k => '<li>' + md(k) + '</li>').join('') + '</ul></div>';
+  const G = !inSess && f.gram && GRAM.fiches.find(x => x.id === f.gram);
+  if (G) h += '<button class="gramlink" data-gf="' + G.id + '"><span>' + G.icon + '</span><b>Pour aller plus loin<small>Fiche complète dans Grammaire : ' + esc(G.title) + '</small></b><i>›</i></button>';
   return h;
 }
 /* carnet de mots : tous les mots des fiches commencées */
