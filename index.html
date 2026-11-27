@@ -384,6 +384,40 @@ details.manual summary { cursor: pointer; font-weight: 600; color: var(--muted);
 .pb-time { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 body.playing main { padding-bottom: 110px; }
 @media (max-width: 760px) { .pb-time { display: none; } .pb-btn { width: 32px; height: 32px; } .pb-btn.big { width: 40px; height: 40px; } }
+
+/* ---------------------------------------------------------------- lecture libre */
+.hero-btns { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
+.btn.read { display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; text-align: left; max-width: 100%; }
+.btn.read small, .rd-nav small { font-weight: 500; font-size: 12.5px; opacity: .75; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reader { max-width: 760px; }
+.reader .lesson { max-width: none; }
+.rd-chips { display: flex; flex-wrap: wrap; gap: 6px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: none; }
+.rd-chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: #fff; border-radius: 99px; padding: 5px 12px; font-weight: 600; font-size: 13.5px; color: var(--muted); }
+.chip.on { background: var(--t, var(--accent)); border-color: var(--t, var(--accent)); color: #fff; }
+.rd-pos { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); margin: 2px 0 12px; }
+.rd-pos .bar { flex: 1; }
+.readtag { color: var(--ok); font-weight: 700; }
+.rd-nav { display: grid; grid-template-columns: auto 1fr; gap: 10px; margin: 18px -10px 6px; position: sticky; bottom: calc(8px + var(--tabs-h, 0px)); background: color-mix(in srgb, #fff 92%, transparent); backdrop-filter: blur(6px); padding: 8px; border-radius: 14px; box-shadow: 0 4px 18px rgba(17,28,38,.12); z-index: 5; }
+body.playing .rd-nav { bottom: calc(80px + var(--tabs-h, 0px)); }
+.rd-nav .btn { padding: 12px 16px; font-size: 15.5px; }
+.rd-nav .btn.primary { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.rd-nav .btn.primary small { max-width: 100%; }
+.rd-more { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 10px; }
+.badge.read { background: #e6f0fb; color: var(--accent); }
+.lib-tip { margin: -4px 0 14px; font-size: 14px; }
+.pt small { font-size: 14px; font-weight: 600; margin-left: 8px; }
+#toast { position: fixed; left: 50%; bottom: calc(24px + var(--tabs-h, 0px)); transform: translate(-50%, 20px); background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 99px; font-weight: 600; opacity: 0; pointer-events: none; transition: .25s; z-index: 50; }
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (max-width: 760px) {
+  .hero-btns .btn { flex: 1 1 100%; }
+  .rd-chips { flex-wrap: nowrap; }
+  .chip span { display: none; }
+  .chip { padding: 6px 10px; font-size: 16px; }
+  .reader .lesson { padding: 18px 16px; }
+  .rd-nav { margin: 14px -8px 0; }
+  .rd-nav .btn span { display: none; }
+}
 </style>
 </head>
 <body>
@@ -393,6 +427,7 @@ body.playing main { padding-bottom: 110px; }
   <button type="button" class="syncbtn" data-act="sync-box" title="Synchroniser la progression entre le PC et l'iPhone">🔄 Synchro</button>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
+    <button type="button" data-nav="lire">Lire</button>
     <button type="button" data-nav="library">Fiches</button>
     <button type="button" data-nav="frise">Frise</button>
     <button type="button" data-nav="stats">Progrès</button>
@@ -2511,6 +2546,7 @@ const KEY = 'sy-culture-gen.v1';
 let S = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.cards) return s; } catch (e) { /* ignoré */ } return null; })()
   || { cards: {}, fiches: {}, days: {}, opts: {} };
 S.opts = Object.assign({ newPerDay: 1, maxReviews: 30, alwaysChoice: false }, S.opts);
+S.lu = S.lu || {};   /* fiches lues (mode lecture, sans cartes) : id → jour */
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ } schedulePush(); };
 const dayNum = (d) => { d = d || new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 864e5); };
 const dayIso = n => new Date(n * 864e5).toISOString().slice(0, 10);
@@ -2520,8 +2556,10 @@ const isDue = id => { const s = st(id); return !!s && s.due <= today(); };
 const ficheStarted = f => f.cards.some(c => st(c.id)) || !!S.fiches[f.id];
 const ficheMastery = f => f.cards.filter(c => st(c.id) && st(c.id).b >= MASTER).length / f.cards.length;
 const ficheSeen = f => f.cards.filter(c => st(c.id)).length;
+const isRead = f => !!(S.lu && S.lu[f.id]);
+function markRead(f) { S.lu = S.lu || {}; if (!S.lu[f.id]) { S.lu[f.id] = today(); save(); } }
 function ficheStatus(f) {
-  if (!ficheStarted(f)) return { cls: 'new', label: 'À découvrir' };
+  if (!ficheStarted(f)) return isRead(f) ? { cls: 'read', label: '✓ Lue' } : { cls: 'new', label: 'À découvrir' };
   const m = ficheMastery(f);
   if (m >= 1) return { cls: 'done', label: 'Acquise' };
   return { cls: 'wip', label: 'En cours · ' + Math.round(m * 100) + ' %' };
@@ -2533,7 +2571,7 @@ function dueCards() {
 function nextNewFiche() { return ORDER.find(f => !ficheStarted(f)) || null; }
 /* fiches nouvelles du jour : de quoi remplir une séance de 10-15 min (≈ 18 cartes), au plus 2 fiches */
 function plannedLessons(nReviews, extra) {
-  const out = [], todo = ORDER.filter(f => !ficheStarted(f));
+  const out = [], todo = ORDER.filter(f => !ficheStarted(f) && (S.lu || {})[f.id] !== today());   /* « lire seulement » aujourd'hui : pas reproposée avant demain */
   let cards = nReviews;
   for (const f of todo) {
     if (out.length >= 2) break;
@@ -2613,9 +2651,9 @@ let view = { name: 'home' }, sess = null;
 function go(name, arg) { view = { name, arg }; render(); window.scrollTo(0, 0); const m = $('main'); if (m) m.scrollTop = 0; }
 function render() {
   clearTimer();
-  const navOf = { fiche: 'library', theme: 'library', 'game-end': view.arg && view.arg.kind === 'ordre' ? 'frise' : 'home' };
+  const navOf = { fiche: view.arg && view.arg.t === '*' ? 'lire' : 'library', theme: 'library', 'game-end': view.arg && view.arg.kind === 'ordre' ? 'frise' : 'home' };
   document.querySelectorAll('.nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.nav === (navOf[view.name] || view.name))));
-  const h = { home: home, library: library, theme: theme, fiche: fiche, session: session, end: end, stats: stats, frise: frise, 'game-end': gameEnd }[view.name];
+  const h = { home: home, library: library, theme: theme, fiche: fiche, lire: lire, session: session, end: end, stats: stats, frise: frise, 'game-end': gameEnd }[view.name];
   $('main').className = view.name === 'frise' ? 'wide' : '';
   $('main').innerHTML = h(view.arg);
   if (view.name === 'session' && sess) { focusSession(); prefetch(); startTimer(); }
@@ -2637,9 +2675,9 @@ function home() {
   plan += '</ul>';
   let hero;
   if (total) hero = '<section class="hero"><div><p class="eyebrow">Ma séance du jour</p><h1>' + (doneToday ? 'On continue ?' : 'Prêt pour aujourd\'hui ?') + '</h1>' + plan +
-    '<button class="btn primary big" data-act="start">Commencer · ≈ ' + mins + ' min</button></div>' + heroSide() + '</section>';
+    '<div class="hero-btns"><button class="btn primary big" data-act="start">Commencer · ≈ ' + mins + ' min</button>' + readBtn() + '</div></div>' + heroSide() + '</section>';
   else hero = '<section class="hero done"><div><p class="eyebrow">Ma séance du jour</p><h1>Tout est à jour 🎉</h1><p class="lead">' + (nf ? 'Aucune révision en attente. Tu peux apprendre une fiche de plus si tu veux.' : 'Tu as découvert toutes les fiches. Les révisions reviendront au bon moment.') + '</p>' +
-    (nf ? '<button class="btn primary big" data-act="extra">Apprendre une fiche de plus</button>' : '') + '</div>' + heroSide() + '</section>';
+    '<div class="hero-btns">' + (nf ? '<button class="btn primary big" data-act="extra">Apprendre une fiche de plus</button>' : '') + readBtn() + '</div></div>' + heroSide() + '</section>';
   let tiles = homeGames() + '<h2 class="sec">Thèmes</h2><div class="themes">';
   THEMES.forEach(t => {
     const nCards = t.fiches.reduce((s, f) => s + f.cards.length, 0), nM = t.fiches.reduce((s, f) => s + f.cards.filter(c => st(c.id) && st(c.id).b >= MASTER).length, 0);
@@ -2660,7 +2698,7 @@ function week() {
   return h + '</div>';
 }
 function library() {
-  return '<h1 class="pt">Toutes les fiches</h1>' + THEMES.map(t => '<section class="lib" style="--t:' + t.color + '"><h2><span class="ti sm">' + t.icon + '</span>' + esc(t.name) + '</h2>' + ficheList(t) + '</section>').join('');
+  return '<h1 class="pt">Toutes les fiches <small class="muted">' + FICHES.filter(isRead).length + ' / ' + FICHES.length + ' lues</small></h1><p class="muted lib-tip">Touche une fiche pour la lire. Les cartes ne commencent que si tu choisis « Me tester ».</p>' + THEMES.map(t => '<section class="lib" style="--t:' + t.color + '"><h2><span class="ti sm">' + t.icon + '</span>' + esc(t.name) + '</h2>' + ficheList(t) + '</section>').join('');
 }
 function ficheList(t) {
   return '<div class="flist">' + t.fiches.map(f => { const s = ficheStatus(f); return '<button class="frow" data-fiche="' + f.id + '"><span class="fnum">' + (f.index + 1) + '</span><span class="ft"><b>' + esc(f.title) + '</b><small>' + esc(f.when || '') + (f.when ? ' · ' : '') + plural(f.cards.length, 'carte') + '</small></span><span class="badge ' + s.cls + '">' + s.label + '</span></button>'; }).join('') + '</div>';
@@ -2669,13 +2707,55 @@ function theme(id) {
   const t = TBY[id];
   return '<button class="back" data-nav="home">← Accueil</button><h1 class="pt" style="--t:' + t.color + '"><span class="ti">' + t.icon + '</span> ' + esc(t.name) + '</h1>' + ficheList(t);
 }
-function fiche(id) {
-  const f = FBY[id], t = f.theme, s = ficheStatus(f), seen = ficheSeen(f);
-  const learn = seen < f.cards.length ? 'Apprendre ses cartes' : 'Réviser cette fiche';
-  return '<button class="back" data-theme="' + t.id + '">← ' + esc(t.name) + '</button>' +
-    '<article class="lesson" style="--t:' + t.color + '"><p class="eyebrow">' + t.icon + ' ' + esc(t.name) + (f.when ? ' · ' + esc(f.when) : '') + '</p><h1>' + esc(f.title) + '</h1>' +
-    lessonBody(f, false) +
-    '<div class="actions"><button class="btn primary" data-act="learn" data-id="' + f.id + '">' + learn + '</button>' + (FRISE.some(x => x.f === f) ? '<button class="btn" data-act="frise-fiche" data-id="' + f.id + '">🕰️ Voir sur la frise</button>' : '') + '<span class="badge ' + s.cls + '">' + s.label + '</span></div></article>';
+/* ---------------------------------------------------------------- lecture libre (sans cartes) */
+/* liste parcourue : un thème, ou toutes les fiches dans l'ordre d'apprentissage ('*') */
+const readList = t => (t && t !== '*' && TBY[t]) ? TBY[t].fiches : ORDER;
+function nextToRead(t) { const L = readList(t); return L.find(f => !isRead(f)) || L[0]; }
+function readBtn() {
+  const f = nextToRead(S.opts.rdT || '*');
+  return '<button class="btn big read" data-act="read">📖 Juste lire<small>' + esc(f.title) + '</small></button>';
+}
+/* onglet « Lire » : reprend la fiche en cours (pas encore finie), sinon la prochaine non lue */
+function lire() {
+  const t = S.opts.rdT || '*', last = FBY[S.opts.rdId];
+  const f = last && !isRead(last) && readList(t).includes(last) ? last : nextToRead(t);
+  view = { name: 'fiche', arg: { id: f.id, t: '*' } };
+  return fiche(view.arg);
+}
+function fiche(arg) {
+  if (typeof arg === 'string') arg = { id: arg };
+  const f = FBY[arg.id], t = f.theme, s = ficheStatus(f), seen = ficheSeen(f), inLire = arg.t === '*';
+  const ctx = inLire ? (S.opts.rdT || '*') : t.id, L = readList(ctx), i = L.indexOf(f);
+  const prev = L[i - 1], next = L[i + 1], nRead = L.filter(isRead).length;
+  if (inLire && S.opts.rdId !== f.id) { S.opts.rdId = f.id; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignoré */ } }
+  const learn = seen < f.cards.length ? '🧠 Me tester · ' + plural(f.cards.length, 'carte') : '🧠 Réviser ses cartes';
+  let top = inLire
+    ? '<div class="rd-chips" aria-label="Thème"><button class="chip' + (ctx === '*' ? ' on' : '') + '" data-rdt="*">Tout</button>' +
+      THEMES.map(x => '<button class="chip' + (ctx === x.id ? ' on' : '') + '" data-rdt="' + x.id + '" style="--t:' + x.color + '" title="' + esc(x.name) + '">' + x.icon + '<span>' + esc(x.name) + '</span></button>').join('') + '</div>'
+    : '<button class="back" data-theme="' + t.id + '">← ' + esc(t.name) + '</button>';
+  top += '<div class="rd-pos"><span>Fiche ' + (i + 1) + ' / ' + L.length + (inLire && ctx !== '*' ? ' · ' + esc(TBY[ctx].name) : '') + '</span>' + bar(nRead / L.length, t.color) + '<span>' + nRead + ' lue' + (nRead > 1 ? 's' : '') + '</span></div>';
+  const nav = '<div class="rd-nav">' +
+    '<button class="btn" data-act="rd-prev"' + (prev ? '' : ' disabled') + ' title="Fiche précédente (flèche gauche)">←<span> Précédente</span></button>' +
+    (next ? '<button class="btn primary" data-act="rd-next" title="Fiche suivante (flèche droite)">Suivante →<small>' + esc(next.title) + '</small></button>'
+          : '<button class="btn primary" data-act="rd-done">✓ J\'ai tout lu</button>') + '</div>';
+  return '<div class="reader">' + top +
+    '<article class="lesson" style="--t:' + t.color + '"><p class="eyebrow">' + t.icon + ' ' + esc(t.name) + (f.when ? ' · ' + esc(f.when) : '') + (isRead(f) ? ' · <span class="readtag">✓ lue</span>' : '') + '</p><h1>' + esc(f.title) + '</h1>' +
+    lessonBody(f, false) + nav +
+    '<div class="actions rd-more"><button class="btn sm" data-act="learn" data-id="' + f.id + '">' + learn + '</button>' + (FRISE.some(x => x.f === f) ? '<button class="btn sm" data-act="frise-fiche" data-id="' + f.id + '">🕰️ Voir sur la frise</button>' : '') + '<span class="badge ' + s.cls + '">' + s.label + '</span></div></article></div>';
+}
+/* fiche suivante (et la courante compte comme lue) ou précédente, dans le thème ou dans toutes les fiches */
+function rdMove(dir) {
+  if (view.name !== 'fiche') return;
+  const arg = typeof view.arg === 'string' ? { id: view.arg } : view.arg, f = FBY[arg.id];
+  const ctx = arg.t === '*' ? (S.opts.rdT || '*') : f.theme.id, L = readList(ctx), i = L.indexOf(f);
+  if (dir > 0) markRead(f);
+  const to = L[i + dir];
+  if (to) go('fiche', { id: to.id, t: arg.t });
+  else if (dir > 0) { toast(ctx === '*' ? 'Toutes les fiches sont lues 🎉' : 'Thème « ' + TBY[ctx].name + ' » lu en entier 🎉'); if (arg.t === '*') go('home'); else go('theme', f.theme.id); }
+}
+function toast(msg) {
+  let el = $('toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.className = 'show'; clearTimeout(toast.t); toast.t = setTimeout(() => { el.className = ''; }, 2600);
 }
 /* découpe un paragraphe en phrases (sans couper « av. J.-C. » ni un passage en gras) */
 function sentences(p) {
@@ -2721,7 +2801,7 @@ const readMins = f => Math.max(1, Math.round((f.text.join(' ').split(/\s+/).leng
 function lessonBody(f, inSess) {
   if (f.cards[0] && f.cards[0].img && !f.art) return f.text.map(p => '<p>' + md(p) + '</p>').join('') + keysOrGallery(f);
   const L = (CG.lecture || {})[f.id] || {};
-  let h = '<p class="rd-meta">⏱ ' + readMins(f) + ' min de lecture · ' + plural(f.cards.length, 'carte') + ' à la suite</p>' + (typeof audioBtn === 'function' ? audioBtn(f) : '');
+  let h = '<p class="rd-meta">⏱ ' + readMins(f) + ' min de lecture' + (inSess ? ' · ' + plural(f.cards.length, 'carte') + ' à la suite' : '') + '</p>' + (typeof audioBtn === 'function' ? audioBtn(f) : '');
   f.text.forEach((p, i) => {
     h += '<section class="rd-sec"><h3><span class="rd-n">' + (i + 1) + '</span>' + esc((L.h && L.h[i]) || 'Partie ' + (i + 1)) + '</h3><ul>' +
       sentences(p).map(s => '<li>' + sentenceHtml(s) + '</li>').join('') + '</ul></section>';
@@ -2807,7 +2887,8 @@ function lessonScreen() {
   const f = sess.lessons[sess.li], t = f.theme;
   return '<div class="sess" style="--t:' + t.color + '"><div class="sess-top"><button class="link" data-act="stop">✕ Arrêter</button><span class="muted">Nouvelle fiche</span></div>' +
     '<article class="lesson in-sess"><p class="eyebrow">' + t.icon + ' ' + esc(t.name) + (f.when ? ' · ' + esc(f.when) : '') + '</p><h1>' + esc(f.title) + '</h1>' + lessonBody(f, true) +
-    '<div class="actions"><button class="btn primary big" data-act="lesson-ok">J\'ai lu, passer aux ' + plural(f.cards.length, 'carte') + ' <kbd>Entrée</kbd></button></div></article></div>';
+    '<div class="actions"><button class="btn primary big" data-act="lesson-ok">J\'ai lu, passer aux ' + plural(f.cards.length, 'carte') + ' <kbd>Entrée</kbd></button>' +
+    '<button class="btn big" data-act="lesson-skip" title="La fiche est marquée comme lue ; ses cartes te seront proposées un autre jour">📖 Lire seulement, sans cartes</button></div></article></div>';
 }
 function answer(ok, given) {
   const s = sess, it = current(); if (!it || s.answered) return;
@@ -2834,8 +2915,12 @@ function nextCard() {
   const s = sess; s.answered = false; s.revealed = false; s.i++;
   render();
 }
+function lessonSkip() {
+  const s = sess, f = s.lessons[s.li]; s.li++; markRead(f); s.skipped = (s.skipped || []).concat(f);
+  render();
+}
 function lessonOk() {
-  const s = sess, f = s.lessons[s.li]; s.li++; s.read.push(f);
+  const s = sess, f = s.lessons[s.li]; s.li++; s.read.push(f); markRead(f);
   S.fiches[f.id] = S.fiches[f.id] || { read: today() }; save();
   f.cards.map(c => c.id).forEach(id => { if (!st(id)) s.q.push({ id, practice: false, tries: 0 }); else if (!s.q.some(x => x.id === id)) s.q.push({ id, practice: st(id).due > today(), tries: 0 }); });
   render();
@@ -2846,10 +2931,10 @@ function endNow() {
 }
 function end(r) {
   r = r || [];
-  const ok = r.filter(x => x.ok).length, rd = (sess && sess.read) || [];
+  const ok = r.filter(x => x.ok).length, rd = ((sess && sess.read) || []).concat((sess && sess.skipped) || []);
   const tom = Object.keys(S.cards).filter(id => CARDS[id] && S.cards[id].due === today() + 1).length;
   const missed = r.filter(x => !x.ok && x.id).map(x => CARDS[x.id]);
-  return '<section class="hero end"><div><p class="eyebrow">Séance terminée</p><h1>' + (r.length ? ok + ' / ' + r.length + ' du premier coup' : 'Fiche lue') + '</h1>' +
+  return '<section class="hero end"><div><p class="eyebrow">Séance terminée</p><h1>' + (r.length ? ok + ' / ' + r.length + ' du premier coup' : (rd.length > 1 ? 'Fiches lues' : 'Fiche lue')) + '</h1>' +
     '<p class="lead">' + (rd.length ? (rd.length > 1 ? 'Fiches découvertes : ' : 'Fiche découverte : ') + rd.map(f => '<b>' + esc(f.title) + '</b>').join(', ') + '. ' : '') + 'Demain : ' + plural(tom, 'carte') + ' à revoir. Série : ' + plural(streak(), 'jour') + ' 🔥</p>' +
     (missed.length ? '<h3>À retenir de tes erreurs</h3><ul class="weak">' + missed.map(c => '<li><b>' + esc(c.q) + '</b> → ' + esc(c.a) + '</li>').join('') + '</ul>' : '') +
     '<div class="actions"><button class="btn primary" data-nav="home">Retour à l\'accueil</button>' + (nextNewFiche() ? '<button class="btn" data-act="extra">Encore une fiche</button>' : '') + '</div></div></section>';
@@ -2864,6 +2949,7 @@ document.addEventListener('click', e => {
   if (b.dataset.nav) { const to = b.dataset.nav; if (view.name === 'session' && sess && sess.results.length) { ask('Arrêter la séance ? Les réponses déjà données sont gardées.', 'Arrêter', () => go(to)); return; } go(to); return; }
   if (b.dataset.theme) { go('theme', b.dataset.theme); return; }
   if (b.dataset.fiche) { go('fiche', b.dataset.fiche); return; }
+  if (b.dataset.rdt) { S.opts.rdT = b.dataset.rdt; save(); go('lire'); return; }
   if (b.classList.contains('choice')) { const c = CARDS[current().id]; answer(b.dataset.v === c.a, b.dataset.v); return; }
   if (b.dataset.oi != null) { orderPick(+b.dataset.oi); return; }
   if (b.dataset.fz != null) { friseSelect(+b.dataset.fz); return; }
@@ -2875,6 +2961,10 @@ document.addEventListener('click', e => {
   else if (a === 'extra') startSession('extra');
   else if (a === 'learn') startSession('fiche', b.dataset.id);
   else if (a === 'lesson-ok') lessonOk();
+  else if (a === 'lesson-skip') lessonSkip();
+  else if (a === 'read') go('lire');
+  else if (a === 'rd-next' || a === 'rd-done') rdMove(1);
+  else if (a === 'rd-prev') rdMove(-1);
   else if (a === 'reveal') reveal();
   else if (a === 'yes') answer(true);
   else if (a === 'no') answer(false);
@@ -2885,6 +2975,10 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => { if (e.target.id === 'opt-choice') { S.opts.alwaysChoice = e.target.checked; save(); } });
 document.addEventListener('keydown', e => {
   if (view.name === 'frise') { friseKey(e); return; }
+  if (view.name === 'fiche' && !e.altKey && !e.ctrlKey && !e.metaKey && !/INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); rdMove(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); rdMove(-1); }
+    return;
+  }
   if (view.name !== 'session' || !sess) return;
   const k = e.key;
   if (document.querySelector('[data-act="lesson-ok"]')) { if (k === 'Enter') { e.preventDefault(); lessonOk(); } return; }
@@ -2895,6 +2989,20 @@ document.addEventListener('keydown', e => {
   else if (!sess.revealed) { if (k === ' ' || k === 'Enter') { e.preventDefault(); reveal(); } }
   else { if (k === '1') answer(false); if (k === '2') answer(true); }
 });
+
+/* glisser à gauche / à droite pour changer de fiche (téléphone) ; pas dans les galeries qui défilent */
+(() => {
+  let x0 = null, y0 = 0, t0 = 0;
+  document.addEventListener('touchstart', e => {
+    if (view.name !== 'fiche' || e.touches.length !== 1 || e.target.closest('.gallery, .rd-chips, .fmini, .pbar, #player')) { x0 = null; return; }
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (x0 == null) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Date.now() - t0 < 700 && Math.abs(dx) > 70 && Math.abs(dx) > 2 * Math.abs(dy)) rdMove(dx < 0 ? 1 : -1);
+  }, { passive: true });
+})();
 
 /* Culture générale : frise chronologique, « remettre dans l'ordre » et Défi du jour. Chargé après app.js. */
 
@@ -3316,6 +3424,7 @@ function mergeS(a, b) {
   Object.entries(a.cards || {}).forEach(([id, c]) => { const r = m.cards[id]; if (!r || (c.last || 0) > (r.last || 0) || ((c.last || 0) === (r.last || 0) && (c.n || 0) > (r.n || 0))) m.cards[id] = c; });
   Object.entries(a.fiches || {}).forEach(([id, f]) => { if (!m.fiches[id]) m.fiches[id] = f; });
   Object.entries(a.days || {}).forEach(([d, v]) => { const r = m.days[d]; if (!r || v.n > r.n) m.days[d] = v; });
+  if (a.lu || b.lu) { m.lu = Object.assign({}, a.lu, b.lu); Object.entries(a.lu || {}).forEach(([id, d]) => { if (m.lu[id] > d) m.lu[id] = d; }); }   /* fiches lues : réunion (1re lecture) */
   m.opts = Object.assign({}, b.opts, a.opts);
   if (a.defi || b.defi) {
     const A = a.defi || {}, B = b.defi || {};
