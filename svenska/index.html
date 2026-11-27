@@ -332,11 +332,24 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .lvlab { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin: -2px 4px 0; }
 .lvgrad { display: inline-block; width: 46px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #e0342a, #f28c28, #f2c94c, #9fd9df, #4f8fd0, #1d3f8f); vertical-align: middle; margin-right: 4px; }
 .tb-reset { font-size: 13px; justify-self: start; padding: 2px 4px; }
+
+/* familles de thèmes (repliables) */
+.fam-sec { margin: 6px 2px 8px; }
+.fam .fam-h { display: flex; align-items: stretch; border-bottom: 1px solid #ece9df; }
+.fam:not(.on) .fam-h { border-bottom: 0; }
+.fam-t { flex: 1; display: flex; align-items: center; gap: 12px; border: 0; background: #fff; padding: 0 10px 0 0; font: inherit; color: inherit; text-align: left; min-height: 56px; }
+.fam-t b { flex: 1; display: grid; font-size: 16.5px; }
+.fam-t b small { display: flex; gap: 8px; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+.fam-t .chev { color: var(--muted); font-size: 14px; }
+.fam-all { border: 0; border-left: 1px solid #ece9df; background: #f6f4ee; color: var(--blue); font: inherit; font-weight: 600; font-size: 14px; padding: 0 14px; }
+.fam.on .trow { padding-left: 14px; } .fam.on .trow .tr-ico { width: 38px; font-size: 18px; border-radius: 8px; align-self: center; height: 38px; }
+/* en-tête d'un thème : reste visible sous l'en-tête principal pendant le défilement */
+.tilehead { position: sticky; top: var(--toph, 56px); z-index: 6; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.9.0 · build du 27/11 à 19:42">v0.9.0</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.9.1 · build du 27/11 à 21:07">v0.9.1</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -7367,7 +7380,27 @@ function refSet(ids, id, title, icon, color) {
   return { id, title, vocab: R.map(([w, k]) => w.vocab[k]), refs: R, theme: { id, name: title, icon, color } };
 }
 function vlistSet(arg) { const L = VLISTS[arg.set]; if (!arg.refs) arg.refs = vlistIds(arg.set); return refSet(arg.refs, arg.set, L.title, L.icon, L.color); }
-const setById = (id, arg) => id === 'daily' ? dailySet() : VLISTS[id] ? vlistSet(arg || view.arg) : WBY[id];
+/* familles de thèmes (pour explorer un domaine entier ; les thèmes détaillés restent dessous) */
+const FAMS = [
+  ['bas', 'Les bases', '🧱', '#1F5F99', 'xn xv xa xp xs xt xy pro alm'],
+  ['gra', 'Grammaire et verbes', '📐', '#6E56CF', 'vb2 vb3 vb5 vb4 pv ad2 adv jmf'],
+  ['phr', 'Phrases et expressions', '💬', '#E5484D', 'utt ord idi kom'],
+  ['per', 'Personnes et corps', '👥', '#E93D82', 'xf emo krp xk kro hal bar'],
+  ['mai', 'Maison et quotidien', '🏠', '#0091FF', 'xh hem liv xc ac2 byg tra'],
+  ['man', 'Manger et boire', '🍽️', '#46A758', 'xm mat ali rst'],
+  ['vil', 'Ville, transports et voyage', '✈️', '#F76B15', 'sta bil xl res'],
+  ['tra', 'Travail, argent et société', '💼', '#B45309', 'job sko kto kon bti eko sam jur adm'],
+  ['nat', 'Nature et environnement', '🌲', '#2F9E44', 'nat dju xj lan hav mil'],
+  ['cul', 'Culture et savoirs', '🎭', '#8E4EC6', 'kul spo mus art rel his geo vet tek abs id2 mtt']
+].map(([key, title, icon, color, ids]) => ({ key, title, icon, color, sets: ids.split(' ').map(i => WBY['w' + i]).filter(Boolean) }));
+(() => { const inF = new Set(FAMS.flatMap(f => f.sets)), rest = WSETS.filter(w => !inF.has(w)); if (rest.length) FAMS.push({ key: 'aut', title: 'Autres', icon: '📁', color: '#8a8f98', sets: rest }); })();
+function famSet(arg) {
+  const F = FAMS.find(f => 'f-' + f.key === arg.set);
+  if (!arg.refs) { arg.refs = []; F.sets.forEach(w => w.vocab.forEach((v, k) => arg.refs.push(w.id + '-' + k))); }
+  return refSet(arg.refs, arg.set, F.title, F.icon, F.color);
+}
+let tilesY = 0;   /* position dans la liste des thèmes, retrouvée au retour */
+const setById = (id, arg) => id === 'daily' ? dailySet() : VLISTS[id] ? vlistSet(arg || view.arg) : id.startsWith('f-') ? famSet(arg || view.arg) : WBY[id];
 const curSet = () => setById(view.arg.set);
 function dailyCard() {
   const d = dailySet(), n = d.refs.length, done = d.refs.filter(([w, k]) => tileState(w.id + '-' + k)).length;
@@ -7380,17 +7413,24 @@ function tiles(arg) {
   const row = (id, icon, color, title, right) => '<button class="trow" data-tset="' + id + '"><span class="tr-ico" style="background:' + color + '">' + icon + '</span><b>' + esc(title) + '</b><small>' + right + '</small></button>';
   let h = '<h1 class="pt">Tuiles de mots</h1>' + dailyCard() + '<div class="tlist">';
   Object.keys(VLISTS).forEach(id => { const L = VLISTS[id]; h += row(id, L.icon, L.color, L.title, String(vlistIds(id).length)); });
-  h += '</div><div class="tlist">';
-  WSETS.forEach(w => {
-    const n = w.vocab.length, c = { learn: 0, known: 0, out: 0 }; w.vocab.forEach((v, k) => { const s = tileState(w.id + '-' + k); if (s) c[s]++; });
-    h += row(w.id, w.theme.icon, w.theme.color, w.title, (c.learn ? '<span class="tr-l">★ ' + c.learn + '</span>' : '') + (c.known ? '<span class="tr-k">✓ ' + c.known + '</span>' : '') + n);
+  h += '</div><h2 class="sec fam-sec">Thèmes</h2>';
+  const open = S.opts.famOpen || {};
+  const counts = w => { const c = { learn: 0, known: 0 }; w.vocab.forEach((v, k) => { const s = tileState(w.id + '-' + k); if (s === 'learn' || s === 'known') c[s]++; }); return c; };
+  const right = (c, n) => (c.learn ? '<span class="tr-l">★ ' + c.learn + '</span>' : '') + (c.known ? '<span class="tr-k">✓ ' + c.known + '</span>' : '') + n;
+  FAMS.forEach(F => {
+    const cs = F.sets.map(counts), n = F.sets.reduce((a, w) => a + w.vocab.length, 0), on = !!open[F.key];
+    const tot = { learn: cs.reduce((a, c) => a + c.learn, 0), known: cs.reduce((a, c) => a + c.known, 0) };
+    h += '<div class="tlist fam' + (on ? ' on' : '') + '"><div class="fam-h"><button class="fam-t" data-fam="' + F.key + '" aria-expanded="' + on + '"><span class="tr-ico" style="background:' + F.color + '">' + F.icon + '</span><b>' + esc(F.title) + '<small>' + plural(F.sets.length, 'thème') + ' · ' + right(tot, plural(n, 'mot')) + '</small></b><span class="chev">' + (on ? '▴' : '▾') + '</span></button>' +
+      '<button class="fam-all" data-tset="f-' + F.key + '" title="Tous les mots de la famille">Tout</button></div>';
+    if (on) F.sets.forEach((w, i) => { h += row(w.id, w.theme.icon, w.theme.color, w.title, right(cs[i], w.vocab.length)); });
+    h += '</div>';
   });
-  return h + '</div>';
+  return h;
 }
 function tileSet(w) {
   const sel = view.arg.sel, flip = view.arg.flip || {}, hideKnown = !!view.arg.hide;
   const n = w.vocab.length, nl = w.vocab.filter((v, k) => tst(w, k) === 'learn').length;
-  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div>' + '<p class="tlegend"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre du mot</span><span><b class="lvgrad"></b> à apprendre → connu</span><span><b class="lg l-fr">FR</b> côté français</span></p>' + '<div class="tilegrid">';
+  let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-act="tback" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div>' + '<p class="tlegend"><span><i class="art a-en">en</i> <i class="art a-ett">ett</i> genre du mot</span><span><b class="lvgrad"></b> à apprendre → connu</span><span><b class="lg l-fr">FR</b> côté français</span></p>' + '<div class="tilegrid">';
   w.vocab.forEach((v, k) => {
     const s = tst(w, k), [TW, TK] = tref(w, k), L = tileLevel(TW, TK);
     if ((s === 'out' && w.id !== 'v-out') || (hideKnown && s === 'known')) return;
@@ -7685,7 +7725,9 @@ document.addEventListener('click', e => {
   if (b.dataset.say != null) { speak(b.dataset.say, b.dataset.rate); return; }
   if (b.dataset.nav) { const to = b.dataset.nav; if (view.name === 'session' && sess && sess.results.length && !confirm('Arrêter la séance ? Les réponses déjà données sont gardées.')) return; go(to); return; }
   if (b.dataset.theme) { go('theme', b.dataset.theme); return; }
-  if (b.dataset.tset) { go('tiles', { set: b.dataset.tset }); return; }
+  if (b.dataset.fam) { S.opts.famOpen = S.opts.famOpen || {}; S.opts.famOpen[b.dataset.fam] = !S.opts.famOpen[b.dataset.fam]; save(); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+  if (b.dataset.tset) { if (view.name === 'tiles' && !(view.arg && view.arg.set)) tilesY = window.scrollY; go('tiles', { set: b.dataset.tset }); return; }
+  if (b.dataset.act === 'tback') { go('tiles'); window.scrollTo(0, tilesY); return; }
   if (b.dataset.dn) { setDailyN(+b.dataset.dn); render(); return; }
   if (b.dataset.tile != null) { const k = +b.dataset.tile, w = curSet(); view.arg.flip = view.arg.flip || {}; view.arg.flip[k] = !view.arg.flip[k]; view.arg.sel = k; if (S.opts.tileSpeak) speak(w.vocab[k].sv); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
   if (b.dataset.fiche) { go('fiche', b.dataset.fiche); return; }
