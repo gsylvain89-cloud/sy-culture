@@ -247,11 +247,23 @@ html{overflow-x:hidden}body{overflow-x:clip}
 .drow .dl, .drow .dr { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 2px; min-width: 0; }
 .drow .gb { flex: none; }
 .dopen .tb-info { flex: 1; }
+
+/* Tuiles : carte « Mots du jour » (toute la largeur, compacte) */
+.dailycard { background: #fff; border: 1px solid var(--line); border-top: 4px solid #1F5F99; border-radius: 14px; padding: 10px 12px; margin: 0 0 16px; display: grid; gap: 8px; }
+.dc-top { display: flex; align-items: center; gap: 8px; }
+.dc-top b { font-size: 17px; }
+.dc-top small { margin-left: auto; color: var(--muted); font-size: 13px; }
+.dc-ico { font-size: 20px; }
+.dc-row { display: flex; align-items: center; gap: 8px; }
+.dc-n { display: flex; gap: 3px; background: #eceade; border-radius: 9px; padding: 3px; flex: 1; }
+.dc-n button { flex: 1; border: 0; background: none; border-radius: 7px; padding: 6px 0; font: inherit; font-weight: 600; color: var(--muted); }
+.dc-n button.on { background: #fff; color: #1F5F99; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.btn.dc-go { flex: none; width: auto !important; padding: 8px 14px; margin: 0; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.0 · build du 27/11 à 16:48">v0.7.0</span></h1></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><h1>Svenska<span class="ver" title="SY Svenska 0.7.1 · build du 27/11 à 16:59">v0.7.1</span></h1></div>
   <nav class="nav" aria-label="Sections">
     <button type="button" data-nav="home">Accueil</button>
     <button type="button" data-nav="library">Fiches</button>
@@ -4083,9 +4095,40 @@ function setTile(w, k, state) {
   });
   save();
 }
+/* « Mots du jour » : N mots tirés au hasard parmi les tuiles jamais marquées ni travaillées ; le tirage est gardé pour la journée (S.daily) */
+const dailyN = () => S.opts.dailyN || 10;
+const tileSeen = wid => { const i = wid.lastIndexOf('-'), w = WBY[wid.slice(0, i)]; return !!tileState(wid) || (w && tileCards(w, +wid.slice(i + 1)).some(id => S.cards[id])); };
+function dailyDraw(n, keep) {
+  const pool = []; WSETS.forEach(w => w.vocab.forEach((v, k) => { const id = w.id + '-' + k; if (!keep.includes(id) && !tileSeen(id)) pool.push(id); }));
+  return keep.concat(shuffle(pool).slice(0, n));
+}
+function dailySet() {
+  if (!S.daily || S.daily.day !== today()) { S.daily = { day: today(), refs: dailyDraw(dailyN(), []) }; save(); }
+  const refs = S.daily.refs.filter(id => { const i = id.lastIndexOf('-'), w = WBY[id.slice(0, i)]; return w && w.vocab[+id.slice(i + 1)]; });
+  const R = refs.map(id => { const i = id.lastIndexOf('-'); return [WBY[id.slice(0, i)], +id.slice(i + 1)]; });
+  return { id: 'daily', title: 'Mots du jour', vocab: R.map(([w, k]) => w.vocab[k]), refs: R, theme: { id: 'daily', name: 'Mots du jour', icon: '🎲', color: '#1F5F99' } };
+}
+function setDailyN(n) {
+  S.opts.dailyN = n;
+  if (S.daily && S.daily.day === today()) {
+    const marked = S.daily.refs.filter(id => tileState(id)), rest = S.daily.refs.filter(id => !tileState(id));
+    S.daily.refs = rest.length + marked.length >= n ? marked.concat(rest.slice(0, Math.max(0, n - marked.length))) : dailyDraw(n - marked.length - rest.length, marked.concat(rest));
+  }
+  save();
+}
+const tref = (w, k) => w.refs ? w.refs[k] : [w, k];
+const tst = (w, k) => { const [W, K] = tref(w, k); return tileState(W.id + '-' + K); };
+const tcard = (w, k) => { const [W, K] = tref(w, k); return st(W.id + '-s' + K); };
+const curSet = () => view.arg.set === 'daily' ? dailySet() : WBY[view.arg.set];
+function dailyCard() {
+  const d = dailySet(), n = d.refs.length, done = d.refs.filter(([w, k]) => tileState(w.id + '-' + k)).length;
+  return '<div class="dailycard"><div class="dc-top"><span class="dc-ico">🎲</span><b>Mots du jour</b><small>' + (n ? done + ' / ' + n + ' triés' : 'tout est trié 🎉') + '</small></div>' +
+    '<div class="dc-row"><div class="dc-n" role="group" aria-label="Mots par jour">' + [5, 10, 15, 20, 30].map(x => '<button data-dn="' + x + '"' + (x === dailyN() ? ' class="on"' : '') + '>' + x + '</button>').join('') + '</div>' +
+    '<button class="btn primary dc-go" data-tset="daily">Découvrir →</button></div></div>';
+}
 function tiles(arg) {
-  if (arg && arg.set) return tileSet(WBY[arg.set]);
-  let h = '<h1 class="pt">Tuiles de mots</h1><p class="muted">Touche une tuile pour la retourner (le suédois est lu à voix haute). Marque les mots que tu veux apprendre : ils entrent dans tes révisions.</p><div class="themes">';
+  if (arg && arg.set) return tileSet(arg.set === 'daily' ? dailySet() : WBY[arg.set]);
+  let h = '<h1 class="pt">Tuiles de mots</h1>' + dailyCard() + '<div class="themes">';
   WSETS.forEach(w => {
     const n = w.vocab.length, c = { learn: 0, known: 0, out: 0 }; w.vocab.forEach((v, k) => { const s = tileState(w.id + '-' + k); if (s) c[s]++; });
     h += '<button class="theme" data-tset="' + w.id + '" style="--t:' + w.theme.color + '"><span class="ti">' + w.theme.icon + '</span><b>' + esc(w.title) + '</b><small>' + plural(n, 'mot') + '</small>' + bar((c.known + c.learn) / n, w.theme.color) + '<small>' + c.learn + ' à apprendre · ' + c.known + ' connus</small></button>';
@@ -4094,17 +4137,17 @@ function tiles(arg) {
 }
 function tileSet(w) {
   const sel = view.arg.sel, flip = view.arg.flip || {}, hideKnown = !!view.arg.hide;
-  const n = w.vocab.length, nl = w.vocab.filter((v, k) => tileState(w.id + '-' + k) === 'learn').length;
+  const n = w.vocab.length, nl = w.vocab.filter((v, k) => tst(w, k) === 'learn').length;
   let h = '<div class="tilehead" style="background:' + w.theme.color + '"><button class="link" data-nav="tiles" style="color:#fff">‹ Thèmes</button>' + (SP.ok ? '<button class="tspeak" data-act="tspeak" aria-pressed="' + !!S.opts.tileSpeak + '" title="' + (S.opts.tileSpeak ? 'Lecture du mot activée : touche pour la couper' : 'Lecture du mot coupée : touche pour l\'activer') + '">' + (S.opts.tileSpeak ? '🔊' : '🔇') + '</button>' : '') + '<div class="tbig">' + w.theme.icon + '</div><h1>' + esc(w.title) + '</h1></div><div class="tilegrid">';
   w.vocab.forEach((v, k) => {
-    const s = tileState(w.id + '-' + k);
+    const s = tst(w, k);
     if (s === 'out' || (hideKnown && s === 'known')) return;
-    const c = st(w.id + '-s' + k), done = s === 'learn' && c && c.b >= MASTER;
+    const c = tcard(w, k), done = s === 'learn' && c && c.b >= MASTER;
     h += '<button class="tile' + (v.g ? ' g-' + v.g : '') + (flip[k] ? ' flip' : '') + (sel === k ? ' sel' : '') + (s ? ' s-' + s : '') + (done ? ' s-done' : '') + '" data-tile="' + k + '"><span>' + esc(flip[k] ? v.fr : svFull(v)) + '</span></button>';
   });
   h += '</div>';
   if (sel != null) {
-    const v = w.vocab[sel], s = tileState(w.id + '-' + sel);
+    const v = w.vocab[sel], s = tst(w, sel);
     const info = [v.g && v.pl ? 'pl. <b>' + esc(v.pl) + '</b>' : '', v.forms ? esc(v.forms) : '', v.note ? esc(v.note) : ''].filter(Boolean).join(' · ');
     const tb = (st8, label, cls) => '<button class="tb-btn ' + cls + (s === st8 ? ' on' : '') + '" data-act="tset" data-s="' + st8 + '">' + label + '</button>';
     h += '<div class="tilebar"><div class="tb-row"><span class="tb-w">' + gBadge(v.g) + esc(v.sv) + '</span><span class="tb-fr">' + esc(v.fr) + '</span>' + playBtn(v.sv) + '</div>' +
@@ -4112,8 +4155,8 @@ function tileSet(w) {
       '<div class="tb-acts">' + tb('learn', 'À apprendre', 'learn') + tb('known', 'Je connais', 'known') + tb('out', 'Exclure', 'out') +
       (s ? '<button class="tb-btn reset" data-act="tset" data-s="" title="Réinitialiser" aria-label="Réinitialiser">↺</button>' : '') + '</div></div>';
   }
-  const hidden = w.vocab.filter((v, k) => tileState(w.id + '-' + k) === 'out').length;
-  h += '<div class="actions"><button class="btn primary" data-act="tlearn" data-id="' + w.id + '">' + (nl ? 'Réviser mes ' + plural(nl, 'mot') + ' à apprendre' : 'Tout apprendre (' + n + ')') + '</button><button class="btn" data-act="tflip">Tout retourner</button><button class="btn" data-act="thide">' + (hideKnown ? 'Afficher les mots connus' : 'Masquer les mots connus') + '</button>' + (hidden ? '<button class="link" data-act="trestore">Remettre les ' + hidden + ' exclus</button>' : '') + '</div>';
+  const hidden = w.vocab.filter((v, k) => tst(w, k) === 'out').length;
+  h += '<div class="actions"><button class="btn primary" data-act="tlearn" data-id="' + w.id + '">' + (nl ? 'Réviser mes ' + plural(nl, 'mot') + ' à apprendre' : 'Tout apprendre (' + n + ')') + '</button>' + (w.refs ? '<button class="btn" data-act="dmore">🎲 Encore ' + dailyN() + ' mots</button>' : '') + '<button class="btn" data-act="tflip">Tout retourner</button><button class="btn" data-act="thide">' + (hideKnown ? 'Afficher les mots connus' : 'Masquer les mots connus') + '</button>' + (hidden ? '<button class="link" data-act="trestore">Remettre les ' + hidden + ' exclus</button>' : '') + '</div>';
   return h;
 }
 /* ---------------------------------------------------------------- Rechercher : dictionnaire suédois ⇄ français (tuiles + mots des fiches) */
@@ -4386,7 +4429,8 @@ document.addEventListener('click', e => {
   if (b.dataset.nav) { const to = b.dataset.nav; if (view.name === 'session' && sess && sess.results.length && !confirm('Arrêter la séance ? Les réponses déjà données sont gardées.')) return; go(to); return; }
   if (b.dataset.theme) { go('theme', b.dataset.theme); return; }
   if (b.dataset.tset) { go('tiles', { set: b.dataset.tset }); return; }
-  if (b.dataset.tile != null) { const k = +b.dataset.tile, w = WBY[view.arg.set]; view.arg.flip = view.arg.flip || {}; view.arg.flip[k] = !view.arg.flip[k]; view.arg.sel = k; if (S.opts.tileSpeak) speak(w.vocab[k].sv); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+  if (b.dataset.dn) { setDailyN(+b.dataset.dn); render(); return; }
+  if (b.dataset.tile != null) { const k = +b.dataset.tile, w = curSet(); view.arg.flip = view.arg.flip || {}; view.arg.flip[k] = !view.arg.flip[k]; view.arg.sel = k; if (S.opts.tileSpeak) speak(w.vocab[k].sv); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
   if (b.dataset.fiche) { go('fiche', b.dataset.fiche); return; }
   if (b.dataset.rdt) { S.opts.rdT = b.dataset.rdt; save(); go('lire'); return; }
   if (b.dataset.chip != null) {
@@ -4400,16 +4444,17 @@ document.addEventListener('click', e => {
   if (a === 'start') startSession('daily');
   else if (a === 'extra') startSession('extra');
   else if (a === 'learn') startSession('fiche', b.dataset.id);
-  else if (a === 'tset') { const w = WBY[view.arg.set]; setTile(w, view.arg.sel, b.dataset.s); const y = window.scrollY; render(); window.scrollTo(0, y); }
+  else if (a === 'tset') { const [W, K] = tref(curSet(), view.arg.sel); setTile(W, K, b.dataset.s); const y = window.scrollY; render(); window.scrollTo(0, y); }
   else if (a === 'tspeak') { S.opts.tileSpeak = !S.opts.tileSpeak; save(); const y = window.scrollY; render(); window.scrollTo(0, y); }
-  else if (a === 'tflip') { const w = WBY[view.arg.set], f = view.arg.flip || {}, all = w.vocab.every((v, k) => f[k]); view.arg.flip = {}; if (!all) w.vocab.forEach((v, k) => { view.arg.flip[k] = true; }); render(); }
+  else if (a === 'dmore') { const d = S.daily; d.refs = dailyDraw(dailyN(), d.refs); save(); render(); }
+  else if (a === 'tflip') { const w = curSet(), f = view.arg.flip || {}, all = w.vocab.every((v, k) => f[k]); view.arg.flip = {}; if (!all) w.vocab.forEach((v, k) => { view.arg.flip[k] = true; }); render(); }
   else if (a === 'thide') { view.arg.hide = !view.arg.hide; render(); }
-  else if (a === 'trestore') { const w = WBY[view.arg.set]; w.vocab.forEach((v, k) => { if (tileState(w.id + '-' + k) === 'out') setTile(w, k, ''); }); render(); }
+  else if (a === 'trestore') { const w = curSet(); w.vocab.forEach((v, k) => { if (tst(w, k) === 'out') { const [W, K] = tref(w, k); setTile(W, K, ''); } }); render(); }
   else if (a === 'tlearn') {
-    const w = WBY[b.dataset.id]; let ks = w.vocab.map((v, k) => k).filter(k => tileState(w.id + '-' + k) === 'learn');
-    if (!ks.length) { ks = w.vocab.map((v, k) => k).filter(k => !tileState(w.id + '-' + k)).slice(0, 20); ks.forEach(k => setTile(w, k, 'learn')); }
-    const ids = []; ks.forEach(k => tileCards(w, k).forEach(id => { const s = st(id); if (!s || s.due <= today() || s.b < 2) ids.push(id); }));
-    startSession('ids', ids.slice(0, 40));
+    const w = b.dataset.id === 'daily' ? dailySet() : WBY[b.dataset.id]; let ks = w.vocab.map((v, k) => k).filter(k => tst(w, k) === 'learn');
+    if (!ks.length) { ks = w.vocab.map((v, k) => k).filter(k => !tst(w, k)).slice(0, 30); ks.forEach(k => { const [W, K] = tref(w, k); setTile(W, K, 'learn'); }); }
+    const ids = []; ks.forEach(k => { const [W, K] = tref(w, k); tileCards(W, K).forEach(id => { const s = st(id); if (!s || s.due <= today() || s.b < 2) ids.push(id); }); });
+    startSession('ids', ids.slice(0, 60));
   }
   else if (a === 'lesson-ok') lessonOk();
   else if (a === 'lesson-skip') lessonSkip();
@@ -4493,6 +4538,7 @@ function mergeS(a, b) {
   const bt = b.tmod || {};
   Object.keys(bt).forEach(k => { if (!(m.tmod[k] >= bt[k])) { m.tmod[k] = bt[k]; if (b.tiles && b.tiles[k]) m.tiles[k] = b.tiles[k]; else delete m.tiles[k]; } });
   Object.keys(m.tmod).forEach(k => { if (!m.tiles[k] || m.tiles[k] === 'out') { const i = k.lastIndexOf('-'); ['s', 'f', 'g', 'p', 't'].forEach(x => { delete m.cards[k.slice(0, i) + '-' + x + k.slice(i + 1)]; }); } });
+  if (b.daily && (!m.daily || b.daily.day > m.daily.day)) m.daily = b.daily;   /* mots du jour : le tirage le plus récent */
   m.opts = Object.assign({}, b.opts, m.opts); m.mod = Math.max(a.mod || 0, b.mod || 0);
   return m;
 }
